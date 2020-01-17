@@ -367,8 +367,12 @@
            receiver:(DIMID *)receiver
            callback:(nullable DIMMessengerCallback)callback
         dispersedly:(BOOL)split {
+    
+    //Application Layer should make sure user is already login before it send message to server.
+    //Application layer should put message into queue so that it will send automatically after user login
     DIMUser *user = self.facebook.currentUser;
     NSAssert(user, @"current user not found");
+    
     DIMInstantMessage *iMsg;
     iMsg = [[DIMInstantMessage alloc] initWithContent:content
                                                sender:user.ID
