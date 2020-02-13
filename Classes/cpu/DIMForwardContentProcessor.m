@@ -55,6 +55,7 @@
     DIMSecureMessage *sMsg = [self.messenger verifyMessage:rMsg];
     if (!sMsg) {
         // TODO: save this message in a queue to wait meta response
+        //[self.messenger suspendMessage:rMsg];
         //NSAssert(false, @"failed to verify message: " + rMsg);
         return nil;
     }

@@ -338,19 +338,13 @@ static inline void load_cmd_classes(void) {
         // no message received
         return nil;
     }
-    // 2. verify
-    DIMSecureMessage *sMsg = [self verifyMessage:rMsg];
-    if (!sMsg) {
-        // waiting for sender's meta if not eixsts
-        return nil;
-    }
-    // 3. process message
-    DIMContent *res = [self processSecureMessage:sMsg];
+    // 2. process message
+    DIMContent *res = [self processReliableMessage:rMsg];
     if (!res) {
         // nothing to response
         return nil;
     }
-    // 4. pack response
+    // 3. pack response
     DIMID *sender = [self.facebook IDWithString:rMsg.envelope.sender];
     DIMID *receiver = [self.facebook IDWithString:rMsg.envelope.receiver];
     DIMUser *user = [self selectUserWithID:receiver];
@@ -364,16 +358,24 @@ static inline void load_cmd_classes(void) {
                                                sender:user.ID
                                              receiver:sender
                                                  time:nil];
-    sMsg = [self encryptMessage:iMsg];
-    NSAssert(sMsg, @"failed to encrypt message: %@", iMsg);
-    rMsg = [self signMessage:sMsg];
-    NSAssert(rMsg, @"failed to sign message: %@", sMsg);
-    // 5. serialize message
+    rMsg = [self signMessage:[self encryptMessage:iMsg]];
+    NSAssert(rMsg, @"failed to encrypt/sign message: %@", iMsg);
+    // serialize message
     return [self serializeMessage:rMsg];
 }
 
-// TODO: override to check broadcast message before calling it
-// TODO: override to deliver to the receiver when catch exception "receiver error ..."
+- (nullable DIMContent *)processReliableMessage:(DIMReliableMessage *)rMsg {
+    // 2. verify
+    DIMSecureMessage *sMsg = [self verifyMessage:rMsg];
+    if (!sMsg) {
+        // waiting for sender's meta if not eixsts
+        return nil;
+    }
+    // TODO: override to check broadcast message before calling it
+    // TODO: override to deliver to the receiver when catch exception "ReceiverError"
+    return [self processSecureMessage:sMsg];
+}
+
 - (nullable DIMContent *)processSecureMessage:(DIMSecureMessage *)sMsg {
     // try to decrypt
     DIMInstantMessage *iMsg = [self decryptMessage:sMsg];
@@ -451,7 +453,7 @@ static inline void load_cmd_classes(void) {
     DIMSecureMessage *msg = [self trimMessage:sMsg];
     if (!msg) {
         // not for you?
-        @throw [NSException exceptionWithName:@"Decryption error" reason:@"not for you?" userInfo:sMsg];
+        @throw [NSException exceptionWithName:@"ReceiverError" reason:@"not for you?" userInfo:sMsg];
     }
     // decrypt message
     return [super decryptMessage:msg];
