@@ -131,7 +131,7 @@ static NSMutableDictionary<NSString *, Class> *cpu_classes(void) {
         // try to create new processor with content type
         Class clazz = [cpu_classes() objectForKey:name];
         if (clazz) {
-            cpu = [[clazz alloc] initWithMessenger:_messenger];
+            cpu = [[clazz alloc] initWithMessenger:self.messenger];
             [_processors setObject:cpu forKey:name];
         }
     }

@@ -53,7 +53,7 @@
     // NOTICE: owner invite owner?
     //         it's a Reset command!
     if ([self containsOwnerInMembers:inviteList group:group]) {
-        return [_facebook group:group isOwner:sender];
+        return [self.facebook group:group isOwner:sender];
     }
     return NO;
 }
@@ -66,7 +66,7 @@
 
 - (nullable NSArray<DIMID *> *)_doInvite:(NSArray<DIMID *> *)inviteList group:(DIMID *)group {
     // existed members
-    NSMutableArray<DIMID *> *members = [self convertMembers:[_facebook membersOfGroup:group]];
+    NSMutableArray<DIMID *> *members = [self convertMembers:[self.facebook membersOfGroup:group]];
     // added list
     NSMutableArray *addedList = [[NSMutableArray alloc] initWithCapacity:inviteList.count];
     for (DIMID *item in inviteList) {
@@ -78,7 +78,7 @@
         [members addObject:item];
     }
     if ([addedList count] > 0) {
-        if ([_facebook saveMembers:members group:group]) {
+        if ([self.facebook saveMembers:members group:group]) {
             return addedList;
         }
         NSAssert(false, @"failed to update members for group: %@", group);
@@ -94,7 +94,7 @@
                                 message:(DIMInstantMessage *)iMsg {
     NSAssert([content isKindOfClass:[DIMInviteCommand class]], @"invite command error: %@", content);
     DIMInviteCommand *cmd = (DIMInviteCommand *)content;
-    DIMID *group = [_facebook IDWithString:content.group];
+    DIMID *group = [self.facebook IDWithString:content.group];
     // 0. check whether group info empty
     if ([self isEmpty:group]) {
         // NOTICE:
@@ -103,20 +103,20 @@
         return [self _callReset:cmd sender:sender message:iMsg];
     }
     // 1. check permission
-    if (![_facebook group:group hasMember:sender]) {
-        if (![_facebook group:group hasAssistant:sender]) {
-            if (![_facebook group:group isOwner:sender]) {
+    if (![self.facebook group:group hasMember:sender]) {
+        if (![self.facebook group:group hasAssistant:sender]) {
+            if (![self.facebook group:group isOwner:sender]) {
                 // FIXME: imcomplete member list? query the admin/assistant
                 DIMCommand *cmd = [[DIMQueryGroupCommand alloc] initWithGroup:group];
                 // 1.1. if assistants exist, query them
-                NSArray<DIMID *> *assistants = [_facebook assistantsOfGroup:group];
+                NSArray<DIMID *> *assistants = [self.facebook assistantsOfGroup:group];
                 for (DIMID *item in assistants) {
-                    [_messenger sendContent:cmd receiver:item];
+                    [self.messenger sendContent:cmd receiver:item];
                 }
                 // 1.2. if owner found, query it
-                DIMID *owner = [_facebook ownerOfGroup:group];
+                DIMID *owner = [self.facebook ownerOfGroup:group];
                 if (owner) {
-                    [_messenger sendContent:cmd receiver:owner];
+                    [self.messenger sendContent:cmd receiver:owner];
                 }
                 //NSAssert(false, @"%@ is not a member/assistant of group %@, cannot invite.", sender, group);
                 return nil;

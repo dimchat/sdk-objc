@@ -44,7 +44,7 @@
 
 - (nullable DIMContent *)_getProfileForID:(DIMID *)ID {
     // query profile for ID
-    DIMProfile *profile = [_facebook profileForID:ID];
+    DIMProfile *profile = [self.facebook profileForID:ID];
     if (profile) {
         return [[DIMProfileCommand alloc] initWithID:ID profile:profile];
     }
@@ -59,24 +59,24 @@
     NSString *text;
     if (meta) {
         // received a meta for ID
-        if (![_facebook verifyMeta:meta forID:ID]) {
+        if (![self.facebook verifyMeta:meta forID:ID]) {
             // meta not match
             text = [NSString stringWithFormat:@"Meta not match ID: %@", ID];
             return [[DIMTextContent alloc] initWithText:text];
         }
-        if (![_facebook saveMeta:meta forID:ID]) {
+        if (![self.facebook saveMeta:meta forID:ID]) {
             // save failed
             NSAssert(false, @"failed to save meta for ID: %@, %@", ID, meta);
             return nil;
         }
     }
     // received a profile for ID
-    if (![_facebook verifyProfile:profile forID:ID]) {
+    if (![self.facebook verifyProfile:profile forID:ID]) {
         // profile sitnature not match
         text = [NSString stringWithFormat:@"Profile not match ID: %@", ID];
         return [[DIMTextContent alloc] initWithText:text];
     }
-    if (![_facebook saveProfile:profile]) {
+    if (![self.facebook saveProfile:profile]) {
         // save failed
         NSAssert(false, @"failed to save profile for ID: %@, %@", ID, profile);
         return nil;
@@ -93,7 +93,7 @@
                                 message:(DIMInstantMessage *)iMsg {
     NSAssert([content isKindOfClass:[DIMProfileCommand class]], @"profile command error: %@", content);
     DIMProfileCommand *cmd = (DIMProfileCommand *)content;
-    DIMID *ID = [_facebook IDWithString:cmd.ID];
+    DIMID *ID = [self.facebook IDWithString:cmd.ID];
     DIMProfile *profile = cmd.profile;
     if (profile) {
         // check meta

@@ -2,12 +2,12 @@
 //
 //  DIM-SDK : Decentralized Instant Messaging Software Development Kit
 //
-//                               Written in 2019 by Moky <albert.moky@gmail.com>
+//                               Written in 2020 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Albert Moky
+// Copyright (c) 2020 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,19 +28,16 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMQueryCommandProcessor.m
+//  DIMForwardContentProcessor.m
 //  DIMSDK
 //
-//  Created by Albert Moky on 2019/11/29.
-//  Copyright © 2019 Albert Moky. All rights reserved.
+//  Created by Albert Moky on 2020/2/13.
+//  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
-#import "DIMFacebook.h"
-#import "DIMMessenger.h"
+#import "DIMForwardContentProcessor.h"
 
-#import "DIMQueryCommandProcessor.h"
-
-@implementation DIMQueryGroupCommandProcessor
+@implementation DIMForwardContentProcessor
 
 //
 //  Main
@@ -48,31 +45,26 @@
 - (nullable DIMContent *)processContent:(DIMContent *)content
                                  sender:(DIMID *)sender
                                 message:(DIMInstantMessage *)iMsg {
-    NSAssert([content isKindOfClass:[DIMQueryGroupCommand class]], @"query group command error: %@", content);
-    DIMID *group = [self.facebook IDWithString:content.group];
-    // 1. check permission
-    if (![self.facebook group:group hasMember:sender]) {
-        if (![self.facebook group:group hasAssistant:sender]) {
-            NSAssert(false, @"%@ is not a member/assistant of group %@, cannot query", sender, group);
-            return nil;
-        }
+    NSAssert([content isKindOfClass:[DIMForwardContent class]], @"forward content error: %@", content);
+    DIMForwardContent *forward = (DIMForwardContent *)content;
+    DIMReliableMessage *rMsg = forward.forwardMessage;
+    
+    // [Forward Protocol]
+    // do it again to drop the wrapper,
+    // the secret inside the content is the real message
+    DIMSecureMessage *sMsg = [self.messenger verifyMessage:rMsg];
+    if (!sMsg) {
+        // TODO: save this message in a queue to wait meta response
+        //NSAssert(false, @"failed to verify message: " + rMsg);
+        return nil;
     }
-    // 2. get members
-    NSArray<DIMID *> *members = [self.facebook membersOfGroup:group];
-    if ([members count] == 0) {
-        NSString *text = [NSString stringWithFormat:@"Sorry, members not found in group: %@", group];
-        DIMContent *res = [[DIMTextContent alloc] initWithText:text];
-        res.group = group;
-        return res;
-    }
-    // 3. respond
-    DIMUser *user = [self.facebook currentUser];
-    NSAssert(user, @"current user not set");
-    if ([self.facebook group:group isOwner:user.ID]) {
-        return [[DIMResetGroupCommand alloc] initWithGroup:group members:members];
-    } else {
-        return [[DIMInviteCommand alloc] initWithGroup:group members:members];
-    }
+    
+    return [self.messenger processSecureMessage:sMsg];
+
+    // NOTICE: decrypt failed, not for you?
+    //         check content type in subclass, if it's a 'forward' message,
+    //         it means you are asked to re-pack and forward this message
+    // TODO: override to catch the exception 'receiver error ...'
 }
 
 @end

@@ -43,8 +43,11 @@
 #import "DIMKeyStore.h"
 
 #import "DIMReceiptCommand.h"
+#import "DIMMuteCommand.h"
+#import "DIMBlockCommand.h"
+#import "DIMStorageCommand.h"
 
-#import "DIMMessageProcessor.h"
+#import "DIMContentProcessor.h"
 
 #import "DIMMessenger.h"
 
@@ -56,10 +59,31 @@
     
     __weak DIMFacebook *_facebook;
     
-    DIMMessageProcessor *_processor;
+    DIMContentProcessor *_cpu;
 }
 
 @end
+
+static inline void load_cmd_classes(void) {
+    // receipt
+    [DIMCommand registerClass:[DIMReceiptCommand class]
+                   forCommand:DIMCommand_Receipt];
+    
+    // mute
+    [DIMCommand registerClass:[DIMMuteCommand class]
+                   forCommand:DIMCommand_Mute];
+    // block
+    [DIMCommand registerClass:[DIMBlockCommand class]
+                   forCommand:DIMCommand_Block];
+    
+    // storage (contacts, private_key)
+    [DIMCommand registerClass:[DIMStorageCommand class]
+                   forCommand:DIMCommand_Storage];
+    [DIMCommand registerClass:[DIMStorageCommand class]
+                   forCommand:DIMCommand_Contacts];
+    [DIMCommand registerClass:[DIMStorageCommand class]
+                   forCommand:DIMCommand_PrivateKey];
+}
 
 @implementation DIMMessenger
 
@@ -72,7 +96,13 @@
         _delegate = nil;
         
         _facebook = nil;
-        _processor = nil;
+        
+        _cpu = [[DIMContentProcessor alloc] initWithMessenger:self];
+        
+        // register new commands
+        SingletonDispatchOnce(^{
+            load_cmd_classes();
+        });
     }
     return self;
 }
@@ -149,6 +179,72 @@
         sMsg = [sMsg trimForMember:user.ID];
     }
     return sMsg;
+}
+
+- (BOOL)_isEmptyGroup:(DIMID *)group {
+    NSArray *members = [self.facebook membersOfGroup:group];
+    if ([members count] == 0) {
+        return YES;
+    }
+    DIMID *owner = [self.facebook ownerOfGroup:group];
+    return !owner;
+}
+
+// check whether need to update group
+- (BOOL)_checkingGroup:(DIMContent *)content sender:(DIMID *)sender {
+    // Check if it is a group message, and whether the group members info needs update
+    DIMID *group = [self.facebook IDWithString:content.group];
+    if (!group || [group isBroadcast]) {
+        // 1. personal message
+        // 2. broadcast message
+        return NO;
+    }
+    // chek meta for new group ID
+    DIMMeta *meta = [self.facebook metaForID:group];
+    if (!meta) {
+        // NOTICE: if meta for group not found,
+        //         facebook should query it from DIM network automatically
+        // TODO: insert the message to a temporary queue to wait meta
+        //NSAssert(false, @"group meta not found: %@", group);
+        return YES;
+    }
+    // query group command
+    DIMCommand *cmd = [[DIMQueryGroupCommand alloc] initWithGroup:group];
+    if ([self _isEmptyGroup:group]) {
+        // NOTICE: if the group info not found, and this is not an 'invite' command
+        //         query group info from the sender
+        if ([content isKindOfClass:[DIMInviteCommand class]] ||
+            [content isKindOfClass:[DIMResetGroupCommand class]]) {
+            // FIXME: can we trust this stranger?
+            //        may be we should keep this members list temporary,
+            //        and send 'query' to the owner immediately.
+            // TODO: check whether the members list is a full list,
+            //       it should contain the group owner(owner)
+            return NO;
+        } else {
+            return [self sendContent:cmd receiver:sender];
+        }
+    } else if ([self.facebook group:group hasMember:sender] ||
+               [self.facebook group:group hasAssistant:sender] ||
+               [self.facebook group:group isOwner:sender]) {
+        // normal membership
+        return NO;
+    } else {
+        BOOL checking = NO;
+        // if assistants exist, query them
+        NSArray<DIMID *> *assistants = [self.facebook assistantsOfGroup:group];
+        for (DIMID *item in assistants) {
+            if ([self sendContent:cmd receiver:item]) {
+                checking = YES;
+            }
+        }
+        // if owner found, query it
+        DIMID *owner = [self.facebook ownerOfGroup:group];
+        if (owner && [self sendContent:cmd receiver:owner]) {
+            checking = YES;
+        }
+        return checking;
+    }
 }
 
 #pragma mark DKDInstantMessageDelegate
@@ -242,13 +338,19 @@
         // no message received
         return nil;
     }
-    // 2. process message
-    DIMContent *res = [self processMessage:rMsg];
+    // 2. verify
+    DIMSecureMessage *sMsg = [self verifyMessage:rMsg];
+    if (!sMsg) {
+        // waiting for sender's meta if not eixsts
+        return nil;
+    }
+    // 3. process message
+    DIMContent *res = [self processSecureMessage:sMsg];
     if (!res) {
         // nothing to response
         return nil;
     }
-    // 3. pack response
+    // 4. pack response
     DIMID *sender = [self.facebook IDWithString:rMsg.envelope.sender];
     DIMID *receiver = [self.facebook IDWithString:rMsg.envelope.receiver];
     DIMUser *user = [self selectUserWithID:receiver];
@@ -262,19 +364,42 @@
                                                sender:user.ID
                                              receiver:sender
                                                  time:nil];
-    DIMSecureMessage *sMsg = [self encryptMessage:iMsg];
+    sMsg = [self encryptMessage:iMsg];
     NSAssert(sMsg, @"failed to encrypt message: %@", iMsg);
-    DIMReliableMessage *nMsg = [self signMessage:sMsg];
-    NSAssert(nMsg, @"failed to sign message: %@", sMsg);
-    // serialize message
-    return [self serializeMessage:nMsg];
+    rMsg = [self signMessage:sMsg];
+    NSAssert(rMsg, @"failed to sign message: %@", sMsg);
+    // 5. serialize message
+    return [self serializeMessage:rMsg];
 }
 
-- (nullable DIMContent *)processMessage:(DIMReliableMessage *)rMsg {
-    SingletonDispatchOnce(^{
-        self->_processor = [[DIMMessageProcessor alloc] initWithMessenger:self];
-    });
-    return [_processor processMessage:rMsg];
+// TODO: override to check broadcast message before calling it
+// TODO: override to deliver to the receiver when catch exception "receiver error ..."
+- (nullable DIMContent *)processSecureMessage:(DIMSecureMessage *)sMsg {
+    // try to decrypt
+    DIMInstantMessage *iMsg = [self decryptMessage:sMsg];
+    // cannot decrypt this message, not for you?
+    NSAssert(iMsg, @"failed to decrypt message: %@", sMsg);
+    // process it
+    return [self processInstantMessage:iMsg];
+}
+
+// TODO: override to filter the response
+- (nullable DIMContent *)processInstantMessage:(DIMInstantMessage *)iMsg {
+    DIMContent *content = iMsg.content;
+    DIMID *sender = [self.facebook IDWithString:iMsg.envelope.sender];
+    
+    if ([self _checkingGroup:content sender:sender]) {
+        // save this message in a queue to wait group meta response
+        [self suspendMessage:iMsg];
+        return nil;
+    }
+    
+    DIMContent *res = [_cpu processContent:content sender:sender message:iMsg];
+    if (![self saveMessage:iMsg]) {
+        // error
+        return nil;
+    }
+    return res;
 }
 
 @end
@@ -322,37 +447,14 @@
 }
 
 - (nullable DIMInstantMessage *)decryptMessage:(DIMSecureMessage *)sMsg {
-    // 0. trim message
-    sMsg = [self trimMessage:sMsg];
-    if (!sMsg) {
+    // trim message
+    DIMSecureMessage *msg = [self trimMessage:sMsg];
+    if (!msg) {
         // not for you?
-        return nil;
+        @throw [NSException exceptionWithName:@"Decryption error" reason:@"not for you?" userInfo:sMsg];
     }
-    // 1. decrypt message
-    DIMInstantMessage *iMsg = [super decryptMessage:sMsg];
-    
-    // 2. check top-secret message
-    DIMContent *content = iMsg.content;
-    NSAssert(content, @"content cannot be empty");
-    if ([content isKindOfClass:[DIMForwardContent class]]) {
-        // [Forward Protocol]
-        // do it again to drop the wrapper,
-        // the secret inside the content is the real message
-        DIMForwardContent *forward = (DIMForwardContent *)content;
-        DIMReliableMessage *rMsg = forward.forwardMessage;
-        NSAssert(rMsg, @"forward message error: %@", forward);
-        sMsg = [self verifyMessage:rMsg];
-        NSAssert(sMsg, @"signature error: %@", rMsg);
-        DIMInstantMessage *secret = [self decryptMessage:sMsg];
-        if (secret) {
-            return secret;
-        }
-        // NOTICE: decrypt failed, not for you?
-        //         check content type in subclass, if it's a 'forward' message,
-        //         it means you are asked to re-pack and forward this message
-    }
-    
-    return iMsg;
+    // decrypt message
+    return [super decryptMessage:msg];
 }
 
 @end
@@ -434,52 +536,16 @@
 - (BOOL)sendReliableMessage:(DIMReliableMessage *)rMsg
                    callback:(nullable DIMMessengerCallback)callback {
     NSData *data = [self serializeMessage:rMsg];
-    if (data) {
-        NSAssert(_delegate, @"transceiver delegate not set");
-        return [_delegate sendPackage:data
-                    completionHandler:^(NSError * _Nullable error) {
-                        !callback ?: callback(rMsg, error);
-                    }];
-    } else {
-        NSAssert(false, @"message data error: %@", rMsg);
-        return NO;
-    }
+    NSAssert(_delegate, @"transceiver delegate not set");
+    return [_delegate sendPackage:data
+                completionHandler:^(NSError * _Nullable error) {
+                    !callback ?: callback(rMsg, error);
+                }];
 }
 
 @end
 
-@implementation DIMMessenger (Message)
-
-- (nullable DIMContent *)forwardMessage:(DIMReliableMessage *)msg {
-    DIMID *receiver = [self.facebook IDWithString:msg.envelope.receiver];
-    DIMContent *secret = [[DIMForwardContent alloc] initWithForwardMessage:msg];
-    if ([self sendContent:secret receiver:receiver]) {
-        //NSString *text = @"Message forwarded";
-        //return [[DIMReceiptCommand alloc] initWithMessage:text];
-        return nil;
-    } else {
-        //NSString *text = @"Sorry, failed to forward your message";
-        //return [[DIMTextContent alloc] initWithText:text];
-        NSAssert(false, @"failed to forward message: %@", msg);
-        return nil;
-    }
-}
-
-- (nullable DIMContent *)broadcastMessage:(DIMReliableMessage *)rMsg {
-    // NOTICE: this function is for Station
-    //         if the receiver is a grouped broadcast ID,
-    //         split and deliver to everyone
-    NSAssert([self.barrack IDWithString:rMsg.envelope.receiver].isBroadcast,
-             @"receiver error: %@", rMsg);
-    return nil;
-}
-
-- (nullable DIMContent *)deliverMessage:(DIMReliableMessage *)rMsg {
-    // NOTICE: this function is for Station
-    //         if the station cannot decrypt this message,
-    //         it means you should deliver it to the receiver
-    return nil;
-}
+@implementation DIMMessenger (SavingMessage)
 
 - (BOOL)saveMessage:(DIMInstantMessage *)iMsg {
     NSAssert(false, @"override me!");

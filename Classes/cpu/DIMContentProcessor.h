@@ -42,13 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class DIMMessenger;
 @class DIMFacebook;
 
-@interface DIMContentProcessor : NSObject {
-    
-    __weak DIMMessenger *_messenger;
-    __weak DIMFacebook *_facebook;
-}
-
-@property (readonly, strong, nonatomic) NSDictionary *context;
+@interface DIMContentProcessor : NSObject
 
 @property (readonly, weak, nonatomic) DIMMessenger *messenger;
 @property (readonly, weak, nonatomic) DIMFacebook *facebook;

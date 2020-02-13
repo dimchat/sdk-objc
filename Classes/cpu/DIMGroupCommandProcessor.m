@@ -93,14 +93,14 @@ static inline void load_gpu_classes(void) {
         if (!member) {
             return nil;
         }
-        DIMID *ID = [_facebook IDWithString:member];
+        DIMID *ID = [self.facebook IDWithString:member];
         NSAssert([ID isValid], @"member ID error: %@", member);
         members = @[ID];
     } else {
         NSMutableArray *mArray = [[NSMutableArray alloc] initWithCapacity:members.count];
         DIMID *member;
         for (NSString *item in members) {
-            member = [_facebook IDWithString:item];
+            member = [self.facebook IDWithString:item];
             NSAssert([member isValid], @"member ID error: %@", item);
             [mArray addObject:member];
         }
@@ -120,7 +120,7 @@ static inline void load_gpu_classes(void) {
             NSMutableArray *mArray = [[NSMutableArray alloc] initWithCapacity:members.count];
             DIMID *ID;
             for (item in members) {
-                ID = [_facebook IDWithString:item];
+                ID = [self.facebook IDWithString:item];
                 if (![ID isValid]) {
                     NSAssert(false, @"member ID error: %@", item);
                     continue;
@@ -138,7 +138,7 @@ static inline void load_gpu_classes(void) {
 
 - (BOOL)containsOwnerInMembers:(NSArray<DIMID *> *)members group:(DIMID *)group {
     for (DIMID *item in members) {
-        if ([_facebook group:group isOwner:item]) {
+        if ([self.facebook group:group isOwner:item]) {
             return YES;
         }
     }
@@ -146,11 +146,11 @@ static inline void load_gpu_classes(void) {
 }
 
 - (BOOL)isEmpty:(DIMID *)group {
-    NSArray *members = [_facebook membersOfGroup:group];
+    NSArray *members = [self.facebook membersOfGroup:group];
     if ([members count] == 0) {
         return YES;
     }
-    DIMID *owner = [_facebook ownerOfGroup:group];
+    DIMID *owner = [self.facebook ownerOfGroup:group];
     return !owner;
 }
 

@@ -45,14 +45,14 @@
 - (nullable DIMContent *)_tempSave:(NSArray<DIMID *> *)newMembers sender:(DIMID *)sender group:(DIMID *)group {
     if ([self containsOwnerInMembers:newMembers group:group]) {
         // it's a full list, save it now
-        if ([_facebook saveMembers:newMembers group:group]) {
-            DIMID *owner = [_facebook ownerOfGroup:group];
+        if ([self.facebook saveMembers:newMembers group:group]) {
+            DIMID *owner = [self.facebook ownerOfGroup:group];
             if (owner && ![owner isEqual:sender]) {
                 // NOTICE: to prevent counterfeit,
                 //         query the owner for newest member-list
                 DIMQueryGroupCommand *query;
                 query = [[DIMQueryGroupCommand alloc] initWithGroup:group];
-                [_messenger sendContent:query receiver:owner];
+                [self.messenger sendContent:query receiver:owner];
             }
         }
         // response (no need to response this group command)
@@ -66,7 +66,7 @@
 
 - (NSDictionary *)_doReset:(NSArray<DIMID *> *)newMembers group:(DIMID *)group {
     // existed members
-    NSMutableArray<DIMID *> *members = [self convertMembers:[_facebook membersOfGroup:group]];
+    NSMutableArray<DIMID *> *members = [self convertMembers:[self.facebook membersOfGroup:group]];
     // removed list
     NSMutableArray<DIMID *> *removedList = [[NSMutableArray alloc] init];
     for (DIMID *item in members) {
@@ -87,7 +87,7 @@
     }
     NSMutableDictionary *res = [[NSMutableDictionary alloc] initWithCapacity:2];
     if ([addedList count] > 0 || [removedList count] > 0) {
-        if (![_facebook saveMembers:newMembers group:group]) {
+        if (![self.facebook saveMembers:newMembers group:group]) {
             // failed to update members
             return res;
         }
@@ -110,7 +110,7 @@
     NSAssert([content isKindOfClass:[DIMResetGroupCommand class]] ||
              [content isKindOfClass:[DIMInviteCommand class]], @"invite command error: %@", content);
     DIMGroupCommand *cmd = (DIMGroupCommand *)content;
-    DIMID *group = [_facebook IDWithString:content.group];
+    DIMID *group = [self.facebook IDWithString:content.group];
     // new members
     NSArray<DIMID *> *newMembers = [self membersFromCommand:cmd];
     if ([newMembers count] == 0) {
@@ -124,8 +124,8 @@
         return [self _tempSave:newMembers sender:sender group:group];
     }
     // 1. check permission
-    if (![_facebook group:group isOwner:sender]) {
-        if (![_facebook group:group hasAssistant:sender]) {
+    if (![self.facebook group:group isOwner:sender]) {
+        if (![self.facebook group:group hasAssistant:sender]) {
             NSAssert(false, @"%@ is not the owner/assistant of group %@, cannot reset.", sender, group);
             return nil;
         }

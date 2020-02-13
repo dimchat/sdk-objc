@@ -43,7 +43,7 @@
 
 - (void)_doQuit:(DIMID *)sender group:(DIMID *)group {
     // existed members
-    NSMutableArray<DIMID *> *members = [self convertMembers:[_facebook membersOfGroup:group]];
+    NSMutableArray<DIMID *> *members = [self convertMembers:[self.facebook membersOfGroup:group]];
     if ([members count] == 0) {
         NSAssert(false, @"group members not found: %@", group);
         return;
@@ -53,7 +53,7 @@
         return;
     }
     [members removeObject:sender];
-    [_facebook saveMembers:members group:group];
+    [self.facebook saveMembers:members group:group];
 }
 
 //
@@ -63,13 +63,13 @@
                                  sender:(DIMID *)sender
                                 message:(DIMInstantMessage *)iMsg {
     NSAssert([content isKindOfClass:[DIMQuitCommand class]], @"quit command error: %@", content);
-    DIMID *group = [_facebook IDWithString:content.group];
+    DIMID *group = [self.facebook IDWithString:content.group];
     // 1. check permission
-    if ([_facebook group:group isOwner:sender]) {
+    if ([self.facebook group:group isOwner:sender]) {
         NSAssert(false, @"owner cannot quit: %@ -> %@", sender, group);
         return nil;
     }
-    if ([_facebook group:group hasAssistant:sender]) {
+    if ([self.facebook group:group hasAssistant:sender]) {
         NSAssert(false, @"assistant cannot quit now: %@ -> %@", sender, group);
         return nil;
     }

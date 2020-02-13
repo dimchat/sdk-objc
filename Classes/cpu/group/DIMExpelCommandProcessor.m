@@ -43,7 +43,7 @@
 
 - (nullable NSArray<DIMID *> *)_doExpel:(NSArray<DIMID *> *)expelList group:(DIMID *)group {
     // existed members
-    NSMutableArray<DIMID *> *members = [self convertMembers:[_facebook membersOfGroup:group]];
+    NSMutableArray<DIMID *> *members = [self convertMembers:[self.facebook membersOfGroup:group]];
     if ([members count] == 0) {
         NSAssert(false, @"group members not found: %@", group);
         return nil;
@@ -59,7 +59,7 @@
         [members removeObject:item];
     }
     if ([removedList count] > 0) {
-        if ([_facebook saveMembers:members group:group]) {
+        if ([self.facebook saveMembers:members group:group]) {
             return removedList;
         }
         NSAssert(false, @"failed to update members for group: %@", group);
@@ -75,10 +75,10 @@
                                 message:(DIMInstantMessage *)iMsg {
     NSAssert([content isKindOfClass:[DIMExpelCommand class]], @"expel command error: %@", content);
     DIMExpelCommand *cmd = (DIMExpelCommand *)content;
-    DIMID *group = [_facebook IDWithString:content.group];
+    DIMID *group = [self.facebook IDWithString:content.group];
     // 1. check permission
-    if (![_facebook group:group isOwner:sender]) {
-        if (![_facebook group:group hasAssistant:sender]) {
+    if (![self.facebook group:group isOwner:sender]) {
+        if (![self.facebook group:group hasAssistant:sender]) {
             NSAssert(false, @"%@ is not the owner/assistant of group %@, cannot expel.", sender, group);
             return nil;
         }

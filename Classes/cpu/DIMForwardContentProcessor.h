@@ -2,12 +2,12 @@
 //
 //  DIM-SDK : Decentralized Instant Messaging Software Development Kit
 //
-//                               Written in 2019 by Moky <albert.moky@gmail.com>
+//                               Written in 2020 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Albert Moky
+// Copyright (c) 2020 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,25 +28,18 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMMessageProcessor.h
+//  DIMForwardContentProcessor.h
 //  DIMSDK
 //
-//  Created by Albert Moky on 2019/11/29.
-//  Copyright © 2019 Albert Moky. All rights reserved.
+//  Created by Albert Moky on 2020/2/13.
+//  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
-#import "DIMMessenger.h"
+#import <DIMSDK/DIMSDK.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMMessageProcessor : NSObject
-
-@property (readonly, weak, nonatomic) DIMMessenger *messenger;
-@property (readonly, weak, nonatomic) DIMFacebook *facebook;
-
-- (instancetype)initWithMessenger:(DIMMessenger *)messenger;
-
-- (nullable DIMContent *)processMessage:(DIMReliableMessage *)rMsg;
+@interface DIMForwardContentProcessor : DIMContentProcessor
 
 @end
 

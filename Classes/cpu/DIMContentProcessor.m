@@ -40,6 +40,7 @@
 #import "DIMFacebook.h"
 #import "DIMMessenger.h"
 
+#import "DIMForwardContentProcessor.h"
 #import "DIMCommandProcessor.h"
 #import "DIMHistoryProcessor.h"
 #import "DIMDefaultProcessor.h"
@@ -48,12 +49,10 @@
 
 @interface DIMContentProcessor () {
     
-    NSMutableDictionary<NSString *, id> *_context;
+    __weak DIMMessenger *_messenger;
     
     NSMutableDictionary<NSNumber *, DIMContentProcessor *> *_processors;
 }
-
-@property (weak, nonatomic) DIMMessenger *messenger;
 
 @end
 
@@ -64,12 +63,17 @@
 @end
 
 static inline void load_cpu_classes(void) {
+    // forward content
+    [DIMContentProcessor registerClass:[DIMForwardContentProcessor class]
+                               forType:DKDContentType_Forward];
+
     // command
     [DIMContentProcessor registerClass:[DIMCommandProcessor class]
                                forType:DKDContentType_Command];
     // history command
     [DIMContentProcessor registerClass:[DIMHistoryCommandProcessor class]
                                forType:DKDContentType_History];
+    
     // unknown content (default)
     [DIMContentProcessor registerClass:[DIMDefaultProcessor class]
                                forType:DKDContentType_Unknown];
@@ -80,9 +84,7 @@ static inline void load_cpu_classes(void) {
 - (instancetype)initWithMessenger:(DIMMessenger *)messenger {
     if (self = [super init]) {
         _messenger = messenger;
-        _facebook = messenger.facebook;
         
-        _context = [[NSMutableDictionary alloc] init];
         _processors = nil;
         
         // register CPU classes
@@ -93,12 +95,8 @@ static inline void load_cpu_classes(void) {
     return self;
 }
 
-- (NSDictionary *)context {
-    return _context;
-}
-
 - (DIMFacebook *)facebook {
-    return _facebook;
+    return _messenger.facebook;
 }
 
 - (nullable id)valueForContextName:(NSString *)key {

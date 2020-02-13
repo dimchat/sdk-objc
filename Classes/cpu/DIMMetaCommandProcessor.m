@@ -46,7 +46,7 @@
 
 - (nullable DIMContent *)_getMetaForID:(DIMID *)ID {
     // query meta for ID
-    DIMMeta *meta = [_facebook metaForID:ID];
+    DIMMeta *meta = [self.facebook metaForID:ID];
     if (meta) {
         return [[DIMMetaCommand alloc] initWithID:ID meta:meta];
     }
@@ -59,12 +59,12 @@
                             forID:(DIMID *)ID {
     NSString *text;
     // received a meta for ID
-    if (![_facebook verifyMeta:meta forID:ID]) {
+    if (![self.facebook verifyMeta:meta forID:ID]) {
         // meta not match
         text = [NSString stringWithFormat:@"Meta not match ID: %@", ID];
         return [[DIMTextContent alloc] initWithText:text];
     }
-    if (![_facebook saveMeta:meta forID:ID]) {
+    if (![self.facebook saveMeta:meta forID:ID]) {
         // save failed
         text = [NSString stringWithFormat:@"Sorry, meta error for ID: %@", ID];
         return [[DIMTextContent alloc] initWithText:text];
@@ -81,7 +81,7 @@
                                 message:(DIMInstantMessage *)iMsg {
     NSAssert([content isKindOfClass:[DIMMetaCommand class]], @"meta command error: %@", content);
     DIMMetaCommand *cmd = (DIMMetaCommand *)content;
-    DIMID *ID = [_facebook IDWithString:cmd.ID];
+    DIMID *ID = [self.facebook IDWithString:cmd.ID];
     DIMMeta *meta = cmd.meta;
     if (meta) {
         return [self _putMeta:meta forID:ID];

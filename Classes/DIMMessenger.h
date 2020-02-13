@@ -111,7 +111,8 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
 
 - (nullable DIMUser *)selectUserWithID:(DIMID *)receiver;
 
-- (nullable DIMContent *)processMessage:(DIMReliableMessage *)rMsg;
+- (nullable DIMContent *)processSecureMessage:(DIMSecureMessage *)sMsg;
+- (nullable DIMContent *)processInstantMessage:(DIMInstantMessage *)iMsg;
 
 @end
 
@@ -148,31 +149,7 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
 
 @end
 
-@interface DIMMessenger (Message)
-
-/**
- * Re-pack and deliver (Top-Secret) message to the real receiver
- *
- * @param rMsg - top-secret message
- * @return receipt on success
- */
-- (nullable DIMContent *)forwardMessage:(DIMReliableMessage *)rMsg;
-
-/**
- * Deliver message to everyone@everywhere, including all neighbours
- *
- * @param rMsg - broadcast message
- * @return receipt on success
- */
-- (nullable DIMContent *)broadcastMessage:(DIMReliableMessage *)rMsg;
-
-/**
- * Deliver message to the receiver, or broadcast to neighbours
- *
- * @param rMsg - reliable message
- * @return receipt on success
- */
-- (nullable DIMContent *)deliverMessage:(DIMReliableMessage *)rMsg;
+@interface DIMMessenger (SavingMessage)
 
 /**
  * Save the message into local storage

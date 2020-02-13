@@ -67,7 +67,7 @@
 
 - (DIMGroupCommandProcessor *)processor {
     SingletonDispatchOnce(^{
-        self->_gpu = [[DIMGroupCommandProcessor alloc] initWithMessenger:self->_messenger];
+        self->_gpu = [[DIMGroupCommandProcessor alloc] initWithMessenger:self.messenger];
     });
     return _gpu;
 }
