@@ -529,9 +529,11 @@ static inline void load_cmd_classes(void) {
         NSLog(@"cannot send message now, put in waiting queue: %@", iMsg);
         iMsg.content.state = DIMMessageState_Waiting;
     }
+    /*
     if (![self saveMessage:iMsg]) {
         return NO;
     }
+     */
     return OK;
 }
 
