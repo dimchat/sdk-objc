@@ -106,18 +106,6 @@
     if (![self.facebook group:group hasMember:sender]) {
         if (![self.facebook group:group hasAssistant:sender]) {
             if (![self.facebook group:group isOwner:sender]) {
-                // FIXME: imcomplete member list? query the admin/assistant
-                DIMCommand *cmd = [[DIMQueryGroupCommand alloc] initWithGroup:group];
-                // 1.1. if assistants exist, query them
-                NSArray<DIMID *> *assistants = [self.facebook assistantsOfGroup:group];
-                for (DIMID *item in assistants) {
-                    [self.messenger sendContent:cmd receiver:item];
-                }
-                // 1.2. if owner found, query it
-                DIMID *owner = [self.facebook ownerOfGroup:group];
-                if (owner) {
-                    [self.messenger sendContent:cmd receiver:owner];
-                }
                 //NSAssert(false, @"%@ is not a member/assistant of group %@, cannot invite.", sender, group);
                 return nil;
             }
