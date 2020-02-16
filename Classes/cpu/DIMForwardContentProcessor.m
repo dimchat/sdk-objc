@@ -49,18 +49,7 @@
     DIMForwardContent *forward = (DIMForwardContent *)content;
     DIMReliableMessage *rMsg = forward.forwardMessage;
     
-    // [Forward Protocol]
-    // do it again to drop the wrapper,
-    // the secret inside the content is the real message
-    DIMSecureMessage *sMsg = [self.messenger verifyMessage:rMsg];
-    if (!sMsg) {
-        // TODO: save this message in a queue to wait meta response
-        //[self.messenger suspendMessage:rMsg];
-        //NSAssert(false, @"failed to verify message: " + rMsg);
-        return nil;
-    }
-    
-    return [self.messenger processSecureMessage:sMsg];
+    return [self.messenger processReliableMessage:rMsg];
 
     // NOTICE: decrypt failed, not for you?
     //         check content type in subclass, if it's a 'forward' message,
