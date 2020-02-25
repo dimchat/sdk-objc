@@ -91,13 +91,15 @@
     } else {
         // other commands
         cpu = [self processorForCommand:cmd.command];
+        /*
+        if (!cpu) {
+            NSString *text = [NSString stringWithFormat:@"History command (%@) not support yet!", cmd.command];
+            return [[DIMTextContent alloc] initWithText:text];
+        }
+         */
     }
-    if (cpu) {
-        NSAssert(cpu != self, @"Dead cycle!");
-        return [cpu processContent:content sender:sender message:iMsg];
-    }
-    NSString *text = [NSString stringWithFormat:@"History command (%@) not support yet!", cmd.command];
-    return [[DIMTextContent alloc] initWithText:text];
+    NSAssert(cpu != self, @"Dead cycle!");
+    return [cpu processContent:content sender:sender message:iMsg];
 }
 
 @end

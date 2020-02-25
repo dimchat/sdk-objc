@@ -43,6 +43,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+#define DIMCommand_Unknown      @"unknown"
+
 @interface DIMCommandProcessor (Runtime)
 
 + (void)registerClass:(nullable Class)contentClass forCommand:(NSString *)name;

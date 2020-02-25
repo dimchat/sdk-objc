@@ -41,6 +41,7 @@
 
 #import "DIMMetaCommandProcessor.h"
 #import "DIMProfileCommandProcessor.h"
+#import "DIMDefaultProcessor.h"
 
 #import "DIMCommandProcessor.h"
 
@@ -64,6 +65,9 @@ static inline void load_cpu_classes(void) {
     // profile
     [DIMCommandProcessor registerClass:[DIMProfileCommandProcessor class]
                             forCommand:DIMCommand_Profile];
+    // unknown command (default)
+    [DIMCommandProcessor registerClass:[DIMDefaultCommandProcessor class]
+                            forCommand:DIMCommand_Unknown];
 }
 
 @implementation DIMCommandProcessor
@@ -91,12 +95,8 @@ static inline void load_cpu_classes(void) {
     // process command content by name
     DIMCommand *cmd = (DIMCommand *)content;
     DIMCommandProcessor *cpu = [self processorForCommand:cmd.command];
-    if (cpu) {
-        NSAssert(cpu != self, @"Dead cycle!");
-        return [cpu processContent:content sender:sender message:iMsg];
-    }
-    NSString *text = [NSString stringWithFormat:@"Command (%@) not support yet!", cmd.command];
-    return [[DIMTextContent alloc] initWithText:text];
+    NSAssert(cpu != self, @"Dead cycle!");
+    return [cpu processContent:content sender:sender message:iMsg];
 }
 
 @end
@@ -126,15 +126,24 @@ static NSMutableDictionary<NSString *, Class> *cpu_classes(void) {
     SingletonDispatchOnce(^{
         self->_processors = [[NSMutableDictionary alloc] init];
     });
+    // 1. get from pool
     DIMCommandProcessor *cpu = [_processors objectForKey:name];
-    if (!cpu) {
-        // try to create new processor with content type
-        Class clazz = [cpu_classes() objectForKey:name];
-        if (clazz) {
-            cpu = [[clazz alloc] initWithMessenger:self.messenger];
-            [_processors setObject:cpu forKey:name];
-        }
+    if (cpu) {
+        return cpu;
     }
+    // 2. get CPU class by command name
+    Class clazz = [cpu_classes() objectForKey:name];
+    if (!clazz) {
+        if ([name isEqualToString:DIMCommand_Unknown]) {
+            NSAssert(false, @"default CPU not register yet");
+            return nil;
+        }
+        // call default CPU
+        return [self processorForCommand:DIMCommand_Unknown];
+    }
+    // 3. create CPU with messenger
+    cpu = [[clazz alloc] initWithMessenger:self.messenger];
+    [_processors setObject:cpu forKey:name];
     return cpu;
 }
 

@@ -36,10 +36,15 @@
 //
 
 #import "DIMContentProcessor.h"
+#import "DIMCommandProcessor.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMDefaultProcessor : DIMContentProcessor
+@interface DIMDefaultContentProcessor : DIMContentProcessor
+
+@end
+
+@interface DIMDefaultCommandProcessor : DIMCommandProcessor
 
 @end
 

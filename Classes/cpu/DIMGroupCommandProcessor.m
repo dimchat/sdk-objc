@@ -165,14 +165,16 @@ static inline void load_gpu_classes(void) {
     // process command content by name
     DIMCommand *cmd = (DIMCommand *)content;
     DIMCommandProcessor *cpu = [self processorForCommand:cmd.command];
-    if (cpu) {
-        NSAssert(cpu != self, @"Dead cycle!");
-        return [cpu processContent:content sender:sender message:iMsg];
+    /*
+    if (!cpu) {
+        NSString *text = [NSString stringWithFormat:@"Group command (%@) not support yet!", cmd.command];
+        DIMContent *res = [[DIMTextContent alloc] initWithText:text];
+        res.group = content.group;
+        return res;
     }
-    NSString *text = [NSString stringWithFormat:@"Group command (%@) not support yet!", cmd.command];
-    DIMContent *res = [[DIMTextContent alloc] initWithText:text];
-    res.group = content.group;
-    return res;
+     */
+    NSAssert(cpu != self, @"Dead cycle!");
+    return [cpu processContent:content sender:sender message:iMsg];
 }
 
 @end

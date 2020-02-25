@@ -41,7 +41,7 @@
 
 #import "DIMDefaultProcessor.h"
 
-@implementation DIMDefaultProcessor
+@implementation DIMDefaultContentProcessor
 
 //
 //  Main
@@ -89,6 +89,23 @@
     DIMContent *res = [[DIMReceiptCommand alloc] initWithMessage:text];
     res.group = content.group;
     return res;
+}
+
+@end
+
+@implementation DIMDefaultCommandProcessor
+
+//
+//  Main
+//
+- (nullable DIMContent *)processContent:(DIMContent *)content
+                                 sender:(DIMID *)sender
+                                message:(DIMInstantMessage *)iMsg {
+    NSAssert([content isKindOfClass:[DIMCommand class]], @"command error: %@", content);
+    // process command content by name
+    DIMCommand *cmd = (DIMCommand *)content;
+    NSString *text = [NSString stringWithFormat:@"Command (%@) not support yet!", cmd.command];
+    return [[DIMTextContent alloc] initWithText:text];
 }
 
 @end

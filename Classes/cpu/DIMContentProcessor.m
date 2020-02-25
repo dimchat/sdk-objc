@@ -75,7 +75,7 @@ static inline void load_cpu_classes(void) {
                                forType:DKDContentType_History];
     
     // unknown content (default)
-    [DIMContentProcessor registerClass:[DIMDefaultProcessor class]
+    [DIMContentProcessor registerClass:[DIMDefaultContentProcessor class]
                                forType:DKDContentType_Unknown];
 }
 
@@ -148,17 +148,24 @@ static NSMutableDictionary<NSNumber *, Class> *cpu_classes(void) {
         self->_processors = [[NSMutableDictionary alloc] init];
     });
     NSNumber *key = @(type);
+    // 1. get from pool
     DIMContentProcessor *cpu = [_processors objectForKey:key];
-    if (!cpu) {
-        // try to create new processor with content type
-        Class clazz = [cpu_classes() objectForKey:key];
-        if (!clazz) {
-            clazz = [cpu_classes() objectForKey:@(DKDContentType_Unknown)];
-            NSAssert(clazz, @"default CPU not set");
-        }
-        cpu = [[clazz alloc] initWithMessenger:_messenger];
-        [_processors setObject:cpu forKey:@(type)];
+    if (cpu) {
+        return cpu;
     }
+    // 2. get CPU class by content type
+    Class clazz = [cpu_classes() objectForKey:key];
+    if (!clazz) {
+        if (type == DKDContentType_Unknown) {
+            NSAssert(false, @"default CPU not register yet");
+            return nil;
+        }
+        // call default CPU
+        return [self processorForContentType:DKDContentType_Unknown];
+    }
+    // 3. create CPU with messenger
+    cpu = [[clazz alloc] initWithMessenger:_messenger];
+    [_processors setObject:cpu forKey:@(type)];
     return cpu;
 }
 
