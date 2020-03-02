@@ -58,7 +58,7 @@
 
 @interface DIMContentProcessor (Create)
 
-- (DIMContentProcessor *)processorForContentType:(DKDContentType)type;
+- (DIMContentProcessor *)processorForContentType:(UInt8)type;
 
 @end
 
@@ -133,7 +133,7 @@ static NSMutableDictionary<NSNumber *, Class> *cpu_classes(void) {
 
 @implementation DIMContentProcessor (Runtime)
 
-+ (void)registerClass:(nullable Class)clazz forType:(DKDContentType)type {
++ (void)registerClass:(nullable Class)clazz forType:(UInt8)type {
     NSAssert(![clazz isEqual:self], @"only subclass");
     if (clazz) {
         NSAssert([clazz isSubclassOfClass:self], @"error: %@", clazz);
@@ -143,7 +143,7 @@ static NSMutableDictionary<NSNumber *, Class> *cpu_classes(void) {
     }
 }
 
-- (DIMContentProcessor *)processorForContentType:(DKDContentType)type {
+- (DIMContentProcessor *)processorForContentType:(UInt8)type {
     SingletonDispatchOnce(^{
         self->_processors = [[NSMutableDictionary alloc] init];
     });

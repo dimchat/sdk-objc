@@ -63,7 +63,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMContentProcessor (Runtime)
 
-+ (void)registerClass:(nullable Class)contentClass forType:(DKDContentType)type;
++ (void)registerClass:(nullable Class)contentClass forType:(UInt8)type;
 
 @end
 
