@@ -143,7 +143,7 @@ static inline void load_cmd_classes(void) {
         // broadcast message can decrypt by anyone, so just return current user
         return [users firstObject];
     }
-    if (MKMNetwork_IsGroup(receiver.type)) {
+    if ([receiver isGroup]) {
         // group message (recipient not designated)
         NSArray<DIMID *> *members = [self.facebook membersOfGroup:receiver];
         NSAssert([members count] > 0, @"group members not found: %@", receiver);
@@ -156,7 +156,7 @@ static inline void load_cmd_classes(void) {
     } else {
         // 1. personal message
         // 2. split group message
-        NSAssert(MKMNetwork_IsUser(receiver.type), @"error: %@", receiver);
+        NSAssert([receiver isUser], @"error: %@", receiver);
         for (DIMUser *item in users) {
             if ([receiver isEqual:item.ID]) {
                 //self.currentUser = item;
@@ -174,7 +174,7 @@ static inline void load_cmd_classes(void) {
     if (!user) {
         // local users not matched
         return nil;
-    } else if (MKMNetwork_IsGroup(receiver.type)) {
+    } else if ([receiver isGroup]) {
         // trim group message
         sMsg = [sMsg trimForMember:user.ID];
     }
@@ -430,7 +430,7 @@ static inline void load_cmd_classes(void) {
     
     DIMID *receiver = [self.facebook IDWithString:iMsg.envelope.receiver];
     BOOL OK = YES;
-    if (split && MKMNetwork_IsGroup(receiver.type)) {
+    if (split && [receiver isGroup]) {
         NSAssert([receiver isEqual:iMsg.content.group], @"error: %@", iMsg);
         // split for each members
         NSArray<DIMID *> *members = [self.facebook membersOfGroup:receiver];

@@ -122,7 +122,7 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
 }
 
 - (nullable DIMUser *)createUser:(DIMID *)ID {
-    NSAssert(MKMNetwork_IsUser(ID.type), @"user ID error: %@", ID);
+    NSAssert([ID isUser], @"user ID error: %@", ID);
     if ([ID isBroadcast]) {
         // create user 'anyone@anywhere'
         return [[DIMUser alloc] initWithID:ID];
@@ -132,13 +132,13 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
         return nil;
     }
     MKMNetworkType type = ID.type;
-    if (MKMNetwork_IsPerson(type)) {
+    if (type == MKMNetwork_Main || type == MKMNetwork_BTCMain) {
         return [[DIMUser alloc] initWithID:ID];
     }
-    if (MKMNetwork_IsRobot(type)) {
+    if (type == MKMNetwork_Robot) {
         return [[DIMRobot alloc] initWithID:ID];
     }
-    if (MKMNetwork_IsStation(type)) {
+    if (type == MKMNetwork_Station) {
         return [[DIMStation alloc] initWithID:ID];
     }
     NSAssert(false, @"Unsupported user type: %d", type);
@@ -146,7 +146,7 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
 }
 
 - (nullable DIMGroup *)createGroup:(DIMID *)ID {
-    NSAssert(MKMNetwork_IsGroup(ID.type), @"group ID error: %@", ID);
+    NSAssert([ID isGroup], @"group ID error: %@", ID);
     if ([ID isBroadcast]) {
         // create group 'everyone@everywhere'
         return [[DIMGroup alloc] initWithID:ID];
@@ -162,7 +162,7 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
     if (type == MKMNetwork_Chatroom) {
         return [[DIMChatroom alloc] initWithID:ID];
     }
-    if (MKMNetwork_IsProvider(type)) {
+    if (type == MKMNetwork_Provider) {
         return [[DIMServiceProvider alloc] initWithID:ID];
     }
     NSAssert(false, @"Unsupported group type: %d", type);
@@ -211,7 +211,7 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
 #pragma mark - MKMUserDataSource
 
 - (nullable NSArray<DIMID *> *)contactsOfUser:(DIMID *)user {
-    NSAssert(MKMNetwork_IsUser(user.type), @"user ID error: %@", user);
+    NSAssert([user isUser], @"user ID error: %@", user);
     NSArray<DIMID *> *contacts = [_contactsMap objectForKey:user];
     if (contacts) {
         return contacts;
@@ -225,7 +225,7 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
 }
 
 - (nullable DIMPrivateKey *)privateKeyForSignature:(DIMID *)user {
-    NSAssert(MKMNetwork_IsUser(user.type), @"user ID error: %@", user);
+    NSAssert([user isUser], @"user ID error: %@", user);
     DIMPrivateKey *key = [_privateKeyMap objectForKey:user];
     if (key) {
         return key;
@@ -239,7 +239,7 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
 }
 
 - (nullable NSArray<DIMPrivateKey *> *)privateKeysForDecryption:(DIMID *)user {
-    NSAssert(MKMNetwork_IsUser(user.type), @"user ID error: %@", user);
+    NSAssert([user isUser], @"user ID error: %@", user);
     NSMutableArray<DIMPrivateKey *> *keys;
     keys = [[NSMutableArray alloc] initWithCapacity:1];
     DIMPrivateKey *key = [_privateKeyMap objectForKey:user];
@@ -269,7 +269,7 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
     NSArray<DIMID *> *members = [self membersOfGroup:group];
     DIMMeta *mMeta;
     for (DIMID *item in members) {
-        NSAssert(MKMNetwork_IsUser(item.type), @"member ID error: %@", item);
+        NSAssert([item isUser], @"member ID error: %@", item);
         mMeta = [self metaForID:item];
         if (!mMeta) {
             // failed to get member meta
@@ -385,7 +385,7 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
     //         else (this is a user profile)
     //             verify it with the user's meta.key
     DIMMeta *meta;
-    if (MKMNetwork_IsGroup(ID.type)) {
+    if ([ID isGroup]) {
         // check by each member
         NSArray<DIMID *> *members = [self membersOfGroup:ID];
         for (DIMID *item in members) {
@@ -419,7 +419,7 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
             meta = [self metaForID:owner];
         }
     } else {
-        NSAssert(MKMNetwork_IsUser(ID.type), @"profile ID error: %@", ID);
+        NSAssert([ID isUser], @"profile ID error: %@", ID);
         meta = [self metaForID:ID];
     }
     return [profile verify:meta.key];
@@ -438,7 +438,7 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
 #pragma mark Private Key
 
 - (BOOL)cachePrivateKey:(DIMPrivateKey *)key user:(DIMID *)ID {
-    NSAssert(MKMNetwork_IsUser(ID.type), @"user ID error: %@", ID);
+    NSAssert([ID isUser], @"user ID error: %@", ID);
     if (key) {
         [_privateKeyMap setObject:key forKey:ID];
         return YES;
@@ -461,7 +461,7 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
 #pragma mark User Contacts
 
 - (BOOL)cacheContacts:(NSArray<DIMID *> *)contacts user:(DIMID *)ID {
-    NSAssert(MKMNetwork_IsUser(ID.type), @"user ID error: %@", ID);
+    NSAssert([ID isUser], @"user ID error: %@", ID);
     if ([contacts count] == 0) {
         [_contactsMap removeObjectForKey:ID];
         //return NO;
@@ -487,7 +487,7 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
 #pragma mark Group Members
 
 - (BOOL)cacheMembers:(NSArray<DIMID *> *)members group:(DIMID *)ID {
-    NSAssert(MKMNetwork_IsGroup(ID.type), @"group ID error: %@", ID);
+    NSAssert([ID isGroup], @"group ID error: %@", ID);
     if ([members count] == 0) {
         [_membersMap removeObjectForKey:ID];
         return NO;
@@ -620,7 +620,7 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
 #pragma mark Group Assistants
 
 - (nullable NSArray<DIMID *> *)assistantsOfGroup:(DIMID *)group {
-    NSAssert(MKMNetwork_IsGroup(group.type), @"group ID error: %@", group);
+    NSAssert([group isGroup], @"group ID error: %@", group);
     DIMID *assistant = [self IDWithString:@"assistant"];
     if ([assistant isValid]) {
         return @[assistant];
