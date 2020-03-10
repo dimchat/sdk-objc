@@ -135,7 +135,8 @@ static inline void load_cmd_classes(void) {
 }
 
 - (nullable DIMUser *)selectUserWithID:(DIMID *)receiver {
-    NSArray<DIMUser *> *users = self.facebook.localUsers;
+    DIMFacebook *facebook = self.facebook;
+    NSArray<DIMUser *> *users = facebook.localUsers;
     if ([users count] == 0) {
         NSAssert(false, @"local users should not be empty");
         return nil;
@@ -145,10 +146,8 @@ static inline void load_cmd_classes(void) {
     }
     if ([receiver isGroup]) {
         // group message (recipient not designated)
-        NSArray<DIMID *> *members = [self.facebook membersOfGroup:receiver];
-        NSAssert([members count] > 0, @"group members not found: %@", receiver);
         for (DIMUser *item in users) {
-            if ([members containsObject:item.ID]) {
+            if ([facebook group:receiver hasMember:item.ID]) {
                 //self.currentUser = item;
                 return item;
             }
@@ -173,7 +172,7 @@ static inline void load_cmd_classes(void) {
     DIMUser *user = [self selectUserWithID:receiver];
     if (!user) {
         // local users not matched
-        return nil;
+        sMsg = nil;
     } else if ([receiver isGroup]) {
         // trim group message
         sMsg = [sMsg trimForMember:user.ID];
@@ -273,63 +272,81 @@ static inline void load_cmd_classes(void) {
         return nil;
     }
     // 2. process message
-    DIMContent *res = [self processReliableMessage:rMsg];
-    if (!res) {
+    rMsg = [self processReliableMessage:rMsg];
+    if (!rMsg) {
         // nothing to response
         return nil;
     }
-    // 3. pack response
-    DIMID *sender = [self.facebook IDWithString:rMsg.envelope.sender];
-    DIMID *receiver = [self.facebook IDWithString:rMsg.envelope.receiver];
-    DIMUser *user = [self selectUserWithID:receiver];
-    if (!user) {
-        // not for you?
-        // delivering message to other receiver?
-        user = [self.facebook currentUser];
-    }
-    DIMInstantMessage *iMsg;
-    iMsg = [[DIMInstantMessage alloc] initWithContent:res
-                                               sender:user.ID
-                                             receiver:sender
-                                                 time:nil];
-    rMsg = [self signMessage:[self encryptMessage:iMsg]];
-    NSAssert(rMsg, @"failed to encrypt/sign message: %@", iMsg);
     // serialize message
     return [self serializeMessage:rMsg];
 }
 
-- (nullable DIMContent *)processReliableMessage:(DIMReliableMessage *)rMsg {
-    // 2. verify
+// TODO: override to check broadcast message before calling it
+// TODO: override to deliver to the receiver when catch exception "ReceiverError"
+- (nullable DIMReliableMessage *)processReliableMessage:(DIMReliableMessage *)rMsg {
+    // 1. verify message
     DIMSecureMessage *sMsg = [self verifyMessage:rMsg];
     if (!sMsg) {
         // waiting for sender's meta if not eixsts
         return nil;
     }
-    // TODO: override to check broadcast message before calling it
-    // TODO: override to deliver to the receiver when catch exception "ReceiverError"
-    return [self processSecureMessage:sMsg];
+    // 2. process message
+    sMsg = [self processSecureMessage:sMsg];
+    if (!sMsg) {
+        // nothing to respond
+        return nil;
+    }
+    // 3. sign message
+    return [self signMessage:sMsg];
 }
 
-- (nullable DIMContent *)processSecureMessage:(DIMSecureMessage *)sMsg {
-    // try to decrypt
+- (nullable DIMSecureMessage *)processSecureMessage:(DIMSecureMessage *)sMsg {
+    // 1. decrypt message
     DIMInstantMessage *iMsg = [self decryptMessage:sMsg];
-    // cannot decrypt this message, not for you?
-    NSAssert(iMsg, @"failed to decrypt message: %@", sMsg);
-    // process it
-    return [self processInstantMessage:iMsg];
+    if (!iMsg) {
+        // cannot decrypt this message, not for you?
+        // delivering message to other receiver?
+        return nil;
+    }
+    // 2. process message
+    iMsg = [self processInstantMessage:iMsg];
+    if (!iMsg) {
+        // nothing to respond
+        return nil;
+    }
+    // 3. encrypt message
+    return [self encryptMessage:iMsg];
 }
 
+// TODO: override to check group
 // TODO: override to filter the response
-- (nullable DIMContent *)processInstantMessage:(DIMInstantMessage *)iMsg {
+- (nullable DIMInstantMessage *)processInstantMessage:(DIMInstantMessage *)iMsg {
+    DIMFacebook *facebook = self.facebook;
+    DIMEnvelope *env = iMsg.envelope;
     DIMContent *content = iMsg.content;
-    DIMID *sender = [self.facebook IDWithString:iMsg.envelope.sender];
+    DIMID *sender = [facebook IDWithString:env.sender];
     
+    // process content from sender
     DIMContent *res = [_cpu processContent:content sender:sender message:iMsg];
     if (![self saveMessage:iMsg]) {
         // error
         return nil;
     }
-    return res;
+    if (!res) {
+        // nothing to respond
+        return nil;
+    }
+    
+    // check receiver
+    DIMID *receiver = [facebook IDWithString:env.receiver];
+    DIMUser *user = [self selectUserWithID:receiver];
+    NSAssert(user, @"receiver error: %@", receiver);
+    
+    // pack message
+    return [[DIMInstantMessage alloc] initWithContent:res
+                                               sender:user.ID
+                                             receiver:sender
+                                                 time:nil];
 }
 
 @end
