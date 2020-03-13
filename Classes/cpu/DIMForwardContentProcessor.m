@@ -53,7 +53,7 @@
     rMsg = [self.messenger processReliableMessage:rMsg];
     // response
     if (rMsg) {
-        [self.messenger sendReliableMessage:rMsg callback:NULL];
+        [self.messenger sendReliableMessage:rMsg];
         /*
     } else {
         id receiver = forward.forwardMessage.envelope.receiver;

@@ -408,8 +408,17 @@ static inline void load_cmd_classes(void) {
 
 @implementation DIMMessenger (Send)
 
-- (BOOL)sendContent:(DIMContent *)content receiver:(DIMID *)receiver {
-    return [self sendContent:content receiver:receiver callback:NULL dispersedly:YES];
+- (BOOL)sendContent:(DIMContent *)content
+           receiver:(DIMID *)receiver {
+    
+    return [self sendContent:content receiver:receiver callback:NULL dispersedly:NO];
+}
+
+- (BOOL)sendContent:(DIMContent *)content
+           receiver:(DIMID *)receiver
+           callback:(nullable DIMMessengerCallback)callback {
+    
+    return [self sendContent:content receiver:receiver callback:callback dispersedly:NO];
 }
 
 - (BOOL)sendContent:(DIMContent *)content
@@ -432,9 +441,21 @@ static inline void load_cmd_classes(void) {
                         dispersedly:split];
 }
 
+- (BOOL)sendInstantMessage:(DIMInstantMessage *)iMsg {
+    
+    return [self sendInstantMessage:iMsg callback:NULL dispersedly:NO];
+}
+
+- (BOOL)sendInstantMessage:(DIMInstantMessage *)iMsg
+                  callback:(nullable DIMMessengerCallback)callback {
+    
+    return [self sendInstantMessage:iMsg callback:callback dispersedly:NO];
+}
+
 - (BOOL)sendInstantMessage:(DIMInstantMessage *)iMsg
                   callback:(nullable DIMMessengerCallback)callback
                dispersedly:(BOOL)split {
+    
     // Send message (secured + certified) to target station
     DIMSecureMessage *sMsg = [self encryptMessage:iMsg];
     DIMReliableMessage *rMsg = [self signMessage:sMsg];
@@ -481,8 +502,14 @@ static inline void load_cmd_classes(void) {
     return OK;
 }
 
+- (BOOL)sendReliableMessage:(DIMReliableMessage *)rMsg {
+    
+    return [self sendReliableMessage:rMsg callback:NULL];
+}
+
 - (BOOL)sendReliableMessage:(DIMReliableMessage *)rMsg
                    callback:(nullable DIMMessengerCallback)callback {
+    
     NSData *data = [self serializeMessage:rMsg];
     NSAssert(_delegate, @"transceiver delegate not set");
     return [_delegate sendPackage:data

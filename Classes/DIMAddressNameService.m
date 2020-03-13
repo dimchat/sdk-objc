@@ -115,7 +115,7 @@
 }
 
 - (BOOL)isReservedName:(NSString *)username {
-    return [_reserved objectForKey:username];
+    return !![_reserved objectForKey:username];
 }
 
 - (BOOL)cacheID:(DIMID *)ID withName:(NSString *)username {
