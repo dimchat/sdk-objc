@@ -49,23 +49,20 @@
     DIMForwardContent *forward = (DIMForwardContent *)content;
     DIMReliableMessage *rMsg = forward.forwardMessage;
     
-    // process
+    // call messenger to process it
     rMsg = [self.messenger processReliableMessage:rMsg];
-    // response
+    // check response
     if (rMsg) {
-        [self.messenger sendReliableMessage:rMsg];
-        /*
-    } else {
+        // Over The Top
+        return [[DIMForwardContent alloc] initWithForwardMessage:rMsg];
+    }/* else {
         id receiver = forward.forwardMessage.envelope.receiver;
         NSString *text = [NSString stringWithFormat:@"Message forwarded: %@", receiver];
         return [[DIMReceiptCommand alloc] initWithMessage:text];
-         */
-    }
+    }*/
 
     // NOTICE: decrypt failed, not for you?
-    //         check content type in subclass, if it's a 'forward' message,
     //         it means you are asked to re-pack and forward this message
-    // TODO: override to catch the exception 'receiver error ...'
     return nil;
 }
 
