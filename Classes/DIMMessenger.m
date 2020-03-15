@@ -377,22 +377,6 @@ static inline void load_cmd_classes(void) {
     return [super verifyMessage:rMsg];
 }
 
-- (nullable DIMSecureMessage *)encryptMessage:(DIMInstantMessage *)iMsg {
-    DIMSecureMessage *sMsg = [super encryptMessage:iMsg];
-    NSString *group = iMsg.envelope.group;
-    if (group) {
-        // NOTICE: this help the receiver knows the group ID
-        //         when the group message separated to multi-messages,
-        //         if don't want the others know you are the group members,
-        //         remove it.
-        sMsg.envelope.group = group;
-    }
-    // NOTICE: copy content type to envelope
-    //         this help the intermediate nodes to recognize message type
-    sMsg.envelope.type = iMsg.envelope.type;
-    return sMsg;
-}
-
 - (nullable DIMInstantMessage *)decryptMessage:(DIMSecureMessage *)sMsg {
     // trim message
     DIMSecureMessage *msg = [self trimMessage:sMsg];
