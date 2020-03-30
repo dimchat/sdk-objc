@@ -101,27 +101,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (nullable DIMProfile *)loadProfileForID:(DIMID *)ID;
 
-#pragma mark User Contacts
-
-- (BOOL)cacheContacts:(NSArray<DIMID *> *)contacts user:(DIMID *)ID;
-
-/**
- *  Save contacts for user
- *
- * @param contacts - contact ID list
- * @param ID - user ID
- * @return true on success
- */
-- (BOOL)saveContacts:(NSArray<DIMID *> *)contacts user:(DIMID *)ID;
-
-/**
- *  Load contacts for user
- *
- * @param ID - user ID
- * @return contact ID list on success
- */
-- (nullable NSArray<DIMID *> *)loadContacts:(DIMID *)ID;
-
 #pragma mark Group Members
 
 /**
@@ -138,15 +117,11 @@ NS_ASSUME_NONNULL_BEGIN
 @interface DIMFacebook (Relationship)
 
 - (BOOL)user:(DIMID *)user hasContact:(DIMID *)contact;
-- (BOOL)user:(DIMID *)user addContact:(DIMID *)contact;
-- (BOOL)user:(DIMID *)user removeContact:(DIMID *)contact;
 
 - (BOOL)group:(DIMID *)group isFounder:(DIMID *)member;
 - (BOOL)group:(DIMID *)group isOwner:(DIMID *)member;
 
 - (BOOL)group:(DIMID *)group hasMember:(DIMID *)member;
-- (BOOL)group:(DIMID *)group addMember:(DIMID *)member;
-- (BOOL)group:(DIMID *)group removeMember:(DIMID *)member;
 
 #pragma mark Assistant
 

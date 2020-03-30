@@ -48,14 +48,11 @@
 
 #define PROFILE_EXPIRES  3600
 
-typedef NSMutableArray<DIMID *> IDList;
-typedef NSMutableDictionary<DIMID *, IDList *> IDTable;
 typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
 
 @interface DIMFacebook () {
     
     ProfileTable *_profileMap;
-    IDTable      *_contactsMap;
 }
 
 @end
@@ -66,7 +63,6 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
     if (self = [super init]) {
         // memory caches
         _profileMap    = [[ProfileTable alloc] init];
-        _contactsMap   = [[IDTable alloc] init];
     }
     return self;
 }
@@ -197,17 +193,8 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
 #pragma mark - MKMUserDataSource
 
 - (nullable NSArray<DIMID *> *)contactsOfUser:(DIMID *)user {
-    NSAssert([user isUser], @"user ID error: %@", user);
-    NSArray<DIMID *> *contacts = [_contactsMap objectForKey:user];
-    if (contacts) {
-        return contacts;
-    }
-    // load from local storage
-    contacts = [self loadContacts:user];
-    if (contacts) {
-        [self cacheContacts:contacts user:user];
-    }
-    return contacts;
+    NSAssert(false, @"implement me!");
+    return nil;
 }
 
 - (nullable DIMPrivateKey *)privateKeyForSignature:(DIMID *)user {
@@ -380,32 +367,6 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
     return nil;
 }
 
-#pragma mark User Contacts
-
-- (BOOL)cacheContacts:(NSArray<DIMID *> *)contacts user:(DIMID *)ID {
-    NSAssert([ID isUser], @"user ID error: %@", ID);
-    if ([contacts count] == 0) {
-        [_contactsMap removeObjectForKey:ID];
-        //return NO;
-    } else if ([contacts isKindOfClass:[IDList class]]) {
-        [_contactsMap setObject:(IDList *)contacts forKey:ID];
-    } else {
-        IDList *list = [contacts mutableCopy];
-        [_contactsMap setObject:list forKey:ID];
-    }
-    return YES;
-}
-
-- (BOOL)saveContacts:(NSArray<DIMID *> *)contacts user:(DIMID *)ID {
-    NSAssert(false, @"override me!");
-    return NO;
-}
-
-- (nullable NSArray<DIMID *> *)loadContacts:(DIMID *)ID {
-    NSAssert(false, @"override me!");
-    return nil;
-}
-
 #pragma mark Group Members
 
 - (BOOL)saveMembers:(NSArray<DIMID *> *)members group:(DIMID *)ID {
@@ -420,43 +381,6 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
 - (BOOL)user:(DIMID *)user hasContact:(DIMID *)contact{
     NSArray<DIMID *> *contacts = [self contactsOfUser:user];
     return [contacts containsObject:contact];
-}
-
-- (BOOL)user:(DIMID *)user addContact:(DIMID *)contact {
-    NSLog(@"user %@ add contact %@", user, contact);
-    NSArray<DIMID *> *contacts = [self contactsOfUser:user];
-    if (contacts) {
-        if ([contacts containsObject:contact]) {
-            NSLog(@"contact %@ already exists, user: %@", contact, user);
-            return NO;
-        } else if (![contacts respondsToSelector:@selector(addObject:)]) {
-            // mutable
-            contacts = [contacts mutableCopy];
-        }
-    } else {
-        contacts = [[NSMutableArray alloc] initWithCapacity:1];
-    }
-    [(IDList *)contacts addObject:contact];
-    return [self saveContacts:contacts user:user];
-}
-
-- (BOOL)user:(DIMID *)user removeContact:(DIMID *)contact {
-    NSLog(@"user %@ remove contact %@", user, contact);
-    NSArray<DIMID *> *contacts = [self contactsOfUser:user];
-    if (contacts) {
-        if (![contacts containsObject:contact]) {
-            NSLog(@"contact %@ not exists, user: %@", contact, user);
-            return NO;
-        } else if (![contacts respondsToSelector:@selector(removeObject:)]) {
-            // mutable
-            contacts = [contacts mutableCopy];
-        }
-    } else {
-        NSLog(@"user %@ doesn't has contact yet", user);
-        return NO;
-    }
-    [(IDList *)contacts removeObject:contact];
-    return [self saveContacts:contacts user:user];
 }
 
 #pragma mark -
@@ -481,43 +405,6 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
 - (BOOL)group:(DIMID *)group hasMember:(DIMID *)member {
     NSArray<DIMID *> *members = [self membersOfGroup:group];
     return [members containsObject:member];
-}
-
-- (BOOL)group:(DIMID *)group addMember:(DIMID *)member {
-    NSLog(@"group %@ add member %@", group, member);
-    NSArray<DIMID *> *members = [self membersOfGroup:group];
-    if (members) {
-        if ([members containsObject:member]) {
-            NSLog(@"member %@ already exists, group: %@", member, group);
-            return NO;
-        } else if (![members respondsToSelector:@selector(addObject:)]) {
-            // mutable
-            members = [members mutableCopy];
-        }
-    } else {
-        members = [[NSMutableArray alloc] initWithCapacity:1];
-    }
-    [(IDList *)members addObject:member];
-    return [self saveMembers:members group:group];
-}
-
-- (BOOL)group:(DIMID *)group removeMember:(DIMID *)member {
-    NSLog(@"group %@ remove member %@", group, member);
-    NSArray<DIMID *> *members = [self membersOfGroup:group];
-    if (members) {
-        if (![members containsObject:member]) {
-            NSLog(@"members %@ not exists, group: %@", member, group);
-            return NO;
-        } else if (![members respondsToSelector:@selector(removeObject:)]) {
-            // mutable
-            members = [members mutableCopy];
-        }
-    } else {
-        NSLog(@"group %@ doesn't has member yet", group);
-        return NO;
-    }
-    [(IDList *)members removeObject:member];
-    return [self saveMembers:members group:group];
 }
 
 #pragma mark Group Assistants
