@@ -109,27 +109,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (nullable DIMProfile *)loadProfileForID:(DIMID *)ID;
 
-#pragma mark Private Key
-
-- (BOOL)cachePrivateKey:(DIMPrivateKey *)key user:(DIMID *)ID;
-
-/**
- *  Save private key for user ID
- *
- * @param key - private key
- * @param ID - user ID
- * @return true on success
- */
-- (BOOL)savePrivateKey:(DIMPrivateKey *)key user:(DIMID *)ID;
-
-/**
- *  Load private key for user ID
- *
- * @param ID - user ID
- * @return PrivateKey object on success
- */
-- (nullable DIMPrivateKey *)loadPrivateKey:(DIMID *)ID;
-
 #pragma mark User Contacts
 
 - (BOOL)cacheContacts:(NSArray<DIMID *> *)contacts user:(DIMID *)ID;

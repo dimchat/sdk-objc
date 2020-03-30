@@ -50,12 +50,10 @@
 
 typedef NSMutableArray<DIMID *> IDList;
 typedef NSMutableDictionary<DIMID *, IDList *> IDTable;
-typedef NSMutableDictionary<DIMID *, DIMPrivateKey *> KeyTable;
 typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
 
 @interface DIMFacebook () {
     
-    KeyTable     *_privateKeyMap;
     ProfileTable *_profileMap;
     IDTable      *_contactsMap;
     IDTable      *_membersMap;
@@ -68,7 +66,6 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
 - (instancetype)init {
     if (self = [super init]) {
         // memory caches
-        _privateKeyMap = [[KeyTable alloc] init];
         _profileMap    = [[ProfileTable alloc] init];
         _contactsMap   = [[IDTable alloc] init];
         _membersMap    = [[IDTable alloc] init];
@@ -117,8 +114,7 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
     if (ID) {
         return ID;
     }
-    // create by Barrack
-    return [super createID:string];
+    return MKMIDFromString(string);
 }
 
 - (nullable DIMUser *)createUser:(DIMID *)ID {
@@ -225,30 +221,13 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
 }
 
 - (nullable DIMPrivateKey *)privateKeyForSignature:(DIMID *)user {
-    NSAssert([user isUser], @"user ID error: %@", user);
-    DIMPrivateKey *key = [_privateKeyMap objectForKey:user];
-    if (key) {
-        return key;
-    }
-    // load from local storage
-    key = [self loadPrivateKey:user];
-    if (key) {
-        [self cachePrivateKey:key user:user];
-    }
-    return key;
+    NSAssert(false, @"implement me!");
+    return nil;
 }
 
 - (nullable NSArray<DIMPrivateKey *> *)privateKeysForDecryption:(DIMID *)user {
-    NSAssert([user isUser], @"user ID error: %@", user);
-    NSMutableArray<DIMPrivateKey *> *keys;
-    keys = [[NSMutableArray alloc] initWithCapacity:1];
-    DIMPrivateKey *key = [_privateKeyMap objectForKey:user];
-    if (key) {
-        // TODO: support profile.key
-        NSAssert([key conformsToProtocol:@protocol(DIMDecryptKey)], @"key error: %@", key);
-        [keys addObject:key];
-    }
-    return keys;
+    NSAssert(false, @"implement me!");
+    return nil;
 }
 
 #pragma mark - MKMGroupDataSource
@@ -431,29 +410,6 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
 }
 
 - (nullable DIMProfile *)loadProfileForID:(DIMID *)ID {
-    NSAssert(false, @"override me!");
-    return nil;
-}
-
-#pragma mark Private Key
-
-- (BOOL)cachePrivateKey:(DIMPrivateKey *)key user:(DIMID *)ID {
-    NSAssert([ID isUser], @"user ID error: %@", ID);
-    if (key) {
-        [_privateKeyMap setObject:key forKey:ID];
-        return YES;
-    } else {
-        [_privateKeyMap removeObjectForKey:ID];
-        return NO;
-    }
-}
-
-- (BOOL)savePrivateKey:(DIMPrivateKey *)key user:(DIMID *)ID {
-    NSAssert(false, @"override me!");
-    return NO;
-}
-
-- (nullable DIMPrivateKey *)loadPrivateKey:(DIMID *)ID {
     NSAssert(false, @"override me!");
     return nil;
 }
