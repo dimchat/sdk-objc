@@ -46,23 +46,10 @@
 
 #import "DIMFacebook.h"
 
-#define PROFILE_EXPIRES  3600
-
-typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
-
-@interface DIMFacebook () {
-    
-    ProfileTable *_profileMap;
-}
-
-@end
-
 @implementation DIMFacebook
 
 - (instancetype)init {
     if (self = [super init]) {
-        // memory caches
-        _profileMap    = [[ProfileTable alloc] init];
     }
     return self;
 }
@@ -167,27 +154,8 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
 }
 
 - (nullable __kindof DIMProfile *)profileForID:(MKMID *)ID {
-    DIMProfile *profile = [_profileMap objectForKey:ID];
-    if (profile) {
-        // check expired time
-        NSDate *now = [[NSDate alloc] init];
-        NSTimeInterval timestamp = [now timeIntervalSince1970] + PROFILE_EXPIRES;
-        NSNumber *expires = [profile objectForKey:@"expires"];
-        if (!expires) {
-            // set expired time
-            [profile setObject:@(timestamp) forKey:@"expires"];
-            return profile;
-        } else if ([expires doubleValue] < timestamp) {
-            // not expired yet
-            return profile;
-        }
-    }
-    // load from local storage
-    profile = [self loadProfileForID:ID];
-    if (profile) {
-        [self cacheProfile:profile forID:ID];
-    }
-    return profile;
+    NSAssert(false, @"implement me!");
+    return nil;
 }
 
 #pragma mark - MKMUserDataSource
@@ -277,27 +245,6 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
 
 #pragma mark Profile
 
-- (BOOL)cacheProfile:(DIMProfile *)profile forID:(DIMID *)ID {
-    NSAssert([ID isValid], @"ID error: %@", ID);
-    if (!profile) {
-        // remove from cache if exists
-        [_profileMap removeObjectForKey:ID];
-        return NO;
-    }
-    if (![self verifyProfile:profile forID:ID]) {
-        // profile not valid
-        return NO;
-    }
-    [_profileMap setObject:profile forKey:ID];
-    return YES;
-}
-
-- (BOOL)cacheProfile:(DIMProfile *)profile {
-    NSAssert(profile, @"profile should not be empty");
-    DIMID *ID = [self IDWithString:profile.ID];
-    return [self cacheProfile:profile forID:ID];
-}
-
 - (BOOL)verifyProfile:(DIMProfile *)profile forID:(DIMID *)ID {
     if (![ID isEqual:profile.ID]) {
         // profile ID not match
@@ -360,11 +307,6 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
 - (BOOL)saveProfile:(DIMProfile *)profile {
     NSAssert(false, @"override me!");
     return NO;
-}
-
-- (nullable DIMProfile *)loadProfileForID:(DIMID *)ID {
-    NSAssert(false, @"override me!");
-    return nil;
 }
 
 #pragma mark Group Members

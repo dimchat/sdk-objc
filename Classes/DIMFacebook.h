@@ -82,9 +82,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)verifyProfile:(DIMProfile *)profile forID:(DIMID *)ID;
 - (BOOL)verifyProfile:(DIMProfile *)profile;
 
-- (BOOL)cacheProfile:(DIMProfile *)profile forID:(DIMID *)ID;
-- (BOOL)cacheProfile:(DIMProfile *)profile;
-
 /**
  *  Save profile with entity ID (must verify first)
  *
@@ -92,14 +89,6 @@ NS_ASSUME_NONNULL_BEGIN
  * @return true on success
  */
 - (BOOL)saveProfile:(DIMProfile *)profile;
-
-/**
- *  Load profile for entity ID
- *
- * @param ID - entity ID
- * @return Profile object on success
- */
-- (nullable DIMProfile *)loadProfileForID:(DIMID *)ID;
 
 #pragma mark Group Members
 
