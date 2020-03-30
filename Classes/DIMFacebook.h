@@ -77,14 +77,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (BOOL)saveMeta:(DIMMeta *)meta forID:(DIMID *)ID;
 
-/**
- *  Load meta for entity ID
- *
- * @param ID - entity ID
- * @return Meta object on success
- */
-- (nullable DIMMeta *)loadMetaForID:(DIMID *)ID;
-
 #pragma mark Profile
 
 - (BOOL)verifyProfile:(DIMProfile *)profile forID:(DIMID *)ID;

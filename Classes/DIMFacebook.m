@@ -168,16 +168,8 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
 #pragma mark - MKMEntityDataSource
 
 - (nullable DIMMeta *)metaForID:(DIMID *)ID {
-    DIMMeta *meta = [super metaForID:ID];
-    if (meta) {
-        return meta;
-    }
-    // load from local storage
-    meta = [self loadMetaForID:ID];
-    if (meta) {
-        [self cacheMeta:meta forID:ID];
-    }
-    return meta;
+    NSAssert(false, @"implement me!");
+    return nil;
 }
 
 - (nullable __kindof DIMProfile *)profileForID:(MKMID *)ID {
@@ -300,13 +292,6 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
 
 #pragma mark Meta
 
-- (BOOL)cacheMeta:(DIMMeta *)meta forID:(DIMID *)ID {
-    if (![self verifyMeta:meta forID:ID]) {
-        return NO;
-    }
-    return [super cacheMeta:meta forID:ID];
-}
-
 - (BOOL)verifyMeta:(DIMMeta *)meta forID:(DIMID *)ID {
     NSAssert([meta isValid], @"meta error: %@", meta);
     return [meta matchID:ID];
@@ -315,11 +300,6 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
 - (BOOL)saveMeta:(DIMMeta *)meta forID:(DIMID *)ID {
     NSAssert(false, @"override me!");
     return NO;
-}
-
-- (nullable DIMMeta *)loadMetaForID:(DIMID *)ID {
-    NSAssert(false, @"override me!");
-    return nil;
 }
 
 #pragma mark Profile
