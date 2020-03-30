@@ -56,7 +56,6 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
     
     ProfileTable *_profileMap;
     IDTable      *_contactsMap;
-    IDTable      *_membersMap;
 }
 
 @end
@@ -68,7 +67,6 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
         // memory caches
         _profileMap    = [[ProfileTable alloc] init];
         _contactsMap   = [[IDTable alloc] init];
-        _membersMap    = [[IDTable alloc] init];
     }
     return self;
 }
@@ -270,20 +268,8 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
 }
 
 - (nullable NSArray<DIMID *> *)membersOfGroup:(DIMID *)group {
-    // get from cache
-    NSArray<DIMID *> *members = [_membersMap objectForKey:group];
-    if (!members) {
-        // get from barrack
-        members = [super membersOfGroup:group];
-        if (!members) {
-            // load from local storage
-            members = [self loadMembers:group];
-        }
-        if (members) {
-            [self cacheMembers:members group:group];
-        }
-    }
-    return members;
+    NSAssert(false, @"implement me!");
+    return nil;
 }
 
 @end
@@ -422,28 +408,9 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
 
 #pragma mark Group Members
 
-- (BOOL)cacheMembers:(NSArray<DIMID *> *)members group:(DIMID *)ID {
-    NSAssert([ID isGroup], @"group ID error: %@", ID);
-    if ([members count] == 0) {
-        [_membersMap removeObjectForKey:ID];
-        return NO;
-    } else if ([members isKindOfClass:[IDList class]]) {
-        [_membersMap setObject:(IDList *)members forKey:ID];
-    } else {
-        IDList *list = [members mutableCopy];
-        [_membersMap setObject:list forKey:ID];
-    }
-    return YES;
-}
-
 - (BOOL)saveMembers:(NSArray<DIMID *> *)members group:(DIMID *)ID {
     NSAssert(false, @"override me!");
     return NO;
-}
-
-- (nullable NSArray<DIMID *> *)loadMembers:(DIMID *)ID {
-    NSAssert(false, @"override me!");
-    return nil;
 }
 
 @end

@@ -124,8 +124,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark Group Members
 
-- (BOOL)cacheMembers:(NSArray<DIMID *> *)members group:(DIMID *)ID;
-
 /**
  *  Save members of group
  *
@@ -134,14 +132,6 @@ NS_ASSUME_NONNULL_BEGIN
  * @return true on success
  */
 - (BOOL)saveMembers:(NSArray<DIMID *> *)members group:(DIMID *)ID;
-
-/**
- *  Load members of group
- *
- * @param ID - group ID
- * @return member ID list on success
- */
-- (nullable NSArray<DIMID *> *)loadMembers:(DIMID *)ID;
 
 @end
 
