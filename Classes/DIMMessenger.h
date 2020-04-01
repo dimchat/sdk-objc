@@ -117,6 +117,13 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
 
 @end
 
+@interface DIMMessenger (Serialization)
+
+- (nullable NSData *)serializeMessage:(DIMReliableMessage *)rMsg;
+- (nullable DIMReliableMessage *)deserializeMessage:(NSData *)data;
+
+@end
+
 @interface DIMMessenger (Send)
 
 /**

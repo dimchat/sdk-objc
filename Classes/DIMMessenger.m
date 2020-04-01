@@ -196,19 +196,6 @@ static inline BOOL isBroadcast(DIMMessage *msg,
     return sMsg;
 }
 
-#pragma mark Serialization
-
-//- (nullable NSData *)serializeMessage:(DIMReliableMessage *)rMsg {
-//    return [super serializeMessage:rMsg];
-//}
-//
-//- (nullable DIMReliableMessage *)deserializeMessage:(NSData *)data {
-//    if ([data length] == 0) {
-//        return nil;
-//    }
-//    return [super deserializeMessage:data];
-//}
-
 #pragma mark DKDInstantMessageDelegate
 
 - (nullable NSData *)message:(DIMInstantMessage *)iMsg
@@ -417,6 +404,31 @@ static inline BOOL isBroadcast(DIMMessage *msg,
     }
     // decrypt message
     return [super decryptMessage:msg];
+}
+
+@end
+
+@implementation DIMMessenger (Serialization)
+
+- (nullable NSData *)serializeMessage:(DIMReliableMessage *)rMsg {
+    return [rMsg jsonData];
+}
+
+- (nullable DIMReliableMessage *)deserializeMessage:(NSData *)data {
+    NSDictionary *dict = [data jsonDictionary];
+    // TODO: translate short keys
+    //       'S' -> 'sender'
+    //       'R' -> 'receiver'
+    //       'W' -> 'time'
+    //       'T' -> 'type'
+    //       'G' -> 'group'
+    //       ------------------
+    //       'D' -> 'data'
+    //       'V' -> 'signature'
+    //       'K' -> 'key'
+    //       ------------------
+    //       'M' -> 'meta'
+    return DKDReliableMessageFromDictionary(dict);
 }
 
 @end
