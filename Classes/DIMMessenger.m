@@ -196,6 +196,19 @@ static inline BOOL isBroadcast(DIMMessage *msg,
     return sMsg;
 }
 
+#pragma mark Serialization
+
+//- (nullable NSData *)serializeMessage:(DIMReliableMessage *)rMsg {
+//    return [super serializeMessage:rMsg];
+//}
+//
+//- (nullable DIMReliableMessage *)deserializeMessage:(NSData *)data {
+//    if ([data length] == 0) {
+//        return nil;
+//    }
+//    return [super deserializeMessage:data];
+//}
+
 #pragma mark DKDInstantMessageDelegate
 
 - (nullable NSData *)message:(DIMInstantMessage *)iMsg
