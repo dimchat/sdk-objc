@@ -199,7 +199,7 @@ static inline BOOL isBroadcast(DIMMessage *msg,
 #pragma mark DKDInstantMessageDelegate
 
 - (nullable NSData *)message:(DIMInstantMessage *)iMsg
-              encryptContent:(DIMContent *)content
+            serializeContent:(DIMContent *)content
                      withKey:(NSDictionary *)password {
     
     DIMSymmetricKey *key = MKMSymmetricKeyFromDictionary(password);
@@ -221,11 +221,11 @@ static inline BOOL isBroadcast(DIMMessage *msg,
         //[iMsg setObject:file forKey:@"content"];
     }
     
-    return [super message:iMsg encryptContent:content withKey:key];
+    return [super message:iMsg serializeContent:content withKey:key];
 }
 
 - (nullable NSData *)message:(DIMInstantMessage *)iMsg
-                  encryptKey:(NSDictionary *)password
+                  encryptKey:(NSData *)data
                  forReceiver:(NSString *)receiver {
     if (!isBroadcast(iMsg, self.barrack)) {
         DIMID *to = [self.facebook IDWithString:receiver];
@@ -240,18 +240,18 @@ static inline BOOL isBroadcast(DIMMessage *msg,
             }
         }
     }
-    return [super message:iMsg encryptKey:password forReceiver:receiver];
+    return [super message:iMsg encryptKey:data forReceiver:receiver];
 }
 
 #pragma mark DKDSecureMessageDelegate
 
 - (nullable DIMContent *)message:(DIMSecureMessage *)sMsg
-                  decryptContent:(NSData *)data
+              deserializeContent:(NSData *)data
                          withKey:(NSDictionary *)password {
     DIMSymmetricKey *key = MKMSymmetricKeyFromDictionary(password);
     NSAssert(key == password, @"irregular symmetric key: %@", password);
     
-    DIMContent *content = [super message:sMsg decryptContent:data withKey:key];
+    DIMContent *content = [super message:sMsg deserializeContent:data withKey:key];
     if (!content) {
         return nil;
     }
