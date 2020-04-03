@@ -85,22 +85,6 @@ static inline void load_cmd_classes(void) {
                    forCommand:DIMCommand_PrivateKey];
 }
 
-static inline BOOL isBroadcast(DIMMessage *msg,
-                               id<DIMEntityDelegate> barrack) {
-    NSString *receiver;
-    if ([msg isKindOfClass:[DIMInstantMessage class]]) {
-        DIMInstantMessage *iMsg = (DIMInstantMessage *)msg;
-        receiver = iMsg.content.group;
-    } else {
-        receiver = msg.envelope.group;
-    }
-    if (!receiver) {
-        receiver = msg.envelope.receiver;
-    }
-    DIMID *ID = [barrack IDWithString:receiver];
-    return [ID isBroadcast];
-}
-
 @implementation DIMMessenger
 
 - (instancetype)init {
@@ -227,17 +211,15 @@ static inline BOOL isBroadcast(DIMMessage *msg,
 - (nullable NSData *)message:(DIMInstantMessage *)iMsg
                   encryptKey:(NSData *)data
                  forReceiver:(NSString *)receiver {
-    if (!isBroadcast(iMsg, self.barrack)) {
-        DIMID *to = [self.facebook IDWithString:receiver];
-        id<DIMEncryptKey> key = [self.facebook publicKeyForEncryption:to];
-        if (!key) {
-            DIMMeta *meta = [self.facebook metaForID:to];
-            if (![meta.key conformsToProtocol:@protocol(MKMEncryptKey)]) {
-                // save this message in a queue waiting receiver's meta response
-                [self suspendMessage:iMsg];
-                //NSAssert(false, @"failed to get encrypt key for receiver: %@", receiver);
-                return nil;
-            }
+    DIMID *to = [self.facebook IDWithString:receiver];
+    id<DIMEncryptKey> key = [self.facebook publicKeyForEncryption:to];
+    if (!key) {
+        DIMMeta *meta = [self.facebook metaForID:to];
+        if (![meta.key conformsToProtocol:@protocol(MKMEncryptKey)]) {
+            // save this message in a queue waiting receiver's meta response
+            [self suspendMessage:iMsg];
+            //NSAssert(false, @"failed to get encrypt key for receiver: %@", receiver);
+            return nil;
         }
     }
     return [super message:iMsg encryptKey:data forReceiver:receiver];
