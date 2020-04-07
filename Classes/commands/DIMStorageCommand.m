@@ -36,7 +36,6 @@
 //
 
 #import "NSObject+JsON.h"
-#import "NSString+Crypto.h"
 #import "NSData+Crypto.h"
 
 #import "DIMStorageCommand.h"
@@ -176,7 +175,7 @@
         NSAssert([key length] > 0, @"key empty: %@", self);
         key = [SK decrypt:key];
         NSAssert([key length] > 0, @"failed to decrypt key data: %@ wity private key: %@", self, SK);
-        NSDictionary *dict = [key jsonDictionary];
+        NSDictionary *dict = MKMJSONDecode(key);
         _password = MKMSymmetricKeyFromDictionary(dict);
     }
     return [self decryptWithSymmetricKey:_password];

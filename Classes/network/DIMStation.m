@@ -136,12 +136,11 @@
 
 - (NSString *)debugDescription {
     NSString *desc = [super debugDescription];
-    NSData *data = [desc data];
-    NSDictionary *dict = [data jsonDictionary];
+    NSDictionary *dict = MKMJSONDecode([desc data]);
     NSMutableDictionary *mDict = [dict mutableCopy];
     [mDict setObject:self.host forKey:@"host"];
     [mDict setObject:@(self.port) forKey:@"port"];
-    return [mDict jsonString];
+    return [MKMJSONEncode(mDict) UTF8String];
 }
 
 - (BOOL)isEqual:(id)object {

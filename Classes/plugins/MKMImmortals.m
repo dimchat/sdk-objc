@@ -103,7 +103,7 @@
     }
     NSData *data = [NSData dataWithContentsOfFile:path];
     NSAssert(data.length > 0, @"failed to load JSON file: %@", path);
-    return [data jsonDictionary];
+    return MKMJSONDecode(data);
 }
 
 - (nullable MKMMeta *)_loadMeta:(NSString *)filename {

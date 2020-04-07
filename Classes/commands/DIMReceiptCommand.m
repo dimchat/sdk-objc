@@ -38,7 +38,6 @@
 #import "NSObject+Compare.h"
 #import "NSDate+Timestamp.h"
 #import "NSData+Crypto.h"
-#import "NSString+Crypto.h"
 
 #import "DIMReceiptCommand.h"
 

@@ -37,7 +37,6 @@
 
 #import "NSObject+JsON.h"
 #import "NSData+Crypto.h"
-#import "NSString+Crypto.h"
 
 #import "DIMCAData.h"
 
@@ -90,7 +89,7 @@
 
 - (void)setInfo:(DIMCAData *)info {
     if (info) {
-        NSString *json = [info jsonString];
+        NSString *json = [MKMJSONEncode(info) UTF8String];
         [_storeDictionary setObject:json forKey:@"Info"];
     } else {
         [_storeDictionary removeObjectForKey:@"Info"];

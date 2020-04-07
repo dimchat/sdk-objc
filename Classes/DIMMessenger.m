@@ -393,11 +393,11 @@ static inline void load_cmd_classes(void) {
 @implementation DIMMessenger (Serialization)
 
 - (nullable NSData *)serializeMessage:(DIMReliableMessage *)rMsg {
-    return [rMsg jsonData];
+    return MKMJSONEncode(rMsg);
 }
 
 - (nullable DIMReliableMessage *)deserializeMessage:(NSData *)data {
-    NSDictionary *dict = [data jsonDictionary];
+    NSDictionary *dict = MKMJSONDecode(data);
     // TODO: translate short keys
     //       'S' -> 'sender'
     //       'R' -> 'receiver'
