@@ -121,7 +121,7 @@
     if (!_data) {
         NSString *base64 = [_storeDictionary objectForKey:@"data"];
         if (base64) {
-            _data = [base64 base64Decode];
+            _data = MKMBase64Decode(base64);
         }
     }
     return _data;
@@ -129,7 +129,7 @@
 
 - (void)setData:(NSData *)data {
     if (data) {
-        [_storeDictionary setObject:[data base64Encode] forKey:@"data"];
+        [_storeDictionary setObject:MKMBase64Encode(data) forKey:@"data"];
     } else {
         [_storeDictionary removeObjectForKey:@"data"];
     }
@@ -141,7 +141,7 @@
     if (!_key) {
         NSString *base64 = [_storeDictionary objectForKey:@"key"];
         if (base64) {
-            _key = [base64 base64Decode];
+            _key = MKMBase64Decode(base64);
         }
     }
     return _key;
@@ -149,7 +149,7 @@
 
 - (void)setKey:(NSData *)keyData {
     if (keyData) {
-        [_storeDictionary setObject:[keyData base64Encode] forKey:@"key"];
+        [_storeDictionary setObject:MKMBase64Encode(keyData) forKey:@"key"];
     } else {
         [_storeDictionary removeObjectForKey:@"key"];
     }

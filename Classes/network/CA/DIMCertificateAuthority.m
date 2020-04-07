@@ -101,12 +101,12 @@
 
 - (NSData *)signature {
     NSString *encode = [_storeDictionary objectForKey:@"Signature"];
-    return [encode base64Decode];
+    return MKMBase64Decode(encode);
 }
 
 - (void)setSignature:(NSData *)signature {
     if (signature) {
-        NSString *encode = [signature base64Encode];
+        NSString *encode = MKMBase64Encode(signature);
         [_storeDictionary setObject:encode forKey:@"Signature"];
     } else {
         [_storeDictionary removeObjectForKey:@"Signature"];
