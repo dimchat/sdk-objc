@@ -7,6 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E915CE5B243C62B700B98FE3 /* MKMImmortals.m in Sources */ = {isa = PBXBuildFile; fileRef = E915CE59243C62B700B98FE3 /* MKMImmortals.m */; };
+		E915CE5C243C62B700B98FE3 /* MKMImmortals.h in Headers */ = {isa = PBXBuildFile; fileRef = E915CE5A243C62B700B98FE3 /* MKMImmortals.h */; };
+		E915CE65243C654300B98FE3 /* hulk_secret.js in Resources */ = {isa = PBXBuildFile; fileRef = E915CE5F243C654300B98FE3 /* hulk_secret.js */; };
+		E915CE66243C654400B98FE3 /* moki_secret.js in Resources */ = {isa = PBXBuildFile; fileRef = E915CE60243C654300B98FE3 /* moki_secret.js */; };
+		E915CE67243C654400B98FE3 /* hulk_meta.js in Resources */ = {isa = PBXBuildFile; fileRef = E915CE61243C654300B98FE3 /* hulk_meta.js */; };
+		E915CE68243C654400B98FE3 /* hulk_profile.js in Resources */ = {isa = PBXBuildFile; fileRef = E915CE62243C654300B98FE3 /* hulk_profile.js */; };
+		E915CE69243C654400B98FE3 /* moki_meta.js in Resources */ = {isa = PBXBuildFile; fileRef = E915CE63243C654300B98FE3 /* moki_meta.js */; };
+		E915CE6A243C654400B98FE3 /* moki_profile.js in Resources */ = {isa = PBXBuildFile; fileRef = E915CE64243C654300B98FE3 /* moki_profile.js */; };
 		E919AFDC2390F8DD004F7FF9 /* DIMSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E919AFD22390F8DD004F7FF9 /* DIMSDK.framework */; };
 		E919AFE12390F8DD004F7FF9 /* DIMSDKTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E919AFE02390F8DD004F7FF9 /* DIMSDKTests.m */; };
 		E919B0092390FA3B004F7FF9 /* DIMSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = E919B0082390FA3B004F7FF9 /* DIMSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -107,6 +115,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		E915CE59243C62B700B98FE3 /* MKMImmortals.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKMImmortals.m; sourceTree = "<group>"; };
+		E915CE5A243C62B700B98FE3 /* MKMImmortals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKMImmortals.h; sourceTree = "<group>"; };
+		E915CE5F243C654300B98FE3 /* hulk_secret.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = hulk_secret.js; sourceTree = "<group>"; };
+		E915CE60243C654300B98FE3 /* moki_secret.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = moki_secret.js; sourceTree = "<group>"; };
+		E915CE61243C654300B98FE3 /* hulk_meta.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = hulk_meta.js; sourceTree = "<group>"; };
+		E915CE62243C654300B98FE3 /* hulk_profile.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = hulk_profile.js; sourceTree = "<group>"; };
+		E915CE63243C654300B98FE3 /* moki_meta.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = moki_meta.js; sourceTree = "<group>"; };
+		E915CE64243C654300B98FE3 /* moki_profile.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = moki_profile.js; sourceTree = "<group>"; };
 		E919AFD22390F8DD004F7FF9 /* DIMSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DIMSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E919AFD62390F8DD004F7FF9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E919AFDB2390F8DD004F7FF9 /* DIMSDKTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DIMSDKTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -202,10 +218,34 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		E915CE58243C62B700B98FE3 /* plugins */ = {
+			isa = PBXGroup;
+			children = (
+				E915CE5A243C62B700B98FE3 /* MKMImmortals.h */,
+				E915CE59243C62B700B98FE3 /* MKMImmortals.m */,
+			);
+			path = plugins;
+			sourceTree = "<group>";
+		};
+		E915CE5E243C654300B98FE3 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				E915CE5F243C654300B98FE3 /* hulk_secret.js */,
+				E915CE60243C654300B98FE3 /* moki_secret.js */,
+				E915CE61243C654300B98FE3 /* hulk_meta.js */,
+				E915CE62243C654300B98FE3 /* hulk_profile.js */,
+				E915CE63243C654300B98FE3 /* moki_meta.js */,
+				E915CE64243C654300B98FE3 /* moki_profile.js */,
+			);
+			name = Resources;
+			path = ../Resources;
+			sourceTree = "<group>";
+		};
 		E919AFC82390F8DD004F7FF9 = {
 			isa = PBXGroup;
 			children = (
 				E9798B4D23BC992E00A14FD8 /* DIMCore.xcodeproj */,
+				E915CE5E243C654300B98FE3 /* Resources */,
 				E919AFEE2390F932004F7FF9 /* Classes */,
 				E919AFD42390F8DD004F7FF9 /* DIMSDK */,
 				E919AFDF2390F8DD004F7FF9 /* DIMSDKTests */,
@@ -243,6 +283,7 @@
 		E919AFEE2390F932004F7FF9 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				E915CE58243C62B700B98FE3 /* plugins */,
 				E94DEB7A23A1053400FBFD3C /* group */,
 				E94DEB6923A1053400FBFD3C /* network */,
 				E95964FE2391077F00DAA870 /* commands */,
@@ -417,6 +458,7 @@
 				E95965322391273200DAA870 /* DIMCommandProcessor.h in Headers */,
 				E959653623912BDB00DAA870 /* DIMHistoryProcessor.h in Headers */,
 				E95965072391077F00DAA870 /* DIMMuteCommand.h in Headers */,
+				E915CE5C243C62B700B98FE3 /* MKMImmortals.h in Headers */,
 				E95965052391077F00DAA870 /* DIMBlockCommand.h in Headers */,
 				E95965062391077F00DAA870 /* DIMReceiptCommand.h in Headers */,
 				E95964EF239101D900DAA870 /* DKDInstantMessage+Extension.h in Headers */,
@@ -533,6 +575,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E915CE6A243C654400B98FE3 /* moki_profile.js in Resources */,
+				E915CE67243C654400B98FE3 /* hulk_meta.js in Resources */,
+				E915CE66243C654400B98FE3 /* moki_secret.js in Resources */,
+				E915CE68243C654400B98FE3 /* hulk_profile.js in Resources */,
+				E915CE65243C654300B98FE3 /* hulk_secret.js in Resources */,
+				E915CE69243C654400B98FE3 /* moki_meta.js in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -556,6 +604,7 @@
 				E94DEB8723A1053400FBFD3C /* DIMCASubject.m in Sources */,
 				E959654C23913ACC00DAA870 /* DIMQueryCommandProcessor.m in Sources */,
 				E95965082391077F00DAA870 /* DIMBlockCommand.m in Sources */,
+				E915CE5B243C62B700B98FE3 /* MKMImmortals.m in Sources */,
 				E95965582391609600DAA870 /* DIMMetaCommandProcessor.m in Sources */,
 				E94DEB7F23A1053400FBFD3C /* DIMServiceProvider.m in Sources */,
 				E95965272391096600DAA870 /* DIMContentProcessor.m in Sources */,

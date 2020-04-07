@@ -54,6 +54,9 @@ FOUNDATION_EXPORT const unsigned char DIMSDKVersionString[];
 // Core
 //#import <DIMCore/DIMCore.h>
 
+// Plugins
+//#import <DIMPlugins/MKMImmortals.h>
+
 #if !defined(__DIM_SDK__)
 #define __DIM_SDK__ 1
 
