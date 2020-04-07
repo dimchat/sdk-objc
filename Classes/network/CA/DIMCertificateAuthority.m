@@ -35,7 +35,6 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "NSObject+JsON.h"
 #import "NSData+Crypto.h"
 
 #import "DIMCAData.h"
@@ -89,7 +88,7 @@
 
 - (void)setInfo:(DIMCAData *)info {
     if (info) {
-        NSString *json = [MKMJSONEncode(info) UTF8String];
+        NSString *json = MKMUTF8Decode(MKMJSONEncode(info));
         [_storeDictionary setObject:json forKey:@"Info"];
     } else {
         [_storeDictionary removeObjectForKey:@"Info"];
@@ -134,7 +133,7 @@
 
 - (BOOL)verifyWithPublicKey:(DIMPublicKey *)PK {
     NSString *json = [_storeDictionary objectForKey:@"Info"];
-    return [PK verify:[json data] withSignature:self.signature];
+    return [PK verify:MKMUTF8Encode(json) withSignature:self.signature];
 }
 
 @end

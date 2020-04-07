@@ -36,7 +36,6 @@
 //
 
 #import "NSObject+Compare.h"
-#import "NSObject+JsON.h"
 
 #import "DIMServiceProvider.h"
 
@@ -136,11 +135,11 @@
 
 - (NSString *)debugDescription {
     NSString *desc = [super debugDescription];
-    NSDictionary *dict = MKMJSONDecode([desc data]);
+    NSDictionary *dict = MKMJSONDecode(MKMUTF8Encode(desc));
     NSMutableDictionary *mDict = [dict mutableCopy];
     [mDict setObject:self.host forKey:@"host"];
     [mDict setObject:@(self.port) forKey:@"port"];
-    return [MKMJSONEncode(mDict) UTF8String];
+    return MKMUTF8Decode(MKMJSONEncode(mDict));
 }
 
 - (BOOL)isEqual:(id)object {
