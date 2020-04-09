@@ -81,6 +81,15 @@
 		E9798B5A23BC994400A14FD8 /* DIMCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9798B5523BC992E00A14FD8 /* DIMCore.framework */; };
 		E988C94C23F54BBE00BA5D66 /* DIMForwardContentProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = E988C94A23F54BBE00BA5D66 /* DIMForwardContentProcessor.h */; };
 		E988C94D23F54BBE00BA5D66 /* DIMForwardContentProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = E988C94B23F54BBE00BA5D66 /* DIMForwardContentProcessor.m */; };
+		E9A1F311243F22E70015D18D /* MKMRSAPrivateKey+PersistentStore.m in Sources */ = {isa = PBXBuildFile; fileRef = E9A1F309243F22E70015D18D /* MKMRSAPrivateKey+PersistentStore.m */; };
+		E9A1F312243F22E70015D18D /* MKMRSAPublicKey.m in Sources */ = {isa = PBXBuildFile; fileRef = E9A1F30B243F22E70015D18D /* MKMRSAPublicKey.m */; };
+		E9A1F313243F22E70015D18D /* MKMRSAPrivateKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E9A1F30C243F22E70015D18D /* MKMRSAPrivateKey.h */; };
+		E9A1F314243F22E70015D18D /* MKMRSAPrivateKey.m in Sources */ = {isa = PBXBuildFile; fileRef = E9A1F30D243F22E70015D18D /* MKMRSAPrivateKey.m */; };
+		E9A1F315243F22E70015D18D /* MKMAESKey.m in Sources */ = {isa = PBXBuildFile; fileRef = E9A1F30E243F22E70015D18D /* MKMAESKey.m */; };
+		E9A1F316243F22E70015D18D /* MKMRSAPublicKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E9A1F30F243F22E70015D18D /* MKMRSAPublicKey.h */; };
+		E9A1F317243F22E70015D18D /* MKMAESKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E9A1F310243F22E70015D18D /* MKMAESKey.h */; };
+		E9A1F31A243F2BA40015D18D /* MKMRSAHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = E9A1F318243F2BA40015D18D /* MKMRSAHelper.h */; };
+		E9A1F31B243F2BA40015D18D /* MKMRSAHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = E9A1F319243F2BA40015D18D /* MKMRSAHelper.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -196,6 +205,15 @@
 		E9798B4D23BC992E00A14FD8 /* DIMCore.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DIMCore.xcodeproj; path = "../../core-objc/DIMCore/DIMCore.xcodeproj"; sourceTree = "<group>"; };
 		E988C94A23F54BBE00BA5D66 /* DIMForwardContentProcessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMForwardContentProcessor.h; sourceTree = "<group>"; };
 		E988C94B23F54BBE00BA5D66 /* DIMForwardContentProcessor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMForwardContentProcessor.m; sourceTree = "<group>"; };
+		E9A1F309243F22E70015D18D /* MKMRSAPrivateKey+PersistentStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MKMRSAPrivateKey+PersistentStore.m"; sourceTree = "<group>"; };
+		E9A1F30B243F22E70015D18D /* MKMRSAPublicKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKMRSAPublicKey.m; sourceTree = "<group>"; };
+		E9A1F30C243F22E70015D18D /* MKMRSAPrivateKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKMRSAPrivateKey.h; sourceTree = "<group>"; };
+		E9A1F30D243F22E70015D18D /* MKMRSAPrivateKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKMRSAPrivateKey.m; sourceTree = "<group>"; };
+		E9A1F30E243F22E70015D18D /* MKMAESKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKMAESKey.m; sourceTree = "<group>"; };
+		E9A1F30F243F22E70015D18D /* MKMRSAPublicKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKMRSAPublicKey.h; sourceTree = "<group>"; };
+		E9A1F310243F22E70015D18D /* MKMAESKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKMAESKey.h; sourceTree = "<group>"; };
+		E9A1F318243F2BA40015D18D /* MKMRSAHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MKMRSAHelper.h; sourceTree = "<group>"; };
+		E9A1F319243F2BA40015D18D /* MKMRSAHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MKMRSAHelper.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -223,6 +241,15 @@
 			children = (
 				E915CE5A243C62B700B98FE3 /* MKMImmortals.h */,
 				E915CE59243C62B700B98FE3 /* MKMImmortals.m */,
+				E9A1F310243F22E70015D18D /* MKMAESKey.h */,
+				E9A1F30E243F22E70015D18D /* MKMAESKey.m */,
+				E9A1F318243F2BA40015D18D /* MKMRSAHelper.h */,
+				E9A1F319243F2BA40015D18D /* MKMRSAHelper.m */,
+				E9A1F30C243F22E70015D18D /* MKMRSAPrivateKey.h */,
+				E9A1F30D243F22E70015D18D /* MKMRSAPrivateKey.m */,
+				E9A1F309243F22E70015D18D /* MKMRSAPrivateKey+PersistentStore.m */,
+				E9A1F30F243F22E70015D18D /* MKMRSAPublicKey.h */,
+				E9A1F30B243F22E70015D18D /* MKMRSAPublicKey.m */,
 			);
 			path = plugins;
 			sourceTree = "<group>";
@@ -459,11 +486,15 @@
 				E959653623912BDB00DAA870 /* DIMHistoryProcessor.h in Headers */,
 				E95965072391077F00DAA870 /* DIMMuteCommand.h in Headers */,
 				E915CE5C243C62B700B98FE3 /* MKMImmortals.h in Headers */,
+				E9A1F317243F22E70015D18D /* MKMAESKey.h in Headers */,
 				E95965052391077F00DAA870 /* DIMBlockCommand.h in Headers */,
 				E95965062391077F00DAA870 /* DIMReceiptCommand.h in Headers */,
 				E95964EF239101D900DAA870 /* DKDInstantMessage+Extension.h in Headers */,
 				E919B0152390FAA1004F7FF9 /* DIMAddressNameService.h in Headers */,
 				E919B0122390FAA1004F7FF9 /* DIMFacebook.h in Headers */,
+				E9A1F313243F22E70015D18D /* MKMRSAPrivateKey.h in Headers */,
+				E9A1F316243F22E70015D18D /* MKMRSAPublicKey.h in Headers */,
+				E9A1F31A243F2BA40015D18D /* MKMRSAHelper.h in Headers */,
 				E988C94C23F54BBE00BA5D66 /* DIMForwardContentProcessor.h in Headers */,
 				E919B0162390FAA1004F7FF9 /* DIMKeyStore.h in Headers */,
 				E919B0132390FAA1004F7FF9 /* DIMMessenger.h in Headers */,
@@ -600,12 +631,17 @@
 			files = (
 				E959654823913AC200DAA870 /* DIMQuitCommandProcessor.m in Sources */,
 				E959655023913AD600DAA870 /* DIMResetCommandProcessor.m in Sources */,
+				E9A1F31B243F2BA40015D18D /* MKMRSAHelper.m in Sources */,
+				E9A1F311243F22E70015D18D /* MKMRSAPrivateKey+PersistentStore.m in Sources */,
 				E94DEB8923A1053400FBFD3C /* DIMCAValidity.m in Sources */,
 				E94DEB8723A1053400FBFD3C /* DIMCASubject.m in Sources */,
+				E9A1F312243F22E70015D18D /* MKMRSAPublicKey.m in Sources */,
 				E959654C23913ACC00DAA870 /* DIMQueryCommandProcessor.m in Sources */,
 				E95965082391077F00DAA870 /* DIMBlockCommand.m in Sources */,
 				E915CE5B243C62B700B98FE3 /* MKMImmortals.m in Sources */,
+				E9A1F315243F22E70015D18D /* MKMAESKey.m in Sources */,
 				E95965582391609600DAA870 /* DIMMetaCommandProcessor.m in Sources */,
+				E9A1F314243F22E70015D18D /* MKMRSAPrivateKey.m in Sources */,
 				E94DEB7F23A1053400FBFD3C /* DIMServiceProvider.m in Sources */,
 				E95965272391096600DAA870 /* DIMContentProcessor.m in Sources */,
 				E9705CCC2395034900289441 /* DIMStorageCommand.m in Sources */,
