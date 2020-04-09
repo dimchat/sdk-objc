@@ -143,9 +143,9 @@
         NSString *pem = [_storeDictionary objectForKey:@"data"];
         if (pem) {
             // key from data
-            NSString *base64 = RSAPublicKeyContentFromNSString(pem);
+            NSString *base64 = RSAPrivateKeyContentFromNSString(pem);
             NSData *data = MKMBase64Decode(base64);
-            _privateKeyRef = SecKeyRefFromPublicData(data);
+            _privateKeyRef = SecKeyRefFromPrivateData(data);
             return _privateKeyRef;
         }
         

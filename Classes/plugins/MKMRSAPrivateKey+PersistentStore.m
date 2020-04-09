@@ -82,7 +82,7 @@ static NSString *s_application_tag = @"chat.dim.rsa.private";
         base64 = MKMBase64Encode(data);
         NSString *pkc = NSStringFromRSAPublicKeyContent(base64);
         // key content
-        NSString *content = [NSString stringWithFormat:@"%@\n%@", pkc, skc];
+        NSString *content = [NSString stringWithFormat:@"%@%@", pkc, skc];
         NSString *algorithm = ACAlgorithmRSA;
         NSDictionary *keyInfo = @{@"algorithm":algorithm,
                                   @"data"     :content,
