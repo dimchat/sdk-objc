@@ -105,6 +105,14 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)station:(DIMStation *)server sendPackage:(NSData *)data didFailWithError:(NSError *)error;
 
+/**
+ *  Callback for handshake accepted
+ *
+ * @param server - current station
+ * @param session - new session key
+ */
+- (void)station:(DIMStation *)server onHandshakeAccepted:(NSString *)session;
+
 @end
 
 NS_ASSUME_NONNULL_END
