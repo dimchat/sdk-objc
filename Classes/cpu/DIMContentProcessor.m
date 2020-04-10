@@ -146,6 +146,11 @@ static NSMutableDictionary<NSNumber *, Class> *cpu_classes(void) {
 - (DIMContentProcessor *)processorForContentType:(UInt8)type {
     SingletonDispatchOnce(^{
         self->_processors = [[NSMutableDictionary alloc] init];
+        // history CPU
+        NSNumber *key = @(DKDContentType_History);
+        Class clazz = [cpu_classes() objectForKey:key];
+        DIMContentProcessor *cpu = [[clazz alloc] initWithMessenger:self->_messenger];
+        [self->_processors setObject:cpu forKey:key];
     });
     NSNumber *key = @(type);
     // 1. get from pool

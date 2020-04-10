@@ -40,6 +40,11 @@
 #import "DIMMessenger.h"
 
 #import "DIMGroupCommandProcessor.h"
+#import "DIMInviteCommandProcessor.h"
+#import "DIMExpelCommandProcessor.h"
+#import "DIMQuitCommandProcessor.h"
+#import "DIMResetCommandProcessor.h"
+#import "DIMQueryCommandProcessor.h"
 
 #import "DIMHistoryProcessor.h"
 
@@ -56,11 +61,35 @@
 
 @end
 
+static inline void load_gpu_classes(void) {
+    // invite
+    [DIMGroupCommandProcessor registerClass:[DIMInviteCommandProcessor class]
+                                 forCommand:DIMGroupCommand_Invite];
+    // expel
+    [DIMGroupCommandProcessor registerClass:[DIMExpelCommandProcessor class]
+                                 forCommand:DIMGroupCommand_Expel];
+    // quit
+    [DIMGroupCommandProcessor registerClass:[DIMQuitCommandProcessor class]
+                                 forCommand:DIMGroupCommand_Quit];
+    // reset
+    [DIMGroupCommandProcessor registerClass:[DIMResetGroupCommandProcessor class]
+                                 forCommand:DIMGroupCommand_Reset];
+    
+    // query
+    [DIMGroupCommandProcessor registerClass:[DIMQueryGroupCommandProcessor class]
+                                 forCommand:DIMGroupCommand_Query];
+}
+
 @implementation DIMHistoryCommandProcessor
 
 - (instancetype)initWithMessenger:(DIMMessenger *)messenger {
     if (self = [super initWithMessenger:messenger]) {
         _gpu = nil;
+        
+        // register CPU classes
+        SingletonDispatchOnce(^{
+            load_gpu_classes();
+        });
     }
     return self;
 }
