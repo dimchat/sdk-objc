@@ -48,7 +48,7 @@
 //
 - (nullable DIMContent *)processContent:(DIMContent *)content
                                  sender:(DIMID *)sender
-                                message:(DIMInstantMessage *)iMsg {
+                                message:(DIMReliableMessage *)rMsg {
     NSString *text = nil;
     
     // File: Image, Audio, Video
@@ -100,7 +100,7 @@
 //
 - (nullable DIMContent *)processContent:(DIMContent *)content
                                  sender:(DIMID *)sender
-                                message:(DIMInstantMessage *)iMsg {
+                                message:(DIMReliableMessage *)rMsg {
     NSAssert([content isKindOfClass:[DIMCommand class]], @"command error: %@", content);
     // process command content by name
     DIMCommand *cmd = (DIMCommand *)content;

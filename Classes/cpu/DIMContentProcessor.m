@@ -112,12 +112,12 @@ static inline void load_cpu_classes(void) {
 //
 - (nullable DIMContent *)processContent:(DIMContent *)content
                                  sender:(DIMID *)sender
-                                message:(DIMInstantMessage *)iMsg {
+                                message:(DIMReliableMessage *)rMsg {
     NSAssert([self isMemberOfClass:[DIMContentProcessor class]], @"error!");
     // process content by type
     DIMContentProcessor *cpu = [self processorForContentType:content.type];
     NSAssert(cpu != self, @"Dead cycle!");
-    return [cpu processContent:content sender:sender message:iMsg];
+    return [cpu processContent:content sender:sender message:rMsg];
 }
 
 @end

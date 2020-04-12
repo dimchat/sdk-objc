@@ -90,7 +90,7 @@
 //
 - (nullable DIMContent *)processContent:(DIMContent *)content
                                  sender:(DIMID *)sender
-                                message:(DIMInstantMessage *)iMsg {
+                                message:(DIMReliableMessage *)rMsg {
     NSAssert([content isKindOfClass:[DIMProfileCommand class]], @"profile command error: %@", content);
     DIMProfileCommand *cmd = (DIMProfileCommand *)content;
     DIMID *ID = [self.facebook IDWithString:cmd.ID];

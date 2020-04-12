@@ -106,7 +106,7 @@ static inline void load_gpu_classes(void) {
 //
 - (nullable DIMContent *)processContent:(DIMContent *)content
                                  sender:(DIMID *)sender
-                                message:(DIMInstantMessage *)iMsg {
+                                message:(DIMReliableMessage *)rMsg {
     NSAssert([self isMemberOfClass:[DIMHistoryCommandProcessor class]], @"error!");
     NSAssert([content isKindOfClass:[DIMCommand class]], @"history command error: %@", content);
     // process command content by name
@@ -128,7 +128,7 @@ static inline void load_gpu_classes(void) {
          */
     }
     NSAssert(cpu != self, @"Dead cycle!");
-    return [cpu processContent:content sender:sender message:iMsg];
+    return [cpu processContent:content sender:sender message:rMsg];
 }
 
 @end

@@ -78,7 +78,7 @@
 //
 - (nullable DIMContent *)processContent:(DIMContent *)content
                                  sender:(DIMID *)sender
-                                message:(DIMInstantMessage *)iMsg {
+                                message:(DIMReliableMessage *)rMsg {
     NSAssert([content isKindOfClass:[DIMMetaCommand class]], @"meta command error: %@", content);
     DIMMetaCommand *cmd = (DIMMetaCommand *)content;
     DIMID *ID = [self.facebook IDWithString:cmd.ID];

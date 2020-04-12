@@ -72,7 +72,7 @@
 //
 - (nullable DIMContent *)processContent:(DIMContent *)content
                                  sender:(DIMID *)sender
-                                message:(DIMInstantMessage *)iMsg {
+                                message:(DIMReliableMessage *)rMsg {
     NSAssert([content isKindOfClass:[DIMExpelCommand class]], @"expel command error: %@", content);
     DIMExpelCommand *cmd = (DIMExpelCommand *)content;
     DIMID *group = [self.facebook IDWithString:content.group];

@@ -47,7 +47,7 @@
 //
 - (nullable DIMContent *)processContent:(DIMContent *)content
                                  sender:(DIMID *)sender
-                                message:(DIMInstantMessage *)iMsg {
+                                message:(DIMReliableMessage *)rMsg {
     NSAssert([content isKindOfClass:[DIMQueryGroupCommand class]], @"query group command error: %@", content);
     DIMID *group = [self.facebook IDWithString:content.group];
     // 1. check permission

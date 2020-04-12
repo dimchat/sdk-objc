@@ -111,9 +111,9 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
 
 - (nullable DIMUser *)selectUserWithID:(DIMID *)receiver;
 
-- (nullable DIMInstantMessage *)processInstantMessage:(DIMInstantMessage *)iMsg;
-- (nullable DIMSecureMessage *)processSecureMessage:(DIMSecureMessage *)sMsg;
-- (nullable DIMReliableMessage *)processReliableMessage:(DIMReliableMessage *)rMsg;
+- (nullable DIMInstantMessage *)processInstant:(DIMInstantMessage *)iMsg message:(DIMReliableMessage *)rMsg;
+//- (nullable DIMSecureMessage *)processSecure:(DIMSecureMessage *)sMsg message:(DIMReliableMessage *)rMsg;
+- (nullable DIMReliableMessage *)processMessage:(DIMReliableMessage *)rMsg;
 
 @end
 

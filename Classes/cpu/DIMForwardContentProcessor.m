@@ -44,17 +44,17 @@
 //
 - (nullable DIMContent *)processContent:(DIMContent *)content
                                  sender:(DIMID *)sender
-                                message:(DIMInstantMessage *)iMsg {
+                                message:(DIMReliableMessage *)rMsg {
     NSAssert([content isKindOfClass:[DIMForwardContent class]], @"forward content error: %@", content);
     DIMForwardContent *forward = (DIMForwardContent *)content;
-    DIMReliableMessage *rMsg = forward.forwardMessage;
+    DIMReliableMessage *secret = forward.forwardMessage;
     
     // call messenger to process it
-    rMsg = [self.messenger processReliableMessage:rMsg];
+    secret = [self.messenger processMessage:secret];
     // check response
-    if (rMsg) {
+    if (secret) {
         // Over The Top
-        return [[DIMForwardContent alloc] initWithForwardMessage:rMsg];
+        return [[DIMForwardContent alloc] initWithForwardMessage:secret];
     }/* else {
         id receiver = forward.forwardMessage.envelope.receiver;
         NSString *text = [NSString stringWithFormat:@"Message forwarded: %@", receiver];

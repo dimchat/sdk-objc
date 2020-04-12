@@ -129,7 +129,7 @@
 //
 - (nullable DIMContent *)processContent:(DIMContent *)content
                                  sender:(DIMID *)sender
-                                message:(DIMInstantMessage *)iMsg {
+                                message:(DIMReliableMessage *)rMsg {
     NSAssert([self isMemberOfClass:[DIMGroupCommandProcessor class]], @"error!");
     NSAssert([content isKindOfClass:[DIMCommand class]], @"group command error: %@", content);
     // process command content by name
@@ -144,7 +144,7 @@
     }
      */
     NSAssert(cpu != self, @"Dead cycle!");
-    return [cpu processContent:content sender:sender message:iMsg];
+    return [cpu processContent:content sender:sender message:rMsg];
 }
 
 @end

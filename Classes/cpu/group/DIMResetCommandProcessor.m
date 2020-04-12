@@ -106,7 +106,7 @@
 //
 - (nullable DIMContent *)processContent:(DIMContent *)content
                                  sender:(DIMID *)sender
-                                message:(DIMInstantMessage *)iMsg {
+                                message:(DIMReliableMessage *)rMsg {
     NSAssert([content isKindOfClass:[DIMResetGroupCommand class]] ||
              [content isKindOfClass:[DIMInviteCommand class]], @"invite command error: %@", content);
     DIMGroupCommand *cmd = (DIMGroupCommand *)content;

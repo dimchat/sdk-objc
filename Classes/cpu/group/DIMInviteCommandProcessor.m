@@ -58,10 +58,10 @@
     return NO;
 }
 
-- (nullable DIMContent *)_callReset:(DIMGroupCommand *)cmd sender:(DIMID *)sender message:(DIMInstantMessage *)iMsg {
+- (nullable DIMContent *)_callReset:(DIMGroupCommand *)cmd sender:(DIMID *)sender message:(DIMReliableMessage *)rMsg {
     DIMCommandProcessor *cpu = [self processorForCommand:DIMGroupCommand_Reset];
     NSAssert(cpu, @"reset CPU not set yet");
-    return [cpu processContent:cmd sender:sender message:iMsg];
+    return [cpu processContent:cmd sender:sender message:rMsg];
 }
 
 - (nullable NSArray<DIMID *> *)_doInvite:(NSArray<DIMID *> *)inviteList group:(DIMID *)group {
@@ -91,7 +91,7 @@
 //
 - (nullable DIMContent *)processContent:(DIMContent *)content
                                  sender:(DIMID *)sender
-                                message:(DIMInstantMessage *)iMsg {
+                                message:(DIMReliableMessage *)rMsg {
     NSAssert([content isKindOfClass:[DIMInviteCommand class]], @"invite command error: %@", content);
     DIMInviteCommand *cmd = (DIMInviteCommand *)content;
     DIMID *group = [self.facebook IDWithString:content.group];
@@ -100,7 +100,7 @@
         // NOTICE:
         //     group membership lost?
         //     reset group members
-        return [self _callReset:cmd sender:sender message:iMsg];
+        return [self _callReset:cmd sender:sender message:rMsg];
     }
     // 1. check permission
     if (![self.facebook group:group hasMember:sender]) {
@@ -121,7 +121,7 @@
     if ([self _isReset:inviteList sender:sender group:group]) {
         // NOTICE: owner invites owner?
         //         it means this should be a 'reset' command
-        return [self _callReset:cmd sender:sender message:iMsg];
+        return [self _callReset:cmd sender:sender message:rMsg];
     }
     // 2.2. get added-list
     NSArray<DIMID *> *added = [self _doInvite:inviteList group:group];

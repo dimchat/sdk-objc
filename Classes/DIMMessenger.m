@@ -271,7 +271,7 @@ static inline void load_cmd_classes(void) {
         return nil;
     }
     // 2. process message
-    rMsg = [self processReliableMessage:rMsg];
+    rMsg = [self processMessage:rMsg];
     if (!rMsg) {
         // nothing to response
         return nil;
@@ -282,7 +282,7 @@ static inline void load_cmd_classes(void) {
 
 // TODO: override to check broadcast message before calling it
 // TODO: override to deliver to the receiver when catch exception "ReceiverError"
-- (nullable DIMReliableMessage *)processReliableMessage:(DIMReliableMessage *)rMsg {
+- (nullable DIMReliableMessage *)processMessage:(DIMReliableMessage *)rMsg {
     // 1. verify message
     DIMSecureMessage *sMsg = [self verifyMessage:rMsg];
     if (!sMsg) {
@@ -290,7 +290,7 @@ static inline void load_cmd_classes(void) {
         return nil;
     }
     // 2. process message
-    sMsg = [self processSecureMessage:sMsg];
+    sMsg = [self processSecure:sMsg message:rMsg];
     if (!sMsg) {
         // nothing to respond
         return nil;
@@ -299,7 +299,7 @@ static inline void load_cmd_classes(void) {
     return [self signMessage:sMsg];
 }
 
-- (nullable DIMSecureMessage *)processSecureMessage:(DIMSecureMessage *)sMsg {
+- (nullable DIMSecureMessage *)processSecure:(DIMSecureMessage *)sMsg message:(DIMReliableMessage *)rMsg {
     // 1. decrypt message
     DIMInstantMessage *iMsg = [self decryptMessage:sMsg];
     if (!iMsg) {
@@ -308,7 +308,7 @@ static inline void load_cmd_classes(void) {
         return nil;
     }
     // 2. process message
-    iMsg = [self processInstantMessage:iMsg];
+    iMsg = [self processInstant:iMsg message:rMsg];
     if (!iMsg) {
         // nothing to respond
         return nil;
@@ -319,14 +319,14 @@ static inline void load_cmd_classes(void) {
 
 // TODO: override to check group
 // TODO: override to filter the response
-- (nullable DIMInstantMessage *)processInstantMessage:(DIMInstantMessage *)iMsg {
+- (nullable DIMInstantMessage *)processInstant:(DIMInstantMessage *)iMsg message:(DIMReliableMessage *)rMsg {
     DIMFacebook *facebook = self.facebook;
     DIMEnvelope *env = iMsg.envelope;
     DIMContent *content = iMsg.content;
     DIMID *sender = [facebook IDWithString:env.sender];
     
     // process content from sender
-    DIMContent *res = [_cpu processContent:content sender:sender message:iMsg];
+    DIMContent *res = [_cpu processContent:content sender:sender message:rMsg];
     if (![self saveMessage:iMsg]) {
         // error
         return nil;
