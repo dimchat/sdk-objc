@@ -317,8 +317,6 @@ static inline void load_cmd_classes(void) {
     return [self encryptMessage:iMsg];
 }
 
-// TODO: override to check group
-// TODO: override to filter the response
 - (nullable DIMInstantMessage *)processInstant:(DIMInstantMessage *)iMsg message:(DIMReliableMessage *)rMsg {
     DIMFacebook *facebook = self.facebook;
     DIMEnvelope *env = iMsg.envelope;
@@ -326,7 +324,7 @@ static inline void load_cmd_classes(void) {
     DIMID *sender = [facebook IDWithString:env.sender];
     
     // process content from sender
-    DIMContent *res = [_cpu processContent:content sender:sender message:rMsg];
+    DIMContent *res = [self processContent:content sender:sender message:rMsg];
     if (![self saveMessage:iMsg]) {
         // error
         return nil;
@@ -346,6 +344,15 @@ static inline void load_cmd_classes(void) {
                                                sender:user.ID
                                              receiver:sender
                                                  time:nil];
+}
+
+// TODO: override to check group
+// TODO: override to filter the response
+- (nullable DIMContent *)processContent:(DIMContent *)content
+                                 sender:(DIMID *)sender
+                                message:(DIMReliableMessage *)rMsg {
+    // call CPU to process it
+    return [_cpu processContent:content sender:sender message:rMsg];
 }
 
 @end
