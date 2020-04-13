@@ -42,6 +42,8 @@
 #import "DIMKeyStore.h"
 
 #import "DIMReceiptCommand.h"
+#import "DIMHandshakeCommand.h"
+#import "DIMLoginCommand.h"
 #import "DIMMuteCommand.h"
 #import "DIMBlockCommand.h"
 #import "DIMStorageCommand.h"
@@ -67,7 +69,13 @@ static inline void load_cmd_classes(void) {
     // receipt
     [DIMCommand registerClass:[DIMReceiptCommand class]
                    forCommand:DIMCommand_Receipt];
-    
+    // handshake
+    [DIMCommand registerClass:[DIMHandshakeCommand class]
+                   forCommand:DIMCommand_Handshake];
+    // handshake
+    [DIMCommand registerClass:[DIMLoginCommand class]
+                   forCommand:DIMCommand_Login];
+
     // mute
     [DIMCommand registerClass:[DIMMuteCommand class]
                    forCommand:DIMCommand_Mute];

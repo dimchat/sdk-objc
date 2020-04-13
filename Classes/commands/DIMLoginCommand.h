@@ -2,7 +2,7 @@
 //
 //  DIMP : Decentralized Instant Messaging Protocol
 //
-//                               Written in 2019 by Moky <albert.moky@gmail.com>
+//                               Written in 2020 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
@@ -28,40 +28,66 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMReceiptCommand.h
-//  DIMClient
+//  DIMLoginCommand.h
+//  DIMSDK
 //
-//  Created by Albert Moky on 2019/3/28.
-//  Copyright © 2019 DIM Group. All rights reserved.
+//  Created by Albert Moky on 2020/4/14.
+//  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
 #import <DIMCore/DIMCore.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMReceiptCommand : DIMCommand
-
-@property (readonly, strong, nonatomic) NSString *message;
-
-// original message info
-@property (strong, nonatomic, nullable) DIMEnvelope *envelope;
-@property (strong, nonatomic, nullable) NSData *signature;
+@class DIMStation;
+@class DIMServiceProvider;
 
 /*
  *  Command message: {
  *      type : 0x88,
- *      sn   : 123,  // the same serial number with the original message
+ *      sn   : 123,
  *
- *      command : "receipt",
- *      message : "...",
- *      // -- extra info
- *      sender    : "...",
- *      receiver  : "...",
- *      time      : 0,
- *      signature : "..." // the same signature with the original message
+ *      command  : "login",
+ *      time     : 0,
+ *      //---- client info ----
+ *      ID       : "{UserID}",
+ *      device   : "DeviceID",  // (optional)
+ *      agent    : "UserAgent", // (optional)
+ *      //---- server info ----
+ *      station  : {
+ *          ID   : "{StationID}",
+ *          host : "{IP}",
+ *          port : 9394
+ *      },
+ *      provider : {
+ *          ID   : "{SP_ID}"
+ *      }
  *  }
  */
-- (instancetype)initWithMessage:(NSString *)message;
+@interface DIMLoginCommand : DIMCommand
+
+@property (readonly, strong, nonatomic) NSDate *time;
+
+#pragma mark Client Info
+
+// User ID
+@property (readonly, strong, nonatomic) NSString *ID;
+// Device ID
+@property (strong, nonatomic, nullable) NSString *device;
+// User-Agent
+@property (strong, nonatomic, nullable) NSString *agent;
+
+#pragma mark Server Info
+
+// station
+@property (strong, nonatomic) NSDictionary *stationInfo;
+// SP
+@property (strong, nonatomic, nullable) NSDictionary *providerInfo;
+
+- (instancetype)initWithID:(DIMID *)ID;
+
+- (void)copyStationInfo:(DIMStation *)station;
+- (void)copyProviderInfo:(DIMServiceProvider *)provider;
 
 @end
 
