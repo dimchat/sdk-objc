@@ -86,8 +86,8 @@
     }
     
     // response
-    DIMContent *res = [[DIMReceiptCommand alloc] initWithMessage:text];
-    res.group = content.group;
+    DIMReceiptCommand *res = [[DIMReceiptCommand alloc] initWithMessage:text];
+    res.envelope = rMsg.envelope;
     return res;
 }
 
