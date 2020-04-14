@@ -65,6 +65,9 @@ static NSString *s_application_tag = @"chat.dim.rsa.private";
               
               (id)kSecMatchLimit          :(id)kSecMatchLimitOne,
               (id)kSecReturnRef           :(id)kCFBooleanTrue,
+
+              // FIXME: 'Status = -25308'
+              (id)kSecAttrAccessible      :(id)kSecAttrAccessibleWhenUnlocked,
               };
     CFTypeRef result = NULL;
     OSStatus status = SecItemCopyMatching((CFDictionaryRef)query, &result);
@@ -119,6 +122,9 @@ static NSString *s_application_tag = @"chat.dim.rsa.private";
               
               (id)kSecMatchLimit          :(id)kSecMatchLimitOne,
               (id)kSecReturnRef           :(id)kCFBooleanTrue,
+
+              // FIXME: 'Status = -25308'
+              (id)kSecAttrAccessible      :(id)kSecAttrAccessibleWhenUnlocked,
               };
     CFTypeRef result = NULL;
     OSStatus status = SecItemCopyMatching((CFDictionaryRef)query, &result);
