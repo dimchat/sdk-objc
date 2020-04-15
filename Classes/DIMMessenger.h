@@ -83,23 +83,11 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
 
 @end
 
-@protocol DIMConnectionDelegate <NSObject>
-
-/**
- *  Receive data package
- *
- * @param data - package from network connection
- * @return response to sender
- */
-- (nullable NSData *)onReceivePackage:(NSData *)data;
-
-@end
-
 #pragma mark -
 
 @class DIMFacebook;
 
-@interface DIMMessenger : DIMTransceiver <DIMConnectionDelegate>
+@interface DIMMessenger : DIMTransceiver
 
 @property (readonly, strong, nonatomic) NSDictionary *context;
 
@@ -111,18 +99,35 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
 
 - (nullable DIMUser *)selectUserWithID:(DIMID *)receiver;
 
+/**
+ *  Proess received data package
+ *
+ * @param data - package from network connection
+ * @return response to sender
+ */
+- (nullable NSData *)processPackage:(NSData *)data;
+
 - (nullable DIMReliableMessage *)processMessage:(DIMReliableMessage *)rMsg;
 
 - (nullable DIMContent *)processContent:(DIMContent *)content
                                  sender:(DIMID *)sender
                                 message:(DIMReliableMessage *)rMsg;
 
-@end
+/**
+ * Save the message into local storage
+ *
+ * @param iMsg - instant message
+ * @return true on success
+ */
+- (BOOL)saveMessage:(DIMInstantMessage *)iMsg;
 
-@interface DIMMessenger (Serialization)
-
-- (nullable NSData *)serializeMessage:(DIMReliableMessage *)rMsg;
-- (nullable DIMReliableMessage *)deserializeMessage:(NSData *)data;
+/**
+ *  Suspend message for the contact's meta
+ *
+ * @param msg - message received from network / instant message to be sent
+ * @return NO on error
+ */
+- (BOOL)suspendMessage:(DIMMessage *)msg;
 
 @end
 
@@ -166,26 +171,6 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
 
 - (BOOL)sendReliableMessage:(DIMReliableMessage *)rMsg
                    callback:(nullable DIMMessengerCallback)callback;
-
-@end
-
-@interface DIMMessenger (SavingMessage)
-
-/**
- * Save the message into local storage
- *
- * @param iMsg - instant message
- * @return true on success
- */
-- (BOOL)saveMessage:(DIMInstantMessage *)iMsg;
-
-/**
- *  Suspend message for the contact's meta
- *
- * @param msg - message received from network / instant message to be sent
- * @return NO on error
- */
-- (BOOL)suspendMessage:(DIMMessage *)msg;
 
 @end
 

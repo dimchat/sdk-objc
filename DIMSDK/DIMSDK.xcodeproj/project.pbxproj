@@ -85,6 +85,7 @@
 		E99D9F3D2444E8E50003BC1B /* DIMHandshakeCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = E99D9F3B2444E8E50003BC1B /* DIMHandshakeCommand.m */; };
 		E99D9F442444EC0C0003BC1B /* DIMLoginCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = E99D9F422444EC0C0003BC1B /* DIMLoginCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E99D9F452444EC0C0003BC1B /* DIMLoginCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = E99D9F432444EC0C0003BC1B /* DIMLoginCommand.m */; };
+		E99D9F492445E4570003BC1B /* DIMMessenger+Send.m in Headers */ = {isa = PBXBuildFile; fileRef = E99D9F482445E4570003BC1B /* DIMMessenger+Send.m */; };
 		E9A1F311243F22E70015D18D /* MKMRSAPrivateKey+PersistentStore.m in Sources */ = {isa = PBXBuildFile; fileRef = E9A1F309243F22E70015D18D /* MKMRSAPrivateKey+PersistentStore.m */; };
 		E9A1F312243F22E70015D18D /* MKMRSAPublicKey.m in Sources */ = {isa = PBXBuildFile; fileRef = E9A1F30B243F22E70015D18D /* MKMRSAPublicKey.m */; };
 		E9A1F313243F22E70015D18D /* MKMRSAPrivateKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E9A1F30C243F22E70015D18D /* MKMRSAPrivateKey.h */; };
@@ -213,6 +214,7 @@
 		E99D9F3B2444E8E50003BC1B /* DIMHandshakeCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMHandshakeCommand.m; sourceTree = "<group>"; };
 		E99D9F422444EC0C0003BC1B /* DIMLoginCommand.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMLoginCommand.h; sourceTree = "<group>"; };
 		E99D9F432444EC0C0003BC1B /* DIMLoginCommand.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMLoginCommand.m; sourceTree = "<group>"; };
+		E99D9F482445E4570003BC1B /* DIMMessenger+Send.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "DIMMessenger+Send.m"; sourceTree = "<group>"; };
 		E9A1F309243F22E70015D18D /* MKMRSAPrivateKey+PersistentStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MKMRSAPrivateKey+PersistentStore.m"; sourceTree = "<group>"; };
 		E9A1F30B243F22E70015D18D /* MKMRSAPublicKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKMRSAPublicKey.m; sourceTree = "<group>"; };
 		E9A1F30C243F22E70015D18D /* MKMRSAPrivateKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKMRSAPrivateKey.h; sourceTree = "<group>"; };
@@ -332,6 +334,7 @@
 				E919B0112390FAA1004F7FF9 /* DIMKeyStore.m */,
 				E919B00B2390FAA1004F7FF9 /* DIMMessenger.h */,
 				E919B00C2390FAA1004F7FF9 /* DIMMessenger.m */,
+				E99D9F482445E4570003BC1B /* DIMMessenger+Send.m */,
 				E919B0082390FA3B004F7FF9 /* DIMSDK.h */,
 			);
 			name = Classes;
@@ -499,6 +502,7 @@
 				E959653623912BDB00DAA870 /* DIMHistoryProcessor.h in Headers */,
 				E95965072391077F00DAA870 /* DIMMuteCommand.h in Headers */,
 				E915CE5C243C62B700B98FE3 /* MKMImmortals.h in Headers */,
+				E99D9F492445E4570003BC1B /* DIMMessenger+Send.m in Headers */,
 				E9A1F317243F22E70015D18D /* MKMAESKey.h in Headers */,
 				E99D9F3C2444E8E50003BC1B /* DIMHandshakeCommand.h in Headers */,
 				E95965052391077F00DAA870 /* DIMBlockCommand.h in Headers */,

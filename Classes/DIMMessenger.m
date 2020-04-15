@@ -72,7 +72,7 @@ static inline void load_cmd_classes(void) {
     // handshake
     [DIMCommand registerClass:[DIMHandshakeCommand class]
                    forCommand:DIMCommand_Handshake];
-    // handshake
+    // login
     [DIMCommand registerClass:[DIMLoginCommand class]
                    forCommand:DIMCommand_Login];
 
@@ -174,104 +174,7 @@ static inline void load_cmd_classes(void) {
     return nil;
 }
 
-- (nullable DIMSecureMessage *)trimMessage:(DIMSecureMessage *)sMsg {
-    DIMID *receiver = [self.facebook IDWithString:sMsg.envelope.receiver];
-    DIMUser *user = [self selectUserWithID:receiver];
-    if (!user) {
-        // local users not matched
-        sMsg = nil;
-    } else if ([receiver isGroup]) {
-        // trim group message
-        sMsg = [sMsg trimForMember:user.ID];
-    }
-    return sMsg;
-}
-
-#pragma mark DKDInstantMessageDelegate
-
-- (nullable NSData *)message:(DIMInstantMessage *)iMsg
-            serializeContent:(DIMContent *)content
-                     withKey:(NSDictionary *)password {
-    
-    DIMSymmetricKey *key = MKMSymmetricKeyFromDictionary(password);
-    NSAssert(key == password, @"irregular symmetric key: %@", password);
-    
-    // check attachment for File/Image/Audio/Video message content
-    if ([content isKindOfClass:[DIMFileContent class]]) {
-        DIMFileContent *file = (DIMFileContent *)content;
-        NSAssert(file.fileData != nil, @"content.fileData should not be empty");
-        NSAssert(file.URL == nil, @"content.URL exists, already uploaded?");
-        // encrypt and upload file data onto CDN and save the URL in message content
-        NSData *CT = [key encrypt:file.fileData];
-        NSURL *url = [_delegate uploadData:CT forMessage:iMsg];
-        if (url) {
-            // replace 'data' with 'URL'
-            file.URL = url;
-            file.fileData = nil;
-        }
-        //[iMsg setObject:file forKey:@"content"];
-    }
-    
-    return [super message:iMsg serializeContent:content withKey:key];
-}
-
-- (nullable NSData *)message:(DIMInstantMessage *)iMsg
-                  encryptKey:(NSData *)data
-                 forReceiver:(NSString *)receiver {
-    DIMID *to = [self.facebook IDWithString:receiver];
-    id<DIMEncryptKey> key = [self.facebook publicKeyForEncryption:to];
-    if (!key) {
-        DIMMeta *meta = [self.facebook metaForID:to];
-        if (![meta.key conformsToProtocol:@protocol(MKMEncryptKey)]) {
-            // save this message in a queue waiting receiver's meta response
-            [self suspendMessage:iMsg];
-            //NSAssert(false, @"failed to get encrypt key for receiver: %@", receiver);
-            return nil;
-        }
-    }
-    return [super message:iMsg encryptKey:data forReceiver:receiver];
-}
-
-#pragma mark DKDSecureMessageDelegate
-
-- (nullable DIMContent *)message:(DIMSecureMessage *)sMsg
-              deserializeContent:(NSData *)data
-                         withKey:(NSDictionary *)password {
-    DIMSymmetricKey *key = MKMSymmetricKeyFromDictionary(password);
-    NSAssert(key == password, @"irregular symmetric key: %@", password);
-    
-    DIMContent *content = [super message:sMsg deserializeContent:data withKey:key];
-    if (!content) {
-        return nil;
-    }
-    
-    // check attachment for File/Image/Audio/Video message content
-    if ([content isKindOfClass:[DIMFileContent class]]) {
-        DIMFileContent *file = (DIMFileContent *)content;
-        NSAssert(file.URL != nil, @"content.URL should not be empty");
-        NSAssert(file.fileData == nil, @"content.fileData already download");
-        DIMInstantMessage *iMsg;
-        iMsg = [[DIMInstantMessage alloc] initWithContent:content
-                                                 envelope:sMsg.envelope];
-        // download from CDN
-        NSData *fileData = [_delegate downloadData:file.URL forMessage:iMsg];
-        if (fileData) {
-            // decrypt file data
-            file.fileData = [key decrypt:fileData];
-            file.URL = nil;
-        } else {
-            // save the symmetric key for decrypte file data later
-            file.password = key;
-        }
-        //content = file;
-    }
-    
-    return content;
-}
-
-#pragma mark DIMConnectionDelegate
-
-- (nullable NSData *)onReceivePackage:(NSData *)data {
+- (nullable NSData *)processPackage:(NSData *)data {
     // 1. deserialize message
     DIMReliableMessage *rMsg = [self deserializeMessage:data];
     if (!rMsg) {
@@ -363,9 +266,118 @@ static inline void load_cmd_classes(void) {
     return [_cpu processContent:content sender:sender message:rMsg];
 }
 
+- (BOOL)saveMessage:(DIMInstantMessage *)iMsg {
+    NSAssert(false, @"override me!");
+    return NO;
+}
+
+- (BOOL)suspendMessage:(DIMMessage *)msg {
+    NSAssert(false, @"override me!");
+    return NO;
+}
+
+@end
+
+@implementation DIMMessenger (MessageDelegate)
+
+#pragma mark DKDInstantMessageDelegate
+
+- (nullable NSData *)message:(DIMInstantMessage *)iMsg
+            serializeContent:(DIMContent *)content
+                     withKey:(NSDictionary *)password {
+    
+    DIMSymmetricKey *key = MKMSymmetricKeyFromDictionary(password);
+    NSAssert(key == password, @"irregular symmetric key: %@", password);
+    
+    // check attachment for File/Image/Audio/Video message content
+    if ([content isKindOfClass:[DIMFileContent class]]) {
+        DIMFileContent *file = (DIMFileContent *)content;
+        NSAssert(file.fileData != nil, @"content.fileData should not be empty");
+        NSAssert(file.URL == nil, @"content.URL exists, already uploaded?");
+        // encrypt and upload file data onto CDN and save the URL in message content
+        NSData *CT = [key encrypt:file.fileData];
+        NSURL *url = [_delegate uploadData:CT forMessage:iMsg];
+        if (url) {
+            // replace 'data' with 'URL'
+            file.URL = url;
+            file.fileData = nil;
+        }
+        //[iMsg setObject:file forKey:@"content"];
+    }
+    
+    return [super message:iMsg serializeContent:content withKey:key];
+}
+
+- (nullable NSData *)message:(DIMInstantMessage *)iMsg
+                  encryptKey:(NSData *)data
+                 forReceiver:(NSString *)receiver {
+    DIMID *to = [self.facebook IDWithString:receiver];
+    id<DIMEncryptKey> key = [self.facebook publicKeyForEncryption:to];
+    if (!key) {
+        DIMMeta *meta = [self.facebook metaForID:to];
+        if (![meta.key conformsToProtocol:@protocol(MKMEncryptKey)]) {
+            // save this message in a queue waiting receiver's meta response
+            [self suspendMessage:iMsg];
+            //NSAssert(false, @"failed to get encrypt key for receiver: %@", receiver);
+            return nil;
+        }
+    }
+    return [super message:iMsg encryptKey:data forReceiver:receiver];
+}
+
+#pragma mark DKDSecureMessageDelegate
+
+- (nullable DIMContent *)message:(DIMSecureMessage *)sMsg
+              deserializeContent:(NSData *)data
+                         withKey:(NSDictionary *)password {
+    DIMSymmetricKey *key = MKMSymmetricKeyFromDictionary(password);
+    NSAssert(key == password, @"irregular symmetric key: %@", password);
+    
+    DIMContent *content = [super message:sMsg deserializeContent:data withKey:key];
+    if (!content) {
+        return nil;
+    }
+    
+    // check attachment for File/Image/Audio/Video message content
+    if ([content isKindOfClass:[DIMFileContent class]]) {
+        DIMFileContent *file = (DIMFileContent *)content;
+        NSAssert(file.URL != nil, @"content.URL should not be empty");
+        NSAssert(file.fileData == nil, @"content.fileData already download");
+        DIMInstantMessage *iMsg;
+        iMsg = [[DIMInstantMessage alloc] initWithContent:content
+                                                 envelope:sMsg.envelope];
+        // download from CDN
+        NSData *fileData = [_delegate downloadData:file.URL forMessage:iMsg];
+        if (fileData) {
+            // decrypt file data
+            file.fileData = [key decrypt:fileData];
+            file.URL = nil;
+        } else {
+            // save the symmetric key for decrypte file data later
+            file.password = key;
+        }
+        //content = file;
+    }
+    
+    return content;
+}
+
 @end
 
 @implementation DIMMessenger (Transform)
+
+- (nullable DIMSecureMessage *)trimMessage:(DIMSecureMessage *)sMsg {
+    DIMID *receiver = [self.facebook IDWithString:sMsg.envelope.receiver];
+    DIMUser *user = [self selectUserWithID:receiver];
+    if (!user) {
+        // local users not matched
+        sMsg = nil;
+    } else if ([receiver isGroup]) {
+        // trim group message
+        sMsg = [sMsg trimForMember:user.ID];
+    }
+    return sMsg;
+}
 
 - (nullable DIMSecureMessage *)verifyMessage:(DIMReliableMessage *)rMsg {
     // Notice: check meta before calling me
@@ -400,159 +412,6 @@ static inline void load_cmd_classes(void) {
     }
     // decrypt message
     return [super decryptMessage:msg];
-}
-
-@end
-
-@implementation DIMMessenger (Serialization)
-
-- (nullable NSData *)serializeMessage:(DIMReliableMessage *)rMsg {
-    return MKMJSONEncode(rMsg);
-}
-
-- (nullable DIMReliableMessage *)deserializeMessage:(NSData *)data {
-    NSDictionary *dict = MKMJSONDecode(data);
-    // TODO: translate short keys
-    //       'S' -> 'sender'
-    //       'R' -> 'receiver'
-    //       'W' -> 'time'
-    //       'T' -> 'type'
-    //       'G' -> 'group'
-    //       ------------------
-    //       'D' -> 'data'
-    //       'V' -> 'signature'
-    //       'K' -> 'key'
-    //       ------------------
-    //       'M' -> 'meta'
-    return DKDReliableMessageFromDictionary(dict);
-}
-
-@end
-
-@implementation DIMMessenger (Send)
-
-- (BOOL)sendContent:(DIMContent *)content
-           receiver:(DIMID *)receiver {
-    
-    return [self sendContent:content receiver:receiver callback:NULL dispersedly:NO];
-}
-
-- (BOOL)sendContent:(DIMContent *)content
-           receiver:(DIMID *)receiver
-           callback:(nullable DIMMessengerCallback)callback {
-    
-    return [self sendContent:content receiver:receiver callback:callback dispersedly:NO];
-}
-
-- (BOOL)sendContent:(DIMContent *)content
-           receiver:(DIMID *)receiver
-           callback:(nullable DIMMessengerCallback)callback
-        dispersedly:(BOOL)split {
-    
-    //Application Layer should make sure user is already login before it send message to server.
-    //Application layer should put message into queue so that it will send automatically after user login
-    DIMUser *user = self.facebook.currentUser;
-    NSAssert(user, @"current user not found");
-    
-    DIMInstantMessage *iMsg;
-    iMsg = [[DIMInstantMessage alloc] initWithContent:content
-                                               sender:user.ID
-                                             receiver:receiver
-                                                 time:nil];
-    return [self sendInstantMessage:iMsg
-                           callback:callback
-                        dispersedly:split];
-}
-
-- (BOOL)sendInstantMessage:(DIMInstantMessage *)iMsg {
-    
-    return [self sendInstantMessage:iMsg callback:NULL dispersedly:NO];
-}
-
-- (BOOL)sendInstantMessage:(DIMInstantMessage *)iMsg
-                  callback:(nullable DIMMessengerCallback)callback {
-    
-    return [self sendInstantMessage:iMsg callback:callback dispersedly:NO];
-}
-
-- (BOOL)sendInstantMessage:(DIMInstantMessage *)iMsg
-                  callback:(nullable DIMMessengerCallback)callback
-               dispersedly:(BOOL)split {
-    
-    // Send message (secured + certified) to target station
-    DIMSecureMessage *sMsg = [self encryptMessage:iMsg];
-    DIMReliableMessage *rMsg = [self signMessage:sMsg];
-    if (!rMsg) {
-        NSAssert(false, @"failed to encrypt and sign message: %@", iMsg);
-        iMsg.content.state = DIMMessageState_Error;
-        iMsg.content.error = @"Encryption failed.";
-        return NO;
-    }
-    
-    DIMID *receiver = [self.facebook IDWithString:iMsg.envelope.receiver];
-    BOOL OK = YES;
-    if (split && [receiver isGroup]) {
-        NSAssert([receiver isEqual:iMsg.content.group], @"error: %@", iMsg);
-        // split for each members
-        NSArray<DIMID *> *members = [self.facebook membersOfGroup:receiver];
-        NSAssert([members count] > 0, @"group members empty: %@", receiver);
-        NSArray *messages = [rMsg splitForMembers:members];
-        if ([members count] == 0) {
-            NSLog(@"failed to split msg, send it to group: %@", receiver);
-            OK = [self sendReliableMessage:rMsg callback:callback];
-        } else {
-            for (DIMReliableMessage *item in messages) {
-                if (![self sendReliableMessage:item callback:callback]) {
-                    OK = NO;
-                }
-            }
-        }
-    } else {
-        OK = [self sendReliableMessage:rMsg callback:callback];
-    }
-    
-    // sending status
-    if (OK) {
-        iMsg.content.state = DIMMessageState_Sending;
-    } else {
-        NSLog(@"cannot send message now, put in waiting queue: %@", iMsg);
-        iMsg.content.state = DIMMessageState_Waiting;
-    }
-    
-    if (![self saveMessage:iMsg]) {
-        return NO;
-    }
-    return OK;
-}
-
-- (BOOL)sendReliableMessage:(DIMReliableMessage *)rMsg {
-    
-    return [self sendReliableMessage:rMsg callback:NULL];
-}
-
-- (BOOL)sendReliableMessage:(DIMReliableMessage *)rMsg
-                   callback:(nullable DIMMessengerCallback)callback {
-    
-    NSData *data = [self serializeMessage:rMsg];
-    NSAssert(_delegate, @"transceiver delegate not set");
-    return [_delegate sendPackage:data
-                completionHandler:^(NSError * _Nullable error) {
-                    !callback ?: callback(rMsg, error);
-                }];
-}
-
-@end
-
-@implementation DIMMessenger (SavingMessage)
-
-- (BOOL)saveMessage:(DIMInstantMessage *)iMsg {
-    NSAssert(false, @"override me!");
-    return NO;
-}
-
-- (BOOL)suspendMessage:(DIMMessage *)msg {
-    NSAssert(false, @"override me!");
-    return NO;
 }
 
 @end
