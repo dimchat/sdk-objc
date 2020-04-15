@@ -35,6 +35,9 @@
 //  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
+#import "DKDInstantMessage+Extension.h"
+#import "DIMFacebook.h"
+
 #import "DIMMessenger.h"
 
 @implementation DIMMessenger (Send)
@@ -142,11 +145,11 @@
                    callback:(nullable DIMMessengerCallback)callback {
     
     NSData *data = [self serializeMessage:rMsg];
-    NSAssert(_delegate, @"transceiver delegate not set");
-    return [_delegate sendPackage:data
-                completionHandler:^(NSError * _Nullable error) {
-                    !callback ?: callback(rMsg, error);
-                }];
+    NSAssert(self.delegate, @"transceiver delegate not set");
+    return [self.delegate sendPackage:data
+                    completionHandler:^(NSError * _Nullable error) {
+                        !callback ?: callback(rMsg, error);
+                    }];
 }
 
 @end

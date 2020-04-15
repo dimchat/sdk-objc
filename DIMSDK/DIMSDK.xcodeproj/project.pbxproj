@@ -26,6 +26,7 @@
 		E919B0172390FAA1004F7FF9 /* DIMFacebook.m in Sources */ = {isa = PBXBuildFile; fileRef = E919B00F2390FAA1004F7FF9 /* DIMFacebook.m */; };
 		E919B0182390FAA1004F7FF9 /* DIMAddressNameService.m in Sources */ = {isa = PBXBuildFile; fileRef = E919B0102390FAA1004F7FF9 /* DIMAddressNameService.m */; };
 		E919B0192390FAA1004F7FF9 /* DIMKeyStore.m in Sources */ = {isa = PBXBuildFile; fileRef = E919B0112390FAA1004F7FF9 /* DIMKeyStore.m */; };
+		E91A2A922446F85A0034CDF9 /* DIMMessenger+Send.m in Sources */ = {isa = PBXBuildFile; fileRef = E99D9F482445E4570003BC1B /* DIMMessenger+Send.m */; };
 		E94DEB7F23A1053400FBFD3C /* DIMServiceProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = E94DEB6A23A1053400FBFD3C /* DIMServiceProvider.m */; };
 		E94DEB8023A1053400FBFD3C /* DIMRobot.m in Sources */ = {isa = PBXBuildFile; fileRef = E94DEB6B23A1053400FBFD3C /* DIMRobot.m */; };
 		E94DEB8123A1053400FBFD3C /* DIMStation.h in Headers */ = {isa = PBXBuildFile; fileRef = E94DEB6C23A1053400FBFD3C /* DIMStation.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -684,6 +685,7 @@
 				E94DEB8D23A1053400FBFD3C /* DIMPolylogue.m in Sources */,
 				E94DEB8C23A1053400FBFD3C /* DIMStation.m in Sources */,
 				E919B0142390FAA1004F7FF9 /* DIMMessenger.m in Sources */,
+				E91A2A922446F85A0034CDF9 /* DIMMessenger+Send.m in Sources */,
 				E959650A2391077F00DAA870 /* DIMMuteCommand.m in Sources */,
 				E94DEB8E23A1053400FBFD3C /* DIMChatroom.m in Sources */,
 			);

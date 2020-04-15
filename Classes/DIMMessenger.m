@@ -36,7 +36,6 @@
 //
 
 #import "NSObject+Singleton.h"
-#import "DKDInstantMessage+Extension.h"
 
 #import "DIMFacebook.h"
 #import "DIMKeyStore.h"

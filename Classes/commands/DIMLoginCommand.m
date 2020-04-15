@@ -135,10 +135,20 @@
     }
 }
 - (void)copyStationInfo:(DIMStation *)station {
+    DIMID *ID = station.ID;
+    NSString *host = station.host;
+    UInt32 port = station.port;
+    if (![ID isValid] || [host length] == 0) {
+        NSAssert(!station, @"station error: %@", station);
+        return;
+    }
+    if (port == 0) {
+        port = 9394;
+    }
     [self setStationInfo:@{
-        @"ID"  : station.ID,
-        @"host": station.host,
-        @"port": @(station.port),
+        @"ID"  : ID,
+        @"host": host,
+        @"port": @(port),
     }];
 }
 
@@ -153,8 +163,13 @@
     }
 }
 - (void)copyProviderInfo:(DIMServiceProvider *)provider {
+    DIMID *ID = provider.ID;
+    if (![ID isValid]) {
+        NSAssert(!provider, @"SP error: %@", provider);
+        return;
+    }
     [self setProviderInfo:@{
-        @"ID"  : provider.ID,
+        @"ID"  : ID,
     }];
 }
 
