@@ -73,6 +73,10 @@
         if (ID) {
             [_storeDictionary setObject:ID forKey:@"ID"];
         }
+        // time
+        _time = [[NSDate alloc] init];
+        NSNumber *timestemp = NSNumberFromDate(_time);
+        [_storeDictionary setObject:timestemp forKey:@"time"];
     }
     return self;
 }
