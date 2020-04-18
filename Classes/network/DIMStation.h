@@ -82,9 +82,9 @@ NS_ASSUME_NONNULL_BEGIN
  *  Received a new data package from the station
  *
  * @param server - current station
- * @param data - data package to send
+ * @param data - data package received
  */
-- (void)station:(DIMStation *)server didReceivePackage:(NSData *)data;
+- (void)station:(DIMStation *)server onReceivePackage:(NSData *)data;
 
 @optional
 
