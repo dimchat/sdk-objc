@@ -100,7 +100,7 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
 - (nullable DIMUser *)selectUserWithID:(DIMID *)receiver;
 
 /**
- *  Proess received data package
+ *  Process received data package
  *
  * @param data - package from network connection
  * @return response to sender

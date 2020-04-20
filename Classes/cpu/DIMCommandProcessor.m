@@ -41,9 +41,45 @@
 
 #import "DIMMetaCommandProcessor.h"
 #import "DIMProfileCommandProcessor.h"
-#import "DIMDefaultProcessor.h"
 
 #import "DIMCommandProcessor.h"
+
+@interface _DefaultCommandProcessor : DIMCommandProcessor
+
+@end
+
+@implementation _DefaultCommandProcessor
+
+//
+//  Main
+//
+- (nullable DIMContent *)processContent:(DIMContent *)content
+                                 sender:(DIMID *)sender
+                                message:(DIMReliableMessage *)rMsg {
+    NSAssert([content isKindOfClass:[DIMCommand class]], @"command error: %@", content);
+    // process command content by name
+    DIMCommand *cmd = (DIMCommand *)content;
+    NSString *text = [NSString stringWithFormat:@"Command (%@) not support yet!", cmd.command];
+    DIMContent *res = [[DIMTextContent alloc] initWithText:text];
+    res.group = content.group;
+    return res;
+}
+
+@end
+
+static inline void load_cpu_classes(void) {
+    // meta
+    [DIMCommandProcessor registerClass:[DIMMetaCommandProcessor class]
+                            forCommand:DIMCommand_Meta];
+    // profile
+    [DIMCommandProcessor registerClass:[DIMProfileCommandProcessor class]
+                            forCommand:DIMCommand_Profile];
+    // unknown command (default)
+    [DIMCommandProcessor registerClass:[_DefaultCommandProcessor class]
+                            forCommand:DIMCommand_Unknown];
+}
+
+#pragma mark -
 
 @interface DIMCommandProcessor () {
     
@@ -57,18 +93,6 @@
 - (DIMCommandProcessor *)processorForCommand:(NSString *)name;
 
 @end
-
-static inline void load_cpu_classes(void) {
-    // meta
-    [DIMCommandProcessor registerClass:[DIMMetaCommandProcessor class]
-                            forCommand:DIMCommand_Meta];
-    // profile
-    [DIMCommandProcessor registerClass:[DIMProfileCommandProcessor class]
-                            forCommand:DIMCommand_Profile];
-    // unknown command (default)
-    [DIMCommandProcessor registerClass:[DIMDefaultCommandProcessor class]
-                            forCommand:DIMCommand_Unknown];
-}
 
 @implementation DIMCommandProcessor
 

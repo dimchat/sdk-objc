@@ -43,22 +43,27 @@
 #import "DIMForwardContentProcessor.h"
 #import "DIMCommandProcessor.h"
 #import "DIMHistoryProcessor.h"
-#import "DIMDefaultProcessor.h"
 
 #import "DIMContentProcessor.h"
 
-@interface DIMContentProcessor () {
-    
-    __weak DIMMessenger *_messenger;
-    
-    NSMutableDictionary<NSNumber *, DIMContentProcessor *> *_processors;
-}
+@interface _DefaultContentProcessor : DIMContentProcessor
 
 @end
 
-@interface DIMContentProcessor (Create)
+@implementation _DefaultContentProcessor
 
-- (DIMContentProcessor *)processorForContentType:(UInt8)type;
+//
+//  Main
+//
+- (nullable DIMContent *)processContent:(DIMContent *)content
+                                 sender:(DIMID *)sender
+                                message:(DIMReliableMessage *)rMsg {
+    // process content by type
+    NSString *text = [NSString stringWithFormat:@"Content (type: %u) not support yet!", content.type];
+    DIMContent *res = [[DIMTextContent alloc] initWithText:text];
+    res.group = content.group;
+    return res;
+}
 
 @end
 
@@ -75,9 +80,26 @@ static inline void load_cpu_classes(void) {
                                forType:DKDContentType_History];
     
     // unknown content (default)
-    [DIMContentProcessor registerClass:[DIMDefaultContentProcessor class]
+    [DIMContentProcessor registerClass:[_DefaultContentProcessor class]
                                forType:DKDContentType_Unknown];
 }
+
+#pragma mark -
+
+@interface DIMContentProcessor () {
+    
+    __weak DIMMessenger *_messenger;
+    
+    NSMutableDictionary<NSNumber *, DIMContentProcessor *> *_processors;
+}
+
+@end
+
+@interface DIMContentProcessor (Create)
+
+- (DIMContentProcessor *)processorForContentType:(UInt8)type;
+
+@end
 
 @implementation DIMContentProcessor
 
