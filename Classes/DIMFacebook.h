@@ -49,11 +49,7 @@ NS_ASSUME_NONNULL_BEGIN
 #define MKMNetwork_IsThing(network)    ((network) & MKMNetwork_Thing)
 #define MKMNetwork_IsRobot(network)    ((network) == MKMNetwork_Robot)
 
-@protocol DIMAddressNameService;
-
 @interface DIMFacebook : DIMBarrack
-
-@property (weak, nonatomic) id<DIMAddressNameService> ans;
 
 @property (readonly, strong, nonatomic, nullable) NSArray<DIMUser *> *localUsers;
 @property (readonly, strong, nonatomic, nullable) DIMUser *currentUser;

@@ -47,8 +47,6 @@
 #import "DIMPolylogue.h"
 #import "DIMChatroom.h"
 
-#import "DIMAddressNameService.h"
-
 #import "DIMFacebook.h"
 
 static inline void load_plugins(void) {
@@ -76,10 +74,6 @@ static inline void load_plugins(void) {
         });
     }
     return self;
-}
-
-- (nullable DIMID *)ansGet:(NSString *)name {
-    return [_ans IDWithName:name];
 }
 
 - (nullable NSArray<DIMUser *> *)localUsers {
@@ -114,11 +108,6 @@ static inline void load_plugins(void) {
 #pragma mark DIMBarrack
 
 - (nullable DIMID *)createID:(NSString *)string {
-    // try ANS record
-    DIMID *ID = [self ansGet:string];
-    if (ID) {
-        return ID;
-    }
     return MKMIDFromString(string);
 }
 
@@ -376,13 +365,8 @@ static inline void load_plugins(void) {
 #pragma mark Group Assistants
 
 - (nullable NSArray<DIMID *> *)assistantsOfGroup:(DIMID *)group {
-    NSAssert([group isGroup], @"group ID error: %@", group);
-    DIMID *assistant = [self IDWithString:@"assistant"];
-    if ([assistant isValid]) {
-        return @[assistant];
-    } else {
-        return nil;
-    }
+    NSAssert(false, @"implement me!");
+    return nil;
 }
 
 - (BOOL)group:(DIMID *)group hasAssistant:(DIMID *)assistant {
