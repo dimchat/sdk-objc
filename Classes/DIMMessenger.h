@@ -138,36 +138,22 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
  *
  * @param content - message content
  * @param receiver - receiver ID
+ * @param callback - callback function
  * @return true on success
  */
-- (BOOL)sendContent:(DIMContent *)content
-           receiver:(DIMID *)receiver;
-
 - (BOOL)sendContent:(DIMContent *)content
            receiver:(DIMID *)receiver
            callback:(nullable DIMMessengerCallback)callback;
 
-- (BOOL)sendContent:(DIMContent *)content
-           receiver:(DIMID *)receiver
-           callback:(nullable DIMMessengerCallback)callback
-        dispersedly:(BOOL)split;
-
 /**
  *  Send instant message (encrypt and sign) onto DIM network
  *
- *  @param iMsg - instant message
- *  @return NO on data/delegate error
+ * @param iMsg - instant message
+ * @param callback - callback function
+ * @return NO on data/delegate error
  */
-- (BOOL)sendInstantMessage:(DIMInstantMessage *)iMsg;
-
 - (BOOL)sendInstantMessage:(DIMInstantMessage *)iMsg
                   callback:(nullable DIMMessengerCallback)callback;
-
-- (BOOL)sendInstantMessage:(DIMInstantMessage *)iMsg
-                  callback:(nullable DIMMessengerCallback)callback
-               dispersedly:(BOOL)split;
-
-- (BOOL)sendReliableMessage:(DIMReliableMessage *)rMsg;
 
 - (BOOL)sendReliableMessage:(DIMReliableMessage *)rMsg
                    callback:(nullable DIMMessengerCallback)callback;

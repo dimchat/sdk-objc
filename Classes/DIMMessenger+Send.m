@@ -43,22 +43,8 @@
 @implementation DIMMessenger (Send)
 
 - (BOOL)sendContent:(DIMContent *)content
-           receiver:(DIMID *)receiver {
-    
-    return [self sendContent:content receiver:receiver callback:NULL dispersedly:NO];
-}
-
-- (BOOL)sendContent:(DIMContent *)content
            receiver:(DIMID *)receiver
            callback:(nullable DIMMessengerCallback)callback {
-    
-    return [self sendContent:content receiver:receiver callback:callback dispersedly:NO];
-}
-
-- (BOOL)sendContent:(DIMContent *)content
-           receiver:(DIMID *)receiver
-           callback:(nullable DIMMessengerCallback)callback
-        dispersedly:(BOOL)split {
     
     // Application Layer should make sure user is already login before it send message to server.
     // Application layer should put message into queue so that it will send automatically after user login
@@ -79,57 +65,28 @@
                                              receiver:receiver
                                                  time:nil];
     return [self sendInstantMessage:iMsg
-                           callback:callback
-                        dispersedly:split];
-}
-
-- (BOOL)sendInstantMessage:(DIMInstantMessage *)iMsg {
-    
-    return [self sendInstantMessage:iMsg callback:NULL dispersedly:NO];
+                           callback:callback];
 }
 
 - (BOOL)sendInstantMessage:(DIMInstantMessage *)iMsg
                   callback:(nullable DIMMessengerCallback)callback {
     
-    return [self sendInstantMessage:iMsg callback:callback dispersedly:NO];
-}
-
-- (BOOL)sendInstantMessage:(DIMInstantMessage *)iMsg
-                  callback:(nullable DIMMessengerCallback)callback
-               dispersedly:(BOOL)split {
-    
     // Send message (secured + certified) to target station
     DIMSecureMessage *sMsg = [self encryptMessage:iMsg];
+    if (!sMsg) {
+        // public key not found?
+        NSAssert(false, @"failed to encrypt message: %@", iMsg);
+        return NO;
+    }
     DIMReliableMessage *rMsg = [self signMessage:sMsg];
     if (!rMsg) {
-        NSAssert(false, @"failed to encrypt and sign message: %@", iMsg);
+        NSAssert(false, @"failed to sign message: %@", sMsg);
         iMsg.content.state = DIMMessageState_Error;
         iMsg.content.error = @"Encryption failed.";
         return NO;
     }
     
-    DIMID *receiver = [self.facebook IDWithString:iMsg.envelope.receiver];
-    BOOL OK = YES;
-    if (split && [receiver isGroup]) {
-        NSAssert([receiver isEqual:iMsg.content.group], @"error: %@", iMsg);
-        // split for each members
-        NSArray<DIMID *> *members = [self.facebook membersOfGroup:receiver];
-        NSAssert([members count] > 0, @"group members empty: %@", receiver);
-        NSArray *messages = [rMsg splitForMembers:members];
-        if ([members count] == 0) {
-            NSLog(@"failed to split msg, send it to group: %@", receiver);
-            OK = [self sendReliableMessage:rMsg callback:callback];
-        } else {
-            for (DIMReliableMessage *item in messages) {
-                if (![self sendReliableMessage:item callback:callback]) {
-                    OK = NO;
-                }
-            }
-        }
-    } else {
-        OK = [self sendReliableMessage:rMsg callback:callback];
-    }
-    
+    BOOL OK = [self sendReliableMessage:rMsg callback:callback];
     // sending status
     if (OK) {
         iMsg.content.state = DIMMessageState_Sending;
@@ -142,11 +99,6 @@
         return NO;
     }
     return OK;
-}
-
-- (BOOL)sendReliableMessage:(DIMReliableMessage *)rMsg {
-    
-    return [self sendReliableMessage:rMsg callback:NULL];
 }
 
 - (BOOL)sendReliableMessage:(DIMReliableMessage *)rMsg
