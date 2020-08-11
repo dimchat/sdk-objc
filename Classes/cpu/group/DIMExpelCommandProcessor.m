@@ -75,7 +75,7 @@
                                 message:(DIMReliableMessage *)rMsg {
     NSAssert([content isKindOfClass:[DIMExpelCommand class]], @"expel command error: %@", content);
     DIMExpelCommand *cmd = (DIMExpelCommand *)content;
-    DIMID *group = [self.facebook IDWithString:content.group];
+    DIMID *group = content.group;
     // 1. check permission
     if (![self.facebook group:group isOwner:sender]) {
         if (![self.facebook group:group hasAssistant:sender]) {

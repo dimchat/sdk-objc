@@ -60,7 +60,9 @@
     NSString *sender = [_storeDictionary objectForKey:@"sender"];
     NSString *receiver = [_storeDictionary objectForKey:@"receiver"];
     if (sender && receiver) {
-        return DKDEnvelopeFromDictionary(_storeDictionary);
+        DIMEnvelope *env = DKDEnvelopeFromDictionary(_storeDictionary);
+        env.delegate = self.delegate;
+        return env;
     } else {
         return nil;
     }

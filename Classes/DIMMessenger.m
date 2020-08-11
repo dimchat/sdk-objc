@@ -228,10 +228,13 @@ static inline void load_cmd_classes(void) {
 }
 
 - (nullable DIMInstantMessage *)processInstant:(DIMInstantMessage *)iMsg message:(DIMReliableMessage *)rMsg {
-    DIMFacebook *facebook = self.facebook;
+    // check message delegate
+    if (!iMsg.delegate) {
+        iMsg.delegate = self;
+    }
     DIMEnvelope *env = iMsg.envelope;
     DIMContent *content = iMsg.content;
-    DIMID *sender = [facebook IDWithString:env.sender];
+    DIMID *sender = env.sender;
     
     // process content from sender
     DIMContent *res = [self processContent:content sender:sender message:rMsg];
@@ -245,7 +248,7 @@ static inline void load_cmd_classes(void) {
     }
     
     // check receiver
-    DIMID *receiver = [facebook IDWithString:env.receiver];
+    DIMID *receiver = env.receiver;
     DIMUser *user = [self selectUserWithID:receiver];
     NSAssert(user, @"receiver error: %@", receiver);
     
@@ -366,7 +369,11 @@ static inline void load_cmd_classes(void) {
 @implementation DIMMessenger (Transform)
 
 - (nullable DIMSecureMessage *)trimMessage:(DIMSecureMessage *)sMsg {
-    DIMID *receiver = [self.facebook IDWithString:sMsg.envelope.receiver];
+    // check message delegate
+    if (!sMsg.delegate) {
+        sMsg.delegate = self;
+    }
+    DIMID *receiver = sMsg.envelope.receiver;
     DIMUser *user = [self selectUserWithID:receiver];
     if (!user) {
         // local users not matched
@@ -379,8 +386,12 @@ static inline void load_cmd_classes(void) {
 }
 
 - (nullable DIMSecureMessage *)verifyMessage:(DIMReliableMessage *)rMsg {
+    // check message delegate
+    if (!rMsg.delegate) {
+        rMsg.delegate = self;
+    }
     // Notice: check meta before calling me
-    DIMID *sender = [self.facebook IDWithString:rMsg.envelope.sender];
+    DIMID *sender = rMsg.envelope.sender;
     DIMMeta *meta = MKMMetaFromDictionary(rMsg.meta);
     if (meta) {
         // [Meta Protocol]

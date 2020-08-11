@@ -49,7 +49,7 @@
                                  sender:(DIMID *)sender
                                 message:(DIMReliableMessage *)rMsg {
     NSAssert([content isKindOfClass:[DIMQueryGroupCommand class]], @"query group command error: %@", content);
-    DIMID *group = [self.facebook IDWithString:content.group];
+    DIMID *group = content.group;
     // 1. check permission
     if (![self.facebook group:group hasMember:sender]) {
         if (![self.facebook group:group hasAssistant:sender]) {

@@ -93,7 +93,7 @@
                                 message:(DIMReliableMessage *)rMsg {
     NSAssert([content isKindOfClass:[DIMProfileCommand class]], @"profile command error: %@", content);
     DIMProfileCommand *cmd = (DIMProfileCommand *)content;
-    DIMID *ID = [self.facebook IDWithString:cmd.ID];
+    DIMID *ID = cmd.ID;
     DIMProfile *profile = cmd.profile;
     if (profile) {
         // check meta

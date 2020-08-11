@@ -110,7 +110,7 @@
     NSAssert([content isKindOfClass:[DIMResetGroupCommand class]] ||
              [content isKindOfClass:[DIMInviteCommand class]], @"invite command error: %@", content);
     DIMGroupCommand *cmd = (DIMGroupCommand *)content;
-    DIMID *group = [self.facebook IDWithString:content.group];
+    DIMID *group = content.group;
     // new members
     NSArray<DIMID *> *newMembers = [self membersFromCommand:cmd];
     if ([newMembers count] == 0) {

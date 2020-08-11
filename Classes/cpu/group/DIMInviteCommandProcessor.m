@@ -94,7 +94,7 @@
                                 message:(DIMReliableMessage *)rMsg {
     NSAssert([content isKindOfClass:[DIMInviteCommand class]], @"invite command error: %@", content);
     DIMInviteCommand *cmd = (DIMInviteCommand *)content;
-    DIMID *group = [self.facebook IDWithString:content.group];
+    DIMID *group = content.group;
     // 0. check whether group info empty
     if ([self isEmpty:group]) {
         // NOTICE:

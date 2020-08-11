@@ -63,7 +63,7 @@
                                  sender:(DIMID *)sender
                                 message:(DIMReliableMessage *)rMsg {
     NSAssert([content isKindOfClass:[DIMQuitCommand class]], @"quit command error: %@", content);
-    DIMID *group = [self.facebook IDWithString:content.group];
+    DIMID *group = content.group;
     // 1. check permission
     if ([self.facebook group:group isOwner:sender]) {
         NSAssert(false, @"owner cannot quit: %@ -> %@", sender, group);
