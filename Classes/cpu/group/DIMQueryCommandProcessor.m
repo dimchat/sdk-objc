@@ -45,11 +45,11 @@
 //
 //  Main
 //
-- (nullable DIMContent *)processContent:(DIMContent *)content
-                                 sender:(DIMID *)sender
-                                message:(DIMReliableMessage *)rMsg {
+- (nullable id<DKDContent>)processContent:(id<DKDContent>)content
+                                 sender:(id<MKMID>)sender
+                                message:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMQueryGroupCommand class]], @"query group command error: %@", content);
-    DIMID *group = content.group;
+    id<MKMID>group = content.group;
     // 1. check permission
     if (![self.facebook group:group hasMember:sender]) {
         if (![self.facebook group:group hasAssistant:sender]) {
@@ -58,15 +58,15 @@
         }
     }
     // 2. get members
-    NSArray<DIMID *> *members = [self.facebook membersOfGroup:group];
+    NSArray<id<MKMID>> *members = [self.facebook membersOfGroup:group];
     if ([members count] == 0) {
         NSString *text = [NSString stringWithFormat:@"Sorry, members not found in group: %@", group];
-        DIMContent *res = [[DIMTextContent alloc] initWithText:text];
+        id<DKDContent>res = [[DIMTextContent alloc] initWithText:text];
         res.group = group;
         return res;
     }
     // 3. respond
-    DIMUser *user = [self.facebook currentUser];
+    MKMUser *user = [self.facebook currentUser];
     NSAssert(user, @"current user not set");
     if ([self.facebook group:group isOwner:user.ID]) {
         return [[DIMResetGroupCommand alloc] initWithGroup:group members:members];

@@ -41,13 +41,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMGroupCommandProcessor : DIMHistoryCommandProcessor
 
-- (nullable NSArray<DIMID *> *)membersFromCommand:(DIMGroupCommand *)cmd;
+- (nullable NSArray<id<MKMID>> *)membersFromCommand:(DIMGroupCommand *)cmd;
 
-- (nullable NSMutableArray<DIMID *> *)convertMembers:(NSArray *)members;
+- (BOOL)containsOwnerInMembers:(NSArray<id<MKMID>> *)members group:(id<MKMID>)group;
 
-- (BOOL)containsOwnerInMembers:(NSArray<DIMID *> *)members group:(DIMID *)group;
-
-- (BOOL)isEmpty:(DIMID *)group;
+- (BOOL)isEmpty:(id<MKMID>)group;
 
 @end
 

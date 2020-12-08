@@ -43,7 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  Callback for sending message
  *  set by application and executed by DIM Core
  */
-typedef void (^DIMMessengerCallback)(DIMReliableMessage *rMsg,
+typedef void (^DIMMessengerCallback)(id<DKDReliableMessage>rMsg,
                                      NSError * _Nullable error);
 
 /**
@@ -70,7 +70,7 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
  *  @param iMsg - instant message
  *  @return download URL
  */
-- (nullable NSURL *)uploadData:(NSData *)CT forMessage:(DIMInstantMessage *)iMsg;
+- (nullable NSURL *)uploadData:(NSData *)CT forMessage:(id<DKDInstantMessage>)iMsg;
 
 /**
  *  Download encrypted data from CDN
@@ -79,13 +79,14 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
  *  @param iMsg - instant message
  *  @return encrypted file data
  */
-- (nullable NSData *)downloadData:(NSURL *)url forMessage:(DIMInstantMessage *)iMsg;
+- (nullable NSData *)downloadData:(NSURL *)url forMessage:(id<DKDInstantMessage>)iMsg;
 
 @end
 
 #pragma mark -
 
 @class DIMFacebook;
+@class DIMMessageProcessor;
 
 @interface DIMMessenger : DIMTransceiver
 
@@ -94,24 +95,10 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
 @property (readonly, weak, nonatomic) DIMFacebook *facebook;
 @property (weak, nonatomic) id<DIMMessengerDelegate> delegate;
 
+@property (strong, nonatomic) DIMMessageProcessor *processor;
+
 - (nullable id)valueForContextName:(NSString *)key;
 - (void)setContextValue:(id)value forName:(NSString *)key;
-
-- (nullable DIMUser *)selectUserWithID:(DIMID *)receiver;
-
-/**
- *  Process received data package
- *
- * @param data - package from network connection
- * @return response to sender
- */
-- (nullable NSData *)processPackage:(NSData *)data;
-
-- (nullable DIMReliableMessage *)processMessage:(DIMReliableMessage *)rMsg;
-
-- (nullable DIMContent *)processContent:(DIMContent *)content
-                                 sender:(DIMID *)sender
-                                message:(DIMReliableMessage *)rMsg;
 
 /**
  * Save the message into local storage
@@ -119,7 +106,7 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
  * @param iMsg - instant message
  * @return true on success
  */
-- (BOOL)saveMessage:(DIMInstantMessage *)iMsg;
+- (BOOL)saveMessage:(id<DKDInstantMessage>)iMsg;
 
 /**
  *  Suspend message for the contact's meta
@@ -127,7 +114,7 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
  * @param msg - message received from network / instant message to be sent
  * @return NO on error
  */
-- (BOOL)suspendMessage:(DIMMessage *)msg;
+- (BOOL)suspendMessage:(id<DKDMessage>)msg;
 
 @end
 
@@ -141,8 +128,8 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
  * @param callback - callback function
  * @return true on success
  */
-- (BOOL)sendContent:(DIMContent *)content
-           receiver:(DIMID *)receiver
+- (BOOL)sendContent:(id<DKDContent>)content
+           receiver:(id<MKMID>)receiver
            callback:(nullable DIMMessengerCallback)callback;
 
 /**
@@ -152,10 +139,10 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
  * @param callback - callback function
  * @return NO on data/delegate error
  */
-- (BOOL)sendInstantMessage:(DIMInstantMessage *)iMsg
+- (BOOL)sendInstantMessage:(id<DKDInstantMessage>)iMsg
                   callback:(nullable DIMMessengerCallback)callback;
 
-- (BOOL)sendReliableMessage:(DIMReliableMessage *)rMsg
+- (BOOL)sendReliableMessage:(id<DKDReliableMessage>)rMsg
                    callback:(nullable DIMMessengerCallback)callback;
 
 @end

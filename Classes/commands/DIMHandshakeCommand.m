@@ -60,7 +60,7 @@
 }
 
 /* designated initializer */
-- (instancetype)initWithType:(UInt8)type {
+- (instancetype)initWithType:(DKDContentType)type {
     if (self = [super initWithType:type]) {
         _message = nil;
         _sessionKey = nil;
@@ -74,13 +74,13 @@
     if (self = [self initWithCommand:DIMCommand_Handshake]) {
         // message
         if (message) {
-            [_storeDictionary setObject:message forKey:@"message"];
+            [self setObject:message forKey:@"message"];
         }
         _message = message;
         
         // session key
         if (session) {
-            [_storeDictionary setObject:session forKey:@"session"];
+            [self setObject:session forKey:@"session"];
         }
         _sessionKey = session;
         
@@ -105,14 +105,14 @@
 
 - (NSString *)message {
     if (!_message) {
-        _message = [_storeDictionary objectForKey:@"message"];
+        _message = [self objectForKey:@"message"];
     }
     return _message;
 }
 
 - (nullable NSString *)sessionKey {
     if (!_sessionKey) {
-        _sessionKey = [_storeDictionary objectForKey:@"session"];
+        _sessionKey = [self objectForKey:@"session"];
     }
     return _sessionKey;
 }

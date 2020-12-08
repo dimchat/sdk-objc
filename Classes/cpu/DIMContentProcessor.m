@@ -55,12 +55,12 @@
 //
 //  Main
 //
-- (nullable DIMContent *)processContent:(DIMContent *)content
-                                 sender:(DIMID *)sender
-                                message:(DIMReliableMessage *)rMsg {
+- (nullable id<DKDContent>)processContent:(id<DKDContent>)content
+                                 sender:(id<MKMID>)sender
+                                message:(id<DKDReliableMessage>)rMsg {
     // process content by type
     NSString *text = [NSString stringWithFormat:@"Content (type: %u) not support yet!", content.type];
-    DIMContent *res = [[DIMTextContent alloc] initWithText:text];
+    id<DKDContent>res = [[DIMTextContent alloc] initWithText:text];
     res.group = content.group;
     return res;
 }
@@ -132,9 +132,9 @@ static inline void load_cpu_classes(void) {
 //
 //  Main
 //
-- (nullable DIMContent *)processContent:(DIMContent *)content
-                                 sender:(DIMID *)sender
-                                message:(DIMReliableMessage *)rMsg {
+- (nullable id<DKDContent>)processContent:(id<DKDContent>)content
+                                 sender:(id<MKMID>)sender
+                                message:(id<DKDReliableMessage>)rMsg {
     NSAssert([self isMemberOfClass:[DIMContentProcessor class]], @"error!");
     // process content by type
     DIMContentProcessor *cpu = [self processorForContentType:content.type];

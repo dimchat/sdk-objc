@@ -55,9 +55,9 @@ NS_ASSUME_NONNULL_BEGIN
 //
 //  Main
 //
-- (nullable DIMContent *)processContent:(DIMContent *)content
-                                 sender:(DIMID *)sender
-                                message:(DIMReliableMessage *)rMsg;
+- (nullable id<DKDContent>)processContent:(id<DKDContent>)content
+                                 sender:(id<MKMID>)sender
+                                message:(id<DKDReliableMessage>)rMsg;
 
 @end
 

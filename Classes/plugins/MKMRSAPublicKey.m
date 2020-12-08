@@ -42,10 +42,14 @@
 
 @interface MKMRSAPublicKey () {
     
+    NSData *_data;
+    
     NSUInteger _keySize;
     
     SecKeyRef _publicKeyRef;
 }
+
+@property (strong, nonatomic) NSData *data;
 
 @property (nonatomic) NSUInteger keySize;
 
@@ -59,6 +63,7 @@
 - (instancetype)initWithDictionary:(NSDictionary *)keyInfo {
     if (self = [super initWithDictionary:keyInfo]) {
         // lazy
+        _data = nil;
         _keySize = 0;
         _publicKeyRef = NULL;
     }
@@ -101,12 +106,12 @@
 - (NSUInteger)keySize {
     if (_keySize == 0) {
         // get from key
-        if (_publicKeyRef || [_storeDictionary objectForKey:@"data"]) {
+        if (_publicKeyRef || [self objectForKey:@"data"]) {
             size_t bytes = SecKeyGetBlockSize(self.publicKeyRef);
             _keySize = bytes * sizeof(uint8_t);
         } else {
             // get from dictionary
-            NSNumber *size = [_storeDictionary objectForKey:@"keySize"];
+            NSNumber *size = [self objectForKey:@"keySize"];
             if (size == nil) {
                 _keySize = 1024 / 8; // 128
             } else {
@@ -131,7 +136,7 @@
 
 - (SecKeyRef)publicKeyRef {
     if (!_publicKeyRef) {
-        NSString *pem = [_storeDictionary objectForKey:@"data"];
+        NSString *pem = [self objectForKey:@"data"];
         NSAssert(pem, @"Public key data not found: %@", self);
         NSString *base64 = RSAPublicKeyContentFromNSString(pem);
         NSData *data = MKMBase64Decode(base64);
@@ -200,7 +205,7 @@
 @implementation MKMRSAPublicKey (PersistentStore)
 
 + (nullable instancetype)loadKeyWithIdentifier:(NSString *)identifier {
-    MKMRSAPublicKey *PK = nil;
+    id PK = nil;
     
     // TODO: load RSA public key from persistent store
     

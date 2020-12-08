@@ -2,7 +2,7 @@
 //
 //  DIM-SDK : Decentralized Instant Messaging Software Development Kit
 //
-//                               Written in 2018 by Moky <albert.moky@gmail.com>
+//                               Written in 2019 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
@@ -28,28 +28,18 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMCASubject.h
-//  DIMCore
+//  DIMDocumentCommandProcessor.h
+//  DIMSDK
 //
-//  Created by Albert Moky on 2018/11/25.
-//  Copyright © 2018 DIM Group. All rights reserved.
+//  Created by Albert Moky on 2019/11/29.
+//  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
-#import <DIMCore/DIMCore.h>
+#import "DIMCommandProcessor.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMCASubject : DIMDictionary
-
-@property (strong, nonatomic) NSString *country;  // C:  CN, US, ...
-@property (strong, nonatomic) NSString *state;    // ST: province
-@property (strong, nonatomic) NSString *locality; // L:  city
-
-@property (strong, nonatomic) NSString *organization;     // O:  Co., Ltd.
-@property (strong, nonatomic) NSString *organizationUnit; // OU: Department
-@property (strong, nonatomic) NSString *commonName;       // CN: domain/ip
-
-+ (instancetype)subjectWithSubject:(id)subject;
+@interface DIMDocumentCommandProcessor : DIMCommandProcessor
 
 @end
 

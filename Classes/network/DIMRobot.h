@@ -39,7 +39,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMRobot : DIMUser
+@interface DIMRobot : MKMUser
 
 @end
 

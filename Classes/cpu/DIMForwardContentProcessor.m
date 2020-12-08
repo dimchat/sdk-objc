@@ -42,15 +42,15 @@
 //
 //  Main
 //
-- (nullable DIMContent *)processContent:(DIMContent *)content
-                                 sender:(DIMID *)sender
-                                message:(DIMReliableMessage *)rMsg {
+- (nullable id<DKDContent>)processContent:(id<DKDContent>)content
+                                 sender:(id<MKMID>)sender
+                                message:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMForwardContent class]], @"forward content error: %@", content);
     DIMForwardContent *forward = (DIMForwardContent *)content;
-    DIMReliableMessage *secret = forward.forwardMessage;
+    id<DKDReliableMessage>secret = forward.forwardMessage;
     
     // call messenger to process it
-    secret = [self.messenger processMessage:secret];
+    secret = [self.messenger.processor processMessage:secret];
     // check response
     if (secret) {
         // Over The Top

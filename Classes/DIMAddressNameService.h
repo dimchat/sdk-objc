@@ -39,13 +39,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class DIMID;
-
 @protocol DIMAddressNameService <NSObject>
 
-- (nullable DIMID *)IDWithName:(NSString *)username;
+- (nullable id<MKMID>)IDWithName:(NSString *)username;
 
-- (nullable NSArray<NSString *> *)namesWithID:(DIMID *)ID;
+- (nullable NSArray<NSString *> *)namesWithID:(id<MKMID>)ID;
 
 @end
 
@@ -53,7 +51,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)isReservedName:(NSString *)username;
 
-- (BOOL)cacheID:(DIMID *)ID withName:(NSString *)username;
+- (BOOL)cacheID:(id<MKMID>)ID withName:(NSString *)username;
 
 /**
  *  Save ANS record
@@ -62,7 +60,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param ID - user ID; if empty, means delete this name
  * @return true on success
  */
-- (BOOL)saveID:(DIMID *)ID withName:(NSString *)username;
+- (BOOL)saveID:(id<MKMID>)ID withName:(NSString *)username;
 
 @end
 

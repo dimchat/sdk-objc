@@ -42,11 +42,11 @@
 
 @implementation DIMResetGroupCommandProcessor
 
-- (nullable DIMContent *)_tempSave:(NSArray<DIMID *> *)newMembers sender:(DIMID *)sender group:(DIMID *)group {
+- (nullable id<DKDContent>)_tempSave:(NSArray<id<MKMID>> *)newMembers sender:(id<MKMID>)sender group:(id<MKMID>)group {
     if ([self containsOwnerInMembers:newMembers group:group]) {
         // it's a full list, save it now
         if ([self.facebook saveMembers:newMembers group:group]) {
-            DIMID *owner = [self.facebook ownerOfGroup:group];
+            id<MKMID>owner = [self.facebook ownerOfGroup:group];
             if (owner && ![owner isEqual:sender]) {
                 // NOTICE: to prevent counterfeit,
                 //         query the owner for newest member-list
@@ -64,12 +64,12 @@
     }
 }
 
-- (NSDictionary *)_doReset:(NSArray<DIMID *> *)newMembers group:(DIMID *)group {
+- (NSDictionary *)_doReset:(NSArray<id<MKMID>> *)newMembers group:(id<MKMID>)group {
     // existed members
-    NSMutableArray<DIMID *> *members = [self convertMembers:[self.facebook membersOfGroup:group]];
+    NSArray<id<MKMID>> *members = [self.facebook membersOfGroup:group];
     // removed list
-    NSMutableArray<DIMID *> *removedList = [[NSMutableArray alloc] init];
-    for (DIMID *item in members) {
+    NSMutableArray<id<MKMID>> *removedList = [[NSMutableArray alloc] init];
+    for (id<MKMID>item in members) {
         if ([newMembers containsObject:item]) {
             continue;
         }
@@ -77,8 +77,8 @@
         [removedList addObject:item];
     }
     // added list
-    NSMutableArray<DIMID *> *addedList = [[NSMutableArray alloc] init];
-    for (DIMID *item in newMembers) {
+    NSMutableArray<id<MKMID>> *addedList = [[NSMutableArray alloc] init];
+    for (id<MKMID>item in newMembers) {
         if ([members containsObject:item]) {
             continue;
         }
@@ -104,15 +104,15 @@
 //
 //  Main
 //
-- (nullable DIMContent *)processContent:(DIMContent *)content
-                                 sender:(DIMID *)sender
-                                message:(DIMReliableMessage *)rMsg {
+- (nullable id<DKDContent>)processContent:(id<DKDContent>)content
+                                 sender:(id<MKMID>)sender
+                                message:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMResetGroupCommand class]] ||
              [content isKindOfClass:[DIMInviteCommand class]], @"invite command error: %@", content);
     DIMGroupCommand *cmd = (DIMGroupCommand *)content;
-    DIMID *group = content.group;
+    id<MKMID>group = content.group;
     // new members
-    NSArray<DIMID *> *newMembers = [self membersFromCommand:cmd];
+    NSArray<id<MKMID>> *newMembers = [self membersFromCommand:cmd];
     if ([newMembers count] == 0) {
         NSAssert(false, @"invite/reset command error: %@", cmd);
         return nil;

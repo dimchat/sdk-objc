@@ -44,7 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly, strong, nonatomic) NSString *message;
 
 // original message info
-@property (strong, nonatomic, nullable) DIMEnvelope *envelope;
+@property (strong, nonatomic, nullable) id<DKDEnvelope> envelope;
 @property (strong, nonatomic, nullable) NSData *signature;
 
 /*

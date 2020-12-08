@@ -54,7 +54,7 @@ NS_ASSUME_NONNULL_BEGIN
  *      list    : [] // block-list; if it's None, means querying block-list from station
  *  }
  */
-- (instancetype)initWithList:(nullable NSArray<DIMID *> *)blockList;
+- (instancetype)initWithList:(nullable NSArray<id<MKMID>> *)blockList;
 
 @end
 

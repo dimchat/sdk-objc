@@ -42,41 +42,28 @@
 
 #import "DIMLoginCommand.h"
 
-@interface DIMLoginCommand ()
-
-@property (strong, nonatomic) NSDate *time;
-
-@end
-
 @implementation DIMLoginCommand
 
 /* designated initializer */
 - (instancetype)initWithDictionary:(NSDictionary *)dict {
     if (self = [super initWithDictionary:dict]) {
-        // lazy
-        _time = nil;
     }
     return self;
 }
 
 /* designated initializer */
-- (instancetype)initWithType:(UInt8)type {
+- (instancetype)initWithType:(DKDContentType)type {
     if (self = [super initWithType:type]) {
-        _time = nil;
     }
     return self;
 }
 
-- (instancetype)initWithID:(DIMID *)ID {
+- (instancetype)initWithID:(id<MKMID>)ID {
     if (self = [self initWithCommand:DIMCommand_Login]) {
         // ID
         if (ID) {
-            [_storeDictionary setObject:ID forKey:@"ID"];
+            [self setObject:ID forKey:@"ID"];
         }
-        // time
-        _time = [[NSDate alloc] init];
-        NSNumber *timestemp = NSNumberFromDate(_time);
-        [_storeDictionary setObject:timestemp forKey:@"time"];
     }
     return self;
 }
@@ -84,66 +71,57 @@
 - (id)copyWithZone:(NSZone *)zone {
     DIMLoginCommand *cmd = [super copyWithZone:zone];
     if (cmd) {
-        cmd.time = _time;
+        //
     }
     return cmd;
 }
 
-- (NSDate *)time {
-    if (!_time) {
-        NSNumber *timestamp = [_storeDictionary objectForKey:@"time"];
-        NSAssert(timestamp != nil, @"time error: %@", _storeDictionary);
-        _time = NSDateFromNumber(timestamp);
-    }
-    return _time;
-}
-
 #pragma mark Client Info
 
-- (DIMID *)ID {
-    id string = [_storeDictionary objectForKey:@"ID"];
-    return [self.delegate parseID:string];
+- (id<MKMID>)ID {
+    id string = [self objectForKey:@"ID"];
+    return MKMIDFromString(string);
 }
 
 - (NSString *)device {
-    return [_storeDictionary objectForKey:@"device"];
+    return [self objectForKey:@"device"];
 }
 - (void)setDevice:(NSString *)device {
     if (device) {
-        [_storeDictionary setObject:device forKey:@"device"];
+        [self setObject:device forKey:@"device"];
     } else {
-        [_storeDictionary removeObjectForKey:@"device"];
+        [self removeObjectForKey:@"device"];
     }
 }
 
 - (NSString *)agent {
-    return [_storeDictionary objectForKey:@"agent"];
+    return [self objectForKey:@"agent"];
 }
 - (void)setAgent:(NSString *)agent {
     if (agent) {
-        [_storeDictionary setObject:agent forKey:@"agent"];
+        [self setObject:agent forKey:@"agent"];
     } else {
-        [_storeDictionary removeObjectForKey:@"agent"];
+        [self removeObjectForKey:@"agent"];
     }
 }
 
 #pragma mark Server Info
 
 - (NSDictionary *)stationInfo {
-    return [_storeDictionary objectForKey:@"station"];
+    return [self objectForKey:@"station"];
 }
 - (void)setStationInfo:(NSDictionary *)stationInfo {
     if (stationInfo) {
-        [_storeDictionary setObject:stationInfo forKey:@"station"];
+        [self setObject:stationInfo forKey:@"station"];
     } else {
-        [_storeDictionary removeObjectForKey:@"station"];
+        [self removeObjectForKey:@"station"];
     }
 }
 - (void)copyStationInfo:(DIMStation *)station {
-    DIMID *ID = station.ID;
+    id<MKMID>ID = station.ID;
     NSString *host = station.host;
     UInt32 port = station.port;
-    if (![ID isValid] || [host length] == 0) {
+    if (!ID || [host length] == 0) {
         NSAssert(!station, @"station error: %@", station);
         return;
     }
@@ -158,18 +136,18 @@
 }
 
 - (NSDictionary *)providerInfo {
-    return [_storeDictionary objectForKey:@"provider"];
+    return [self objectForKey:@"provider"];
 }
 - (void)setProviderInfo:(NSDictionary *)providerInfo {
     if (providerInfo) {
-        [_storeDictionary setObject:providerInfo forKey:@"provider"];
+        [self setObject:providerInfo forKey:@"provider"];
     } else {
-        [_storeDictionary removeObjectForKey:@"provider"];
+        [self removeObjectForKey:@"provider"];
     }
 }
 - (void)copyProviderInfo:(DIMServiceProvider *)provider {
-    DIMID *ID = provider.ID;
-    if (![ID isValid]) {
+    id<MKMID>ID = provider.ID;
+    if (!ID) {
         NSAssert(!provider, @"SP error: %@", provider);
         return;
     }

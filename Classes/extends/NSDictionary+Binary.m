@@ -1,8 +1,8 @@
 // license: https://mit-license.org
 //
-//  DIM-SDK : Decentralized Instant Messaging Software Development Kit
+//  Ming-Ke-Ming : Decentralized User Identity Authentication
 //
-//                               Written in 2019 by Moky <albert.moky@gmail.com>
+//                               Written in 2018 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
@@ -28,19 +28,31 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMKeyStore.h
-//  DIMClient
+//  NSDictionary+Binary.m
+//  MingKeMing
 //
-//  Created by Albert Moky on 2019/8/1.
-//  Copyright © 2019 DIM Group. All rights reserved.
+//  Created by Albert Moky on 2018/11/8.
+//  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import <DIMCore/DIMCore.h>
+#import "NSDictionary+Binary.h"
 
-NS_ASSUME_NONNULL_BEGIN
+@implementation NSDictionary (Binary)
 
-@interface DIMKeyStore : DIMKeyCache
+- (BOOL)writeToBinaryFile:(NSString *)path {
+    NSData *data;
+    NSPropertyListFormat fmt = NSPropertyListBinaryFormat_v1_0;
+    NSPropertyListWriteOptions opt = 0;
+    NSError *err = nil;
+    data = [NSPropertyListSerialization dataWithPropertyList:self
+                                                      format:fmt
+                                                     options:opt
+                                                       error:&err];
+    if (err) {
+        NSAssert(false, @"serialize failed: %@", err);
+        return NO;
+    }
+    return [data writeToFile:path atomically:YES];
+}
 
 @end
-
-NS_ASSUME_NONNULL_END

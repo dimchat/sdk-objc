@@ -41,25 +41,25 @@
 
 @implementation DIMMuteCommand
 
-- (instancetype)initWithList:(nullable NSArray<DIMID *> *)muteList {
+- (instancetype)initWithList:(nullable NSArray<id<MKMID>> *)muteList {
     if (self = [self initWithCommand:DIMCommand_Mute]) {
         // mute-list
         if (muteList) {
-            [_storeDictionary setObject:muteList forKey:@"list"];
+            [self setObject:muteList forKey:@"list"];
         }
     }
     return self;
 }
 
 - (nullable NSArray<NSString *> *)list {
-    return [_storeDictionary objectForKey:@"list"];
+    return [self objectForKey:@"list"];
 }
 
 - (void)setList:(NSArray<NSString *> *)list {
     if (list) {
-        [_storeDictionary setObject:list forKey:@"list"];
+        [self setObject:list forKey:@"list"];
     } else {
-        [_storeDictionary removeObjectForKey:@"list"];
+        [self removeObjectForKey:@"list"];
     }
 }
 

@@ -48,9 +48,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly, strong, nonatomic) NSString *title;
 
 //
-//  ID string
+//  user ID
 //
-@property (strong, nonatomic, nullable) NSString *ID;
+@property (strong, nonatomic, nullable) id<MKMID> ID;
 
 //
 //  Encrypted data
@@ -85,9 +85,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark Decryption
 
-- (nullable NSData *)decryptWithSymmetricKey:(id<DIMDecryptKey>)PW;
+- (nullable NSData *)decryptWithSymmetricKey:(id<MKMDecryptKey>)PW;
 
-- (nullable NSData *)decryptWithPrivateKey:(id<DIMDecryptKey>)SK;
+- (nullable NSData *)decryptWithPrivateKey:(id<MKMDecryptKey>)SK;
 
 @end
 

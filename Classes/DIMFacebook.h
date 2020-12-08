@@ -51,10 +51,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMFacebook : DIMBarrack
 
-@property (readonly, strong, nonatomic, nullable) NSArray<DIMUser *> *localUsers;
-@property (readonly, strong, nonatomic, nullable) DIMUser *currentUser;
+@property (readonly, strong, nonatomic, nullable) NSArray<MKMUser *> *localUsers;
+@property (readonly, strong, nonatomic, nullable) MKMUser *currentUser;
 
-- (nullable DIMID *)IDWithAddress:(DIMAddress *)address;
+- (nullable id<MKMID>)IDWithAddress:(id<MKMAddress>)address;
+
+- (nullable MKMUser *)selectUserWithID:(id<MKMID>)receiver;
 
 @end
 
@@ -62,7 +64,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark Meta
 
-- (BOOL)verifyMeta:(DIMMeta *)meta forID:(DIMID *)ID;
+- (BOOL)verifyMeta:(id<MKMMeta>)meta forID:(id<MKMID>)ID;
 
 /**
  *  Save meta for entity ID (must verify first)
@@ -71,12 +73,12 @@ NS_ASSUME_NONNULL_BEGIN
  * @param ID - entity ID
  * @return true on success
  */
-- (BOOL)saveMeta:(DIMMeta *)meta forID:(DIMID *)ID;
+- (BOOL)saveMeta:(id<MKMMeta>)meta forID:(id<MKMID>)ID;
 
 #pragma mark Profile
 
-- (BOOL)verifyProfile:(DIMProfile *)profile forID:(DIMID *)ID;
-- (BOOL)verifyProfile:(DIMProfile *)profile;
+- (BOOL)verifyProfile:(id<MKMDocument>)profile forID:(id<MKMID>)ID;
+- (BOOL)verifyProfile:(id<MKMDocument>)profile;
 
 /**
  *  Save profile with entity ID (must verify first)
@@ -84,7 +86,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param profile - entity profile
  * @return true on success
  */
-- (BOOL)saveProfile:(DIMProfile *)profile;
+- (BOOL)saveProfile:(id<MKMDocument>)profile;
 
 #pragma mark Group Members
 
@@ -95,23 +97,23 @@ NS_ASSUME_NONNULL_BEGIN
  * @param ID - group ID
  * @return true on success
  */
-- (BOOL)saveMembers:(NSArray<DIMID *> *)members group:(DIMID *)ID;
+- (BOOL)saveMembers:(NSArray<id<MKMID>> *)members group:(id<MKMID>)ID;
 
 @end
 
 @interface DIMFacebook (Relationship)
 
-- (BOOL)user:(DIMID *)user hasContact:(DIMID *)contact;
+- (BOOL)user:(id<MKMID>)user hasContact:(id<MKMID>)contact;
 
-- (BOOL)group:(DIMID *)group isFounder:(DIMID *)member;
-- (BOOL)group:(DIMID *)group isOwner:(DIMID *)member;
+- (BOOL)group:(id<MKMID>)group isFounder:(id<MKMID>)member;
+- (BOOL)group:(id<MKMID>)group isOwner:(id<MKMID>)member;
 
-- (BOOL)group:(DIMID *)group hasMember:(DIMID *)member;
+- (BOOL)group:(id<MKMID>)group hasMember:(id<MKMID>)member;
 
 #pragma mark Assistant
 
-- (nullable NSArray<DIMID *> *)assistantsOfGroup:(DIMID *)group;
-- (BOOL)group:(DIMID *)group hasAssistant:(DIMID *)assistant;
+- (nullable NSArray<id<MKMID>> *)assistantsOfGroup:(id<MKMID>)group;
+- (BOOL)group:(id<MKMID>)group hasAssistant:(id<MKMID>)assistant;
 
 @end
 

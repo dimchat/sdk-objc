@@ -1,13 +1,13 @@
 // license: https://mit-license.org
 //
-//  DIM-SDK : Decentralized Instant Messaging Software Development Kit
+//  Ming-Ke-Ming : Decentralized User Identity Authentication
 //
-//                               Written in 2019 by Moky <albert.moky@gmail.com>
+//                               Written in 2018 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Albert Moky
+// Copyright (c) 2018 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,18 +28,24 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMProfileCommandProcessor.h
-//  DIMSDK
+//  NSData+Crypto.h
+//  MingKeMing
 //
-//  Created by Albert Moky on 2019/11/29.
-//  Copyright © 2019 Albert Moky. All rights reserved.
+//  Created by Albert Moky on 2018/9/26.
+//  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "DIMCommandProcessor.h"
+#import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMProfileCommandProcessor : DIMCommandProcessor
+@interface NSData (AES)
+
+- (nullable NSData *)AES256EncryptWithKey:(NSData *)key
+                     initializationVector:(nullable NSData *)iv;
+
+- (nullable NSData *)AES256DecryptWithKey:(NSData *)key
+                     initializationVector:(nullable NSData *)iv;
 
 @end
 

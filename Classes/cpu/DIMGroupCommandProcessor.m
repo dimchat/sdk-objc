@@ -35,8 +35,6 @@
 //  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
-#import "NSObject+Singleton.h"
-
 #import "DIMFacebook.h"
 #import "DIMMessenger.h"
 
@@ -56,22 +54,22 @@
     return self;
 }
 
-- (nullable NSArray<DIMID *> *)membersFromCommand:(DIMGroupCommand *)cmd {
+- (nullable NSArray<id<MKMID>> *)membersFromCommand:(DIMGroupCommand *)cmd {
     NSArray *members = [cmd members];
     if (!members) {
         NSString *member = [cmd member];
         if (!member) {
             return nil;
         }
-        DIMID *ID = [self.facebook IDWithString:member];
-        NSAssert([ID isValid], @"member ID error: %@", member);
+        id<MKMID>ID = MKMIDFromString(member);
+        NSAssert(ID, @"member ID error: %@", member);
         members = @[ID];
     } else {
         NSMutableArray *mArray = [[NSMutableArray alloc] initWithCapacity:members.count];
-        DIMID *member;
+        id<MKMID>member;
         for (NSString *item in members) {
-            member = [self.facebook IDWithString:item];
-            NSAssert([member isValid], @"member ID error: %@", item);
+            member = MKMIDFromString(item);
+            NSAssert(member, @"member ID error: %@", item);
             [mArray addObject:member];
         }
         members = mArray;
@@ -79,35 +77,8 @@
     return members;
 }
 
-- (nullable NSMutableArray<DIMID *> *)convertMembers:(NSArray *)members {
-    if (!members) {
-        return [[NSMutableArray alloc] init];
-    }
-    if ([members count] > 0) {
-        NSString *item = [members firstObject];
-        if (![item isKindOfClass:[DIMID class]]) {
-            // NSString list
-            NSMutableArray *mArray = [[NSMutableArray alloc] initWithCapacity:members.count];
-            DIMID *ID;
-            for (item in members) {
-                ID = [self.facebook IDWithString:item];
-                if (![ID isValid]) {
-                    NSAssert(false, @"member ID error: %@", item);
-                    continue;
-                }
-                [mArray addObject:ID];
-            }
-            return mArray;
-        }
-    }
-    if ([members isKindOfClass:[NSMutableArray class]]) {
-        return (NSMutableArray<DIMID *> *)members;
-    }
-    return [members mutableCopy];
-}
-
-- (BOOL)containsOwnerInMembers:(NSArray<DIMID *> *)members group:(DIMID *)group {
-    for (DIMID *item in members) {
+- (BOOL)containsOwnerInMembers:(NSArray<id<MKMID>> *)members group:(id<MKMID>)group {
+    for (id<MKMID>item in members) {
         if ([self.facebook group:group isOwner:item]) {
             return YES;
         }
@@ -115,21 +86,21 @@
     return NO;
 }
 
-- (BOOL)isEmpty:(DIMID *)group {
+- (BOOL)isEmpty:(id<MKMID>)group {
     NSArray *members = [self.facebook membersOfGroup:group];
     if ([members count] == 0) {
         return YES;
     }
-    DIMID *owner = [self.facebook ownerOfGroup:group];
+    id<MKMID>owner = [self.facebook ownerOfGroup:group];
     return !owner;
 }
 
 //
 //  Main
 //
-- (nullable DIMContent *)processContent:(DIMContent *)content
-                                 sender:(DIMID *)sender
-                                message:(DIMReliableMessage *)rMsg {
+- (nullable id<DKDContent>)processContent:(id<DKDContent>)content
+                                 sender:(id<MKMID>)sender
+                                message:(id<DKDReliableMessage>)rMsg {
     NSAssert([self isMemberOfClass:[DIMGroupCommandProcessor class]], @"error!");
     NSAssert([content isKindOfClass:[DIMCommand class]], @"group command error: %@", content);
     // process command content by name
@@ -138,7 +109,7 @@
     /*
     if (!cpu) {
         NSString *text = [NSString stringWithFormat:@"Group command (%@) not support yet!", cmd.command];
-        DIMContent *res = [[DIMTextContent alloc] initWithText:text];
+        id<DKDContent>res = [[DIMTextContent alloc] initWithText:text];
         res.group = content.group;
         return res;
     }

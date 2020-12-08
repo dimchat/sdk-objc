@@ -35,16 +35,13 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "DIMCertificateAuthority.h"
+#import <MingKeMing/MingKeMing.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 @class DIMStation;
 
-@interface DIMServiceProvider : DIMGroup
-
-@property (strong, nonatomic, nullable) DIMCertificateAuthority *CA;
-@property (readonly, strong, nonatomic) DIMPublicKey *publicKey; // CA.info.*
+@interface DIMServiceProvider : MKMGroup
 
 @property (strong, nonatomic, nullable) NSURL *home; // home page URL
 

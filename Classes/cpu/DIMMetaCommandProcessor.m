@@ -44,9 +44,9 @@
 
 @implementation DIMMetaCommandProcessor
 
-- (nullable DIMContent *)_getMetaForID:(DIMID *)ID {
+- (nullable id<DKDContent>)_getMetaForID:(id<MKMID>)ID {
     // query meta for ID
-    DIMMeta *meta = [self.facebook metaForID:ID];
+    id<MKMMeta> meta = [self.facebook metaForID:ID];
     if (meta) {
         return [[DIMMetaCommand alloc] initWithID:ID meta:meta];
     }
@@ -55,8 +55,8 @@
     return [[DIMTextContent alloc] initWithText:text];
 }
 
-- (nullable DIMContent *)_putMeta:(DIMMeta *)meta
-                            forID:(DIMID *)ID {
+- (nullable id<DKDContent>)_putMeta:(id<MKMMeta>)meta
+                            forID:(id<MKMID>)ID {
     NSString *text;
     // received a meta for ID
     if (![self.facebook verifyMeta:meta forID:ID]) {
@@ -76,13 +76,13 @@
 //
 //  Main
 //
-- (nullable DIMContent *)processContent:(DIMContent *)content
-                                 sender:(DIMID *)sender
-                                message:(DIMReliableMessage *)rMsg {
+- (nullable id<DKDContent>)processContent:(id<DKDContent>)content
+                                 sender:(id<MKMID>)sender
+                                message:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMMetaCommand class]], @"meta command error: %@", content);
     DIMMetaCommand *cmd = (DIMMetaCommand *)content;
-    DIMID *ID = cmd.ID;
-    DIMMeta *meta = cmd.meta;
+    id<MKMID> ID = cmd.ID;
+    id<MKMMeta> meta = cmd.meta;
     if (meta) {
         return [self _putMeta:meta forID:ID];
     } else {

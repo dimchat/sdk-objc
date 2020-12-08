@@ -66,12 +66,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface DIMLoginCommand : DIMCommand
 
-@property (readonly, strong, nonatomic) NSDate *time;
-
 #pragma mark Client Info
 
 // User ID
-@property (readonly, strong, nonatomic) DIMID *ID;
+@property (readonly, strong, nonatomic) id<MKMID>ID;
 // Device ID
 @property (strong, nonatomic, nullable) NSString *device;
 // User-Agent
@@ -84,7 +82,7 @@ NS_ASSUME_NONNULL_BEGIN
 // SP
 @property (strong, nonatomic, nullable) NSDictionary *providerInfo;
 
-- (instancetype)initWithID:(DIMID *)ID;
+- (instancetype)initWithID:(id<MKMID>)ID;
 
 - (void)copyStationInfo:(DIMStation *)station;
 - (void)copyProviderInfo:(DIMServiceProvider *)provider;

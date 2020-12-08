@@ -41,25 +41,26 @@
 
 @implementation DIMExpelCommandProcessor
 
-- (nullable NSArray<DIMID *> *)_doExpel:(NSArray<DIMID *> *)expelList group:(DIMID *)group {
+- (nullable NSArray<id<MKMID>> *)_doExpel:(NSArray<id<MKMID>> *)expelList group:(id<MKMID>)group {
     // existed members
-    NSMutableArray<DIMID *> *members = [self convertMembers:[self.facebook membersOfGroup:group]];
+    NSArray<id<MKMID>> *members = [self.facebook membersOfGroup:group];
     if ([members count] == 0) {
         NSAssert(false, @"group members not found: %@", group);
         return nil;
     }
+    NSMutableArray<id<MKMID>> *mArray = [members mutableCopy];
     // removed list
     NSMutableArray *removedList = [[NSMutableArray alloc] initWithCapacity:expelList.count];
-    for (DIMID *item in expelList) {
+    for (id<MKMID>item in expelList) {
         if (![members containsObject:item]) {
             continue;
         }
         // removing member found
         [removedList addObject:item];
-        [members removeObject:item];
+        [mArray removeObject:item];
     }
     if ([removedList count] > 0) {
-        if ([self.facebook saveMembers:members group:group]) {
+        if ([self.facebook saveMembers:mArray group:group]) {
             return removedList;
         }
         NSAssert(false, @"failed to update members for group: %@", group);
@@ -70,12 +71,12 @@
 //
 //  Main
 //
-- (nullable DIMContent *)processContent:(DIMContent *)content
-                                 sender:(DIMID *)sender
-                                message:(DIMReliableMessage *)rMsg {
+- (nullable id<DKDContent>)processContent:(id<DKDContent>)content
+                                 sender:(id<MKMID>)sender
+                                message:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMExpelCommand class]], @"expel command error: %@", content);
     DIMExpelCommand *cmd = (DIMExpelCommand *)content;
-    DIMID *group = content.group;
+    id<MKMID>group = content.group;
     // 1. check permission
     if (![self.facebook group:group isOwner:sender]) {
         if (![self.facebook group:group hasAssistant:sender]) {
@@ -84,13 +85,13 @@
         }
     }
     // 2. get expelling members
-    NSArray<DIMID *> *expelList = [self membersFromCommand:cmd];
+    NSArray<id<MKMID>> *expelList = [self membersFromCommand:cmd];
     if ([expelList count] == 0) {
         NSAssert(false, @"expel command error: %@", cmd);
         return nil;
     }
     // 2.1. get removed-list
-    NSArray<DIMID *> *removed = [self _doExpel:expelList group:group];
+    NSArray<id<MKMID>> *removed = [self _doExpel:expelList group:group];
     if (removed) {
         [content setObject:removed forKey:@"removed"];
     }

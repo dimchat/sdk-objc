@@ -46,51 +46,49 @@
     if (self = [self initWithCommand:DIMCommand_Receipt]) {
         // message
         if (message) {
-            [_storeDictionary setObject:message forKey:@"message"];
+            [self setObject:message forKey:@"message"];
         }
     }
     return self;
 }
 
 - (NSString *)message {
-    return [_storeDictionary objectForKey:@"message"];
+    return [self objectForKey:@"message"];
 }
 
-- (nullable DIMEnvelope *)envelope {
-    NSString *sender = [_storeDictionary objectForKey:@"sender"];
-    NSString *receiver = [_storeDictionary objectForKey:@"receiver"];
+- (nullable id<DKDEnvelope>)envelope {
+    NSString *sender = [self objectForKey:@"sender"];
+    NSString *receiver = [self objectForKey:@"receiver"];
     if (sender && receiver) {
-        DIMEnvelope *env = DKDEnvelopeFromDictionary(_storeDictionary);
-        env.delegate = self.delegate;
-        return env;
+        return DKDEnvelopeFromDictionary(self.dictionary);
     } else {
         return nil;
     }
 }
 
-- (void)setEnvelope:(DIMEnvelope *)envelope {
+- (void)setEnvelope:(id<DKDEnvelope>)envelope {
     if (envelope) {
         NSNumber *timestamp = NSNumberFromDate(envelope.time);
-        [_storeDictionary setObject:envelope.sender forKey:@"sender"];
-        [_storeDictionary setObject:envelope.receiver forKey:@"receiver"];
-        [_storeDictionary setObject:timestamp forKey:@"time"];
+        [self setObject:envelope.sender forKey:@"sender"];
+        [self setObject:envelope.receiver forKey:@"receiver"];
+        [self setObject:timestamp forKey:@"time"];
     } else {
-        [_storeDictionary removeObjectForKey:@"sender"];
-        [_storeDictionary removeObjectForKey:@"receiver"];
-        [_storeDictionary removeObjectForKey:@"time"];
+        [self removeObjectForKey:@"sender"];
+        [self removeObjectForKey:@"receiver"];
+        [self removeObjectForKey:@"time"];
     }
 }
 
 - (NSData *)signature {
-    NSString *CT = [_storeDictionary objectForKey:@"signature"];
+    NSString *CT = [self objectForKey:@"signature"];
     return MKMBase64Decode(CT);
 }
 
 - (void)setSignature:(NSData *)signature {
     if (signature) {
-        [_storeDictionary setObject:MKMBase64Encode(signature) forKey:@"signature"];
+        [self setObject:MKMBase64Encode(signature) forKey:@"signature"];
     } else {
-        [_storeDictionary removeObjectForKey:@"signature"];
+        [self removeObjectForKey:@"signature"];
     }
 }
 

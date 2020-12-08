@@ -51,12 +51,11 @@
 @implementation DIMStation
 
 /* designated initializer */
-- (instancetype)initWithID:(DIMID *)ID {
+- (instancetype)initWithID:(id<MKMID>)ID {
     if (self = [super initWithID:ID]) {
         _host = nil;
         _port = 9394;
         _SP = nil;
-        _CA = nil;
         _delegate = nil;
     }
     return self;
@@ -64,14 +63,14 @@
 
 - (instancetype)initWithDictionary:(NSDictionary *)dict {
     // ID
-    DIMID *ID = MKMIDFromString([dict objectForKey:@"ID"]);
+    id<MKMID>ID = MKMIDFromString([dict objectForKey:@"ID"]);
 //    // public key
-//    DIMPublicKey *PK = [dict objectForKey:@"publicKey"];
+//    id PK = [dict objectForKey:@"publicKey"];
 //    if (!PK) {
 //        PK = [dict objectForKey:@"PK"];
 //        if (!PK) {
 //            // get from meta.key
-//            DIMMeta *meta = [dict objectForKey:@"meta"];
+//            id<MKMMeta> meta = [dict objectForKey:@"meta"];
 //            if (meta) {
 //                meta = MKMMetaFromDictionary(meta);
 //                PK = meta.key;
@@ -92,9 +91,6 @@
     if ([SP isKindOfClass:[NSDictionary class]]) {
         SP = [[DIMServiceProvider alloc] initWithDictionary:SP];
     }
-    // CA
-    DIMCertificateAuthority *CA = [dict objectForKey:@"CA"];
-    CA = [DIMCertificateAuthority caWithCA:CA];
     
 //    if (!PK) {
 //        // get from CA.info.publicKey
@@ -106,12 +102,11 @@
                            host:host
                            port:[port unsignedIntValue]]) {
         _SP = SP;
-        _CA = CA;
     }
     return self;
 }
 
-- (instancetype)initWithID:(DIMID *)ID
+- (instancetype)initWithID:(id<MKMID>)ID
                       host:(NSString *)IP
                       port:(UInt32)port {
     if (self = [self initWithID:ID]) {
@@ -127,7 +122,6 @@
         server.host = _host;
         server.port = _port;
         server.SP = _SP;
-        server.CA = _CA;
         server.delegate = _delegate;
     }
     return server;
@@ -158,37 +152,8 @@
     return YES;
 }
 
-- (NSString *)name {
-    DIMCASubject *subject = self.CA.info.subject;
-    if (subject.commonName) {
-        return subject.commonName;
-    } else if (subject.organization) {
-        return subject.organization;
-    } else {
-        return [super name];
-    }
-}
-
-- (DIMPublicKey *)publicKey {
-    return self.CA.info.publicKey;
-}
-
 - (NSURL *)home {
     return self.SP.home;
-}
-
-- (NSData *)encrypt:(NSData *)plaintext {
-    // 1. get key for encryption from CA.info.publicKey
-    DIMPublicKey *key = [self publicKey];
-    if (key == nil) {
-        // 2. get key for encryption from meta
-        DIMMeta *meta = [self meta];
-        // NOTICE: meta.key will never changed,
-        //         so use profile.key to encrypt is the better way
-        key = (DIMPublicKey *)[meta key];
-    }
-    // 3. encrypt with profile.key
-    return [(id<DIMEncryptKey>)key encrypt:plaintext];
 }
 
 @end

@@ -41,9 +41,9 @@
 
 @implementation DIMQuitCommandProcessor
 
-- (void)_doQuit:(DIMID *)sender group:(DIMID *)group {
+- (void)_doQuit:(id<MKMID>)sender group:(id<MKMID>)group {
     // existed members
-    NSMutableArray<DIMID *> *members = [self convertMembers:[self.facebook membersOfGroup:group]];
+    NSArray<id<MKMID>> *members = [self.facebook membersOfGroup:group];
     if ([members count] == 0) {
         NSAssert(false, @"group members not found: %@", group);
         return;
@@ -52,18 +52,19 @@
         // not a member
         return;
     }
-    [members removeObject:sender];
-    [self.facebook saveMembers:members group:group];
+    NSMutableArray<id<MKMID>> *mArray = [members mutableCopy];
+    [mArray removeObject:sender];
+    [self.facebook saveMembers:mArray group:group];
 }
 
 //
 //  Main
 //
-- (nullable DIMContent *)processContent:(DIMContent *)content
-                                 sender:(DIMID *)sender
-                                message:(DIMReliableMessage *)rMsg {
+- (nullable id<DKDContent>)processContent:(id<DKDContent>)content
+                                 sender:(id<MKMID>)sender
+                                message:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMQuitCommand class]], @"quit command error: %@", content);
-    DIMID *group = content.group;
+    id<MKMID>group = content.group;
     // 1. check permission
     if ([self.facebook group:group isOwner:sender]) {
         NSAssert(false, @"owner cannot quit: %@ -> %@", sender, group);

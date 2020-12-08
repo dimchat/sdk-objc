@@ -114,11 +114,11 @@ typedef UInt8 DIMMemberRole;
 
 #pragma mark - Chatroom
 
-@interface DIMChatroom : DIMGroup
+@interface DIMChatroom : MKMGroup
 
-@property (readonly, copy, nonatomic) NSArray<DIMID *> *admins;
+@property (readonly, copy, nonatomic) NSArray<id<MKMID>> *admins;
 
-- (BOOL)existsAdmin:(DIMID *)ID;
+- (BOOL)existsAdmin:(id<MKMID>)ID;
 
 // -hire(admin, owner)
 // -fire(admin, owner)
@@ -128,7 +128,7 @@ typedef UInt8 DIMMemberRole;
 
 #pragma mark - Chatroom Delegate
 
-@protocol DIMChatroomDataSource <DIMGroupDataSource>
+@protocol DIMChatroomDataSource <MKMGroupDataSource>
 
 /**
  *  Get chatroom admin list
@@ -136,7 +136,7 @@ typedef UInt8 DIMMemberRole;
  * @param chatroom - group ID
  * @return admins list (ID)
  */
-- (nullable NSArray<DIMID *> *)adminsOfChatroom:(DIMID *)chatroom;
+- (nullable NSArray<id<MKMID>> *)adminsOfChatroom:(id<MKMID>)chatroom;
 
 @end
 

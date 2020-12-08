@@ -54,7 +54,7 @@ NS_ASSUME_NONNULL_BEGIN
  *      list    : [] // mute-list; if it's None, means querying mute-list from station
  *  }
  */
-- (instancetype)initWithList:(nullable NSArray<DIMID *> *)muteList;
+- (instancetype)initWithList:(nullable NSArray<id<MKMID>> *)muteList;
 
 @end
 

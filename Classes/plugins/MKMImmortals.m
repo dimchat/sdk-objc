@@ -37,19 +37,13 @@
 
 #import "MKMImmortals.h"
 
-@interface MKMUser (Hacking)
-
-@property (strong, nonatomic) MKMPrivateKey *privateKey;
-
-@end
-
 @interface MKMImmortals () {
     
-    NSMutableDictionary<NSString *, MKMID *>      *_idTable;
-    NSMutableDictionary<MKMID *, MKMPrivateKey *> *_privateTable;
-    NSMutableDictionary<MKMID *, MKMMeta *>       *_metaTable;
-    NSMutableDictionary<MKMID *, MKMProfile *>    *_profileTable;
-    NSMutableDictionary<MKMID *, MKMUser *>       *_userTable;
+    NSMutableDictionary<NSString *, id<MKMID>>         *_idTable;
+    NSMutableDictionary<NSString *, id<MKMPrivateKey>> *_privateTable;
+    NSMutableDictionary<NSString *, id<MKMMeta>>       *_metaTable;
+    NSMutableDictionary<NSString *, id<MKMDocument>>   *_profileTable;
+    NSMutableDictionary<NSString *, MKMUser *>         *_userTable;
 }
 
 @end
@@ -70,24 +64,23 @@
     return self;
 }
 
-- (void)_loadBuiltInAccount:(MKMID *)ID {
-    NSAssert([ID isValid], @"ID error: %@", ID);
-    [_idTable setObject:ID forKey:ID];
+- (void)_loadBuiltInAccount:(id<MKMID>)ID {
+    [_idTable setObject:ID forKey:ID.string];
     NSString *filename;
     
     // load meta for ID
     filename = [ID.name stringByAppendingString:@"_meta"];
-    MKMMeta * meta = [self _loadMeta:filename];
+    id<MKMMeta> meta = [self _loadMeta:filename];
     [self cacheMeta:meta forID:ID];
     
     // load private key for ID
     filename = [ID.name stringByAppendingString:@"_secret"];
-    MKMPrivateKey *key = [self _loadPrivateKey:filename];
+    id<MKMPrivateKey> key = [self _loadPrivateKey:filename];
     [self cachePrivateKey:key forID:ID];
     
     // load profile for ID
     filename = [ID.name stringByAppendingString:@"_profile"];
-    MKMProfile *profile = [self _loadProfile:filename];
+    id<MKMDocument> profile = [self _loadProfile:filename];
     [self cacheProfile:profile forID:ID];
 }
 
@@ -104,22 +97,22 @@
     return MKMJSONDecode(data);
 }
 
-- (nullable MKMMeta *)_loadMeta:(NSString *)filename {
+- (nullable id<MKMMeta>)_loadMeta:(NSString *)filename {
     NSDictionary *dict = [self _loadJSONFile:filename];
     NSAssert(dict, @"failed to load meta file: %@", filename);
     return MKMMetaFromDictionary(dict);
 }
 
-- (nullable MKMPrivateKey *)_loadPrivateKey:(NSString *)filename {
+- (nullable id<MKMPrivateKey>)_loadPrivateKey:(NSString *)filename {
     NSDictionary *dict = [self _loadJSONFile:filename];
     NSAssert(dict, @"failed to load secret file: %@", filename);
     return MKMPrivateKeyFromDictionary(dict);
 }
 
-- (nullable MKMProfile *)_loadProfile:(NSString *)filename {
+- (nullable id<MKMDocument>)_loadProfile:(NSString *)filename {
     NSDictionary *dict = [self _loadJSONFile:filename];
     NSAssert(dict, @"failed to load profile: %@", filename);
-    MKMProfile *profile = MKMProfileFromDictionary(dict);
+    id<MKMDocument> profile = MKMDocumentFromDictionary(dict);
     NSAssert(profile, @"profile error: %@", dict);
     // copy 'name'
     NSString *name = [dict objectForKey:@"name"];
@@ -146,8 +139,8 @@
     return profile;
 }
 
-- (nullable NSData *)_signProfile:(MKMProfile *)profile {
-    MKMID *ID = [self IDWithString:profile.ID];
+- (nullable NSData *)_signProfile:(id<MKMDocument>)profile {
+    id<MKMID>ID = profile.ID;
     id<MKMSignKey> key = [self privateKeyForSignature:ID];
     NSAssert(key, @"failed to get private key for signature: %@", ID);
     return [profile sign:key];
@@ -155,28 +148,21 @@
 
 #pragma mark Cache
 
-- (BOOL)cacheID:(MKMID *)ID {
-    NSAssert([ID isValid], @"ID not valid: %@", ID);
-    [_idTable setObject:ID forKey:ID];
-    return YES;
-}
-
-- (BOOL)cacheMeta:(MKMMeta *)meta forID:(MKMID *)ID {
+- (BOOL)cacheMeta:(id<MKMMeta>)meta forID:(id<MKMID>)ID {
     NSAssert([meta matchID:ID], @"meta not match: %@, %@", ID, meta);
-    [_metaTable setObject:meta forKey:ID];
+    [_metaTable setObject:meta forKey:ID.string];
     return YES;
 }
 
-- (BOOL)cachePrivateKey:(MKMPrivateKey *)SK forID:(MKMID *)ID {
-    NSAssert([(MKMPublicKey *)[self metaForID:ID].key isMatch:SK], @"SK error: %@, %@", ID, SK);
-    [_privateTable setObject:SK forKey:ID];
+- (BOOL)cachePrivateKey:(id<MKMPrivateKey>)SK forID:(id<MKMID>)ID {
+    [_privateTable setObject:SK forKey:ID.string];
     return YES;
 }
 
-- (BOOL)cacheProfile:(MKMProfile *)profile forID:(MKMID *)ID {
+- (BOOL)cacheProfile:(id<MKMDocument>)profile forID:(id<MKMID>)ID {
     NSAssert([profile isValid], @"profile not valid: %@", profile);
     NSAssert([ID isEqual:profile.ID], @"profile not match: %@, %@", ID, profile);
-    [_profileTable setObject:profile forKey:ID];
+    [_profileTable setObject:profile forKey:ID.string];
     return YES;
 }
 
@@ -184,27 +170,26 @@
     if (user.dataSource == nil) {
         user.dataSource = self;
     }
-    [_userTable setObject:user forKey:user.ID];
+    [_userTable setObject:user forKey:user.ID.string];
     return YES;
 }
 
 #pragma mark -
 
-- (nullable MKMID *)IDWithString:(NSString *)string {
+- (nullable id<MKMID>)IDWithString:(NSString *)string {
     if (!string) {
         return nil;
     } else if ([string isKindOfClass:[MKMID class]]) {
-        return (MKMID *)string;
+        return (id<MKMID>)string;
     }
     NSAssert([string isKindOfClass:[NSString class]], @"ID string error: %@", string);
     return [_idTable objectForKey:string];
 }
 
-- (nullable MKMUser *)userWithID:(MKMID *)ID {
-    NSAssert([ID isUser], @"user ID error: %@", ID);
-    MKMUser *user = [_userTable objectForKey:ID];
+- (nullable MKMUser *)userWithID:(id<MKMID>)ID {
+    MKMUser *user = [_userTable objectForKey:ID.string];
     if (!user) {
-        if ([_idTable objectForKey:ID]) {
+        if ([_idTable objectForKey:ID.string]) {
             user = [[MKMUser alloc] initWithID:ID];
             [self cacheUser:user];
         }
@@ -214,17 +199,17 @@
 
 #pragma mark - Delegates
 
-- (nullable MKMMeta *)metaForID:(MKMID *)ID {
-    return [_metaTable objectForKey:ID];
+- (nullable id<MKMMeta>)metaForID:(id<MKMID>)ID {
+    return [_metaTable objectForKey:ID.string];
 }
 
-- (nullable __kindof MKMProfile *)profileForID:(MKMID *)ID {
-    return [_profileTable objectForKey:ID];
+- (nullable __kindof id<MKMDocument>)documentForID:(id<MKMID>)ID
+                                          withType:(nullable NSString *)type {
+    return [_profileTable objectForKey:ID.string];
 }
 
-- (nullable NSArray<MKMID *> *)contactsOfUser:(MKMID *)user {
-    NSAssert([user isUser], @"user ID error: %@", user);
-    if (![_idTable objectForKey:user]) {
+- (nullable NSArray<id<MKMID>> *)contactsOfUser:(id<MKMID>)user {
+    if (![_idTable objectForKey:user.string]) {
         return nil;
     }
     NSArray *list = [_idTable allValues];
@@ -233,28 +218,28 @@
     return mArray;
 }
 
-- (nullable id<MKMEncryptKey>)publicKeyForEncryption:(nonnull MKMID *)user {
-    NSAssert([user isUser], @"user ID error: %@", user);
+- (nullable id<MKMEncryptKey>)publicKeyForEncryption:(nonnull id<MKMID>)user {
     // NOTICE: return nothing to use profile.key or meta.key
     return nil;
 }
 
-- (nullable NSArray<id<MKMDecryptKey>> *)privateKeysForDecryption:(MKMID *)user {
-    NSAssert([user isUser], @"user ID error: %@", user);
-    MKMPrivateKey *key = [_privateTable objectForKey:user];
+- (NSArray<id<MKMDecryptKey>> *)privateKeysForDecryption:(id<MKMID>)user {
+    id<MKMPrivateKey>key = [_privateTable objectForKey:user.string];
     if ([key conformsToProtocol:@protocol(MKMDecryptKey)]) {
         return @[(id<MKMDecryptKey>)key];
     }
     return nil;
 }
 
-- (nullable id<MKMSignKey>)privateKeyForSignature:(MKMID *)user {
-    NSAssert([user isUser], @"user ID error: %@", user);
-    return [_privateTable objectForKey:user];
+- (id<MKMSignKey>)privateKeyForSignature:(id<MKMID>)user {
+    return [_privateTable objectForKey:user.string];
 }
 
-- (nullable NSArray<id<MKMVerifyKey>> *)publicKeysForVerification:(nonnull MKMID *)user {
-    NSAssert([user isUser], @"user ID error: %@", user);
+- (id<MKMSignKey>)privateKeyForVisaSignature:(id<MKMID>)user {
+    return [_privateTable objectForKey:user.string];
+}
+
+- (NSArray<id<MKMVerifyKey>> *)publicKeysForVerification:(nonnull id<MKMID>)user {
     // NOTICE: return nothing to use meta.key
     return nil;
 }

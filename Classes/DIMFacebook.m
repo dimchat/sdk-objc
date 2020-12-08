@@ -50,18 +50,18 @@
 #import "DIMFacebook.h"
 
 static inline void load_plugins(void) {
-    // AES
-    [MKMSymmetricKey registerClass:[MKMAESKey class] forAlgorithm:SCAlgorithmAES];
-    [MKMSymmetricKey registerClass:[MKMAESKey class] forAlgorithm:@"AES/CBC/PKCS7Padding"];
-    
-    // RSA: PublicKey
-    [MKMPublicKey registerClass:[MKMRSAPublicKey class] forAlgorithm:ACAlgorithmRSA];
-    [MKMPublicKey registerClass:[MKMRSAPublicKey class] forAlgorithm:@"SHA256withRSA"];
-    [MKMPublicKey registerClass:[MKMRSAPublicKey class] forAlgorithm:@"RSA/ECB/PKCS1Padding"];
-    // RSA: PrivateKey
-    [MKMPrivateKey registerClass:[MKMRSAPrivateKey class] forAlgorithm:ACAlgorithmRSA];
-    [MKMPrivateKey registerClass:[MKMRSAPrivateKey class] forAlgorithm:@"SHA256withRSA"];
-    [MKMPrivateKey registerClass:[MKMRSAPrivateKey class] forAlgorithm:@"RSA/ECB/PKCS1Padding"];
+//    // AES
+//    [MKMSymmetricKey registerClass:[MKMAESKey class] forAlgorithm:SCAlgorithmAES];
+//    [MKMSymmetricKey registerClass:[MKMAESKey class] forAlgorithm:@"AES/CBC/PKCS7Padding"];
+//    
+//    // RSA: PublicKey
+//    [MKMPublicKey registerClass:[MKMRSAPublicKey class] forAlgorithm:ACAlgorithmRSA];
+//    [MKMPublicKey registerClass:[MKMRSAPublicKey class] forAlgorithm:@"SHA256withRSA"];
+//    [MKMPublicKey registerClass:[MKMRSAPublicKey class] forAlgorithm:@"RSA/ECB/PKCS1Padding"];
+//    // RSA: PrivateKey
+//    [MKMPrivateKey registerClass:[MKMRSAPrivateKey class] forAlgorithm:ACAlgorithmRSA];
+//    [MKMPrivateKey registerClass:[MKMRSAPrivateKey class] forAlgorithm:@"SHA256withRSA"];
+//    [MKMPrivateKey registerClass:[MKMRSAPrivateKey class] forAlgorithm:@"RSA/ECB/PKCS1Padding"];
 }
 
 @implementation DIMFacebook
@@ -76,22 +76,22 @@ static inline void load_plugins(void) {
     return self;
 }
 
-- (nullable NSArray<DIMUser *> *)localUsers {
+- (nullable NSArray<MKMUser *> *)localUsers {
     NSAssert(false, @"override me!");
     return nil;
 }
 
-- (nullable DIMUser *)currentUser {
-    NSArray<DIMUser *> *users = self.localUsers;
+- (nullable MKMUser *)currentUser {
+    NSArray<MKMUser *> *users = self.localUsers;
     if ([users count] == 0) {
         return nil;
     }
     return [users firstObject];
 }
 
-- (nullable DIMID *)IDWithAddress:(DIMAddress *)address {
-    DIMID *ID = [[DIMID alloc] initWithAddress:address];
-    DIMMeta *meta = [self metaForID:ID];
+- (nullable id<MKMID>)IDWithAddress:(id<MKMAddress>)address {
+    id<MKMID> ID = [[MKMID alloc] initWithAddress:address];
+    id<MKMMeta> meta = [self metaForID:ID];
     if (!meta) {
         // failed to get meta for this ID
         return nil;
@@ -100,22 +100,50 @@ static inline void load_plugins(void) {
     if ([seed length] == 0) {
         return ID;
     }
-    ID = [[DIMID alloc] initWithName:seed address:address];
-    [self cacheID:ID];
-    return ID;
+    return [[MKMID alloc] initWithName:seed address:address];
+}
+
+- (nullable MKMUser *)selectUserWithID:(id<MKMID>)receiver {
+    NSArray<MKMUser *> *users = self.localUsers;
+    if ([users count] == 0) {
+        NSAssert(false, @"local users should not be empty");
+        return nil;
+    } else if (MKMIDIsBroadcast(receiver)) {
+        // broadcast message can decrypt by anyone, so just return current user
+        return [users firstObject];
+    }
+    if (MKMIDIsGroup(receiver)) {
+        // group message (recipient not designated)
+        for (MKMUser *item in users) {
+            if ([self group:receiver hasMember:item.ID]) {
+                //self.currentUser = item;
+                return item;
+            }
+        }
+    } else {
+        // 1. personal message
+        // 2. split group message
+        for (MKMUser *item in users) {
+            if ([receiver isEqual:item.ID]) {
+                //self.currentUser = item;
+                return item;
+            }
+        }
+    }
+    NSAssert(false, @"receiver not in local users: %@, %@", receiver, users);
+    return nil;
 }
 
 #pragma mark DIMBarrack
 
-- (nullable DIMID *)createID:(NSString *)string {
+- (nullable id<MKMID>)createID:(NSString *)string {
     return MKMIDFromString(string);
 }
 
-- (nullable DIMUser *)createUser:(DIMID *)ID {
-    NSAssert([ID isUser], @"user ID error: %@", ID);
-    if ([ID isBroadcast]) {
+- (nullable MKMUser *)createUser:(id<MKMID>)ID {
+    if (MKMIDIsBroadcast(ID)) {
         // create user 'anyone@anywhere'
-        return [[DIMUser alloc] initWithID:ID];
+        return [[MKMUser alloc] initWithID:ID];
     }
     if (![self metaForID:ID]) {
         //NSAssert(false, @"failed to get meta for user: %@", ID);
@@ -123,7 +151,7 @@ static inline void load_plugins(void) {
     }
     MKMNetworkType type = ID.type;
     if (type == MKMNetwork_Main || type == MKMNetwork_BTCMain) {
-        return [[DIMUser alloc] initWithID:ID];
+        return [[MKMUser alloc] initWithID:ID];
     }
     if (type == MKMNetwork_Robot) {
         return [[DIMRobot alloc] initWithID:ID];
@@ -135,11 +163,10 @@ static inline void load_plugins(void) {
     return nil;
 }
 
-- (nullable DIMGroup *)createGroup:(DIMID *)ID {
-    NSAssert([ID isGroup], @"group ID error: %@", ID);
-    if ([ID isBroadcast]) {
+- (nullable MKMGroup *)createGroup:(id<MKMID>)ID {
+    if (MKMIDIsBroadcast(ID)) {
         // create group 'everyone@everywhere'
-        return [[DIMGroup alloc] initWithID:ID];
+        return [[MKMGroup alloc] initWithID:ID];
     }
     if (![self metaForID:ID]) {
         //NSAssert(false, @"failed to get meta for group: %@", ID);
@@ -161,52 +188,51 @@ static inline void load_plugins(void) {
 
 #pragma mark - MKMEntityDataSource
 
-- (nullable DIMMeta *)metaForID:(DIMID *)ID {
+- (nullable id<MKMMeta>)metaForID:(id<MKMID>)ID {
     NSAssert(false, @"implement me!");
     return nil;
 }
 
-- (nullable __kindof DIMProfile *)profileForID:(MKMID *)ID {
+- (nullable __kindof id<MKMDocument>)profileForID:(id<MKMID>)ID {
     NSAssert(false, @"implement me!");
     return nil;
 }
 
 #pragma mark - MKMUserDataSource
 
-- (nullable NSArray<DIMID *> *)contactsOfUser:(DIMID *)user {
+- (nullable NSArray<id<MKMID>> *)contactsOfUser:(id<MKMID>)user {
     NSAssert(false, @"implement me!");
     return nil;
 }
 
-- (nullable DIMPrivateKey *)privateKeyForSignature:(DIMID *)user {
+- (id<MKMPrivateKey>)privateKeyForSignature:(id<MKMID>)user {
     NSAssert(false, @"implement me!");
     return nil;
 }
 
-- (nullable NSArray<DIMPrivateKey *> *)privateKeysForDecryption:(DIMID *)user {
+- (NSArray<id<MKMPrivateKey>> *)privateKeysForDecryption:(id<MKMID>)user {
     NSAssert(false, @"implement me!");
     return nil;
 }
 
 #pragma mark - MKMGroupDataSource
 
-- (nullable DIMID *)founderOfGroup:(DIMID *)group {
-    DIMID *founder = [super founderOfGroup:group];
+- (nullable id<MKMID>)founderOfGroup:(id<MKMID>)group {
+    id<MKMID> founder = [super founderOfGroup:group];
     if (founder) {
         return founder;
     }
     // check each member's public key with group meta
-    DIMMeta *gMeta = [self metaForID:group];
+    id<MKMMeta> gMeta = [self metaForID:group];
     if (!gMeta) {
         // FIXME: when group profile was arrived but the meta still on the way,
         //        here will cause founder not found.
         //NSAssert(false, @"failed to get group meta");
         return nil;
     }
-    NSArray<DIMID *> *members = [self membersOfGroup:group];
-    DIMMeta *mMeta;
-    for (DIMID *item in members) {
-        NSAssert([item isUser], @"member ID error: %@", item);
+    NSArray<id<MKMID>> *members = [self membersOfGroup:group];
+    id<MKMMeta> mMeta;
+    for (id<MKMID> item in members) {
         mMeta = [self metaForID:item];
         if (!mMeta) {
             // failed to get member meta
@@ -221,8 +247,8 @@ static inline void load_plugins(void) {
     return nil;
 }
 
-- (nullable DIMID *)ownerOfGroup:(DIMID *)group {
-    DIMID *owner = [super ownerOfGroup:group];
+- (nullable id<MKMID>)ownerOfGroup:(id<MKMID>)group {
+    id<MKMID>owner = [super ownerOfGroup:group];
     if (owner) {
         return owner;
     }
@@ -235,7 +261,7 @@ static inline void load_plugins(void) {
     return nil;
 }
 
-- (nullable NSArray<DIMID *> *)membersOfGroup:(DIMID *)group {
+- (nullable NSArray<id<MKMID>> *)membersOfGroup:(id<MKMID>)group {
     NSAssert(false, @"implement me!");
     return nil;
 }
@@ -246,19 +272,19 @@ static inline void load_plugins(void) {
 
 #pragma mark Meta
 
-- (BOOL)verifyMeta:(DIMMeta *)meta forID:(DIMID *)ID {
+- (BOOL)verifyMeta:(id<MKMMeta>)meta forID:(id<MKMID>)ID {
     NSAssert([meta isValid], @"meta error: %@", meta);
     return [meta matchID:ID];
 }
 
-- (BOOL)saveMeta:(DIMMeta *)meta forID:(DIMID *)ID {
+- (BOOL)saveMeta:(id<MKMMeta>)meta forID:(id<MKMID>)ID {
     NSAssert(false, @"override me!");
     return NO;
 }
 
 #pragma mark Profile
 
-- (BOOL)verifyProfile:(DIMProfile *)profile forID:(DIMID *)ID {
+- (BOOL)verifyProfile:(id<MKMDocument>)profile forID:(id<MKMID>)ID {
     if (![ID isEqual:profile.ID]) {
         // profile ID not match
         return NO;
@@ -266,9 +292,9 @@ static inline void load_plugins(void) {
     return [self verifyProfile:profile];
 }
 
-- (BOOL)verifyProfile:(DIMProfile *)profile {
-    DIMID *ID = [self IDWithString:profile.ID];
-    if (![ID isValid]) {
+- (BOOL)verifyProfile:(id<MKMDocument>)profile {
+    id<MKMID> ID = profile.ID;
+    if (!ID) {
         NSAssert(false, @"profile ID error: %@", profile);
         return NO;
     }
@@ -276,11 +302,11 @@ static inline void load_plugins(void) {
     //             verify it with each member's meta.key
     //         else (this is a user profile)
     //             verify it with the user's meta.key
-    DIMMeta *meta;
-    if ([ID isGroup]) {
+    id<MKMMeta> meta;
+    if (MKMIDIsGroup(ID)) {
         // check by each member
-        NSArray<DIMID *> *members = [self membersOfGroup:ID];
-        for (DIMID *item in members) {
+        NSArray<id<MKMID>> *members = [self membersOfGroup:ID];
+        for (id<MKMID>item in members) {
             meta = [self metaForID:item];
             if (!meta) {
                 // FIXME: meta not found for this member
@@ -293,7 +319,7 @@ static inline void load_plugins(void) {
         // DISCUSS: what to do about assistants?
         
         // check by owner
-        DIMID *owner = [self ownerOfGroup:ID];
+        id<MKMID> owner = [self ownerOfGroup:ID];
         if (!owner) {
             if (ID.type == MKMNetwork_Polylogue) {
                 // NOTICE: if this is a polylogue profile
@@ -311,20 +337,20 @@ static inline void load_plugins(void) {
             meta = [self metaForID:owner];
         }
     } else {
-        NSAssert([ID isUser], @"profile ID error: %@", ID);
+        NSAssert(MKMIDIsUser(ID), @"profile ID error: %@", ID);
         meta = [self metaForID:ID];
     }
     return [profile verify:meta.key];
 }
 
-- (BOOL)saveProfile:(DIMProfile *)profile {
+- (BOOL)saveProfile:(id<MKMDocument>)profile {
     NSAssert(false, @"override me!");
     return NO;
 }
 
 #pragma mark Group Members
 
-- (BOOL)saveMembers:(NSArray<DIMID *> *)members group:(DIMID *)ID {
+- (BOOL)saveMembers:(NSArray<id<MKMID>> *)members group:(id<MKMID>)ID {
     NSAssert(false, @"override me!");
     return NO;
 }
@@ -333,23 +359,23 @@ static inline void load_plugins(void) {
 
 @implementation DIMFacebook (Relationship)
 
-- (BOOL)user:(DIMID *)user hasContact:(DIMID *)contact{
-    NSArray<DIMID *> *contacts = [self contactsOfUser:user];
+- (BOOL)user:(id<MKMID>)user hasContact:(id<MKMID>)contact{
+    NSArray<id<MKMID>> *contacts = [self contactsOfUser:user];
     return [contacts containsObject:contact];
 }
 
 #pragma mark -
 
-- (BOOL)group:(DIMID *)group isFounder:(DIMID *)member {
+- (BOOL)group:(id<MKMID>)group isFounder:(id<MKMID>)member {
     // check member's public key with group's meta.key
-    DIMMeta *gMeta = [self metaForID:group];
+    id<MKMMeta> gMeta = [self metaForID:group];
     NSAssert(gMeta, @"failed to get meta for group: %@", group);
-    DIMMeta *mMeta = [self metaForID:member];
+    id<MKMMeta> mMeta = [self metaForID:member];
     //NSAssert(mMeta, @"failed to get meta for member: %@", member);
     return [gMeta matchPublicKey:mMeta.key];
 }
 
-- (BOOL)group:(DIMID *)group isOwner:(DIMID *)member {
+- (BOOL)group:(id<MKMID>)group isOwner:(id<MKMID>)member {
     if (group.type == MKMNetwork_Polylogue) {
         return [self group:group isFounder:member];
     }
@@ -357,20 +383,20 @@ static inline void load_plugins(void) {
     return NO;
 }
 
-- (BOOL)group:(DIMID *)group hasMember:(DIMID *)member {
-    NSArray<DIMID *> *members = [self membersOfGroup:group];
+- (BOOL)group:(id<MKMID>)group hasMember:(id<MKMID>)member {
+    NSArray<id<MKMID>> *members = [self membersOfGroup:group];
     return [members containsObject:member];
 }
 
 #pragma mark Group Assistants
 
-- (nullable NSArray<DIMID *> *)assistantsOfGroup:(DIMID *)group {
+- (nullable NSArray<id<MKMID>> *)assistantsOfGroup:(id<MKMID>)group {
     NSAssert(false, @"implement me!");
     return nil;
 }
 
-- (BOOL)group:(DIMID *)group hasAssistant:(DIMID *)assistant {
-    NSArray<DIMID *> *assistants = [self assistantsOfGroup:group];
+- (BOOL)group:(id<MKMID>)group hasAssistant:(id<MKMID>)assistant {
+    NSArray<id<MKMID>> *assistants = [self assistantsOfGroup:group];
     return [assistants containsObject:assistant];
 }
 

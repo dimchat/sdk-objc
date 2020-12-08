@@ -49,7 +49,7 @@
 @implementation DIMInviteCommandProcessor
 
 // check whether this is a Reset command
-- (BOOL)_isReset:(NSArray<DIMID *> *)inviteList sender:(DIMID *)sender group:(DIMID *)group {
+- (BOOL)_isReset:(NSArray<id<MKMID>> *)inviteList sender:(id<MKMID>)sender group:(id<MKMID>)group {
     // NOTICE: owner invite owner?
     //         it's a Reset command!
     if ([self containsOwnerInMembers:inviteList group:group]) {
@@ -58,27 +58,28 @@
     return NO;
 }
 
-- (nullable DIMContent *)_callReset:(DIMGroupCommand *)cmd sender:(DIMID *)sender message:(DIMReliableMessage *)rMsg {
+- (nullable id<DKDContent>)_callReset:(DIMGroupCommand *)cmd sender:(id<MKMID>)sender message:(id<DKDReliableMessage>)rMsg {
     DIMCommandProcessor *cpu = [self processorForCommand:DIMGroupCommand_Reset];
     NSAssert(cpu, @"reset CPU not set yet");
     return [cpu processContent:cmd sender:sender message:rMsg];
 }
 
-- (nullable NSArray<DIMID *> *)_doInvite:(NSArray<DIMID *> *)inviteList group:(DIMID *)group {
+- (nullable NSArray<id<MKMID>> *)_doInvite:(NSArray<id<MKMID>> *)inviteList group:(id<MKMID>)group {
     // existed members
-    NSMutableArray<DIMID *> *members = [self convertMembers:[self.facebook membersOfGroup:group]];
+    NSArray<id<MKMID>> *members = [self.facebook membersOfGroup:group];
+    NSMutableArray<id<MKMID>> *mArray = [members mutableCopy];
     // added list
     NSMutableArray *addedList = [[NSMutableArray alloc] initWithCapacity:inviteList.count];
-    for (DIMID *item in inviteList) {
+    for (id<MKMID>item in inviteList) {
         if ([members containsObject:item]) {
             continue;
         }
         // adding member found
         [addedList addObject:item];
-        [members addObject:item];
+        [mArray addObject:item];
     }
     if ([addedList count] > 0) {
-        if ([self.facebook saveMembers:members group:group]) {
+        if ([self.facebook saveMembers:mArray group:group]) {
             return addedList;
         }
         NSAssert(false, @"failed to update members for group: %@", group);
@@ -89,12 +90,12 @@
 //
 //  Main
 //
-- (nullable DIMContent *)processContent:(DIMContent *)content
-                                 sender:(DIMID *)sender
-                                message:(DIMReliableMessage *)rMsg {
+- (nullable id<DKDContent>)processContent:(id<DKDContent>)content
+                                 sender:(id<MKMID>)sender
+                                message:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMInviteCommand class]], @"invite command error: %@", content);
     DIMInviteCommand *cmd = (DIMInviteCommand *)content;
-    DIMID *group = content.group;
+    id<MKMID>group = content.group;
     // 0. check whether group info empty
     if ([self isEmpty:group]) {
         // NOTICE:
@@ -112,7 +113,7 @@
         }
     }
     // 2. get inviting members
-    NSArray<DIMID *> *inviteList = [self membersFromCommand:cmd];
+    NSArray<id<MKMID>> *inviteList = [self membersFromCommand:cmd];
     if ([inviteList count] == 0) {
         NSAssert(false, @"invite command error: %@", cmd);
         return nil;
@@ -124,7 +125,7 @@
         return [self _callReset:cmd sender:sender message:rMsg];
     }
     // 2.2. get added-list
-    NSArray<DIMID *> *added = [self _doInvite:inviteList group:group];
+    NSArray<id<MKMID>> *added = [self _doInvite:inviteList group:group];
     if (added) {
         [content setObject:added forKey:@"added"];
     }

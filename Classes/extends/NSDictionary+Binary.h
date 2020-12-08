@@ -1,6 +1,6 @@
 // license: https://mit-license.org
 //
-//  DIM-SDK : Decentralized Instant Messaging Software Development Kit
+//  Ming-Ke-Ming : Decentralized User Identity Authentication
 //
 //                               Written in 2018 by Moky <albert.moky@gmail.com>
 //
@@ -28,30 +28,20 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMCAData.h
-//  DIMCore
+//  NSDictionary+Binary.h
+//  MingKeMing
 //
-//  Created by Albert Moky on 2018/11/25.
+//  Created by Albert Moky on 2018/11/8.
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import <DIMCore/DIMCore.h>
+#import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class DIMCASubject;
-@class DIMCAValidity;
+@interface NSDictionary (Binary)
 
-@interface DIMCAData : DIMDictionary
-
-@property (strong, nonatomic) DIMCASubject *issuer; // issuer DN
-
-@property (strong, nonatomic) DIMCAValidity *validity;
-
-@property (strong, nonatomic) DIMCASubject *subject; // the CA owner
-@property (strong, nonatomic) DIMPublicKey *publicKey; // owner's PK
-
-+ (instancetype)dataWithData:(id)data;
+- (BOOL)writeToBinaryFile:(NSString *)path;
 
 @end
 

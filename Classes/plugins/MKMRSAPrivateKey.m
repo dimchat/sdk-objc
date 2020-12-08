@@ -42,6 +42,8 @@
 
 @interface MKMRSAPrivateKey () {
     
+    NSData *_data;
+    
     NSUInteger _keySize;
     
     SecKeyRef _privateKeyRef;
@@ -114,7 +116,7 @@
             _keySize = bytes * sizeof(uint8_t);
         } else {
             // get from dictionary
-            NSNumber *size = [_storeDictionary objectForKey:@"keySize"];
+            NSNumber *size = [self objectForKey:@"keySize"];
             if (size == nil) {
                 _keySize = 1024 / 8; // 128
             } else {
@@ -140,7 +142,7 @@
 - (SecKeyRef)privateKeyRef {
     if (!_privateKeyRef) {
         // 1. get private key from data content
-        NSString *pem = [_storeDictionary objectForKey:@"data"];
+        NSString *pem = [self objectForKey:@"data"];
         if (pem) {
             // key from data
             NSString *base64 = RSAPrivateKeyContentFromNSString(pem);
@@ -177,12 +179,12 @@
         NSData *data = NSDataFromSecKeyRef(_privateKeyRef);
         NSString *base64 = MKMBase64Encode(data);
         pem = NSStringFromRSAPrivateKeyContent(base64);
-        [_storeDictionary setObject:pem forKey:@"data"];
+        [self setObject:pem forKey:@"data"];
         
         // 3. other parameters
-        [_storeDictionary setObject:@"ECB" forKey:@"mode"];
-        [_storeDictionary setObject:@"PKCS1" forKey:@"padding"];
-        [_storeDictionary setObject:@"SHA256" forKey:@"digest"];
+        [self setObject:@"ECB" forKey:@"mode"];
+        [self setObject:@"PKCS1" forKey:@"padding"];
+        [self setObject:@"SHA256" forKey:@"digest"];
     }
     return _privateKeyRef;
 }

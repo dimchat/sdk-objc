@@ -40,7 +40,7 @@
 @implementation DIMPolylogue
 
 /* designated initializer */
-- (instancetype)initWithID:(DIMID *)ID {
+- (instancetype)initWithID:(id<MKMID>)ID {
     NSAssert(ID.type == MKMNetwork_Polylogue, @"polylogue ID error: %@", ID);
     if (self = [super initWithID:ID]) {
         //
@@ -48,9 +48,9 @@
     return self;
 }
 
-- (DIMID *)owner {
-    DIMID *ID = [super owner];
-    if ([ID isValid]) {
+- (id<MKMID>)owner {
+    id<MKMID>ID = [super owner];
+    if (ID) {
         NSAssert([[self founder] isEqual:ID], @"polylugue's owner is founder");
         return ID;
     }

@@ -40,7 +40,7 @@
 @interface DIMAddressNameService () {
     
     NSDictionary<NSString *, NSObject *> *_reserved;
-    NSMutableDictionary<NSString *, DIMID *> *_caches;
+    NSMutableDictionary<NSString *, id<MKMID>> *_caches;
 }
 
 @end
@@ -87,10 +87,10 @@
         };
         
         // DIM founder
-        DIMID *founder = [[DIMID alloc] initWithName:@"moky" address:MKMAnywhere()];
+        id<MKMID>founder = [[MKMID alloc] initWithName:@"moky" address:MKMAnywhere()];
         
-        DIMID *anyone = MKMAnyone();
-        DIMID *everyone = MKMEveryone();
+        id<MKMID>anyone = MKMAnyone();
+        id<MKMID>everyone = MKMEveryone();
         
         _caches = [[NSMutableDictionary alloc] init];
         
@@ -118,7 +118,7 @@
     return !![_reserved objectForKey:username];
 }
 
-- (BOOL)cacheID:(DIMID *)ID withName:(NSString *)username {
+- (BOOL)cacheID:(id<MKMID>)ID withName:(NSString *)username {
     if ([self isReservedName:username]) {
         // this name is reserved, cannot register
         return NO;
@@ -131,14 +131,14 @@
     return YES;
 }
 
-- (BOOL)saveID:(DIMID *)ID withName:(NSString *)username {
+- (BOOL)saveID:(id<MKMID>)ID withName:(NSString *)username {
     NSAssert(false, @"override me!");
     return NO;
 }
 
 #pragma mark protocol
 
-- (nullable DIMID *)IDWithName:(nonnull NSString *)username {
+- (nullable id<MKMID>)IDWithName:(nonnull NSString *)username {
     return [_caches objectForKey:username];
 }
 

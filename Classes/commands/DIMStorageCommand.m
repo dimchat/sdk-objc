@@ -44,7 +44,7 @@
     NSData *_key;
     
     NSData *_plaintext;
-    id<DIMDecryptKey> _password;
+    id<MKMDecryptKey> _password;
 }
 
 @end
@@ -52,7 +52,7 @@
 @implementation DIMStorageCommand
 
 /* designated initializer */
-- (instancetype)initWithType:(UInt8)type {
+- (instancetype)initWithType:(DKDContentType)type {
     if (self = [super initWithType:type]) {
         _title = nil;
         _data = nil;
@@ -82,7 +82,7 @@
     if (self = [self initWithCommand:DIMCommand_Storage]) {
         NSAssert([title length] > 0, @"storage title should not be empty");
         NSAssert(![title isEqualToString:DIMCommand_Storage], @"title error: %@", title);
-        [_storeDictionary setObject:title forKey:@"title"];
+        [self setObject:title forKey:@"title"];
         _title = title;
     }
     return self;
@@ -90,7 +90,7 @@
 
 - (NSString *)title {
     if (!_title) {
-        _title = [_storeDictionary objectForKey:@"title"];
+        _title = [self objectForKey:@"title"];
         if (!_title) {
             // (compatible with v1.0)
             //  contacts command: {
@@ -105,17 +105,17 @@
     return _title;
 }
 
-- (nullable NSString *)ID {
-    return [_storeDictionary objectForKey:@"ID"];
+- (nullable id<MKMID> )ID {
+    return MKMIDFromString([self objectForKey:@"ID"]);
 }
 
 - (void)setID:(NSString *)ID {
-    [_storeDictionary setObject:ID forKey:@"ID"];
+    [self setObject:ID forKey:@"ID"];
 }
 
 - (nullable NSData *)data {
     if (!_data) {
-        NSString *base64 = [_storeDictionary objectForKey:@"data"];
+        NSString *base64 = [self objectForKey:@"data"];
         if (base64) {
             _data = MKMBase64Decode(base64);
         }
@@ -125,9 +125,9 @@
 
 - (void)setData:(NSData *)data {
     if (data) {
-        [_storeDictionary setObject:MKMBase64Encode(data) forKey:@"data"];
+        [self setObject:MKMBase64Encode(data) forKey:@"data"];
     } else {
-        [_storeDictionary removeObjectForKey:@"data"];
+        [self removeObjectForKey:@"data"];
     }
     _data = data;
     _plaintext = nil;
@@ -135,7 +135,7 @@
 
 - (nullable NSData *)key {
     if (!_key) {
-        NSString *base64 = [_storeDictionary objectForKey:@"key"];
+        NSString *base64 = [self objectForKey:@"key"];
         if (base64) {
             _key = MKMBase64Decode(base64);
         }
@@ -145,9 +145,9 @@
 
 - (void)setKey:(NSData *)keyData {
     if (keyData) {
-        [_storeDictionary setObject:MKMBase64Encode(keyData) forKey:@"key"];
+        [self setObject:MKMBase64Encode(keyData) forKey:@"key"];
     } else {
-        [_storeDictionary removeObjectForKey:@"key"];
+        [self removeObjectForKey:@"key"];
     }
     _key = keyData;
     _password = nil;
@@ -155,7 +155,7 @@
 
 #pragma mark Decryption
 
-- (nullable NSData *)decryptWithSymmetricKey:(id<DIMDecryptKey>)PW {
+- (nullable NSData *)decryptWithSymmetricKey:(id<MKMDecryptKey>)PW {
     NSAssert([PW conformsToProtocol:@protocol(MKMSymmetricKey)], @"password error: %@", PW);
     if (!_plaintext) {
         NSAssert(PW, @"password should not be empty");
@@ -166,12 +166,12 @@
     return _plaintext;
 }
 
-- (nullable NSData *)decryptWithPrivateKey:(id<DIMDecryptKey>)SK {
+- (nullable NSData *)decryptWithPrivateKey:(id<MKMDecryptKey>)SK {
     if (!_password) {
         NSData *key = self.key;
         NSAssert([key length] > 0, @"key empty: %@", self);
         key = [SK decrypt:key];
-        NSAssert([key length] > 0, @"failed to decrypt key data: %@ wity private key: %@", self, SK);
+        NSAssert([key length] > 0, @"failed to decrypt key data: %@ with private key: %@", self, SK);
         NSDictionary *dict = MKMJSONDecode(key);
         _password = MKMSymmetricKeyFromDictionary(dict);
     }

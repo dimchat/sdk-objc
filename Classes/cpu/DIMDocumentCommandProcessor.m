@@ -28,7 +28,7 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMProfileCommandProcessor.m
+//  DIMDocumentCommandProcessor.m
 //  DIMSDK
 //
 //  Created by Albert Moky on 2019/11/29.
@@ -38,24 +38,24 @@
 #import "DIMFacebook.h"
 #import "DIMReceiptCommand.h"
 
-#import "DIMProfileCommandProcessor.h"
+#import "DIMDocumentCommandProcessor.h"
 
-@implementation DIMProfileCommandProcessor
+@implementation DIMDocumentCommandProcessor
 
-- (nullable DIMContent *)_getProfileForID:(DIMID *)ID {
+- (nullable id<DKDContent>)_getProfileForID:(id<MKMID>)ID {
     // query profile for ID
-    DIMProfile *profile = [self.facebook profileForID:ID];
+    id<MKMDocument>profile = [self.facebook documentForID:ID withType:MKMDocument_Any];
     if (profile) {
-        return [[DIMProfileCommand alloc] initWithID:ID profile:profile];
+        return [[DIMDocumentCommand alloc] initWithID:ID profile:profile];
     }
     // profile not found
     NSString *text = [NSString stringWithFormat:@"Sorry, profile not found for ID: %@", ID];
     return [[DIMTextContent alloc] initWithText:text];
 }
 
-- (nullable DIMContent *)_putProfile:(DIMProfile *)profile
-                                meta:(nullable DIMMeta *)meta
-                               forID:(DIMID *)ID {
+- (nullable id<DKDContent>)_putProfile:(id<MKMDocument>)profile
+                                meta:(nullable id<MKMMeta>)meta
+                               forID:(id<MKMID>)ID {
     NSString *text;
     if (meta) {
         // received a meta for ID
@@ -88,16 +88,16 @@
 //
 //  Main
 //
-- (nullable DIMContent *)processContent:(DIMContent *)content
-                                 sender:(DIMID *)sender
-                                message:(DIMReliableMessage *)rMsg {
-    NSAssert([content isKindOfClass:[DIMProfileCommand class]], @"profile command error: %@", content);
-    DIMProfileCommand *cmd = (DIMProfileCommand *)content;
-    DIMID *ID = cmd.ID;
-    DIMProfile *profile = cmd.profile;
+- (nullable id<DKDContent>)processContent:(id<DKDContent>)content
+                                 sender:(id<MKMID>)sender
+                                message:(id<DKDReliableMessage>)rMsg {
+    NSAssert([content isKindOfClass:[DIMDocumentCommand class]], @"document command error: %@", content);
+    DIMDocumentCommand *cmd = (DIMDocumentCommand *)content;
+    id<MKMID> ID = cmd.ID;
+    id<MKMDocument> profile = cmd.document;
     if (profile) {
         // check meta
-        DIMMeta *meta = cmd.meta;
+        id<MKMMeta> meta = cmd.meta;
         return [self _putProfile:profile meta:meta forID:ID];
     } else {
         return [self _getProfileForID:ID];

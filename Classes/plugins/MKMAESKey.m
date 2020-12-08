@@ -47,7 +47,10 @@ static inline NSData *random_data(NSUInteger size) {
     return [[NSData alloc] initWithBytesNoCopy:buf length:size freeWhenDone:YES];
 }
 
-@interface MKMAESKey ()
+@interface MKMAESKey () {
+    
+    NSData *_data;
+}
 
 @property (readonly, nonatomic) NSUInteger keySize;
 @property (readonly, nonatomic) NSUInteger blockSize;
@@ -84,7 +87,7 @@ static inline NSData *random_data(NSUInteger size) {
     //...
     
     // get from dictionary
-    NSNumber *size = [_storeDictionary objectForKey:@"keySize"];
+    NSNumber *size = [self objectForKey:@"keySize"];
     if (size == nil) {
         return kCCKeySizeAES256; // 32
     } else {
@@ -97,7 +100,7 @@ static inline NSData *random_data(NSUInteger size) {
     //...
     
     // get from dictionary
-    NSNumber *size = [_storeDictionary objectForKey:@"blockSize"];
+    NSNumber *size = [self objectForKey:@"blockSize"];
     if (size == nil) {
         return kCCBlockSizeAES128; // 16
     } else {
@@ -114,7 +117,7 @@ static inline NSData *random_data(NSUInteger size) {
         NSString *PW;
         
         // data
-        PW = [_storeDictionary objectForKey:@"data"];
+        PW = [self objectForKey:@"data"];
         if (PW) {
             _data = MKMBase64Decode(PW);
             break;
@@ -128,17 +131,17 @@ static inline NSData *random_data(NSUInteger size) {
         NSUInteger keySize = [self keySize];
         _data = random_data(keySize);
         PW = MKMBase64Encode(_data);
-        [_storeDictionary setObject:PW forKey:@"data"];
+        [self setObject:PW forKey:@"data"];
         
         // random initialization vector
         NSUInteger blockSize = [self blockSize];
         _iv = random_data(blockSize);
         NSString *IV = MKMBase64Encode(_iv);
-        [_storeDictionary setObject:IV forKey:@"iv"];
+        [self setObject:IV forKey:@"iv"];
         
         // other parameters
-        //[_storeDictionary setObject:@"CBC" forKey:@"mode"];
-        //[_storeDictionary setObject:@"PKCS7" forKey:@"padding"];
+        //[self setObject:@"CBC" forKey:@"mode"];
+        //[self setObject:@"PKCS7" forKey:@"padding"];
         
         break;
     }
@@ -147,7 +150,7 @@ static inline NSData *random_data(NSUInteger size) {
 
 - (NSData *)iv {
     if (!_iv) {
-        NSString *iv = [_storeDictionary objectForKey:@"iv"];
+        NSString *iv = [self objectForKey:@"iv"];
         _iv = MKMBase64Decode(iv);
     }
     return _iv;

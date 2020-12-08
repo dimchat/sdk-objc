@@ -39,7 +39,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMPolylogue : DIMGroup
+@interface DIMPolylogue : MKMGroup
 
 @end
 

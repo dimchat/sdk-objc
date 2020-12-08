@@ -42,23 +42,23 @@
 @implementation DKDContent (State)
 
 - (DIMMessageState)state {
-    NSNumber *number = [_storeDictionary objectForKey:@"state"];
+    NSNumber *number = [self objectForKey:@"state"];
     return [number unsignedIntegerValue];
 }
 
 - (void)setState:(DIMMessageState)state {
-    [_storeDictionary setObject:@(state) forKey:@"state"];
+    [self setObject:@(state) forKey:@"state"];
 }
 
 - (NSString *)error {
-    return [_storeDictionary objectForKey:@"error"];
+    return [self objectForKey:@"error"];
 }
 
 - (void)setError:(NSString *)error {
     if (error) {
-        [_storeDictionary setObject:error forKey:@"error"];
+        [self setObject:error forKey:@"error"];
     } else {
-        [_storeDictionary removeObjectForKey:@"error"];
+        [self removeObjectForKey:@"error"];
     }
 }
 
@@ -68,7 +68,7 @@
 
 - (BOOL)matchReceipt:(DIMReceiptCommand *)cmd {
     
-    DIMContent *content = self.content;
+    id<DKDContent>content = self.content;
     
     // check signature
     NSString *sig1 = [cmd objectForKey:@"signature"];
@@ -81,8 +81,8 @@
     }
     
     // check envelope
-    DIMEnvelope *env1 = cmd.envelope;
-    DIMEnvelope *env2 = self.envelope;
+    id<DKDEnvelope> env1 = cmd.envelope;
+    id<DKDEnvelope> env2 = self.envelope;
     if (env1) {
         // if contains envelope, check it
         return [env1 isEqual:env2];

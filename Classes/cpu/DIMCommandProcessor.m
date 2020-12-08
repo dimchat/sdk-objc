@@ -40,7 +40,7 @@
 #import "DIMMessenger.h"
 
 #import "DIMMetaCommandProcessor.h"
-#import "DIMProfileCommandProcessor.h"
+#import "DIMDocumentCommandProcessor.h"
 
 #import "DIMCommandProcessor.h"
 
@@ -53,14 +53,14 @@
 //
 //  Main
 //
-- (nullable DIMContent *)processContent:(DIMContent *)content
-                                 sender:(DIMID *)sender
-                                message:(DIMReliableMessage *)rMsg {
+- (nullable id<DKDContent>)processContent:(id<DKDContent>)content
+                                   sender:(id<MKMID>)sender
+                                  message:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMCommand class]], @"command error: %@", content);
     // process command content by name
     DIMCommand *cmd = (DIMCommand *)content;
     NSString *text = [NSString stringWithFormat:@"Command (%@) not support yet!", cmd.command];
-    DIMContent *res = [[DIMTextContent alloc] initWithText:text];
+    id<DKDContent>res = [[DIMTextContent alloc] initWithText:text];
     res.group = content.group;
     return res;
 }
@@ -71,8 +71,10 @@ static inline void load_cpu_classes(void) {
     // meta
     [DIMCommandProcessor registerClass:[DIMMetaCommandProcessor class]
                             forCommand:DIMCommand_Meta];
-    // profile
-    [DIMCommandProcessor registerClass:[DIMProfileCommandProcessor class]
+    // document
+    [DIMCommandProcessor registerClass:[DIMDocumentCommandProcessor class]
+                            forCommand:DIMCommand_Document];
+    [DIMCommandProcessor registerClass:[DIMDocumentCommandProcessor class]
                             forCommand:DIMCommand_Profile];
     // unknown command (default)
     [DIMCommandProcessor registerClass:[_DefaultCommandProcessor class]
@@ -111,9 +113,9 @@ static inline void load_cpu_classes(void) {
 //
 //  Main
 //
-- (nullable DIMContent *)processContent:(DIMContent *)content
-                                 sender:(DIMID *)sender
-                                message:(DIMReliableMessage *)rMsg {
+- (nullable id<DKDContent>)processContent:(id<DKDContent>)content
+                                 sender:(id<MKMID>)sender
+                                message:(id<DKDReliableMessage>)rMsg {
     NSAssert([self isMemberOfClass:[DIMCommandProcessor class]], @"error!");
     NSAssert([content isKindOfClass:[DIMCommand class]], @"command error: %@", content);
     // process command content by name

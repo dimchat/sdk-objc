@@ -41,25 +41,25 @@
 
 @implementation DIMBlockCommand
 
-- (instancetype)initWithList:(nullable NSArray<DIMID *> *)blockList {
+- (instancetype)initWithList:(nullable NSArray<id<MKMID>> *)blockList {
     if (self = [self initWithCommand:DIMCommand_Block]) {
         // block-list
         if (blockList) {
-            [_storeDictionary setObject:blockList forKey:@"list"];
+            [self setObject:blockList forKey:@"list"];
         }
     }
     return self;
 }
 
 - (nullable NSArray<NSString *> *)list {
-    return [_storeDictionary objectForKey:@"list"];
+    return [self objectForKey:@"list"];
 }
 
 - (void)setList:(NSArray<NSString *> *)list {
     if (list) {
-        [_storeDictionary setObject:list forKey:@"list"];
+        [self setObject:list forKey:@"list"];
     } else {
-        [_storeDictionary removeObjectForKey:@"list"];
+        [self removeObjectForKey:@"list"];
     }
 }
 

@@ -104,9 +104,9 @@ static inline void load_gpu_classes(void) {
 //
 //  Main
 //
-- (nullable DIMContent *)processContent:(DIMContent *)content
-                                 sender:(DIMID *)sender
-                                message:(DIMReliableMessage *)rMsg {
+- (nullable id<DKDContent>)processContent:(id<DKDContent>)content
+                                 sender:(id<MKMID>)sender
+                                message:(id<DKDReliableMessage>)rMsg {
     NSAssert([self isMemberOfClass:[DIMHistoryCommandProcessor class]], @"error!");
     NSAssert([content isKindOfClass:[DIMCommand class]], @"history command error: %@", content);
     // process command content by name

@@ -35,7 +35,7 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "DIMCertificateAuthority.h"
+#import <MingKeMing/MingKeMing.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -43,13 +43,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol DIMStationDelegate;
 
-@interface DIMStation : DIMUser {
+@interface DIMStation : MKMUser {
     
     NSString *_host;
     UInt32 _port;
     
     DIMServiceProvider *_SP;
-    DIMCertificateAuthority *_CA;
     
     __weak id<DIMStationDelegate> _delegate;
 }
@@ -58,9 +57,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly, nonatomic)         UInt32    port; // default: 9394
 
 @property (strong, nonatomic) DIMServiceProvider *SP;
-@property (strong, nonatomic) DIMCertificateAuthority *CA;
-
-@property (readonly, strong, nonatomic) DIMPublicKey *publicKey; // CA.info.*
 
 @property (readonly, strong, nonatomic) NSURL *home; // SP.home
 
@@ -68,7 +64,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithDictionary:(NSDictionary *)dict;
 
-- (instancetype)initWithID:(DIMID *)ID
+- (instancetype)initWithID:(id<MKMID>)ID
                       host:(NSString *)IP
                       port:(UInt32)port;
 
