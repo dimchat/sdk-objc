@@ -35,17 +35,8 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import "NSObject+Singleton.h"
-
 #import "DKDInstantMessage+Extension.h"
 #import "DIMFacebook.h"
-
-#import "DIMReceiptCommand.h"
-#import "DIMHandshakeCommand.h"
-#import "DIMLoginCommand.h"
-#import "DIMMuteCommand.h"
-#import "DIMBlockCommand.h"
-#import "DIMStorageCommand.h"
 
 #import "DIMContentProcessor.h"
 #import "DIMFileContentProcessor.h"
@@ -66,33 +57,6 @@
 
 @end
 
-static inline void load_cmd_classes(void) {
-//    // receipt
-//    [DIMCommand registerClass:[DIMReceiptCommand class]
-//                   forCommand:DIMCommand_Receipt];
-//    // handshake
-//    [DIMCommand registerClass:[DIMHandshakeCommand class]
-//                   forCommand:DIMCommand_Handshake];
-//    // login
-//    [DIMCommand registerClass:[DIMLoginCommand class]
-//                   forCommand:DIMCommand_Login];
-//
-//    // mute
-//    [DIMCommand registerClass:[DIMMuteCommand class]
-//                   forCommand:DIMCommand_Mute];
-//    // block
-//    [DIMCommand registerClass:[DIMBlockCommand class]
-//                   forCommand:DIMCommand_Block];
-//
-//    // storage (contacts, private_key)
-//    [DIMCommand registerClass:[DIMStorageCommand class]
-//                   forCommand:DIMCommand_Storage];
-//    [DIMCommand registerClass:[DIMStorageCommand class]
-//                   forCommand:DIMCommand_Contacts];
-//    [DIMCommand registerClass:[DIMStorageCommand class]
-//                   forCommand:DIMCommand_PrivateKey];
-}
-
 @implementation DIMMessenger
 
 - (instancetype)init {
@@ -106,11 +70,6 @@ static inline void load_cmd_classes(void) {
         _facebook = nil;
         
         _cpu = [[DIMContentProcessor alloc] initWithMessenger:self];
-        
-        // register new commands
-        SingletonDispatchOnce(^{
-            load_cmd_classes();
-        });
     }
     return self;
 }
