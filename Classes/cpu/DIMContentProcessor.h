@@ -44,26 +44,49 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMContentProcessor : NSObject
 
-@property (readonly, weak, nonatomic) DIMMessenger *messenger;
+@property (weak, nonatomic) DIMMessenger *messenger;
 @property (readonly, weak, nonatomic) DIMFacebook *facebook;
 
+- (instancetype)init;
 - (instancetype)initWithMessenger:(DIMMessenger *)messenger;
 
-- (nullable id)valueForContextName:(NSString *)key;
-- (void)setContextValue:(id)value forName:(NSString *)key;
-
-//
-//  Main
-//
+/**
+ *  Process message content
+ *
+ * @param content - message content
+ * @param rMsg - message with envelope
+ * @return content to respond
+ */
 - (nullable id<DKDContent>)processContent:(id<DKDContent>)content
-                                 sender:(id<MKMID>)sender
-                                message:(id<DKDReliableMessage>)rMsg;
+                              withMessage:(id<DKDReliableMessage>)rMsg;
+
+- (id<DKDContent>)processUnknownContent:(id<DKDContent>)content
+                            withMessage:(id<DKDReliableMessage>)rMsg;
 
 @end
 
-@interface DIMContentProcessor (Runtime)
+@interface DIMContentProcessor (CPU)
 
-+ (void)registerClass:(nullable Class)contentClass forType:(UInt8)type;
++ (void)registerProcessor:(DIMContentProcessor *)processor
+                  forType:(DKDContentType)type;
+
+- (nullable DIMContentProcessor *)getProcessorForType:(DKDContentType)type;
+
+- (nullable DIMContentProcessor *)getProcessorForContent:(id<DKDContent>)content;
+
+@end
+
+#define DIMContentProcessorRegister(type, cpu)                                 \
+            [DIMContentProcessor registerProcessor:(cpu) forType:(type)]       \
+                              /* EOF 'DIMContentProcessorRegister(type, cpu)' */
+
+#define DIMContentProcessorRegisterClass(type, clazz)                          \
+            DIMContentProcessorRegister((type), [[clazz alloc] init])          \
+                       /* EOF 'DIMContentProcessorRegisterClass(type, clazz)' */
+
+@interface DIMContentProcessor (Register)
+
++ (void)registerAllProcessors;
 
 @end
 

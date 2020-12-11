@@ -59,7 +59,7 @@
     NSString *text;
     if (meta) {
         // received a meta for ID
-        if (![self.facebook verifyMeta:meta forID:ID]) {
+        if (![meta matchID:ID]) {
             // meta not match
             text = [NSString stringWithFormat:@"Meta not match ID: %@", ID];
             return [[DIMTextContent alloc] initWithText:text];
@@ -71,12 +71,12 @@
         }
     }
     // received a profile for ID
-    if (![self.facebook verifyProfile:profile forID:ID]) {
+    if (![self.facebook verifyDocument:profile forID:ID]) {
         // profile sitnature not match
         text = [NSString stringWithFormat:@"Profile not match ID: %@", ID];
         return [[DIMTextContent alloc] initWithText:text];
     }
-    if (![self.facebook saveProfile:profile]) {
+    if (![self.facebook saveDocument:profile]) {
         // save failed
         NSAssert(false, @"failed to save profile for ID: %@, %@", ID, profile);
         return nil;
@@ -89,8 +89,7 @@
 //  Main
 //
 - (nullable id<DKDContent>)processContent:(id<DKDContent>)content
-                                 sender:(id<MKMID>)sender
-                                message:(id<DKDReliableMessage>)rMsg {
+                              withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMDocumentCommand class]], @"document command error: %@", content);
     DIMDocumentCommand *cmd = (DIMDocumentCommand *)content;
     id<MKMID> ID = cmd.ID;

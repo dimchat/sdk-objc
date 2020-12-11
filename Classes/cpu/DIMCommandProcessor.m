@@ -41,137 +41,114 @@
 
 #import "DIMMetaCommandProcessor.h"
 #import "DIMDocumentCommandProcessor.h"
+#import "DIMGroupCommandProcessor.h"
+#import "DIMInviteCommandProcessor.h"
+#import "DIMExpelCommandProcessor.h"
+#import "DIMQuitCommandProcessor.h"
+#import "DIMQueryCommandProcessor.h"
+#import "DIMResetCommandProcessor.h"
 
 #import "DIMCommandProcessor.h"
 
-@interface _DefaultCommandProcessor : DIMCommandProcessor
-
-@end
-
-@implementation _DefaultCommandProcessor
+@implementation DIMCommandProcessor
 
 //
 //  Main
 //
 - (nullable id<DKDContent>)processContent:(id<DKDContent>)content
-                                   sender:(id<MKMID>)sender
-                                  message:(id<DKDReliableMessage>)rMsg {
+                              withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMCommand class]], @"command error: %@", content);
-    // process command content by name
     DIMCommand *cmd = (DIMCommand *)content;
+    DIMCommandProcessor *cpu = [self getProcessorForCommand:cmd];
+    if (!cpu) {
+        if ([cmd isKindOfClass:[DIMGroupCommand class]]) {
+            cpu = [self getProcessorForName:@"group"];
+        }
+        if (!cpu) {
+            cpu = [self getProcessorForName:DIMCommand_Unknown];
+        }
+    }
+    if (!cpu || cpu == self) {
+        return [self processUnknownCommand:cmd withMessage:rMsg];
+    }
+    return [cpu processContent:content withMessage:rMsg];
+}
+
+- (id<DKDContent>)processUnknownCommand:(DIMCommand *)cmd
+                            withMessage:(id<DKDReliableMessage>)rMsg {
     NSString *text = [NSString stringWithFormat:@"Command (%@) not support yet!", cmd.command];
     id<DKDContent>res = [[DIMTextContent alloc] initWithText:text];
-    res.group = content.group;
+    // check group message
+    id<MKMID> group = cmd.group;
+    if (group) {
+        res.group = group;
+    }
     return res;
 }
 
 @end
 
-static inline void load_cpu_classes(void) {
-    // meta
-    [DIMCommandProcessor registerClass:[DIMMetaCommandProcessor class]
-                            forCommand:DIMCommand_Meta];
-    // document
-    [DIMCommandProcessor registerClass:[DIMDocumentCommandProcessor class]
-                            forCommand:DIMCommand_Document];
-    [DIMCommandProcessor registerClass:[DIMDocumentCommandProcessor class]
-                            forCommand:DIMCommand_Profile];
-    // unknown command (default)
-    [DIMCommandProcessor registerClass:[_DefaultCommandProcessor class]
-                            forCommand:DIMCommand_Unknown];
-}
+@implementation DIMCommandProcessor (CPU)
 
-#pragma mark -
+static NSMutableDictionary<NSString *, DIMCommandProcessor *> *s_processors = nil;
 
-@interface DIMCommandProcessor () {
-    
-    NSMutableDictionary<NSString *, DIMCommandProcessor *> *_processors;
-}
-
-@end
-
-@interface DIMCommandProcessor (Create)
-
-- (DIMCommandProcessor *)processorForCommand:(NSString *)name;
-
-@end
-
-@implementation DIMCommandProcessor
-
-- (instancetype)initWithMessenger:(DIMMessenger *)messenger {
-    if (self = [super initWithMessenger:messenger]) {
-        _processors = nil;
-        
-        // register CPU classes
-        SingletonDispatchOnce(^{
-            load_cpu_classes();
-        });
-    }
-    return self;
-}
-
-//
-//  Main
-//
-- (nullable id<DKDContent>)processContent:(id<DKDContent>)content
-                                 sender:(id<MKMID>)sender
-                                message:(id<DKDReliableMessage>)rMsg {
-    NSAssert([self isMemberOfClass:[DIMCommandProcessor class]], @"error!");
-    NSAssert([content isKindOfClass:[DIMCommand class]], @"command error: %@", content);
-    // process command content by name
-    DIMCommand *cmd = (DIMCommand *)content;
-    DIMCommandProcessor *cpu = [self processorForCommand:cmd.command];
-    NSAssert(cpu != self, @"Dead cycle!");
-    return [cpu processContent:content sender:sender message:rMsg];
-}
-
-@end
-
-static NSMutableDictionary<NSString *, Class> *cpu_classes(void) {
-    static NSMutableDictionary<NSString *, Class> *classes = nil;
++ (void)registerProcessor:(DIMCommandProcessor *)processor
+               forCommand:(NSString *)name {
     SingletonDispatchOnce(^{
-        classes = [[NSMutableDictionary alloc] init];
-        // ...
-    });
-    return classes;
-}
-
-@implementation DIMCommandProcessor (Runtime)
-
-+ (void)registerClass:(Class)clazz forCommand:(NSString *)name {
-    NSAssert(![clazz isEqual:self], @"only subclass");
-    if (clazz) {
-        NSAssert([clazz isSubclassOfClass:self], @"error: %@", clazz);
-        [cpu_classes() setObject:clazz forKey:name];
-    } else {
-        [cpu_classes() removeObjectForKey:name];
-    }
-}
-
-- (DIMContentProcessor *)processorForCommand:(NSString *)name {
-    SingletonDispatchOnce(^{
-        self->_processors = [[NSMutableDictionary alloc] init];
-    });
-    // 1. get from pool
-    DIMCommandProcessor *cpu = [_processors objectForKey:name];
-    if (cpu) {
-        return cpu;
-    }
-    // 2. get CPU class by command name
-    Class clazz = [cpu_classes() objectForKey:name];
-    if (!clazz) {
-        if ([name isEqualToString:DIMCommand_Unknown]) {
-            NSAssert(false, @"default CPU not register yet");
-            return nil;
+        if (!s_processors) {
+            s_processors = [[NSMutableDictionary alloc] init];
         }
-        // call default CPU
-        return [self processorForCommand:DIMCommand_Unknown];
-    }
-    // 3. create CPU with messenger
-    cpu = [[clazz alloc] initWithMessenger:self.messenger];
-    [_processors setObject:cpu forKey:name];
+    });
+    [s_processors setObject:processor forKey:name];
+}
+
+- (nullable DIMCommandProcessor *)getProcessorForCommand:(DIMCommand *)cmd {
+    return [self getProcessorForName:cmd.command];
+}
+
+- (nullable DIMCommandProcessor *)getProcessorForName:(NSString *)name {
+    DIMCommandProcessor *cpu = [s_processors objectForKey:name];
+    //NSAssert(cpu, @"failed to get CPU for content type: %d", type);
+    cpu.messenger = self.messenger;
     return cpu;
 }
 
+- (nullable DIMCommandProcessor *)newProcessorForName:(NSString *)name {
+    if ([name isEqualToString:DIMCommand_Meta]) {
+        return [[DIMMetaCommandProcessor alloc] initWithMessenger:self.messenger];
+    }
+    
+    if ([name isEqualToString:DIMCommand_Profile]) {
+        return [[DIMDocumentCommandProcessor alloc] initWithMessenger:self.messenger];
+    }
+    if ([name isEqualToString:DIMCommand_Document]) {
+        return [[DIMDocumentCommandProcessor alloc] initWithMessenger:self.messenger];
+    }
+
+    // UNKNOWN
+    return nil;
+}
+
 @end
 
+@implementation DIMCommandProcessor (Register)
+
++ (void)registerAllProcessors {
+    //
+    //  Register command processors
+    //
+    DIMCommandProcessorRegisterClass(DIMCommand_Meta, DIMMetaCommandProcessor);
+    
+    DIMDocumentCommandProcessor *docProcessor = [[DIMDocumentCommandProcessor alloc] init];
+    DIMCommandProcessorRegister(DIMCommand_Profile, docProcessor);
+    DIMCommandProcessorRegister(DIMCommand_Document, docProcessor);
+    
+    DIMCommandProcessorRegisterClass(@"group", DIMGroupCommandProcessor);
+    DIMCommandProcessorRegisterClass(DIMGroupCommand_Invite, DIMInviteCommandProcessor);
+    DIMCommandProcessorRegisterClass(DIMGroupCommand_Expel, DIMExpelCommandProcessor);
+    DIMCommandProcessorRegisterClass(DIMGroupCommand_Quit, DIMQuitCommandProcessor);
+    DIMCommandProcessorRegisterClass(DIMGroupCommand_Query, DIMQueryGroupCommandProcessor);
+    DIMCommandProcessorRegisterClass(DIMGroupCommand_Reset, DIMResetGroupCommandProcessor);
+}
+
+@end

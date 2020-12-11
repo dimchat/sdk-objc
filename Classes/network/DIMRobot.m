@@ -39,4 +39,13 @@
 
 @implementation DIMRobot
 
+/* designated initializer */
+- (instancetype)initWithID:(id<MKMID>)ID {
+    NSAssert(ID.type == MKMNetwork_Robot, @"robot ID error: %@", ID);
+    if (self = [super initWithID:ID]) {
+        //
+    }
+    return self;
+}
+
 @end

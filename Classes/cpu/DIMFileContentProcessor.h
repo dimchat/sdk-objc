@@ -2,12 +2,12 @@
 //
 //  DIM-SDK : Decentralized Instant Messaging Software Development Kit
 //
-//                               Written in 2019 by Moky <albert.moky@gmail.com>
+//                               Written in 2020 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Albert Moky
+// Copyright (c) 2020 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,33 +28,26 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMMuteCommand.h
-//  DIMClient
+//  DIMFileContentProcessor.h
+//  DIMSDK
 //
-//  Created by Albert Moky on 2019/10/25.
-//  Copyright © 2019 DIM Group. All rights reserved.
+//  Created by Albert Moky on 2020/12/11.
+//  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
-#import <DIMCore/DIMCore.h>
+#import "DIMContentProcessor.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-#define DIMCommand_Mute   @"mute"
+@interface DIMFileContentProcessor : DIMContentProcessor
 
-@interface DIMMuteCommand : DIMCommand
+- (BOOL)uploadFileContent:(id<DIMFileContent>)content
+                      key:(id<MKMSymmetricKey>)pwd
+                  message:(id<DKDInstantMessage>)iMsg;
 
-// mute-list
-@property (strong, nonatomic, nullable) NSArray<id<MKMID>> *list;
-
-/*
- *  MuteCommand message: {
- *      type : 0x88,
- *
- *      command : "mute",
- *      list    : [] // mute-list; if it's None, means querying mute-list from station
- *  }
- */
-- (instancetype)initWithList:(nullable NSArray<id<MKMID>> *)muteList;
+- (BOOL)downloadFileContent:(id<DIMFileContent>)content
+                        key:(id<MKMSymmetricKey>)pwd
+                    message:(id<DKDSecureMessage>)sMsg;
 
 @end
 

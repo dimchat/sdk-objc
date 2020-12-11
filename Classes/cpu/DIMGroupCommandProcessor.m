@@ -55,26 +55,15 @@
 }
 
 - (nullable NSArray<id<MKMID>> *)membersFromCommand:(DIMGroupCommand *)cmd {
-    NSArray *members = [cmd members];
-    if (!members) {
-        NSString *member = [cmd member];
-        if (!member) {
-            return nil;
-        }
-        id<MKMID>ID = MKMIDFromString(member);
-        NSAssert(ID, @"member ID error: %@", member);
-        members = @[ID];
-    } else {
-        NSMutableArray *mArray = [[NSMutableArray alloc] initWithCapacity:members.count];
-        id<MKMID>member;
-        for (NSString *item in members) {
-            member = MKMIDFromString(item);
-            NSAssert(member, @"member ID error: %@", item);
-            [mArray addObject:member];
-        }
-        members = mArray;
+    NSArray<id<MKMID>> *members = [cmd members];
+    if (members.count > 0) {
+        return members;
     }
-    return members;
+    id<MKMID> member = [cmd member];
+    if (member) {
+        return @[member];
+    }
+    return nil;
 }
 
 - (BOOL)containsOwnerInMembers:(NSArray<id<MKMID>> *)members group:(id<MKMID>)group {
@@ -95,27 +84,30 @@
     return !owner;
 }
 
+
 //
 //  Main
 //
 - (nullable id<DKDContent>)processContent:(id<DKDContent>)content
-                                 sender:(id<MKMID>)sender
-                                message:(id<DKDReliableMessage>)rMsg {
-    NSAssert([self isMemberOfClass:[DIMGroupCommandProcessor class]], @"error!");
-    NSAssert([content isKindOfClass:[DIMCommand class]], @"group command error: %@", content);
-    // process command content by name
-    DIMCommand *cmd = (DIMCommand *)content;
-    DIMCommandProcessor *cpu = [self processorForCommand:cmd.command];
-    /*
+                              withMessage:(id<DKDReliableMessage>)rMsg {
+    NSAssert([content isKindOfClass:[DIMGroupCommand class]], @"group command error: %@", content);
+    DIMGroupCommand *cmd = (DIMGroupCommand *)content;
+    DIMCommandProcessor *cpu = [self getProcessorForCommand:cmd];
     if (!cpu) {
-        NSString *text = [NSString stringWithFormat:@"Group command (%@) not support yet!", cmd.command];
-        id<DKDContent>res = [[DIMTextContent alloc] initWithText:text];
-        res.group = content.group;
-        return res;
+        cpu = [self getProcessorForName:DIMCommand_Unknown];
     }
-     */
-    NSAssert(cpu != self, @"Dead cycle!");
-    return [cpu processContent:content sender:sender message:rMsg];
+    if (!cpu || cpu == self) {
+        return [self processUnknownCommand:cmd withMessage:rMsg];
+    }
+    return [cpu processContent:content withMessage:rMsg];
+}
+
+- (id<DKDContent>)processUnknownCommand:(DIMCommand *)cmd
+                            withMessage:(id<DKDReliableMessage>)rMsg {
+    NSString *text = [NSString stringWithFormat:@"Group command (%@) not support yet!", cmd.command];
+    id<DKDContent>res = [[DIMTextContent alloc] initWithText:text];
+    res.group = cmd.group;
+    return res;
 }
 
 @end

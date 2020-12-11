@@ -51,20 +51,20 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMFacebook : DIMBarrack
 
-@property (readonly, strong, nonatomic, nullable) NSArray<MKMUser *> *localUsers;
+/**
+ *  Get current user
+ *
+ * @return first local user
+ */
 @property (readonly, strong, nonatomic, nullable) MKMUser *currentUser;
 
-- (nullable id<MKMID>)IDWithAddress:(id<MKMAddress>)address;
-
-- (nullable MKMUser *)selectUserWithID:(id<MKMID>)receiver;
+- (BOOL)isEmptyDocument:(id<MKMDocument>)doc;
+- (BOOL)verifyDocument:(id<MKMDocument>)doc forID:(id<MKMID>)ID;
+- (BOOL)verifyDocument:(id<MKMDocument>)doc;
 
 @end
 
 @interface DIMFacebook (Storage)
-
-#pragma mark Meta
-
-- (BOOL)verifyMeta:(id<MKMMeta>)meta forID:(id<MKMID>)ID;
 
 /**
  *  Save meta for entity ID (must verify first)
@@ -75,20 +75,13 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (BOOL)saveMeta:(id<MKMMeta>)meta forID:(id<MKMID>)ID;
 
-#pragma mark Profile
-
-- (BOOL)verifyProfile:(id<MKMDocument>)profile forID:(id<MKMID>)ID;
-- (BOOL)verifyProfile:(id<MKMDocument>)profile;
-
 /**
  *  Save profile with entity ID (must verify first)
  *
- * @param profile - entity profile
+ * @param doc - entity profile
  * @return true on success
  */
-- (BOOL)saveProfile:(id<MKMDocument>)profile;
-
-#pragma mark Group Members
+- (BOOL)saveDocument:(id<MKMDocument>)doc;
 
 /**
  *  Save members of group
@@ -98,22 +91,6 @@ NS_ASSUME_NONNULL_BEGIN
  * @return true on success
  */
 - (BOOL)saveMembers:(NSArray<id<MKMID>> *)members group:(id<MKMID>)ID;
-
-@end
-
-@interface DIMFacebook (Relationship)
-
-- (BOOL)user:(id<MKMID>)user hasContact:(id<MKMID>)contact;
-
-- (BOOL)group:(id<MKMID>)group isFounder:(id<MKMID>)member;
-- (BOOL)group:(id<MKMID>)group isOwner:(id<MKMID>)member;
-
-- (BOOL)group:(id<MKMID>)group hasMember:(id<MKMID>)member;
-
-#pragma mark Assistant
-
-- (nullable NSArray<id<MKMID>> *)assistantsOfGroup:(id<MKMID>)group;
-- (BOOL)group:(id<MKMID>)group hasAssistant:(id<MKMID>)assistant;
 
 @end
 

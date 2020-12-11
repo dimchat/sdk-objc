@@ -43,30 +43,19 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol DIMStationDelegate;
 
-@interface DIMStation : MKMUser {
-    
-    NSString *_host;
-    UInt32 _port;
-    
-    DIMServiceProvider *_SP;
-    
-    __weak id<DIMStationDelegate> _delegate;
-}
+@interface DIMStation : MKMUser
 
 @property (readonly, strong, nonatomic) NSString *host; // Domain/IP
 @property (readonly, nonatomic)         UInt32    port; // default: 9394
 
-@property (strong, nonatomic) DIMServiceProvider *SP;
-
-@property (readonly, strong, nonatomic) NSURL *home; // SP.home
-
 @property (weak, nonatomic) id<DIMStationDelegate> delegate;
-
-- (instancetype)initWithDictionary:(NSDictionary *)dict;
 
 - (instancetype)initWithID:(id<MKMID>)ID
                       host:(NSString *)IP
-                      port:(UInt32)port;
+                      port:(UInt32)port
+NS_DESIGNATED_INITIALIZER;
+
+- (instancetype)initWithID:(id<MKMID>)ID;
 
 @end
 

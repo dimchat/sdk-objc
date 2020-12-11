@@ -43,8 +43,7 @@
 //  Main
 //
 - (nullable id<DKDContent>)processContent:(id<DKDContent>)content
-                                 sender:(id<MKMID>)sender
-                                message:(id<DKDReliableMessage>)rMsg {
+                              withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMForwardContent class]], @"forward content error: %@", content);
     DIMForwardContent *forward = (DIMForwardContent *)content;
     id<DKDReliableMessage>secret = forward.forwardMessage;
@@ -56,7 +55,7 @@
         // Over The Top
         return [[DIMForwardContent alloc] initWithForwardMessage:secret];
     }/* else {
-        id receiver = forward.forwardMessage.envelope.receiver;
+        id receiver = forward.forwardMessage.receiver;
         NSString *text = [NSString stringWithFormat:@"Message forwarded: %@", receiver];
         return [[DIMReceiptCommand alloc] initWithMessage:text];
     }*/

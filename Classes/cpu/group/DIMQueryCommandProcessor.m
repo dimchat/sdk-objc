@@ -46,13 +46,13 @@
 //  Main
 //
 - (nullable id<DKDContent>)processContent:(id<DKDContent>)content
-                                 sender:(id<MKMID>)sender
-                                message:(id<DKDReliableMessage>)rMsg {
+                              withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMQueryGroupCommand class]], @"query group command error: %@", content);
+    id<MKMID> sender = rMsg.sender;
     id<MKMID>group = content.group;
     // 1. check permission
-    if (![self.facebook group:group hasMember:sender]) {
-        if (![self.facebook group:group hasAssistant:sender]) {
+    if (![self.facebook group:group containsMember:sender]) {
+        if (![self.facebook group:group containsAssistant:sender]) {
             NSAssert(false, @"%@ is not a member/assistant of group %@, cannot query", sender, group);
             return nil;
         }

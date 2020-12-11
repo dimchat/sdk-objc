@@ -59,7 +59,7 @@
                             forID:(id<MKMID>)ID {
     NSString *text;
     // received a meta for ID
-    if (![self.facebook verifyMeta:meta forID:ID]) {
+    if (![meta matchID:ID]) {
         // meta not match
         text = [NSString stringWithFormat:@"Meta not match ID: %@", ID];
         return [[DIMTextContent alloc] initWithText:text];
@@ -77,8 +77,7 @@
 //  Main
 //
 - (nullable id<DKDContent>)processContent:(id<DKDContent>)content
-                                 sender:(id<MKMID>)sender
-                                message:(id<DKDReliableMessage>)rMsg {
+                              withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMMetaCommand class]], @"meta command error: %@", content);
     DIMMetaCommand *cmd = (DIMMetaCommand *)content;
     id<MKMID> ID = cmd.ID;

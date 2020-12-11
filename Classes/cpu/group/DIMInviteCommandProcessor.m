@@ -61,7 +61,7 @@
 - (nullable id<DKDContent>)_callReset:(DIMGroupCommand *)cmd sender:(id<MKMID>)sender message:(id<DKDReliableMessage>)rMsg {
     DIMCommandProcessor *cpu = [self processorForCommand:DIMGroupCommand_Reset];
     NSAssert(cpu, @"reset CPU not set yet");
-    return [cpu processContent:cmd sender:sender message:rMsg];
+    return [cpu processContent:cmd withMessage:rMsg];
 }
 
 - (nullable NSArray<id<MKMID>> *)_doInvite:(NSArray<id<MKMID>> *)inviteList group:(id<MKMID>)group {
@@ -91,10 +91,10 @@
 //  Main
 //
 - (nullable id<DKDContent>)processContent:(id<DKDContent>)content
-                                 sender:(id<MKMID>)sender
-                                message:(id<DKDReliableMessage>)rMsg {
+                              withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMInviteCommand class]], @"invite command error: %@", content);
     DIMInviteCommand *cmd = (DIMInviteCommand *)content;
+    id<MKMID> sender = rMsg.sender;
     id<MKMID>group = content.group;
     // 0. check whether group info empty
     if ([self isEmpty:group]) {
@@ -104,8 +104,8 @@
         return [self _callReset:cmd sender:sender message:rMsg];
     }
     // 1. check permission
-    if (![self.facebook group:group hasMember:sender]) {
-        if (![self.facebook group:group hasAssistant:sender]) {
+    if (![self.facebook group:group containsMember:sender]) {
+        if (![self.facebook group:group containsAssistant:sender]) {
             if (![self.facebook group:group isOwner:sender]) {
                 //NSAssert(false, @"%@ is not a member/assistant of group %@, cannot invite.", sender, group);
                 return nil;

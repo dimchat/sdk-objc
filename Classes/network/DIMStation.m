@@ -51,69 +51,19 @@
 @implementation DIMStation
 
 /* designated initializer */
-- (instancetype)initWithID:(id<MKMID>)ID {
+- (instancetype)initWithID:(id<MKMID>)ID
+                      host:(NSString *)IP
+                      port:(UInt32)port {
     if (self = [super initWithID:ID]) {
-        _host = nil;
-        _port = 9394;
-        _SP = nil;
+        _host = IP;
+        _port = port;
         _delegate = nil;
     }
     return self;
 }
 
-- (instancetype)initWithDictionary:(NSDictionary *)dict {
-    // ID
-    id<MKMID>ID = MKMIDFromString([dict objectForKey:@"ID"]);
-//    // public key
-//    id PK = [dict objectForKey:@"publicKey"];
-//    if (!PK) {
-//        PK = [dict objectForKey:@"PK"];
-//        if (!PK) {
-//            // get from meta.key
-//            id<MKMMeta> meta = [dict objectForKey:@"meta"];
-//            if (meta) {
-//                meta = MKMMetaFromDictionary(meta);
-//                PK = meta.key;
-//            }
-//        }
-//    }
-//    PK = MKMPublicKeyFromDictionary(PK);
-    
-    // host
-    NSString *host = [dict objectForKey:@"host"];
-    // port
-    NSNumber *port = [dict objectForKey:@"port"];
-    if (port == nil) {
-        port = @(9394);
-    }
-    // SP
-    id SP = [dict objectForKey:@"SP"];
-    if ([SP isKindOfClass:[NSDictionary class]]) {
-        SP = [[DIMServiceProvider alloc] initWithDictionary:SP];
-    }
-    
-//    if (!PK) {
-//        // get from CA.info.publicKey
-//        PK = CA.info.publicKey;
-//    }
-    // TODO: save public key for the Station
-    
-    if (self = [self initWithID:ID
-                           host:host
-                           port:[port unsignedIntValue]]) {
-        _SP = SP;
-    }
-    return self;
-}
-
-- (instancetype)initWithID:(id<MKMID>)ID
-                      host:(NSString *)IP
-                      port:(UInt32)port {
-    if (self = [self initWithID:ID]) {
-        _host = IP;
-        _port = port;
-    }
-    return self;
+- (instancetype)initWithID:(id<MKMID>)ID {
+    return [self initWithID:ID host:@"127.0.0.1" port:9394];
 }
 
 - (id)copyWithZone:(NSZone *)zone {
@@ -121,7 +71,6 @@
     if (server) {
         server.host = _host;
         server.port = _port;
-        server.SP = _SP;
         server.delegate = _delegate;
     }
     return server;
@@ -130,10 +79,15 @@
 - (NSString *)debugDescription {
     NSString *desc = [super debugDescription];
     NSDictionary *dict = MKMJSONDecode(MKMUTF8Encode(desc));
-    NSMutableDictionary *mDict = [dict mutableCopy];
-    [mDict setObject:self.host forKey:@"host"];
-    [mDict setObject:@(self.port) forKey:@"port"];
-    return MKMUTF8Decode(MKMJSONEncode(mDict));
+    NSMutableDictionary *info;
+    if ([dict isKindOfClass:[NSMutableDictionary class]]) {
+        info = (NSMutableDictionary *)dict;
+    } else {
+        info = [dict mutableCopy];
+    }
+    [info setObject:self.host forKey:@"host"];
+    [info setObject:@(self.port) forKey:@"port"];
+    return MKMUTF8Decode(MKMJSONEncode(info));
 }
 
 - (BOOL)isEqual:(id)object {
@@ -150,10 +104,6 @@
     }
     // others?
     return YES;
-}
-
-- (NSURL *)home {
-    return self.SP.home;
 }
 
 @end

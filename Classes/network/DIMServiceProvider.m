@@ -43,47 +43,19 @@
 
 /* designated initializer */
 - (instancetype)initWithID:(id<MKMID>)ID {
+    NSAssert(ID.type == MKMNetwork_Provider, @"SP ID error: %@", ID);
     if (self = [super initWithID:ID]) {
-        _home = nil;
+        //
     }
     return self;
-}
-
-- (instancetype)initWithDictionary:(NSDictionary *)dict {
-    // ID
-    id<MKMID>ID = MKMIDFromString([dict objectForKey:@"ID"]);
-//    // founder
-//    id<MKMID>founder = [dict objectForKey:@"founder"];
-//    founder = MKMIDFromString(founder);
-//    // owner
-//    id<MKMID>owner = [dict objectForKey:@"owner"];
-//    owner = MKMIDFromString(owner);
-    
-    // home
-    id home = [dict objectForKey:@"home"];
-    if ([home isKindOfClass:[NSString class]]) {
-        home = [NSURL URLWithString:home];
-    }
-    
-    if (self = [self initWithID:ID]) {
-        _home = home;
-    }
-    return self;
-}
-
-- (id)copyWithZone:(NSZone *)zone {
-    DIMServiceProvider *SP = [super copyWithZone:zone];
-    if (SP) {
-        SP.home = _home;
-    }
-    return SP;
 }
 
 #pragma mark Station
 
-- (BOOL)verifyStation:(DIMStation *)server {
-    NSAssert(false, @"implement me!");
-    return NO;
+- (NSArray<id<MKMID>> *)stations {
+    NSAssert(self.dataSource, @"data source not set yet");
+    NSArray *list = [self.dataSource membersOfGroup:_ID];
+    return [list mutableCopy];
 }
 
 @end

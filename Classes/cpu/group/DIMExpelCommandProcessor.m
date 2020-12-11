@@ -72,14 +72,14 @@
 //  Main
 //
 - (nullable id<DKDContent>)processContent:(id<DKDContent>)content
-                                 sender:(id<MKMID>)sender
-                                message:(id<DKDReliableMessage>)rMsg {
+                              withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMExpelCommand class]], @"expel command error: %@", content);
     DIMExpelCommand *cmd = (DIMExpelCommand *)content;
+    id<MKMID> sender = rMsg.sender;
     id<MKMID>group = content.group;
     // 1. check permission
     if (![self.facebook group:group isOwner:sender]) {
-        if (![self.facebook group:group hasAssistant:sender]) {
+        if (![self.facebook group:group containsAssistant:sender]) {
             NSAssert(false, @"%@ is not the owner/assistant of group %@, cannot expel.", sender, group);
             return nil;
         }

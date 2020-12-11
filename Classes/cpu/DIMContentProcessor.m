@@ -41,159 +41,105 @@
 #import "DIMMessenger.h"
 
 #import "DIMForwardContentProcessor.h"
+#import "DIMFileContentProcessor.h"
 #import "DIMCommandProcessor.h"
 #import "DIMHistoryProcessor.h"
 
 #import "DIMContentProcessor.h"
 
-@interface _DefaultContentProcessor : DIMContentProcessor
-
-@end
-
-@implementation _DefaultContentProcessor
-
-//
-//  Main
-//
-- (nullable id<DKDContent>)processContent:(id<DKDContent>)content
-                                 sender:(id<MKMID>)sender
-                                message:(id<DKDReliableMessage>)rMsg {
-    // process content by type
-    NSString *text = [NSString stringWithFormat:@"Content (type: %u) not support yet!", content.type];
-    id<DKDContent>res = [[DIMTextContent alloc] initWithText:text];
-    res.group = content.group;
-    return res;
-}
-
-@end
-
-static inline void load_cpu_classes(void) {
-    // forward content
-    [DIMContentProcessor registerClass:[DIMForwardContentProcessor class]
-                               forType:DKDContentType_Forward];
-
-    // command
-    [DIMContentProcessor registerClass:[DIMCommandProcessor class]
-                               forType:DKDContentType_Command];
-    // history command
-    [DIMContentProcessor registerClass:[DIMHistoryCommandProcessor class]
-                               forType:DKDContentType_History];
-    
-    // unknown content (default)
-    [DIMContentProcessor registerClass:[_DefaultContentProcessor class]
-                               forType:DKDContentType_Unknown];
-}
-
-#pragma mark -
-
-@interface DIMContentProcessor () {
-    
-    __weak DIMMessenger *_messenger;
-    
-    NSMutableDictionary<NSNumber *, DIMContentProcessor *> *_processors;
-}
-
-@end
-
-@interface DIMContentProcessor (Create)
-
-- (DIMContentProcessor *)processorForContentType:(UInt8)type;
-
-@end
-
 @implementation DIMContentProcessor
 
+- (instancetype)init {
+    if (self = [super init]) {
+        self.messenger = nil;
+    }
+    return self;
+}
 - (instancetype)initWithMessenger:(DIMMessenger *)messenger {
     if (self = [super init]) {
-        _messenger = messenger;
-        
-        _processors = nil;
-        
-        // register CPU classes
-        SingletonDispatchOnce(^{
-            load_cpu_classes();
-        });
+        self.messenger = messenger;
     }
     return self;
 }
 
 - (DIMFacebook *)facebook {
-    return _messenger.facebook;
-}
-
-- (nullable id)valueForContextName:(NSString *)key {
-    return [_messenger valueForContextName:key];
-}
-
-- (void)setContextValue:(id)value forName:(NSString *)key {
-    [_messenger setContextValue:value forName:key];
+    return self.messenger.facebook;
 }
 
 //
 //  Main
 //
 - (nullable id<DKDContent>)processContent:(id<DKDContent>)content
-                                 sender:(id<MKMID>)sender
-                                message:(id<DKDReliableMessage>)rMsg {
-    NSAssert([self isMemberOfClass:[DIMContentProcessor class]], @"error!");
-    // process content by type
-    DIMContentProcessor *cpu = [self processorForContentType:content.type];
-    NSAssert(cpu != self, @"Dead cycle!");
-    return [cpu processContent:content sender:sender message:rMsg];
+                              withMessage:(id<DKDReliableMessage>)rMsg {
+    DIMContentProcessor *cpu = [self getProcessorForContent:content];
+    if (!cpu) {
+        cpu = [self getProcessorForType:DKDContentType_Unknown];
+    }
+    if (!cpu || cpu == self) {
+        return [self processUnknownContent:content withMessage:rMsg];
+    }
+    return [cpu processContent:content withMessage:rMsg];
+}
+
+- (id<DKDContent>)processUnknownContent:(id<DKDContent>)content
+                            withMessage:(id<DKDReliableMessage>)rMsg {
+    NSString *text = [NSString stringWithFormat:@"Content (type: %u) not support yet!", content.type];
+    id<DKDContent>res = [[DIMTextContent alloc] initWithText:text];
+    // check group message
+    id<MKMID> group = content.group;
+    if (group) {
+        res.group = group;
+    }
+    return res;
 }
 
 @end
 
-static NSMutableDictionary<NSNumber *, Class> *cpu_classes(void) {
-    static NSMutableDictionary<NSNumber *, Class> *classes = nil;
+@implementation DIMContentProcessor (CPU)
+
+static NSMutableDictionary<NSNumber *, DIMContentProcessor *> *s_processors = nil;
+
++ (void)registerProcessor:(DIMContentProcessor *)processor
+                  forType:(DKDContentType)type {
     SingletonDispatchOnce(^{
-        classes = [[NSMutableDictionary alloc] init];
-        // ...
-    });
-    return classes;
-}
-
-@implementation DIMContentProcessor (Runtime)
-
-+ (void)registerClass:(nullable Class)clazz forType:(UInt8)type {
-    NSAssert(![clazz isEqual:self], @"only subclass");
-    if (clazz) {
-        NSAssert([clazz isSubclassOfClass:self], @"error: %@", clazz);
-        [cpu_classes() setObject:clazz forKey:@(type)];
-    } else {
-        [cpu_classes() removeObjectForKey:@(type)];
-    }
-}
-
-- (DIMContentProcessor *)processorForContentType:(UInt8)type {
-    SingletonDispatchOnce(^{
-        self->_processors = [[NSMutableDictionary alloc] init];
-        // history CPU
-        NSNumber *key = @(DKDContentType_History);
-        Class clazz = [cpu_classes() objectForKey:key];
-        DIMContentProcessor *cpu = [[clazz alloc] initWithMessenger:self->_messenger];
-        [self->_processors setObject:cpu forKey:key];
-    });
-    NSNumber *key = @(type);
-    // 1. get from pool
-    DIMContentProcessor *cpu = [_processors objectForKey:key];
-    if (cpu) {
-        return cpu;
-    }
-    // 2. get CPU class by content type
-    Class clazz = [cpu_classes() objectForKey:key];
-    if (!clazz) {
-        if (type == DKDContentType_Unknown) {
-            NSAssert(false, @"default CPU not register yet");
-            return nil;
+        if (!s_processors) {
+            s_processors = [[NSMutableDictionary alloc] init];
         }
-        // call default CPU
-        return [self processorForContentType:DKDContentType_Unknown];
-    }
-    // 3. create CPU with messenger
-    cpu = [[clazz alloc] initWithMessenger:_messenger];
-    [_processors setObject:cpu forKey:@(type)];
+    });
+    [s_processors setObject:processor forKey:@(type)];
+}
+
+- (nullable DIMContentProcessor *)getProcessorForContent:(id<DKDContent>)content {
+    return [self getProcessorForType:content.type];
+}
+
+- (nullable DIMContentProcessor *)getProcessorForType:(DKDContentType)type {
+    DIMContentProcessor *cpu = [s_processors objectForKey:@(type)];
+    //NSAssert(cpu, @"failed to get CPU for content type: %d", type);
+    cpu.messenger = self.messenger;
     return cpu;
+}
+
+@end
+
+#pragma mark - Register Processors
+
+@implementation DIMContentProcessor (Register)
+
++ (void)registerAllProcessors {
+    //
+    //  Register content processors
+    //
+    DIMContentProcessorRegisterClass(DKDContentType_Forward, DIMForwardContentProcessor);
+    
+    DIMFileContentProcessor *fileProcessor = [[DIMFileContentProcessor alloc] init];
+    DIMContentProcessorRegister(DKDContentType_File, fileProcessor);
+    DIMContentProcessorRegister(DKDContentType_Image, fileProcessor);
+    DIMContentProcessorRegister(DKDContentType_Audio, fileProcessor);
+    DIMContentProcessorRegister(DKDContentType_Video, fileProcessor);
+    
+    DIMContentProcessorRegisterClass(DKDContentType_Command, DIMCommandProcessor);
+    DIMContentProcessorRegisterClass(DKDContentType_History, DIMHistoryCommandProcessor);
 }
 
 @end

@@ -132,7 +132,7 @@
 }
 
 - (BOOL)saveID:(id<MKMID>)ID withName:(NSString *)username {
-    NSAssert(false, @"override me!");
+    NSAssert(false, @"implement me!");
     return NO;
 }
 

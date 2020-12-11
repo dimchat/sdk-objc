@@ -39,32 +39,21 @@
 
 @implementation DIMChatroom
 
+/* designated initializer */
+- (instancetype)initWithID:(id<MKMID>)ID {
+    NSAssert(ID.type == MKMNetwork_Chatroom, @"chatroom ID error: %@", ID);
+    if (self = [super initWithID:ID]) {
+        //
+    }
+    return self;
+}
+
 #pragma mark Admins of Chatroom
 
 - (NSArray<id<MKMID>> *)admins {
     NSAssert(self.dataSource, @"chatroom data source not set yet");
     NSArray *list = [self.dataSource adminsOfChatroom:_ID];
-    return [list copy];
-}
-
-- (BOOL)existsAdmin:(id<MKMID>)ID {
-    if ([self.owner isEqual:ID]) {
-        return YES;
-    }
-    NSAssert(self.dataSource, @"chatroom data source not set yet");
-    NSArray<id<MKMID>> *admins = [self admins];
-    NSInteger count = [admins count];
-    if (count <= 0) {
-        return NO;
-    }
-    id<MKMID>admin;
-    while (--count >= 0) {
-        admin = [admins objectAtIndex:count];
-        if ([admin isEqual:ID]) {
-            return YES;
-        }
-    }
-    return NO;
+    return [list mutableCopy];
 }
 
 @end

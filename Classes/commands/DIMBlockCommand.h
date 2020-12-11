@@ -44,7 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface DIMBlockCommand : DIMCommand
 
 // block-list
-@property (strong, nonatomic, nullable) NSArray<NSString *> *list;
+@property (strong, nonatomic, nullable) NSArray<id<MKMID>> *list;
 
 /*
  *  BlockCommand message: {

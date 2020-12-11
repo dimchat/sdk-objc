@@ -41,13 +41,35 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMCommandProcessor : DIMContentProcessor
 
+- (id<DKDContent>)processUnknownCommand:(DIMCommand *)cmd
+                            withMessage:(id<DKDReliableMessage>)rMsg;
+
 @end
 
 #define DIMCommand_Unknown      @"unknown"
 
-@interface DIMCommandProcessor (Runtime)
+@interface DIMCommandProcessor (CPU)
 
-+ (void)registerClass:(nullable Class)contentClass forCommand:(NSString *)name;
++ (void)registerProcessor:(DIMCommandProcessor *)processor
+               forCommand:(NSString *)name;
+
+- (nullable DIMCommandProcessor *)getProcessorForCommand:(DIMCommand *)cmd;
+
+- (nullable DIMCommandProcessor *)getProcessorForName:(NSString *)name;
+
+@end
+
+#define DIMCommandProcessorRegister(name, cpu)                                 \
+            [DIMCommandProcessor registerProcessor:(cpu) forCommand:(name)]    \
+                              /* EOF 'DIMCommandProcessorRegister(name, cpu)' */
+
+#define DIMCommandProcessorRegisterClass(name, clazz)                          \
+            DIMCommandProcessorRegister((name), [[clazz alloc] init])          \
+                       /* EOF 'DIMCommandProcessorRegisterClass(name, clazz)' */
+
+@interface DIMCommandProcessor (Register)
+
++ (void)registerAllProcessors;
 
 @end
 

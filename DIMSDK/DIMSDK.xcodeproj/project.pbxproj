@@ -24,7 +24,6 @@
 		E919B0152390FAA1004F7FF9 /* DIMAddressNameService.h in Headers */ = {isa = PBXBuildFile; fileRef = E919B00D2390FAA1004F7FF9 /* DIMAddressNameService.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E919B0172390FAA1004F7FF9 /* DIMFacebook.m in Sources */ = {isa = PBXBuildFile; fileRef = E919B00F2390FAA1004F7FF9 /* DIMFacebook.m */; };
 		E919B0182390FAA1004F7FF9 /* DIMAddressNameService.m in Sources */ = {isa = PBXBuildFile; fileRef = E919B0102390FAA1004F7FF9 /* DIMAddressNameService.m */; };
-		E91A2A922446F85A0034CDF9 /* DIMMessenger+Send.m in Sources */ = {isa = PBXBuildFile; fileRef = E99D9F482445E4570003BC1B /* DIMMessenger+Send.m */; };
 		E946341A257F99F900530E15 /* NSData+Crypto.h in Headers */ = {isa = PBXBuildFile; fileRef = E9463417257F99F900530E15 /* NSData+Crypto.h */; };
 		E946341B257F99F900530E15 /* NSData+Crypto.m in Sources */ = {isa = PBXBuildFile; fileRef = E9463419257F99F900530E15 /* NSData+Crypto.m */; };
 		E946341F257F9BED00530E15 /* NSObject+Singleton.h in Headers */ = {isa = PBXBuildFile; fileRef = E946341E257F9BED00530E15 /* NSObject+Singleton.h */; };
@@ -33,6 +32,8 @@
 		E9463425257FA28F00530E15 /* NSDictionary+Binary.m in Sources */ = {isa = PBXBuildFile; fileRef = E9463423257FA28F00530E15 /* NSDictionary+Binary.m */; };
 		E9463428257FAD8000530E15 /* DIMMessageProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = E9463426257FAD8000530E15 /* DIMMessageProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9463429257FAD8000530E15 /* DIMMessageProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = E9463427257FAD8000530E15 /* DIMMessageProcessor.m */; };
+		E946343425839F6F00530E15 /* DIMFileContentProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = E946343225839F6F00530E15 /* DIMFileContentProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E946343525839F6F00530E15 /* DIMFileContentProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = E946343325839F6F00530E15 /* DIMFileContentProcessor.m */; };
 		E94DEB7F23A1053400FBFD3C /* DIMServiceProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = E94DEB6A23A1053400FBFD3C /* DIMServiceProvider.m */; };
 		E94DEB8023A1053400FBFD3C /* DIMRobot.m in Sources */ = {isa = PBXBuildFile; fileRef = E94DEB6B23A1053400FBFD3C /* DIMRobot.m */; };
 		E94DEB8123A1053400FBFD3C /* DIMStation.h in Headers */ = {isa = PBXBuildFile; fileRef = E94DEB6C23A1053400FBFD3C /* DIMStation.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -82,7 +83,6 @@
 		E99D9F3D2444E8E50003BC1B /* DIMHandshakeCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = E99D9F3B2444E8E50003BC1B /* DIMHandshakeCommand.m */; };
 		E99D9F442444EC0C0003BC1B /* DIMLoginCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = E99D9F422444EC0C0003BC1B /* DIMLoginCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E99D9F452444EC0C0003BC1B /* DIMLoginCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = E99D9F432444EC0C0003BC1B /* DIMLoginCommand.m */; };
-		E99D9F492445E4570003BC1B /* DIMMessenger+Send.m in Headers */ = {isa = PBXBuildFile; fileRef = E99D9F482445E4570003BC1B /* DIMMessenger+Send.m */; };
 		E9A1F311243F22E70015D18D /* MKMRSAPrivateKey+PersistentStore.m in Sources */ = {isa = PBXBuildFile; fileRef = E9A1F309243F22E70015D18D /* MKMRSAPrivateKey+PersistentStore.m */; };
 		E9A1F312243F22E70015D18D /* MKMRSAPublicKey.m in Sources */ = {isa = PBXBuildFile; fileRef = E9A1F30B243F22E70015D18D /* MKMRSAPublicKey.m */; };
 		E9A1F313243F22E70015D18D /* MKMRSAPrivateKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E9A1F30C243F22E70015D18D /* MKMRSAPrivateKey.h */; };
@@ -154,6 +154,8 @@
 		E9463423257FA28F00530E15 /* NSDictionary+Binary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+Binary.m"; sourceTree = "<group>"; };
 		E9463426257FAD8000530E15 /* DIMMessageProcessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMMessageProcessor.h; sourceTree = "<group>"; };
 		E9463427257FAD8000530E15 /* DIMMessageProcessor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMMessageProcessor.m; sourceTree = "<group>"; };
+		E946343225839F6F00530E15 /* DIMFileContentProcessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMFileContentProcessor.h; sourceTree = "<group>"; };
+		E946343325839F6F00530E15 /* DIMFileContentProcessor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMFileContentProcessor.m; sourceTree = "<group>"; };
 		E94D48722390FF5200D787BB /* MingKeMing.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = MingKeMing.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E94D48742390FF6900D787BB /* DaoKeDao.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = DaoKeDao.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E94DEB6A23A1053400FBFD3C /* DIMServiceProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMServiceProvider.m; sourceTree = "<group>"; };
@@ -207,7 +209,6 @@
 		E99D9F3B2444E8E50003BC1B /* DIMHandshakeCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMHandshakeCommand.m; sourceTree = "<group>"; };
 		E99D9F422444EC0C0003BC1B /* DIMLoginCommand.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMLoginCommand.h; sourceTree = "<group>"; };
 		E99D9F432444EC0C0003BC1B /* DIMLoginCommand.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMLoginCommand.m; sourceTree = "<group>"; };
-		E99D9F482445E4570003BC1B /* DIMMessenger+Send.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "DIMMessenger+Send.m"; sourceTree = "<group>"; };
 		E9A1F309243F22E70015D18D /* MKMRSAPrivateKey+PersistentStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MKMRSAPrivateKey+PersistentStore.m"; sourceTree = "<group>"; };
 		E9A1F30B243F22E70015D18D /* MKMRSAPublicKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKMRSAPublicKey.m; sourceTree = "<group>"; };
 		E9A1F30C243F22E70015D18D /* MKMRSAPrivateKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKMRSAPrivateKey.h; sourceTree = "<group>"; };
@@ -327,7 +328,6 @@
 				E9463427257FAD8000530E15 /* DIMMessageProcessor.m */,
 				E919B00B2390FAA1004F7FF9 /* DIMMessenger.h */,
 				E919B00C2390FAA1004F7FF9 /* DIMMessenger.m */,
-				E99D9F482445E4570003BC1B /* DIMMessenger+Send.m */,
 				E919B0082390FA3B004F7FF9 /* DIMSDK.h */,
 			);
 			name = Classes;
@@ -389,6 +389,8 @@
 			children = (
 				E95965242391096600DAA870 /* DIMContentProcessor.h */,
 				E95965252391096600DAA870 /* DIMContentProcessor.m */,
+				E946343225839F6F00530E15 /* DIMFileContentProcessor.h */,
+				E946343325839F6F00530E15 /* DIMFileContentProcessor.m */,
 				E988C94A23F54BBE00BA5D66 /* DIMForwardContentProcessor.h */,
 				E988C94B23F54BBE00BA5D66 /* DIMForwardContentProcessor.m */,
 				E95965302391273200DAA870 /* DIMCommandProcessor.h */,
@@ -478,10 +480,10 @@
 				E95965262391096600DAA870 /* DIMContentProcessor.h in Headers */,
 				E95965322391273200DAA870 /* DIMCommandProcessor.h in Headers */,
 				E9463424257FA28F00530E15 /* NSDictionary+Binary.h in Headers */,
+				E946343425839F6F00530E15 /* DIMFileContentProcessor.h in Headers */,
 				E959653623912BDB00DAA870 /* DIMHistoryProcessor.h in Headers */,
 				E95965072391077F00DAA870 /* DIMMuteCommand.h in Headers */,
 				E915CE5C243C62B700B98FE3 /* MKMImmortals.h in Headers */,
-				E99D9F492445E4570003BC1B /* DIMMessenger+Send.m in Headers */,
 				E9A1F317243F22E70015D18D /* MKMAESKey.h in Headers */,
 				E99D9F3C2444E8E50003BC1B /* DIMHandshakeCommand.h in Headers */,
 				E95965052391077F00DAA870 /* DIMBlockCommand.h in Headers */,
@@ -642,6 +644,7 @@
 				E9A1F314243F22E70015D18D /* MKMRSAPrivateKey.m in Sources */,
 				E94DEB7F23A1053400FBFD3C /* DIMServiceProvider.m in Sources */,
 				E95965272391096600DAA870 /* DIMContentProcessor.m in Sources */,
+				E946343525839F6F00530E15 /* DIMFileContentProcessor.m in Sources */,
 				E9705CCC2395034900289441 /* DIMStorageCommand.m in Sources */,
 				E959653B23912C7B00DAA870 /* DIMGroupCommandProcessor.m in Sources */,
 				E95965092391077F00DAA870 /* DIMReceiptCommand.m in Sources */,
@@ -661,7 +664,6 @@
 				E94DEB8D23A1053400FBFD3C /* DIMPolylogue.m in Sources */,
 				E94DEB8C23A1053400FBFD3C /* DIMStation.m in Sources */,
 				E919B0142390FAA1004F7FF9 /* DIMMessenger.m in Sources */,
-				E91A2A922446F85A0034CDF9 /* DIMMessenger+Send.m in Sources */,
 				E959650A2391077F00DAA870 /* DIMMuteCommand.m in Sources */,
 				E94DEB8E23A1053400FBFD3C /* DIMChatroom.m in Sources */,
 			);

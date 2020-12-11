@@ -105,8 +105,7 @@
 //  Main
 //
 - (nullable id<DKDContent>)processContent:(id<DKDContent>)content
-                                 sender:(id<MKMID>)sender
-                                message:(id<DKDReliableMessage>)rMsg {
+                              withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMResetGroupCommand class]] ||
              [content isKindOfClass:[DIMInviteCommand class]], @"invite command error: %@", content);
     DIMGroupCommand *cmd = (DIMGroupCommand *)content;
@@ -118,6 +117,7 @@
         return nil;
     }
     // 0. check whether group info empty
+    id<MKMID> sender = rMsg.sender;
     if ([self isEmpty:group]) {
         // FIXME: group info lost?
         // FIXME: how to avoid strangers impersonating group member?
@@ -125,7 +125,7 @@
     }
     // 1. check permission
     if (![self.facebook group:group isOwner:sender]) {
-        if (![self.facebook group:group hasAssistant:sender]) {
+        if (![self.facebook group:group containsAssistant:sender]) {
             NSAssert(false, @"%@ is not the owner/assistant of group %@, cannot reset.", sender, group);
             return nil;
         }

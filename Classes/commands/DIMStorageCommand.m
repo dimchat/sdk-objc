@@ -105,11 +105,11 @@
     return _title;
 }
 
-- (nullable id<MKMID> )ID {
+- (nullable id<MKMID>)ID {
     return MKMIDFromString([self objectForKey:@"ID"]);
 }
 
-- (void)setID:(NSString *)ID {
+- (void)setID:(id<MKMID>)ID {
     [self setObject:ID forKey:@"ID"];
 }
 

@@ -51,11 +51,11 @@
     return self;
 }
 
-- (nullable NSArray<NSString *> *)list {
-    return [self objectForKey:@"list"];
+- (nullable NSArray<id<MKMID>> *)list {
+    return [MKMID convert:[self objectForKey:@"list"]];
 }
 
-- (void)setList:(NSArray<NSString *> *)list {
+- (void)setList:(NSArray<id<MKMID>> *)list {
     if (list) {
         [self setObject:list forKey:@"list"];
     } else {

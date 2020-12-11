@@ -176,16 +176,6 @@
 
 #pragma mark -
 
-- (nullable id<MKMID>)IDWithString:(NSString *)string {
-    if (!string) {
-        return nil;
-    } else if ([string isKindOfClass:[MKMID class]]) {
-        return (id<MKMID>)string;
-    }
-    NSAssert([string isKindOfClass:[NSString class]], @"ID string error: %@", string);
-    return [_idTable objectForKey:string];
-}
-
 - (nullable MKMUser *)userWithID:(id<MKMID>)ID {
     MKMUser *user = [_userTable objectForKey:ID.string];
     if (!user) {

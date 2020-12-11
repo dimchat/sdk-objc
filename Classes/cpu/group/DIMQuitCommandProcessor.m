@@ -61,16 +61,16 @@
 //  Main
 //
 - (nullable id<DKDContent>)processContent:(id<DKDContent>)content
-                                 sender:(id<MKMID>)sender
-                                message:(id<DKDReliableMessage>)rMsg {
+                              withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMQuitCommand class]], @"quit command error: %@", content);
-    id<MKMID>group = content.group;
+    id<MKMID> sender = rMsg.sender;
+    id<MKMID> group = content.group;
     // 1. check permission
     if ([self.facebook group:group isOwner:sender]) {
         NSAssert(false, @"owner cannot quit: %@ -> %@", sender, group);
         return nil;
     }
-    if ([self.facebook group:group hasAssistant:sender]) {
+    if ([self.facebook group:group containsAssistant:sender]) {
         NSAssert(false, @"assistant cannot quit now: %@ -> %@", sender, group);
         return nil;
     }

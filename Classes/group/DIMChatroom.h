@@ -118,8 +118,6 @@ typedef UInt8 DIMMemberRole;
 
 @property (readonly, copy, nonatomic) NSArray<id<MKMID>> *admins;
 
-- (BOOL)existsAdmin:(id<MKMID>)ID;
-
 // -hire(admin, owner)
 // -fire(admin, owner)
 // -resign(admin)

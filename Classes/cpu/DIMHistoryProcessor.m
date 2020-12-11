@@ -35,100 +35,20 @@
 //  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
-#import "NSObject+Singleton.h"
-
-#import "DIMMessenger.h"
-
-#import "DIMGroupCommandProcessor.h"
-#import "DIMInviteCommandProcessor.h"
-#import "DIMExpelCommandProcessor.h"
-#import "DIMQuitCommandProcessor.h"
-#import "DIMResetCommandProcessor.h"
-#import "DIMQueryCommandProcessor.h"
-
 #import "DIMHistoryProcessor.h"
-
-@interface DIMHistoryCommandProcessor () {
-    
-    DIMGroupCommandProcessor *_gpu;
-}
-
-@end
-
-@interface DIMCommandProcessor (Hacking)
-
-- (DIMCommandProcessor *)processorForCommand:(NSString *)name;
-
-@end
-
-static inline void load_gpu_classes(void) {
-    // invite
-    [DIMGroupCommandProcessor registerClass:[DIMInviteCommandProcessor class]
-                                 forCommand:DIMGroupCommand_Invite];
-    // expel
-    [DIMGroupCommandProcessor registerClass:[DIMExpelCommandProcessor class]
-                                 forCommand:DIMGroupCommand_Expel];
-    // quit
-    [DIMGroupCommandProcessor registerClass:[DIMQuitCommandProcessor class]
-                                 forCommand:DIMGroupCommand_Quit];
-    // reset
-    [DIMGroupCommandProcessor registerClass:[DIMResetGroupCommandProcessor class]
-                                 forCommand:DIMGroupCommand_Reset];
-    
-    // query
-    [DIMGroupCommandProcessor registerClass:[DIMQueryGroupCommandProcessor class]
-                                 forCommand:DIMGroupCommand_Query];
-}
 
 @implementation DIMHistoryCommandProcessor
 
-- (instancetype)initWithMessenger:(DIMMessenger *)messenger {
-    if (self = [super initWithMessenger:messenger]) {
-        _gpu = nil;
-        
-        // register CPU classes
-        SingletonDispatchOnce(^{
-            load_gpu_classes();
-        });
+- (id<DKDContent>)processUnknownCommand:(DIMCommand *)cmd
+                            withMessage:(id<DKDReliableMessage>)rMsg {
+    NSString *text = [NSString stringWithFormat:@"History command (%@) not support yet!", cmd.command];
+    id<DKDContent>res = [[DIMTextContent alloc] initWithText:text];
+    // check group message
+    id<MKMID> group = cmd.group;
+    if (group) {
+        res.group = group;
     }
-    return self;
-}
-
-- (DIMGroupCommandProcessor *)processor {
-    SingletonDispatchOnce(^{
-        self->_gpu = [[DIMGroupCommandProcessor alloc] initWithMessenger:self.messenger];
-    });
-    return _gpu;
-}
-
-//
-//  Main
-//
-- (nullable id<DKDContent>)processContent:(id<DKDContent>)content
-                                 sender:(id<MKMID>)sender
-                                message:(id<DKDReliableMessage>)rMsg {
-    NSAssert([self isMemberOfClass:[DIMHistoryCommandProcessor class]], @"error!");
-    NSAssert([content isKindOfClass:[DIMCommand class]], @"history command error: %@", content);
-    // process command content by name
-    DIMCommand *cmd = (DIMCommand *)content;
-    DIMCommandProcessor *cpu;
-    // check group
-    if (content.group) {
-        // call group command processor
-        cpu = [self processor];
-        NSAssert(cpu, @"group command processor should not be empty");
-    } else {
-        // other commands
-        cpu = [self processorForCommand:cmd.command];
-        /*
-        if (!cpu) {
-            NSString *text = [NSString stringWithFormat:@"History command (%@) not support yet!", cmd.command];
-            return [[DIMTextContent alloc] initWithText:text];
-        }
-         */
-    }
-    NSAssert(cpu != self, @"Dead cycle!");
-    return [cpu processContent:content sender:sender message:rMsg];
+    return res;
 }
 
 @end

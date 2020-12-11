@@ -37,6 +37,7 @@
 
 #import "NSObject+Singleton.h"
 
+#import "DKDInstantMessage+Extension.h"
 #import "DIMFacebook.h"
 
 #import "DIMReceiptCommand.h"
@@ -47,6 +48,8 @@
 #import "DIMStorageCommand.h"
 
 #import "DIMContentProcessor.h"
+#import "DIMFileContentProcessor.h"
+#import "DIMMessageProcessor.h"
 
 #import "DIMMessenger.h"
 
@@ -112,69 +115,31 @@ static inline void load_cmd_classes(void) {
     return self;
 }
 
-- (NSDictionary *)context {
-    return _context;
-}
-
-- (nullable id)valueForContextName:(NSString *)key {
-    return [_context objectForKey:key];
-}
-
-- (void)setContextValue:(id)value forName:(NSString *)key {
-    if (value) {
-        [_context setObject:value forKey:key];
-    } else {
-        [_context removeObjectForKey:key];
-    }
-}
-
 - (DIMFacebook *)facebook {
     if (!_facebook) {
-        _facebook = [self valueForContextName:@"facebook"];
-        if (!_facebook) {
-            NSAssert([self.barrack isKindOfClass:[DIMFacebook class]], @"facebook error: %@", self.barrack);
-            _facebook = (DIMFacebook *)self.barrack;
-        }
+        NSAssert([self.barrack isKindOfClass:[DIMFacebook class]], @"facebook error: %@", self.barrack);
+        _facebook = (DIMFacebook *)self.barrack;
     }
     return _facebook;
 }
 
-- (BOOL)saveMessage:(id<DKDInstantMessage>)iMsg {
-    NSAssert(false, @"override me!");
-    return NO;
+- (DIMFileContentProcessor *)fileContentProcessor {
+    DIMContentProcessor *cpu = [self.processor getContentProcessorForType:DKDContentType_File];
+    return (DIMFileContentProcessor *)cpu;
 }
-
-- (BOOL)suspendMessage:(id<DKDMessage>)msg {
-    NSAssert(false, @"override me!");
-    return NO;
-}
-
-@end
-
-@implementation DIMMessenger (MessageDelegate)
 
 #pragma mark DKDInstantMessageDelegate
 
 - (nullable NSData *)message:(id<DKDInstantMessage>)iMsg
             serializeContent:(id<DKDContent>)content
                      withKey:(id<MKMSymmetricKey>)password {
-    
     // check attachment for File/Image/Audio/Video message content
     if ([content isKindOfClass:[DIMFileContent class]]) {
-        DIMFileContent *file = (DIMFileContent *)content;
-        NSAssert(file.fileData != nil, @"content.fileData should not be empty");
-        NSAssert(file.URL == nil, @"content.URL exists, already uploaded?");
-        // encrypt and upload file data onto CDN and save the URL in message content
-        NSData *CT = [password encrypt:file.fileData];
-        NSURL *url = [_delegate uploadData:CT forMessage:iMsg];
-        if (url) {
-            // replace 'data' with 'URL'
-            file.URL = url;
-            file.fileData = nil;
-        }
-        //[iMsg setObject:file forKey:@"content"];
+        DIMFileContentProcessor *fpu = [self fileContentProcessor];
+        [fpu uploadFileContent:(id<DIMFileContent>)content
+                           key:password
+                       message:iMsg];
     }
-    
     return [super message:iMsg serializeContent:content withKey:password];
 }
 
@@ -197,16 +162,12 @@ static inline void load_cmd_classes(void) {
 - (nullable NSData *)message:(id<DKDInstantMessage>)iMsg
                   encryptKey:(NSData *)data
                  forReceiver:(id<MKMID>)receiver {
-    
     id<MKMEncryptKey> key = [self publicKeyForEncryption:receiver];
     if (!key) {
-        id<MKMMeta> meta = [self.facebook metaForID:receiver];
-        if (![meta.key conformsToProtocol:@protocol(MKMEncryptKey)]) {
-            // save this message in a queue waiting receiver's meta response
-            [self suspendMessage:iMsg];
-            //NSAssert(false, @"failed to get encrypt key for receiver: %@", receiver);
-            return nil;
-        }
+        // save this message in a queue waiting receiver's meta response
+        [self suspendMessage:iMsg];
+        //NSAssert(false, @"failed to get encrypt key for receiver: %@", receiver);
+        return nil;
     }
     return [super message:iMsg encryptKey:data forReceiver:receiver];
 }
@@ -216,32 +177,112 @@ static inline void load_cmd_classes(void) {
 - (nullable id<DKDContent>)message:(id<DKDSecureMessage>)sMsg
               deserializeContent:(NSData *)data
                          withKey:(id<MKMSymmetricKey>)password {
-    
     id<DKDContent>content = [super message:sMsg deserializeContent:data withKey:password];
-    if (!content) {
-        return nil;
-    }
-    
+    NSAssert(content, @"failed to deserialize message content: %@", sMsg);
     // check attachment for File/Image/Audio/Video message content
     if ([content isKindOfClass:[DIMFileContent class]]) {
-        DIMFileContent *file = (DIMFileContent *)content;
-        NSAssert(file.URL != nil, @"content.URL should not be empty");
-        NSAssert(file.fileData == nil, @"content.fileData already download");
-        id<DKDInstantMessage> iMsg = DKDInstantMessageCreate(sMsg.envelope, content);
-        // download from CDN
-        NSData *fileData = [_delegate downloadData:file.URL forMessage:iMsg];
-        if (fileData) {
-            // decrypt file data
-            file.fileData = [password decrypt:fileData];
-            file.URL = nil;
+        DIMFileContentProcessor *fpu = [self fileContentProcessor];
+        [fpu downloadFileContent:(id<DIMFileContent>)content
+                             key:password
+                         message:sMsg];
+    }
+    return content;
+}
+
+@end
+
+@implementation DIMMessenger (Send)
+
+- (BOOL)sendContent:(id<DKDContent>)content
+           receiver:(id<MKMID>)receiver
+           callback:(nullable DIMMessengerCallback)callback {
+    
+    // Application Layer should make sure user is already login before it send message to server.
+    // Application layer should put message into queue so that it will send automatically after user login
+    MKMUser *user = self.facebook.currentUser;
+    NSAssert(user, @"current user not found");
+    /*
+    if ([receiver isGroup]) {
+        if (content.group) {
+            NSAssert([receiver isEqual:content.group], @"group ID not match: %@, %@", receiver, content);
         } else {
-            // save the symmetric key for decrypte file data later
-            file.password = password;
+            content.group = receiver;
         }
-        //content = file;
+    }
+     */
+    id<DKDEnvelope> env = DKDEnvelopeCreate(user.ID, receiver, nil);
+    id<DKDInstantMessage> iMsg = DKDInstantMessageCreate(env, content);
+    return [self sendInstantMessage:iMsg
+                           callback:callback];
+}
+
+- (BOOL)sendInstantMessage:(id<DKDInstantMessage>)iMsg
+                  callback:(nullable DIMMessengerCallback)callback {
+    
+    // Send message (secured + certified) to target station
+    id<DKDSecureMessage> sMsg = [self.processor encryptMessage:iMsg];
+    if (!sMsg) {
+        // public key not found?
+        NSAssert(false, @"failed to encrypt message: %@", iMsg);
+        return NO;
+    }
+    id<DKDReliableMessage> rMsg = [self.processor signMessage:sMsg];
+    if (!rMsg) {
+        NSAssert(false, @"failed to sign message: %@", sMsg);
+        DKDContent *content = iMsg.content;
+        content.state = DIMMessageState_Error;
+        content.error = @"Encryption failed.";
+        return NO;
     }
     
-    return content;
+    BOOL OK = [self sendReliableMessage:rMsg callback:callback];
+    // sending status
+    if (OK) {
+        DKDContent *content = iMsg.content;
+        content.state = DIMMessageState_Sending;
+    } else {
+        NSLog(@"cannot send message now, put in waiting queue: %@", iMsg);
+        DKDContent *content = iMsg.content;
+        content.state = DIMMessageState_Waiting;
+    }
+    
+    if (![self saveMessage:iMsg]) {
+        return NO;
+    }
+    return OK;
+}
+
+- (BOOL)sendReliableMessage:(id<DKDReliableMessage>)rMsg
+                   callback:(nullable DIMMessengerCallback)callback {
+    
+    NSData *data = [self.processor serializeMessage:rMsg];
+    NSAssert(self.delegate, @"transceiver delegate not set");
+    return [self.delegate sendPackage:data
+                    completionHandler:^(NSError * _Nullable error) {
+                        !callback ?: callback(rMsg, error);
+                    }];
+}
+
+@end
+
+@implementation DIMMessenger (Process)
+
+- (NSData *)processData:(NSData *)data {
+    return [self.processor processData:data];
+}
+
+@end
+
+@implementation DIMMessenger (Storage)
+
+- (BOOL)saveMessage:(id<DKDInstantMessage>)iMsg {
+    NSAssert(false, @"implement me!");
+    return NO;
+}
+
+- (BOOL)suspendMessage:(id<DKDMessage>)msg {
+    NSAssert(false, @"implement me!");
+    return NO;
 }
 
 @end

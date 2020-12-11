@@ -42,14 +42,26 @@
 
 @implementation DIMReceiptCommand
 
-- (instancetype)initWithMessage:(NSString *)message {
+- (instancetype)initWithMessage:(NSString *)message envelope:(id<DKDEnvelope>)env sn:(NSUInteger)num {
     if (self = [self initWithCommand:DIMCommand_Receipt]) {
         // message
         if (message) {
             [self setObject:message forKey:@"message"];
         }
+        // sn of the message responding to
+        if (num > 0) {
+            [self setObject:@(num) forKey:@"sn"];
+        }
+        // envelope of the message responding to
+        if (env) {
+            [self setEnvelope:env];
+        }
     }
     return self;
+}
+- (instancetype)initWithMessage:(NSString *)message {
+    id<DKDEnvelope> env = nil;
+    return [self initWithMessage:message envelope:env sn:0];
 }
 
 - (NSString *)message {
@@ -68,14 +80,16 @@
 
 - (void)setEnvelope:(id<DKDEnvelope>)envelope {
     if (envelope) {
-        NSNumber *timestamp = NSNumberFromDate(envelope.time);
         [self setObject:envelope.sender forKey:@"sender"];
         [self setObject:envelope.receiver forKey:@"receiver"];
-        [self setObject:timestamp forKey:@"time"];
+        NSDate *time = envelope.time;
+        if (time) {
+            [self setObject:NSNumberFromDate(time) forKey:@"time"];
+        }
     } else {
         [self removeObjectForKey:@"sender"];
         [self removeObjectForKey:@"receiver"];
-        [self removeObjectForKey:@"time"];
+        //[self removeObjectForKey:@"time"];
     }
 }
 

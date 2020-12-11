@@ -43,22 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMServiceProvider : MKMGroup
 
-@property (strong, nonatomic, nullable) NSURL *home; // home page URL
-
-- (instancetype)initWithDictionary:(NSDictionary *)dict;
-
-- (BOOL)verifyStation:(DIMStation *)server;
-
-@end
-
-#pragma mark Service Provider Data Source
-
-@protocol DIMServiceProviderDataSource <NSObject>
-
-- (NSInteger)numberOfStationsInServiceProvider:(DIMServiceProvider *)SP;
-
-- (DIMStation *)serviceProvider:(DIMServiceProvider *)SP
-                 stationAtIndex:(NSInteger)index;
+@property (readonly, copy, nonatomic) NSArray<id<MKMID>> *stations;
 
 @end
 

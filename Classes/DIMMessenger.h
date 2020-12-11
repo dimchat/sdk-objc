@@ -90,31 +90,10 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
 
 @interface DIMMessenger : DIMTransceiver
 
-@property (readonly, strong, nonatomic) NSDictionary *context;
-
 @property (readonly, weak, nonatomic) DIMFacebook *facebook;
 @property (weak, nonatomic) id<DIMMessengerDelegate> delegate;
 
 @property (strong, nonatomic) DIMMessageProcessor *processor;
-
-- (nullable id)valueForContextName:(NSString *)key;
-- (void)setContextValue:(id)value forName:(NSString *)key;
-
-/**
- * Save the message into local storage
- *
- * @param iMsg - instant message
- * @return true on success
- */
-- (BOOL)saveMessage:(id<DKDInstantMessage>)iMsg;
-
-/**
- *  Suspend message for the contact's meta
- *
- * @param msg - message received from network / instant message to be sent
- * @return NO on error
- */
-- (BOOL)suspendMessage:(id<DKDMessage>)msg;
 
 @end
 
@@ -144,6 +123,32 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
 
 - (BOOL)sendReliableMessage:(id<DKDReliableMessage>)rMsg
                    callback:(nullable DIMMessengerCallback)callback;
+
+@end
+
+@interface DIMMessenger (Process)
+
+- (NSData *)processData:(NSData *)data;
+
+@end
+
+@interface DIMMessenger (Storage)
+
+/**
+ * Save the message into local storage
+ *
+ * @param iMsg - instant message
+ * @return true on success
+ */
+- (BOOL)saveMessage:(id<DKDInstantMessage>)iMsg;
+
+/**
+ *  Suspend message for the contact's meta
+ *
+ * @param msg - message received from network / instant message to be sent
+ * @return NO on error
+ */
+- (BOOL)suspendMessage:(id<DKDMessage>)msg;
 
 @end
 
