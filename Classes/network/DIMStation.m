@@ -66,7 +66,7 @@
     return [self initWithID:ID host:@"127.0.0.1" port:9394];
 }
 
-- (id)copyWithZone:(NSZone *)zone {
+- (id)copyWithZone:(nullable NSZone *)zone {
     DIMStation *server = [super copyWithZone:zone];
     if (server) {
         server.host = _host;

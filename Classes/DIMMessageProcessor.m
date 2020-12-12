@@ -167,7 +167,7 @@ static inline void register_all_processors() {
         return [facebook saveDocument:visa];
     }
     // check local storage
-    id<MKMDocument> doc = [facebook documentForID:sender withType:MKMDocument_Any];
+    id<MKMDocument> doc = [facebook documentForID:sender type:MKMDocument_Any];
     if ([doc conformsToProtocol:@protocol(MKMVisa)]) {
         return YES;
     }

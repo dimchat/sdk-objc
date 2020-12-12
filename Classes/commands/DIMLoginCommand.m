@@ -68,7 +68,7 @@
     return self;
 }
 
-- (id)copyWithZone:(NSZone *)zone {
+- (id)copyWithZone:(nullable NSZone *)zone {
     DIMLoginCommand *cmd = [super copyWithZone:zone];
     if (cmd) {
         //

@@ -103,7 +103,7 @@
 }
 
 - (nullable id<MKMEncryptKey>)publicKeyForEncryption:(id<MKMID>)receiver {
-    id doc = [self.facebook documentForID:receiver withType:MKMDocument_Visa];
+    id doc = [self.facebook documentForID:receiver type:MKMDocument_Visa];
     if ([doc conformsToProtocol:@protocol(MKMVisa)]) {
         id<MKMEncryptKey> key = [(id<MKMVisa>)doc key];
         if (key) {

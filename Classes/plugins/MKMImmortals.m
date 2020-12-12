@@ -40,10 +40,10 @@
 @interface MKMImmortals () {
     
     NSMutableDictionary<NSString *, id<MKMID>>         *_idTable;
-    NSMutableDictionary<NSString *, id<MKMPrivateKey>> *_privateTable;
-    NSMutableDictionary<NSString *, id<MKMMeta>>       *_metaTable;
-    NSMutableDictionary<NSString *, id<MKMDocument>>   *_profileTable;
-    NSMutableDictionary<NSString *, MKMUser *>         *_userTable;
+    NSMutableDictionary<id<MKMID>, id<MKMPrivateKey>> *_privateTable;
+    NSMutableDictionary<id<MKMID>, id<MKMMeta>>       *_metaTable;
+    NSMutableDictionary<id<MKMID>, id<MKMDocument>>   *_profileTable;
+    NSMutableDictionary<id<MKMID>, MKMUser *>         *_userTable;
 }
 
 @end
@@ -150,19 +150,19 @@
 
 - (BOOL)cacheMeta:(id<MKMMeta>)meta forID:(id<MKMID>)ID {
     NSAssert([meta matchID:ID], @"meta not match: %@, %@", ID, meta);
-    [_metaTable setObject:meta forKey:ID.string];
+    [_metaTable setObject:meta forKey:ID];
     return YES;
 }
 
 - (BOOL)cachePrivateKey:(id<MKMPrivateKey>)SK forID:(id<MKMID>)ID {
-    [_privateTable setObject:SK forKey:ID.string];
+    [_privateTable setObject:SK forKey:ID];
     return YES;
 }
 
 - (BOOL)cacheProfile:(id<MKMDocument>)profile forID:(id<MKMID>)ID {
     NSAssert([profile isValid], @"profile not valid: %@", profile);
     NSAssert([ID isEqual:profile.ID], @"profile not match: %@, %@", ID, profile);
-    [_profileTable setObject:profile forKey:ID.string];
+    [_profileTable setObject:profile forKey:ID];
     return YES;
 }
 
@@ -170,14 +170,14 @@
     if (user.dataSource == nil) {
         user.dataSource = self;
     }
-    [_userTable setObject:user forKey:user.ID.string];
+    [_userTable setObject:user forKey:user.ID];
     return YES;
 }
 
 #pragma mark -
 
 - (nullable MKMUser *)userWithID:(id<MKMID>)ID {
-    MKMUser *user = [_userTable objectForKey:ID.string];
+    MKMUser *user = [_userTable objectForKey:ID];
     if (!user) {
         if ([_idTable objectForKey:ID.string]) {
             user = [[MKMUser alloc] initWithID:ID];
@@ -190,12 +190,12 @@
 #pragma mark - Delegates
 
 - (nullable id<MKMMeta>)metaForID:(id<MKMID>)ID {
-    return [_metaTable objectForKey:ID.string];
+    return [_metaTable objectForKey:ID];
 }
 
 - (nullable __kindof id<MKMDocument>)documentForID:(id<MKMID>)ID
-                                          withType:(nullable NSString *)type {
-    return [_profileTable objectForKey:ID.string];
+                                              type:(nullable NSString *)type {
+    return [_profileTable objectForKey:ID];
 }
 
 - (nullable NSArray<id<MKMID>> *)contactsOfUser:(id<MKMID>)user {
@@ -208,13 +208,13 @@
     return mArray;
 }
 
-- (nullable id<MKMEncryptKey>)publicKeyForEncryption:(nonnull id<MKMID>)user {
-    // NOTICE: return nothing to use profile.key or meta.key
+- (nullable NSArray<id<MKMVerifyKey>> *)publicKeysForVerification:(id<MKMID>)user {
+    // return nil to use [visa.key, meta.key]
     return nil;
 }
 
 - (NSArray<id<MKMDecryptKey>> *)privateKeysForDecryption:(id<MKMID>)user {
-    id<MKMPrivateKey>key = [_privateTable objectForKey:user.string];
+    id<MKMPrivateKey>key = [_privateTable objectForKey:user];
     if ([key conformsToProtocol:@protocol(MKMDecryptKey)]) {
         return @[(id<MKMDecryptKey>)key];
     }
@@ -222,16 +222,11 @@
 }
 
 - (id<MKMSignKey>)privateKeyForSignature:(id<MKMID>)user {
-    return [_privateTable objectForKey:user.string];
+    return [_privateTable objectForKey:user];
 }
 
 - (id<MKMSignKey>)privateKeyForVisaSignature:(id<MKMID>)user {
-    return [_privateTable objectForKey:user.string];
-}
-
-- (NSArray<id<MKMVerifyKey>> *)publicKeysForVerification:(nonnull id<MKMID>)user {
-    // NOTICE: return nothing to use meta.key
-    return nil;
+    return [_privateTable objectForKey:user];
 }
 
 @end

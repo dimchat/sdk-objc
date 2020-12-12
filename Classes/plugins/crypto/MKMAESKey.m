@@ -73,7 +73,7 @@ static inline NSData *random_data(NSUInteger size) {
     return self;
 }
 
-- (id)copyWithZone:(NSZone *)zone {
+- (id)copyWithZone:(nullable NSZone *)zone {
     MKMAESKey *key = [super copyWithZone:zone];
     if (key) {
         key.data = _data;

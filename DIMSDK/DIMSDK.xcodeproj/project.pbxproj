@@ -75,7 +75,7 @@
 		E9705CCB2395034900289441 /* DIMStorageCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = E9705CC92395034900289441 /* DIMStorageCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9705CCC2395034900289441 /* DIMStorageCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = E9705CCA2395034900289441 /* DIMStorageCommand.m */; };
 		E9798B5A23BC994400A14FD8 /* DIMCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9798B5523BC992E00A14FD8 /* DIMCore.framework */; };
-		E988C94C23F54BBE00BA5D66 /* DIMForwardContentProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = E988C94A23F54BBE00BA5D66 /* DIMForwardContentProcessor.h */; };
+		E988C94C23F54BBE00BA5D66 /* DIMForwardContentProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = E988C94A23F54BBE00BA5D66 /* DIMForwardContentProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E988C94D23F54BBE00BA5D66 /* DIMForwardContentProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = E988C94B23F54BBE00BA5D66 /* DIMForwardContentProcessor.m */; };
 		E99D9F3C2444E8E50003BC1B /* DIMHandshakeCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = E99D9F392444E8E50003BC1B /* DIMHandshakeCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E99D9F3D2444E8E50003BC1B /* DIMHandshakeCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = E99D9F3B2444E8E50003BC1B /* DIMHandshakeCommand.m */; };
@@ -101,9 +101,9 @@
 		E9D79E422583D5DC00C8E700 /* NSData+Crypto.m in Sources */ = {isa = PBXBuildFile; fileRef = E9D79E402583D5DC00C8E700 /* NSData+Crypto.m */; };
 		E9D79E452583D67700C8E700 /* MKMPlugins.h in Headers */ = {isa = PBXBuildFile; fileRef = E9D79E432583D67700C8E700 /* MKMPlugins.h */; };
 		E9D79E462583D67700C8E700 /* MKMPlugins.m in Sources */ = {isa = PBXBuildFile; fileRef = E9D79E442583D67700C8E700 /* MKMPlugins.m */; };
-		E9D79E4A2583D74000C8E700 /* MKMAddressBTC.h in Headers */ = {isa = PBXBuildFile; fileRef = E9D79E482583D74000C8E700 /* MKMAddressBTC.h */; };
+		E9D79E4A2583D74000C8E700 /* MKMAddressBTC.h in Headers */ = {isa = PBXBuildFile; fileRef = E9D79E482583D74000C8E700 /* MKMAddressBTC.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9D79E4B2583D74000C8E700 /* MKMAddressBTC.m in Sources */ = {isa = PBXBuildFile; fileRef = E9D79E492583D74000C8E700 /* MKMAddressBTC.m */; };
-		E9D79E4E2583DCBB00C8E700 /* MKMMetaBTC.h in Headers */ = {isa = PBXBuildFile; fileRef = E9D79E4C2583DCBB00C8E700 /* MKMMetaBTC.h */; };
+		E9D79E4E2583DCBB00C8E700 /* MKMMetaBTC.h in Headers */ = {isa = PBXBuildFile; fileRef = E9D79E4C2583DCBB00C8E700 /* MKMMetaBTC.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9D79E4F2583DCBB00C8E700 /* MKMMetaBTC.m in Sources */ = {isa = PBXBuildFile; fileRef = E9D79E4D2583DCBB00C8E700 /* MKMMetaBTC.m */; };
 		E9D79E562583F85400C8E700 /* MKMPlugins+Crypto.mm in Sources */ = {isa = PBXBuildFile; fileRef = E9D79E542583F30100C8E700 /* MKMPlugins+Crypto.mm */; };
 /* End PBXBuildFile section */

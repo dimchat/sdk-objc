@@ -82,7 +82,7 @@
     //[super dealloc];
 }
 
-- (id)copyWithZone:(NSZone *)zone {
+- (id)copyWithZone:(nullable NSZone *)zone {
     MKMRSAPublicKey *key = [super copyWithZone:zone];
     if (key) {
         key.data = _data;

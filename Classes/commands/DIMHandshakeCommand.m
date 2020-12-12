@@ -93,7 +93,7 @@
     return [self initWithMessage:@"Hello world!" sessionKey:session];
 }
 
-- (id)copyWithZone:(NSZone *)zone {
+- (id)copyWithZone:(nullable NSZone *)zone {
     DIMHandshakeCommand *cmd = [super copyWithZone:zone];
     if (cmd) {
         cmd.message = _message;
