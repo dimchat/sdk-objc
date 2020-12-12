@@ -191,14 +191,4 @@
     [MKMDocument setFactory:factory];
 }
 
-+ (void)registerAllFactories {
-    [self registerAddressFactory];
-    [self registerMetaFactory];
-    [self registerDocumentFactory];
-    
-    [self registerKeyFactories];
-    [self registerCoders];
-    [self registerDigesters];
-}
-
 @end

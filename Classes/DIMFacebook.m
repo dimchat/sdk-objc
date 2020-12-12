@@ -36,9 +36,8 @@
 //
 
 #import "NSObject+Singleton.h"
-#import "MKMAESKey.h"
-#import "MKMRSAPublicKey.h"
-#import "MKMRSAPrivateKey.h"
+
+#import "MKMPlugins.h"
 
 #import "DIMServiceProvider.h"
 #import "DIMStation.h"
@@ -50,18 +49,14 @@
 #import "DIMFacebook.h"
 
 static inline void load_plugins(void) {
-//    // AES
-//    [MKMSymmetricKey registerClass:[MKMAESKey class] forAlgorithm:SCAlgorithmAES];
-//    [MKMSymmetricKey registerClass:[MKMAESKey class] forAlgorithm:@"AES/CBC/PKCS7Padding"];
-//    
-//    // RSA: PublicKey
-//    [MKMPublicKey registerClass:[MKMRSAPublicKey class] forAlgorithm:ACAlgorithmRSA];
-//    [MKMPublicKey registerClass:[MKMRSAPublicKey class] forAlgorithm:@"SHA256withRSA"];
-//    [MKMPublicKey registerClass:[MKMRSAPublicKey class] forAlgorithm:@"RSA/ECB/PKCS1Padding"];
-//    // RSA: PrivateKey
-//    [MKMPrivateKey registerClass:[MKMRSAPrivateKey class] forAlgorithm:ACAlgorithmRSA];
-//    [MKMPrivateKey registerClass:[MKMRSAPrivateKey class] forAlgorithm:@"SHA256withRSA"];
-//    [MKMPrivateKey registerClass:[MKMRSAPrivateKey class] forAlgorithm:@"RSA/ECB/PKCS1Padding"];
+    
+    [MKMPlugins registerAddressFactory];
+    [MKMPlugins registerMetaFactory];
+    [MKMPlugins registerDocumentFactory];
+    
+    [MKMPlugins registerKeyFactories];
+    [MKMPlugins registerCoders];
+    [MKMPlugins registerDigesters];
 }
 
 @implementation DIMFacebook
