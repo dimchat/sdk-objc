@@ -48,28 +48,7 @@
 
 #import "DIMFacebook.h"
 
-static inline void load_plugins(void) {
-    
-    [MKMPlugins registerAddressFactory];
-    [MKMPlugins registerMetaFactory];
-    [MKMPlugins registerDocumentFactory];
-    
-    [MKMPlugins registerKeyFactories];
-    [MKMPlugins registerCoders];
-    [MKMPlugins registerDigesters];
-}
-
 @implementation DIMFacebook
-
-- (instancetype)init {
-    if (self = [super init]) {
-        // load plugins
-        SingletonDispatchOnce(^{
-            load_plugins();
-        });
-    }
-    return self;
-}
 
 - (nullable MKMUser *)currentUser {
     NSArray<MKMUser *> *users = self.localUsers;
@@ -208,6 +187,24 @@ static inline void load_plugins(void) {
 - (BOOL)saveMembers:(NSArray<id<MKMID>> *)members group:(id<MKMID>)ID {
     NSAssert(false, @"implement me!");
     return NO;
+}
+
+@end
+
+@implementation DIMFacebook (Plugins)
+
++ (void)loadPlugins {
+    // load plugins
+    SingletonDispatchOnce(^{
+        
+        [MKMPlugins registerAddressFactory];
+        [MKMPlugins registerMetaFactory];
+        [MKMPlugins registerDocumentFactory];
+        
+        [MKMPlugins registerKeyFactories];
+        [MKMPlugins registerCoders];
+        [MKMPlugins registerDigesters];
+    });
 }
 
 @end

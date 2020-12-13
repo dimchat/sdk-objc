@@ -77,6 +77,8 @@
 		E9798B5A23BC994400A14FD8 /* DIMCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9798B5523BC992E00A14FD8 /* DIMCore.framework */; };
 		E988C94C23F54BBE00BA5D66 /* DIMForwardContentProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = E988C94A23F54BBE00BA5D66 /* DIMForwardContentProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E988C94D23F54BBE00BA5D66 /* DIMForwardContentProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = E988C94B23F54BBE00BA5D66 /* DIMForwardContentProcessor.m */; };
+		E99B1FF72585DA53001A05F1 /* MKMKeyStore.h in Headers */ = {isa = PBXBuildFile; fileRef = E99B1FF52585DA53001A05F1 /* MKMKeyStore.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E99B1FF82585DA53001A05F1 /* MKMKeyStore.m in Sources */ = {isa = PBXBuildFile; fileRef = E99B1FF62585DA53001A05F1 /* MKMKeyStore.m */; };
 		E99D9F3C2444E8E50003BC1B /* DIMHandshakeCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = E99D9F392444E8E50003BC1B /* DIMHandshakeCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E99D9F3D2444E8E50003BC1B /* DIMHandshakeCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = E99D9F3B2444E8E50003BC1B /* DIMHandshakeCommand.m */; };
 		E99D9F442444EC0C0003BC1B /* DIMLoginCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = E99D9F422444EC0C0003BC1B /* DIMLoginCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -217,6 +219,8 @@
 		E9798B4D23BC992E00A14FD8 /* DIMCore.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DIMCore.xcodeproj; path = "../../core-objc/DIMCore/DIMCore.xcodeproj"; sourceTree = "<group>"; };
 		E988C94A23F54BBE00BA5D66 /* DIMForwardContentProcessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMForwardContentProcessor.h; sourceTree = "<group>"; };
 		E988C94B23F54BBE00BA5D66 /* DIMForwardContentProcessor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMForwardContentProcessor.m; sourceTree = "<group>"; };
+		E99B1FF52585DA53001A05F1 /* MKMKeyStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MKMKeyStore.h; sourceTree = "<group>"; };
+		E99B1FF62585DA53001A05F1 /* MKMKeyStore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MKMKeyStore.m; sourceTree = "<group>"; };
 		E99D9F392444E8E50003BC1B /* DIMHandshakeCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMHandshakeCommand.h; sourceTree = "<group>"; };
 		E99D9F3B2444E8E50003BC1B /* DIMHandshakeCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMHandshakeCommand.m; sourceTree = "<group>"; };
 		E99D9F422444EC0C0003BC1B /* DIMLoginCommand.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMLoginCommand.h; sourceTree = "<group>"; };
@@ -489,6 +493,8 @@
 				E9D79E1A2583D39200C8E700 /* MKMRSAPrivateKey.h */,
 				E9D79E1F2583D39200C8E700 /* MKMRSAPrivateKey.m */,
 				E9D79E1E2583D39200C8E700 /* MKMRSAPrivateKey+PersistentStore.m */,
+				E99B1FF52585DA53001A05F1 /* MKMKeyStore.h */,
+				E99B1FF62585DA53001A05F1 /* MKMKeyStore.m */,
 			);
 			path = crypto;
 			sourceTree = "<group>";
@@ -565,6 +571,7 @@
 				E94DEB8F23A1053400FBFD3C /* DIMChatroom.h in Headers */,
 				E94DEB8123A1053400FBFD3C /* DIMStation.h in Headers */,
 				E9705CCB2395034900289441 /* DIMStorageCommand.h in Headers */,
+				E99B1FF72585DA53001A05F1 /* MKMKeyStore.h in Headers */,
 				E959654723913AC200DAA870 /* DIMQuitCommandProcessor.h in Headers */,
 				E9D79E412583D5DC00C8E700 /* NSData+Crypto.h in Headers */,
 				E9D79E372583D51700C8E700 /* ripemd160.h in Headers */,
@@ -755,6 +762,7 @@
 				E9D79E392583D51700C8E700 /* ripemd160.cpp in Sources */,
 				E959653B23912C7B00DAA870 /* DIMGroupCommandProcessor.m in Sources */,
 				E9D79E3C2583D51700C8E700 /* base58.cpp in Sources */,
+				E99B1FF82585DA53001A05F1 /* MKMKeyStore.m in Sources */,
 				E9D79E282583D39200C8E700 /* MKMRSAPrivateKey.m in Sources */,
 				E95965092391077F00DAA870 /* DIMReceiptCommand.m in Sources */,
 				E959654023913A1F00DAA870 /* DIMInviteCommandProcessor.m in Sources */,

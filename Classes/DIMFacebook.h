@@ -94,4 +94,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@interface DIMFacebook (Plugins)
+
++ (void)loadPlugins;
+
+@end
+
 NS_ASSUME_NONNULL_END

@@ -201,19 +201,3 @@
 }
 
 @end
-
-@implementation MKMRSAPublicKey (PersistentStore)
-
-+ (nullable instancetype)loadKeyWithIdentifier:(NSString *)identifier {
-    id PK = nil;
-    
-    // TODO: load RSA public key from persistent store
-    
-    // finally, try by private key
-    MKMRSAPrivateKey *SK = [MKMRSAPrivateKey loadKeyWithIdentifier:identifier];
-    PK = SK.publicKey;
-    
-    return PK;
-}
-
-@end
