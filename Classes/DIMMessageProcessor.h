@@ -52,7 +52,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (DIMContentProcessor *)getContentProcessor;
 - (DIMContentProcessor *)getContentProcessorForType:(DKDContentType)type;
-- (DIMContentProcessor *)getContentProcessorForContent:(id<DKDContent>)content;
 
 @end
 

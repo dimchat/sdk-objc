@@ -65,12 +65,18 @@
 
 @implementation PlainKey
 
+SingletonImplementations(PlainKey, sharedInstance)
+
 - (instancetype)init {
     NSDictionary *dict = @{@"algorithm": SCAlgorithmPlain};
     if (self = [super initWithDictionary:dict]) {
         //
     }
     return self;
+}
+
+- (NSData *)data {
+    return nil;
 }
 
 - (NSData *)encrypt:(NSData *)plaintext {
@@ -80,8 +86,6 @@
 - (nullable NSData *)decrypt:(NSData *)ciphertext {
     return ciphertext;
 }
-
-SingletonImplementations(PlainKey, sharedInstance)
 
 @end
 

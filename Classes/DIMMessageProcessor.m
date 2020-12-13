@@ -110,10 +110,6 @@ static inline void register_all_processors() {
     return [_cpu getProcessorForType:type];
 }
 
-- (DIMContentProcessor *)getContentProcessorForContent:(id<DKDContent>)content {
-    return [_cpu getProcessorForContent:content];
-}
-
 - (DIMMessenger *)messenger {
     return self.transceiver;
 }
@@ -212,7 +208,7 @@ static inline void register_all_processors() {
 - (nullable id<DKDInstantMessage>)processInstant:(id<DKDInstantMessage>)iMsg
                                      withMessage:(id<DKDReliableMessage>)rMsg {
     id<DKDInstantMessage> res = [super processInstant:iMsg withMessage:rMsg];
-    if ([self.messenger saveMessage:iMsg]) {
+    if (![self.messenger saveMessage:iMsg]) {
         // error
         return nil;
     }
@@ -222,13 +218,8 @@ static inline void register_all_processors() {
 - (nullable id<DKDContent>)processContent:(id<DKDContent>)content
                               withMessage:(id<DKDReliableMessage>)rMsg {
     // TODO: override to check group
-    DIMContentProcessor *cpu = [self getContentProcessorForContent:content];
-    if (!cpu) {
-        NSAssert(false, @"failed to get CPU for content: %@", content);
-        return nil;
-    }
+    return [_cpu processContent:content withMessage:rMsg];
     // TODO: override to filter the response
-    return [cpu processContent:content withMessage:rMsg];
 }
 
 @end
