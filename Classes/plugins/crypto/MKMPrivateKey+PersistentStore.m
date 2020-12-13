@@ -28,7 +28,7 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  MKMKeyStore.m
+//  MKMPrivateKey+PersistentStore.m
 //  DIMSDK
 //
 //  Created by Albert Moky on 2020/12/13.
@@ -37,7 +37,7 @@
 
 #import "MKMRSAPrivateKey.h"
 
-#import "MKMKeyStore.h"
+#import "MKMPrivateKey+PersistentStore.h"
 
 @implementation MKMPrivateKey (PersistentStore)
 
