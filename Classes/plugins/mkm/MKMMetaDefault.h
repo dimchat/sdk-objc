@@ -28,49 +28,35 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  MKMAddressBTC.h
+//  MKMMetaDefault.h
 //  DIMSDK
 //
-//  Created by Albert Moky on 2020/12/12.
+//  Created by Albert Moky on 2020/12/14.
 //  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
-#import <MingKeMing/MingKeMing.h>
+#import "MKMAddressBTC.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 /*
- *  Address like BitCoin
+ *  Default Meta to build ID with 'name@address'
  *
- *      data format: "network+digest+code"
- *          network    --  1 byte
- *          digest     -- 20 bytes
- *          code       --  4 bytes
+ *  version:
+ *      0x01 - MKM
  *
- *      algorithm:
- *          fingerprint = sign(seed, SK);  // public key data
- *          digest      = ripemd160(sha256(fingerprint));
- *          code        = sha256(sha256(network + digest)).prefix(4);
- *          address     = base58_encode(network + digest + code);
+ *  algorithm:
+ *      CT      = fingerprint = sKey.sign(seed);
+ *      hash    = ripemd160(sha256(CT));
+ *      code    = sha256(sha256(network + hash)).prefix(4);
+ *      address = base58_encode(network + hash + code);
+ *      number  = uint(code);
  */
-@interface MKMAddressBTC : MKMAddress
+@interface MKMMetaDefault : MKMMeta
 
-/**
- *  Generate address with fingerprint and network ID
- *
- * @param fingerprint = meta.fingerprint or key.data
- * @param type - address type
- * @return Address object
- */
-+ (instancetype)generate:(NSData *)fingerprint network:(MKMNetworkType)type;
+- (MKMAddressBTC *)generateAddress:(MKMNetworkType)type;
 
-/**
- *  Parse a string for BTC address
- *
- * @param string - address string
- * @return null on error
- */
-+ (instancetype)parse:(NSString *)string;
+- (MKMID *)generateID:(MKMNetworkType)type;
 
 @end
 

@@ -79,6 +79,8 @@
 		E988C94D23F54BBE00BA5D66 /* DIMForwardContentProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = E988C94B23F54BBE00BA5D66 /* DIMForwardContentProcessor.m */; };
 		E99B1FF72585DA53001A05F1 /* MKMPrivateKey+PersistentStore.h in Headers */ = {isa = PBXBuildFile; fileRef = E99B1FF52585DA53001A05F1 /* MKMPrivateKey+PersistentStore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E99B1FF82585DA53001A05F1 /* MKMPrivateKey+PersistentStore.m in Sources */ = {isa = PBXBuildFile; fileRef = E99B1FF62585DA53001A05F1 /* MKMPrivateKey+PersistentStore.m */; };
+		E99B200B2586834F001A05F1 /* MKMMetaDefault.h in Headers */ = {isa = PBXBuildFile; fileRef = E99B20092586834F001A05F1 /* MKMMetaDefault.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E99B200C2586834F001A05F1 /* MKMMetaDefault.m in Sources */ = {isa = PBXBuildFile; fileRef = E99B200A2586834F001A05F1 /* MKMMetaDefault.m */; };
 		E99D9F3C2444E8E50003BC1B /* DIMHandshakeCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = E99D9F392444E8E50003BC1B /* DIMHandshakeCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E99D9F3D2444E8E50003BC1B /* DIMHandshakeCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = E99D9F3B2444E8E50003BC1B /* DIMHandshakeCommand.m */; };
 		E99D9F442444EC0C0003BC1B /* DIMLoginCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = E99D9F422444EC0C0003BC1B /* DIMLoginCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -221,6 +223,8 @@
 		E988C94B23F54BBE00BA5D66 /* DIMForwardContentProcessor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMForwardContentProcessor.m; sourceTree = "<group>"; };
 		E99B1FF52585DA53001A05F1 /* MKMPrivateKey+PersistentStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MKMPrivateKey+PersistentStore.h"; sourceTree = "<group>"; };
 		E99B1FF62585DA53001A05F1 /* MKMPrivateKey+PersistentStore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "MKMPrivateKey+PersistentStore.m"; sourceTree = "<group>"; };
+		E99B20092586834F001A05F1 /* MKMMetaDefault.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MKMMetaDefault.h; sourceTree = "<group>"; };
+		E99B200A2586834F001A05F1 /* MKMMetaDefault.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MKMMetaDefault.m; sourceTree = "<group>"; };
 		E99D9F392444E8E50003BC1B /* DIMHandshakeCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMHandshakeCommand.h; sourceTree = "<group>"; };
 		E99D9F3B2444E8E50003BC1B /* DIMHandshakeCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMHandshakeCommand.m; sourceTree = "<group>"; };
 		E99D9F422444EC0C0003BC1B /* DIMLoginCommand.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMLoginCommand.h; sourceTree = "<group>"; };
@@ -551,6 +555,8 @@
 			children = (
 				E9D79E482583D74000C8E700 /* MKMAddressBTC.h */,
 				E9D79E492583D74000C8E700 /* MKMAddressBTC.m */,
+				E99B20092586834F001A05F1 /* MKMMetaDefault.h */,
+				E99B200A2586834F001A05F1 /* MKMMetaDefault.m */,
 				E9D79E4C2583DCBB00C8E700 /* MKMMetaBTC.h */,
 				E9D79E4D2583DCBB00C8E700 /* MKMMetaBTC.m */,
 			);
@@ -587,6 +593,7 @@
 				E9D79E232583D39200C8E700 /* MKMRSAPrivateKey.h in Headers */,
 				E959655B239160A400DAA870 /* DIMDocumentCommandProcessor.h in Headers */,
 				E95965572391609600DAA870 /* DIMMetaCommandProcessor.h in Headers */,
+				E99B200B2586834F001A05F1 /* MKMMetaDefault.h in Headers */,
 				E9D79E292583D39200C8E700 /* MKMAESKey.h in Headers */,
 				E95965262391096600DAA870 /* DIMContentProcessor.h in Headers */,
 				E9D79E3B2583D51700C8E700 /* byteswap.h in Headers */,
@@ -780,6 +787,7 @@
 				E99D9F3D2444E8E50003BC1B /* DIMHandshakeCommand.m in Sources */,
 				E94DEB8D23A1053400FBFD3C /* DIMPolylogue.m in Sources */,
 				E9D79E422583D5DC00C8E700 /* NSData+Crypto.m in Sources */,
+				E99B200C2586834F001A05F1 /* MKMMetaDefault.m in Sources */,
 				E9D79E4F2583DCBB00C8E700 /* MKMMetaBTC.m in Sources */,
 				E94DEB8C23A1053400FBFD3C /* DIMStation.m in Sources */,
 				E919B0142390FAA1004F7FF9 /* DIMMessenger.m in Sources */,

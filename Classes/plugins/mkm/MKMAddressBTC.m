@@ -37,9 +37,16 @@
 
 #import "MKMAddressBTC.h"
 
+/**
+ *  BTC address algorithm:
+ *      digest     = ripemd160(sha256(fingerprint));
+ *      check_code = sha256(sha256(network + digest)).prefix(4);
+ *      addr       = base58_encode(network + digest + check_code);
+ */
 @implementation MKMAddressBTC
 
 static inline NSData *check_code(NSData *data) {
+    assert([data length] == 21);
     NSData *sha256d = MKMSHA256Digest(MKMSHA256Digest(data));
     return [sha256d subdataWithRange:NSMakeRange(0, 4)];
 }

@@ -37,6 +37,7 @@
 
 #import "MKMAddressBTC.h"
 #import "MKMMetaBTC.h"
+#import "MKMMetaDefault.h"
 
 #import "MKMPlugins.h"
 
@@ -70,6 +71,9 @@
     id<MKMMeta> meta;
     switch (version) {
         case MKMMetaVersion_MKM:
+            meta = [[MKMMetaDefault alloc] initWithType:version key:PK seed:name fingerprint:CT];
+            break;
+            
         case MKMMetaVersion_BTC:
         case MKMMetaVersion_ExBTC:
             meta = [[MKMMetaBTC alloc] initWithType:version key:PK seed:name fingerprint:CT];
@@ -105,6 +109,9 @@
     MKMNetworkType version = [type unsignedCharValue];
     switch (version) {
         case MKMMetaVersion_MKM:
+            meta = [[MKMMetaDefault alloc] initWithDictionary:info];
+            break;
+            
         case MKMMetaVersion_BTC:
         case MKMMetaVersion_ExBTC:
             meta = [[MKMMetaBTC alloc] initWithDictionary:info];

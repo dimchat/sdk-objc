@@ -64,6 +64,7 @@ FOUNDATION_EXPORT const unsigned char DIMSDKVersionString[];
 #import <DIMSDK/MKMPrivateKey+PersistentStore.h>
 #import <DIMSDK/MKMAddressBTC.h>
 #import <DIMSDK/MKMMetaBTC.h>
+#import <DIMSDK/MKMMetaDefault.h>
 #import <DIMSDK/DKDInstantMessage+Extension.h>
 
 // Network
