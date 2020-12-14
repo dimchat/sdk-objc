@@ -51,6 +51,8 @@
     MKMRSAPublicKey *_publicKey;
 }
 
+@property (strong, nonatomic) NSData *data;
+
 @property (nonatomic) NSUInteger keySize;
 
 @property (nonatomic) SecKeyRef privateKeyRef;
@@ -65,6 +67,8 @@
 - (instancetype)initWithDictionary:(NSDictionary *)keyInfo {
     if (self = [super initWithDictionary:keyInfo]) {
         // lazy
+        _data = nil;
+        
         _keySize = 0;
         
         _privateKeyRef = NULL;
@@ -91,7 +95,7 @@
     if (key) {
         key.data = _data;
         key.keySize = _keySize;
-        key.privateKeyRef = _privateKeyRef;
+        //key.privateKeyRef = _privateKeyRef;
         key.publicKey = _publicKey;
     }
     return key;

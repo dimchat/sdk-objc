@@ -35,6 +35,8 @@
 //  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
+#import "MKMAddressBTC.h"
+
 #import "MKMMetaBTC.h"
 
 @interface MKMMetaBTC () {

@@ -28,30 +28,30 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  MKMMetaDefault.m
+//  MKMMetaETH.m
 //  DIMSDK
 //
-//  Created by Albert Moky on 2020/12/14.
+//  Created by Albert Moky on 2020/12/15.
 //  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
-#import "MKMAddressBTC.h"
+#import "MKMAddressETH.h"
 
-#import "MKMMetaDefault.h"
+#import "MKMMetaETH.h"
 
-@interface MKMMetaDefault () {
+@interface MKMMetaETH () {
     
-    NSMutableDictionary<NSNumber *, MKMID *> *_cachedIdentifiers;
+    MKMID *_cachedIdentifier;
 }
 
 @end
 
-@implementation MKMMetaDefault
+@implementation MKMMetaETH
 
 /* designated initializer */
 - (instancetype)initWithDictionary:(NSDictionary *)dict {
     if (self = [super initWithDictionary:dict]) {
-        _cachedIdentifiers = [[NSMutableDictionary alloc] init];
+        _cachedIdentifier = nil;
     }
     return self;
 }
@@ -62,36 +62,35 @@
                         seed:(NSString *)seed
                  fingerprint:(NSData *)fingerprint {
     if (self = [super initWithType:version key:publicKey seed:seed fingerprint:fingerprint]) {
-        _cachedIdentifiers = [[NSMutableDictionary alloc] init];
+        _cachedIdentifier = nil;
     }
     return self;
 }
 
 - (BOOL)matchID:(id<MKMID>)ID {
-    if ([ID.address isKindOfClass:[MKMAddressBTC class]]) {
-        return [[self generateID:ID.type] isEqual:ID];
+    if ([ID.address isKindOfClass:[MKMAddressETH class]]) {
+        return [[self generateID] isEqual:ID];
     }
     return NO;
 }
 
-- (MKMAddressBTC *)generateAddress:(MKMNetworkType)type {
+- (MKMAddressETH *)generateAddress {
     if ([self isValid]) {
-        return [MKMAddressBTC generate:self.fingerprint network:type];
+        NSData *data = [self.key data];
+        return [MKMAddressETH generate:data];
     }
     NSAssert(false, @"meta invalid: %@", self);
     return nil;
 }
 
-- (MKMID *)generateID:(MKMNetworkType)type {
-    MKMID *ID = [_cachedIdentifiers objectForKey:@(type)];
-    if (!ID) {
-        id<MKMAddress> address = [self generateAddress:type];
+- (MKMID *)generateID {
+    if (!_cachedIdentifier) {
+        id<MKMAddress> address = [self generateAddress];
         if (address) {
-            ID = [[MKMID alloc] initWithName:self.seed address:address];
-            [_cachedIdentifiers setObject:ID forKey:@(type)];
+            _cachedIdentifier = [[MKMID alloc] initWithName:self.seed address:address];
         }
     }
-    return ID;
+    return _cachedIdentifier;
 }
 
 @end

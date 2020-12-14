@@ -75,6 +75,17 @@
 		E95CB3332587972B00685B1B /* sha3.h in Headers */ = {isa = PBXBuildFile; fileRef = E95CB3302587972B00685B1B /* sha3.h */; };
 		E95CB3342587972B00685B1B /* compiler.h in Headers */ = {isa = PBXBuildFile; fileRef = E95CB3312587972B00685B1B /* compiler.h */; };
 		E95CB3352587972B00685B1B /* sha3.c in Sources */ = {isa = PBXBuildFile; fileRef = E95CB3322587972B00685B1B /* sha3.c */; };
+		E95CB34A2587B91A00685B1B /* secp256k1.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E95CB3492587B91A00685B1B /* secp256k1.framework */; };
+		E95CB34E2587BDFA00685B1B /* MKMECCPrivateKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E95CB34C2587BDFA00685B1B /* MKMECCPrivateKey.h */; };
+		E95CB34F2587BDFA00685B1B /* MKMECCPrivateKey.m in Sources */ = {isa = PBXBuildFile; fileRef = E95CB34D2587BDFA00685B1B /* MKMECCPrivateKey.m */; };
+		E95CB3522587C29500685B1B /* MKMECCPublicKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E95CB3502587C29500685B1B /* MKMECCPublicKey.h */; };
+		E95CB3532587C29500685B1B /* MKMECCPublicKey.m in Sources */ = {isa = PBXBuildFile; fileRef = E95CB3512587C29500685B1B /* MKMECCPublicKey.m */; };
+		E95CB3562587D5B900685B1B /* MKMECCHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = E95CB3542587D5B900685B1B /* MKMECCHelper.h */; };
+		E95CB3572587D5B900685B1B /* MKMECCHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = E95CB3552587D5B900685B1B /* MKMECCHelper.m */; };
+		E95CB35A2587E25300685B1B /* MKMAddressETH.h in Headers */ = {isa = PBXBuildFile; fileRef = E95CB3582587E25300685B1B /* MKMAddressETH.h */; };
+		E95CB35B2587E25300685B1B /* MKMAddressETH.m in Sources */ = {isa = PBXBuildFile; fileRef = E95CB3592587E25300685B1B /* MKMAddressETH.m */; };
+		E95CB35E2587E84000685B1B /* MKMMetaETH.h in Headers */ = {isa = PBXBuildFile; fileRef = E95CB35C2587E84000685B1B /* MKMMetaETH.h */; };
+		E95CB35F2587E84000685B1B /* MKMMetaETH.m in Sources */ = {isa = PBXBuildFile; fileRef = E95CB35D2587E84000685B1B /* MKMMetaETH.m */; };
 		E9705CCB2395034900289441 /* DIMStorageCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = E9705CC92395034900289441 /* DIMStorageCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9705CCC2395034900289441 /* DIMStorageCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = E9705CCA2395034900289441 /* DIMStorageCommand.m */; };
 		E9798B5A23BC994400A14FD8 /* DIMCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9798B5523BC992E00A14FD8 /* DIMCore.framework */; };
@@ -222,6 +233,17 @@
 		E95CB3302587972B00685B1B /* sha3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sha3.h; sourceTree = "<group>"; };
 		E95CB3312587972B00685B1B /* compiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = compiler.h; sourceTree = "<group>"; };
 		E95CB3322587972B00685B1B /* sha3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sha3.c; sourceTree = "<group>"; };
+		E95CB3492587B91A00685B1B /* secp256k1.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = secp256k1.framework; sourceTree = "<group>"; };
+		E95CB34C2587BDFA00685B1B /* MKMECCPrivateKey.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MKMECCPrivateKey.h; sourceTree = "<group>"; };
+		E95CB34D2587BDFA00685B1B /* MKMECCPrivateKey.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MKMECCPrivateKey.m; sourceTree = "<group>"; };
+		E95CB3502587C29500685B1B /* MKMECCPublicKey.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MKMECCPublicKey.h; sourceTree = "<group>"; };
+		E95CB3512587C29500685B1B /* MKMECCPublicKey.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MKMECCPublicKey.m; sourceTree = "<group>"; };
+		E95CB3542587D5B900685B1B /* MKMECCHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MKMECCHelper.h; sourceTree = "<group>"; };
+		E95CB3552587D5B900685B1B /* MKMECCHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MKMECCHelper.m; sourceTree = "<group>"; };
+		E95CB3582587E25300685B1B /* MKMAddressETH.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MKMAddressETH.h; sourceTree = "<group>"; };
+		E95CB3592587E25300685B1B /* MKMAddressETH.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MKMAddressETH.m; sourceTree = "<group>"; };
+		E95CB35C2587E84000685B1B /* MKMMetaETH.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MKMMetaETH.h; sourceTree = "<group>"; };
+		E95CB35D2587E84000685B1B /* MKMMetaETH.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MKMMetaETH.m; sourceTree = "<group>"; };
 		E9705CC92395034900289441 /* DIMStorageCommand.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMStorageCommand.h; sourceTree = "<group>"; };
 		E9705CCA2395034900289441 /* DIMStorageCommand.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMStorageCommand.m; sourceTree = "<group>"; };
 		E9798B4D23BC992E00A14FD8 /* DIMCore.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DIMCore.xcodeproj; path = "../../core-objc/DIMCore/DIMCore.xcodeproj"; sourceTree = "<group>"; };
@@ -268,6 +290,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E9798B5A23BC994400A14FD8 /* DIMCore.framework in Frameworks */,
+				E95CB34A2587B91A00685B1B /* secp256k1.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -378,6 +401,7 @@
 		E919B01F2390FCF4004F7FF9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E95CB3492587B91A00685B1B /* secp256k1.framework */,
 				E95964E22391004B00DAA870 /* MingKeMing.framework */,
 				E95964DF2391004200DAA870 /* DaoKeDao.framework */,
 				E94D48742390FF6900D787BB /* DaoKeDao.framework */,
@@ -515,6 +539,12 @@
 			children = (
 				E9D79E202583D39200C8E700 /* MKMAESKey.h */,
 				E9D79E1C2583D39200C8E700 /* MKMAESKey.m */,
+				E95CB3542587D5B900685B1B /* MKMECCHelper.h */,
+				E95CB3552587D5B900685B1B /* MKMECCHelper.m */,
+				E95CB3502587C29500685B1B /* MKMECCPublicKey.h */,
+				E95CB3512587C29500685B1B /* MKMECCPublicKey.m */,
+				E95CB34C2587BDFA00685B1B /* MKMECCPrivateKey.h */,
+				E95CB34D2587BDFA00685B1B /* MKMECCPrivateKey.m */,
 				E9D79E212583D39200C8E700 /* MKMRSAHelper.h */,
 				E9D79E1B2583D39200C8E700 /* MKMRSAHelper.m */,
 				E9D79E1D2583D39200C8E700 /* MKMRSAPublicKey.h */,
@@ -580,10 +610,14 @@
 			children = (
 				E9D79E482583D74000C8E700 /* MKMAddressBTC.h */,
 				E9D79E492583D74000C8E700 /* MKMAddressBTC.m */,
+				E95CB3582587E25300685B1B /* MKMAddressETH.h */,
+				E95CB3592587E25300685B1B /* MKMAddressETH.m */,
 				E99B20092586834F001A05F1 /* MKMMetaDefault.h */,
 				E99B200A2586834F001A05F1 /* MKMMetaDefault.m */,
 				E9D79E4C2583DCBB00C8E700 /* MKMMetaBTC.h */,
 				E9D79E4D2583DCBB00C8E700 /* MKMMetaBTC.m */,
+				E95CB35C2587E84000685B1B /* MKMMetaETH.h */,
+				E95CB35D2587E84000685B1B /* MKMMetaETH.m */,
 			);
 			path = mkm;
 			sourceTree = "<group>";
@@ -599,6 +633,7 @@
 				E94DEB8A23A1053400FBFD3C /* DIMRobot.h in Headers */,
 				E94DEB9023A1053400FBFD3C /* DIMPolylogue.h in Headers */,
 				E9463421257F9C1400530E15 /* NSObject+Compare.h in Headers */,
+				E95CB3562587D5B900685B1B /* MKMECCHelper.h in Headers */,
 				E94DEB8F23A1053400FBFD3C /* DIMChatroom.h in Headers */,
 				E94DEB8123A1053400FBFD3C /* DIMStation.h in Headers */,
 				E95CB3342587972B00685B1B /* compiler.h in Headers */,
@@ -623,9 +658,11 @@
 				E9D79E292583D39200C8E700 /* MKMAESKey.h in Headers */,
 				E95CB3332587972B00685B1B /* sha3.h in Headers */,
 				E95965262391096600DAA870 /* DIMContentProcessor.h in Headers */,
+				E95CB34E2587BDFA00685B1B /* MKMECCPrivateKey.h in Headers */,
 				E9D79E3B2583D51700C8E700 /* byteswap.h in Headers */,
 				E9D79E4A2583D74000C8E700 /* MKMAddressBTC.h in Headers */,
 				E95965322391273200DAA870 /* DIMCommandProcessor.h in Headers */,
+				E95CB35A2587E25300685B1B /* MKMAddressETH.h in Headers */,
 				E9D79E3A2583D51700C8E700 /* endian.h in Headers */,
 				E9463424257FA28F00530E15 /* NSDictionary+Binary.h in Headers */,
 				E946343425839F6F00530E15 /* DIMFileContentProcessor.h in Headers */,
@@ -639,12 +676,14 @@
 				E9D79E2A2583D39200C8E700 /* MKMRSAHelper.h in Headers */,
 				E95964EF239101D900DAA870 /* DKDInstantMessage+Extension.h in Headers */,
 				E946341F257F9BED00530E15 /* NSObject+Singleton.h in Headers */,
+				E95CB35E2587E84000685B1B /* MKMMetaETH.h in Headers */,
 				E9D79E262583D39200C8E700 /* MKMRSAPublicKey.h in Headers */,
 				E919B0152390FAA1004F7FF9 /* DIMAddressNameService.h in Headers */,
 				E919B0122390FAA1004F7FF9 /* DIMFacebook.h in Headers */,
 				E9463428257FAD8000530E15 /* DIMMessageProcessor.h in Headers */,
 				E988C94C23F54BBE00BA5D66 /* DIMForwardContentProcessor.h in Headers */,
 				E919B0132390FAA1004F7FF9 /* DIMMessenger.h in Headers */,
+				E95CB3522587C29500685B1B /* MKMECCPublicKey.h in Headers */,
 				E919B0092390FA3B004F7FF9 /* DIMSDK.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -780,6 +819,7 @@
 				E959654823913AC200DAA870 /* DIMQuitCommandProcessor.m in Sources */,
 				E959655023913AD600DAA870 /* DIMResetCommandProcessor.m in Sources */,
 				E959654C23913ACC00DAA870 /* DIMQueryCommandProcessor.m in Sources */,
+				E95CB3532587C29500685B1B /* MKMECCPublicKey.m in Sources */,
 				E9D79E272583D39200C8E700 /* MKMRSAPrivateKey+PersistentStore.m in Sources */,
 				E95965082391077F00DAA870 /* DIMBlockCommand.m in Sources */,
 				E9463429257FAD8000530E15 /* DIMMessageProcessor.m in Sources */,
@@ -787,6 +827,7 @@
 				E9D79E242583D39200C8E700 /* MKMRSAHelper.m in Sources */,
 				E915CE5B243C62B700B98FE3 /* MKMImmortals.m in Sources */,
 				E95965582391609600DAA870 /* DIMMetaCommandProcessor.m in Sources */,
+				E95CB34F2587BDFA00685B1B /* MKMECCPrivateKey.m in Sources */,
 				E94DEB7F23A1053400FBFD3C /* DIMServiceProvider.m in Sources */,
 				E95965272391096600DAA870 /* DIMContentProcessor.m in Sources */,
 				E9D79E252583D39200C8E700 /* MKMAESKey.m in Sources */,
@@ -802,6 +843,7 @@
 				E959654023913A1F00DAA870 /* DIMInviteCommandProcessor.m in Sources */,
 				E959655C239160A400DAA870 /* DIMDocumentCommandProcessor.m in Sources */,
 				E959653723912BDB00DAA870 /* DIMHistoryProcessor.m in Sources */,
+				E95CB35B2587E25300685B1B /* MKMAddressETH.m in Sources */,
 				E99D9F452444EC0C0003BC1B /* DIMLoginCommand.m in Sources */,
 				E959654423913A8F00DAA870 /* DIMExpelCommandProcessor.m in Sources */,
 				E95CB3352587972B00685B1B /* sha3.c in Sources */,
@@ -819,9 +861,11 @@
 				E9D79E4F2583DCBB00C8E700 /* MKMMetaBTC.m in Sources */,
 				E94DEB8C23A1053400FBFD3C /* DIMStation.m in Sources */,
 				E919B0142390FAA1004F7FF9 /* DIMMessenger.m in Sources */,
+				E95CB35F2587E84000685B1B /* MKMMetaETH.m in Sources */,
 				E959650A2391077F00DAA870 /* DIMMuteCommand.m in Sources */,
 				E9D79E4B2583D74000C8E700 /* MKMAddressBTC.m in Sources */,
 				E94DEB8E23A1053400FBFD3C /* DIMChatroom.m in Sources */,
+				E95CB3572587D5B900685B1B /* MKMECCHelper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -974,6 +1018,10 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				HEADER_SEARCH_PATHS = (
 					"../../core-objc/Classes/**",
 					"../../dkd-objc/Classes/**",
@@ -1002,6 +1050,10 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				HEADER_SEARCH_PATHS = (
 					"../../core-objc/Classes/**",
 					"../../dkd-objc/Classes/**",
@@ -1026,6 +1078,10 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = JUVC7SZJE7;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = DIMSDKTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1043,6 +1099,10 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = JUVC7SZJE7;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = DIMSDKTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

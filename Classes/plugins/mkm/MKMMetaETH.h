@@ -28,10 +28,10 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  MKMMetaBTC.h
+//  MKMMetaETH.h
 //  DIMSDK
 //
-//  Created by Albert Moky on 2020/12/12.
+//  Created by Albert Moky on 2020/12/15.
 //  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
@@ -39,26 +39,23 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class MKMAddressBTC;
+@class MKMAddressETH;
 
-/*
- *  Meta to build BTC address for ID
+/**
+ *  Meta to build ETH address for ID
  *
  *  version:
- *      0x02 - BTC
- *      0x03 - ExBTC
+ *      0x04 - ETH
+ *      0x05 - ExETH
  *
  *  algorithm:
- *      CT      = key.data;
- *      hash    = ripemd160(sha256(CT));
- *      code    = sha256(sha256(network + hash)).prefix(4);
- *      address = base58_encode(network + hash + code);
- *      number  = uint(code);
+ *      CT      = key.data;  // without prefix byte
+ *      digest  = keccak256(CT);
+ *      address = hex_encode(digest.suffix(20));
  */
-@interface MKMMetaBTC : MKMMeta
+@interface MKMMetaETH : MKMMeta
 
- // generate address with network type: BTCMain
-- (MKMAddressBTC *)generateAddress;
+- (MKMAddressETH *)generateAddress;
 
 - (MKMID *)generateID;
 

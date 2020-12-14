@@ -44,6 +44,8 @@
 #import "MKMAESKey.h"
 #import "MKMRSAPublicKey.h"
 #import "MKMRSAPrivateKey.h"
+#import "MKMECCPublicKey.h"
+#import "MKMECCPrivateKey.h"
 
 #import "MKMPlugins.h"
 
@@ -135,7 +137,7 @@ SingletonImplementations(PlainKey, sharedInstance)
     }
     // ECC Key
     if ([algorithm isEqualToString:ACAlgorithmECC]) {
-        //
+        return [[MKMECCPublicKey alloc] initWithDictionary:key];
     }
     NSAssert(false, @"public key algorithm (%@) not support yet", algorithm);
     return nil;
@@ -163,7 +165,7 @@ SingletonImplementations(PlainKey, sharedInstance)
     }
     // ECC Key
     if ([algorithm isEqualToString:ACAlgorithmECC]) {
-        //
+        return [[MKMECCPrivateKey alloc] initWithDictionary:key];
     }
     NSAssert(false, @"private key algorithm (%@) not support yet", algorithm);
     return nil;

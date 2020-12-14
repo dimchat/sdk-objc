@@ -36,8 +36,10 @@
 //
 
 #import "MKMAddressBTC.h"
-#import "MKMMetaBTC.h"
+#import "MKMAddressETH.h"
 #import "MKMMetaDefault.h"
+#import "MKMMetaBTC.h"
+#import "MKMMetaETH.h"
 
 #import "MKMPlugins.h"
 
@@ -51,6 +53,7 @@
     NSUInteger len = [address length];
     if (len == 42) {
         // ETH address
+        return [MKMAddressETH parse:address];
     }
     // try BTC address
     return [MKMAddressBTC parse:address];
@@ -78,7 +81,12 @@
         case MKMMetaVersion_ExBTC:
             meta = [[MKMMetaBTC alloc] initWithType:version key:PK seed:name fingerprint:CT];
             break;
-            
+                
+        case MKMMetaVersion_ETH:
+        case MKMMetaVersion_ExETH:
+            meta = [[MKMMetaETH alloc] initWithType:version key:PK seed:name fingerprint:CT];
+            break;
+
         default:
             NSAssert(false, @"meta type not supported: %d", version);
             meta = nil;
@@ -115,6 +123,11 @@
         case MKMMetaVersion_BTC:
         case MKMMetaVersion_ExBTC:
             meta = [[MKMMetaBTC alloc] initWithDictionary:info];
+            break;
+            
+        case MKMMetaVersion_ETH:
+        case MKMMetaVersion_ExETH:
+            meta = [[MKMMetaETH alloc] initWithDictionary:info];
             break;
             
         default:

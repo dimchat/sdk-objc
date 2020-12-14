@@ -28,10 +28,10 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  MKMMetaBTC.h
+//  MKMAddressETH.h
 //  DIMSDK
 //
-//  Created by Albert Moky on 2020/12/12.
+//  Created by Albert Moky on 2020/12/15.
 //  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
@@ -39,28 +39,36 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class MKMAddressBTC;
-
-/*
- *  Meta to build BTC address for ID
+/**
+ *  Address like Ethereum
  *
- *  version:
- *      0x02 - BTC
- *      0x03 - ExBTC
+ *      data format: "0x{address}"
  *
- *  algorithm:
- *      CT      = key.data;
- *      hash    = ripemd160(sha256(CT));
- *      code    = sha256(sha256(network + hash)).prefix(4);
- *      address = base58_encode(network + hash + code);
- *      number  = uint(code);
+ *      algorithm:
+ *          fingerprint = PK.data;
+ *          digest      = keccak256(fingerprint);
+ *          address     = hex_encode(digest.suffix(20));
  */
-@interface MKMMetaBTC : MKMMeta
+@interface MKMAddressETH : MKMAddress
 
- // generate address with network type: BTCMain
-- (MKMAddressBTC *)generateAddress;
+/**
+ *  Generate ETH address with key.data
+ *
+ * @param fingerprint = key.data
+ * @return Address object
+ */
++ (instancetype)generate:(NSData *)fingerprint;
 
-- (MKMID *)generateID;
+/**
+ *  Parse a string for ETH address
+ *
+ * @param string - address string
+ * @return null on error
+ */
++ (instancetype)parse:(NSString *)string;
+
++ (NSString *)validateAddress:(NSString *)address;
++ (BOOL)isValidate:(NSString *)address;
 
 @end
 

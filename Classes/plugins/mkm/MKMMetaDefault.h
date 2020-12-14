@@ -35,9 +35,11 @@
 //  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
-#import "MKMAddressBTC.h"
+#import <MingKeMing/MingKeMing.h>
 
 NS_ASSUME_NONNULL_BEGIN
+
+@class MKMAddressBTC;
 
 /*
  *  Default Meta to build ID with 'name@address'

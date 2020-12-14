@@ -87,7 +87,7 @@
     if (key) {
         key.data = _data;
         key.keySize = _keySize;
-        key.publicKeyRef = _publicKeyRef;
+        //key.publicKeyRef = _publicKeyRef;
     }
     return key;
 }
