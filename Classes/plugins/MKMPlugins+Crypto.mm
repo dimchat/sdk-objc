@@ -37,6 +37,7 @@
 
 #import "base58.h"
 #import "ripemd160.h"
+#import "sha3.h"
 
 #import "NSObject+Singleton.h"
 
@@ -313,13 +314,30 @@ static inline char hex_char(char ch) {
 
 @end
 
+@interface KECCAK256 : NSObject <MKMDataDigester>
+
+@end
+
+@implementation KECCAK256
+
+- (NSData *)digest:(NSData *)data {
+    const unsigned char *bytes = (const unsigned char *)[data bytes];
+    size_t len = data.length;
+    unsigned char digest[32];
+    sha3_256(digest, 32, bytes, len);
+    return [[NSData alloc] initWithBytes:digest length:32];
+}
+
+@end
+
 @implementation MKMPlugins (Digest)
 
 + (void)registerDigesters {
     RIPEMD160 *ripemd = [[RIPEMD160 alloc] init];
     [MKMRIPEMD160 setDigester:ripemd];
     
-    // TODO: KECCAK256
+    KECCAK256 *sha3 = [[KECCAK256 alloc] init];
+    [MKMKECCAK256 setDigester:sha3];
 }
 
 @end

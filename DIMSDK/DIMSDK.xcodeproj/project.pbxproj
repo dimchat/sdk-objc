@@ -72,6 +72,9 @@
 		E95965582391609600DAA870 /* DIMMetaCommandProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = E95965562391609600DAA870 /* DIMMetaCommandProcessor.m */; };
 		E959655B239160A400DAA870 /* DIMDocumentCommandProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = E9596559239160A400DAA870 /* DIMDocumentCommandProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E959655C239160A400DAA870 /* DIMDocumentCommandProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = E959655A239160A400DAA870 /* DIMDocumentCommandProcessor.m */; };
+		E95CB3332587972B00685B1B /* sha3.h in Headers */ = {isa = PBXBuildFile; fileRef = E95CB3302587972B00685B1B /* sha3.h */; };
+		E95CB3342587972B00685B1B /* compiler.h in Headers */ = {isa = PBXBuildFile; fileRef = E95CB3312587972B00685B1B /* compiler.h */; };
+		E95CB3352587972B00685B1B /* sha3.c in Sources */ = {isa = PBXBuildFile; fileRef = E95CB3322587972B00685B1B /* sha3.c */; };
 		E9705CCB2395034900289441 /* DIMStorageCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = E9705CC92395034900289441 /* DIMStorageCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9705CCC2395034900289441 /* DIMStorageCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = E9705CCA2395034900289441 /* DIMStorageCommand.m */; };
 		E9798B5A23BC994400A14FD8 /* DIMCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9798B5523BC992E00A14FD8 /* DIMCore.framework */; };
@@ -216,6 +219,9 @@
 		E95965562391609600DAA870 /* DIMMetaCommandProcessor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMMetaCommandProcessor.m; sourceTree = "<group>"; };
 		E9596559239160A400DAA870 /* DIMDocumentCommandProcessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMDocumentCommandProcessor.h; sourceTree = "<group>"; };
 		E959655A239160A400DAA870 /* DIMDocumentCommandProcessor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMDocumentCommandProcessor.m; sourceTree = "<group>"; };
+		E95CB3302587972B00685B1B /* sha3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sha3.h; sourceTree = "<group>"; };
+		E95CB3312587972B00685B1B /* compiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = compiler.h; sourceTree = "<group>"; };
+		E95CB3322587972B00685B1B /* sha3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sha3.c; sourceTree = "<group>"; };
 		E9705CC92395034900289441 /* DIMStorageCommand.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMStorageCommand.h; sourceTree = "<group>"; };
 		E9705CCA2395034900289441 /* DIMStorageCommand.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMStorageCommand.m; sourceTree = "<group>"; };
 		E9798B4D23BC992E00A14FD8 /* DIMCore.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DIMCore.xcodeproj; path = "../../core-objc/DIMCore/DIMCore.xcodeproj"; sourceTree = "<group>"; };
@@ -279,6 +285,7 @@
 		E915CE58243C62B700B98FE3 /* plugins */ = {
 			isa = PBXGroup;
 			children = (
+				E95CB32B2587951C00685B1B /* ethereum */,
 				E9D79E2C2583D51600C8E700 /* bitcoin */,
 				E9D79E3E2583D5DC00C8E700 /* extends */,
 				E9D79E192583D39200C8E700 /* crypto */,
@@ -476,6 +483,24 @@
 			path = group;
 			sourceTree = "<group>";
 		};
+		E95CB32B2587951C00685B1B /* ethereum */ = {
+			isa = PBXGroup;
+			children = (
+				E95CB32D2587954B00685B1B /* ethash */,
+			);
+			path = ethereum;
+			sourceTree = "<group>";
+		};
+		E95CB32D2587954B00685B1B /* ethash */ = {
+			isa = PBXGroup;
+			children = (
+				E95CB3312587972B00685B1B /* compiler.h */,
+				E95CB3302587972B00685B1B /* sha3.h */,
+				E95CB3322587972B00685B1B /* sha3.c */,
+			);
+			path = ethash;
+			sourceTree = "<group>";
+		};
 		E9798B4E23BC992E00A14FD8 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -576,6 +601,7 @@
 				E9463421257F9C1400530E15 /* NSObject+Compare.h in Headers */,
 				E94DEB8F23A1053400FBFD3C /* DIMChatroom.h in Headers */,
 				E94DEB8123A1053400FBFD3C /* DIMStation.h in Headers */,
+				E95CB3342587972B00685B1B /* compiler.h in Headers */,
 				E9705CCB2395034900289441 /* DIMStorageCommand.h in Headers */,
 				E99B1FF72585DA53001A05F1 /* MKMPrivateKey+PersistentStore.h in Headers */,
 				E959654723913AC200DAA870 /* DIMQuitCommandProcessor.h in Headers */,
@@ -595,6 +621,7 @@
 				E95965572391609600DAA870 /* DIMMetaCommandProcessor.h in Headers */,
 				E99B200B2586834F001A05F1 /* MKMMetaDefault.h in Headers */,
 				E9D79E292583D39200C8E700 /* MKMAESKey.h in Headers */,
+				E95CB3332587972B00685B1B /* sha3.h in Headers */,
 				E95965262391096600DAA870 /* DIMContentProcessor.h in Headers */,
 				E9D79E3B2583D51700C8E700 /* byteswap.h in Headers */,
 				E9D79E4A2583D74000C8E700 /* MKMAddressBTC.h in Headers */,
@@ -777,6 +804,7 @@
 				E959653723912BDB00DAA870 /* DIMHistoryProcessor.m in Sources */,
 				E99D9F452444EC0C0003BC1B /* DIMLoginCommand.m in Sources */,
 				E959654423913A8F00DAA870 /* DIMExpelCommandProcessor.m in Sources */,
+				E95CB3352587972B00685B1B /* sha3.c in Sources */,
 				E919B0172390FAA1004F7FF9 /* DIMFacebook.m in Sources */,
 				E988C94D23F54BBE00BA5D66 /* DIMForwardContentProcessor.m in Sources */,
 				E94DEB8023A1053400FBFD3C /* DIMRobot.m in Sources */,
