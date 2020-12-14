@@ -35,7 +35,7 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "MKMRSAHelper.h"
+#import "MKMSecKeyHelper.h"
 #import "MKMRSAPrivateKey.h"
 
 #import "MKMRSAPublicKey.h"
@@ -98,7 +98,8 @@
 
 - (NSData *)data {
     if (!_data) {
-        _data = NSDataFromSecKeyRef(self.publicKeyRef);
+        NSString *pem = [self objectForKey:@"data"];
+        _data = [MKMSecKeyHelper publicKeyDataFromContent:pem algorithm:ACAlgorithmRSA];
     }
     return _data;
 }
@@ -136,11 +137,7 @@
 
 - (SecKeyRef)publicKeyRef {
     if (!_publicKeyRef) {
-        NSString *pem = [self objectForKey:@"data"];
-        NSAssert(pem, @"Public key data not found: %@", self);
-        NSString *base64 = RSAPublicKeyContentFromNSString(pem);
-        NSData *data = MKMBase64Decode(base64);
-        _publicKeyRef = SecKeyRefFromPublicData(data);
+        _publicKeyRef = [MKMSecKeyHelper publicKeyFromData:self.data algorithm:ACAlgorithmRSA];
     }
     return _publicKeyRef;
 }

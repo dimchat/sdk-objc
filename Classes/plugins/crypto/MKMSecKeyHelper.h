@@ -7,7 +7,7 @@
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Albert Moky
+// Copyright (c) 2020 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,26 +28,68 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  MKMRSAHelper.h
+//  MKMSecKeyHelper.h
 //  DIMSDK
 //
-//  Created by Albert Moky on 2020/4/9.
+//  Created by Albert Moky on 2020/12/15.
 //  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
+#import <Security/Security.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-extern SecKeyRef SecKeyRefFromPublicData(NSData *data);
-extern SecKeyRef SecKeyRefFromPrivateData(NSData *data);
+@interface MKMSecKeyHelper : NSObject
 
-extern NSData *NSDataFromSecKeyRef(SecKeyRef keyRef);
+/**
+ *  Get public key data from PEM content
+ *
+ * @param pem - key content
+ * @param name - "RSA" or 'EC"
+ * @return public key data
+ */
++ (NSData *)publicKeyDataFromContent:(NSString *)pem algorithm:(NSString *)name;
 
-extern NSString *RSAPublicKeyContentFromNSString(NSString *content);
-extern NSString *RSAPrivateKeyContentFromNSString(NSString *content);
++ (SecKeyRef)publicKeyFromData:(NSData *)data algorithm:(NSString *)name;
 
-extern NSString *NSStringFromRSAPublicKeyContent(NSString *content);
-extern NSString *NSStringFromRSAPrivateKeyContent(NSString *content);
+/**
+ *  Get private key data from PEM content
+ *
+ * @param pem - key content
+ * @param name - "RSA" or 'EC"
+ * @return private key data
+ */
++ (NSData *)privateKeyDataFromContent:(NSString *)pem algorithm:(NSString *)name;
+
++ (SecKeyRef)privateKeyFromData:(NSData *)data algorithm:(NSString *)name;
+
+/**
+ *  Get key data
+ *
+ * @param key - public/private key
+ * @return key data
+ */
++ (NSData *)dataFromKey:(SecKeyRef)key;
+
+/**
+ *  Serialize public key to PEM content
+ *
+ * @param pKey - public key
+ * @param name - "RSA" or 'EC"
+ * @return PEM content
+ */
++ (NSString *)serializePublicKey:(SecKeyRef)pKey algorithm:(NSString *)name;
+
+/**
+ *  Serialize private key to PEM content
+ *
+ * @param sKey - private key
+ * @param name - "RSA" or 'EC"
+ * @return PEM content
+ */
++ (NSString *)serializePrivateKey:(SecKeyRef)sKey algorithm:(NSString *)name;
+
+@end
 
 NS_ASSUME_NONNULL_END

@@ -7,7 +7,7 @@
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Albert Moky
+// Copyright (c) 2020 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,23 +28,26 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  MKMRSAHelper.m
+//  MKMSecKeyHelper.m
 //  DIMSDK
 //
-//  Created by Albert Moky on 2020/4/9.
+//  Created by Albert Moky on 2020/12/15.
 //  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
-#import "MKMRSAHelper.h"
+#import <MingKeMing/MingKeMing.h>
 
-static inline NSString *RSAKeyContentFromNSString(NSString *content,
-                                                  NSString *tag) {
+#import "MKMSecKeyHelper.h"
+
+static inline NSString *KeyContentFromPEM(NSString *content,
+                                          NSString *algorithm,
+                                          NSString *tag) {
     NSString *sTag, *eTag;
     NSRange spos, epos;
     NSString *key = content;
     
-    sTag = [NSString stringWithFormat:@"-----BEGIN RSA %@ KEY-----", tag];
-    eTag = [NSString stringWithFormat:@"-----END RSA %@ KEY-----", tag];
+    sTag = [NSString stringWithFormat:@"-----BEGIN %@ %@ KEY-----", algorithm, tag];
+    eTag = [NSString stringWithFormat:@"-----END %@ %@ KEY-----", algorithm, tag];
     spos = [key rangeOfString:sTag];
     if (spos.length > 0) {
         epos = [key rangeOfString:eTag];
@@ -70,19 +73,12 @@ static inline NSString *RSAKeyContentFromNSString(NSString *content,
     return key;
 }
 
-NSString *RSAPublicKeyContentFromNSString(NSString *content) {
-    return RSAKeyContentFromNSString(content, @"PUBLIC");
-}
-
-NSString *RSAPrivateKeyContentFromNSString(NSString *content) {
-    return RSAKeyContentFromNSString(content, @"PRIVATE");
-}
-
 static inline SecKeyRef SecKeyRefFromData(NSData *data,
+                                          NSString *keyType,
                                           NSString *keyClass) {
     // Set the private key query dictionary.
     NSDictionary * dict;
-    dict = @{(id)kSecAttrKeyType :(id)kSecAttrKeyTypeRSA,
+    dict = @{(id)kSecAttrKeyType :keyType,
              (id)kSecAttrKeyClass:keyClass,
              };
     CFErrorRef error = NULL;
@@ -90,21 +86,13 @@ static inline SecKeyRef SecKeyRefFromData(NSData *data,
                                             (CFDictionaryRef)dict,
                                             &error);
     if (error) {
-        NSLog(@"RSA failed to create sec key with data: %@", data);
+        NSLog(@"failed to create sec key with data: %@, error: %@", data, error);
         assert(keyRef == NULL); // the key ref should be empty when error
         assert(false);
         CFRelease(error);
         error = NULL;
     }
     return keyRef;
-}
-
-SecKeyRef SecKeyRefFromPublicData(NSData *data) {
-    return SecKeyRefFromData(data, (__bridge id)kSecAttrKeyClassPublic);
-}
-
-SecKeyRef SecKeyRefFromPrivateData(NSData *data) {
-    return SecKeyRefFromData(data, (__bridge id)kSecAttrKeyClassPrivate);
 }
 
 NSData *NSDataFromSecKeyRef(SecKeyRef keyRef) {
@@ -120,9 +108,13 @@ NSData *NSDataFromSecKeyRef(SecKeyRef keyRef) {
     return (__bridge_transfer NSData *)dataRef;
 }
 
-NSString *NSStringFromRSAPublicKeyContent(NSString *content) {
+NSString *NSStringFromKeyContent(NSString *content, NSString *tag) {
+    NSString *sTag, *eTag;
+    sTag = [NSString stringWithFormat:@"-----BEGIN %@ KEY-----", tag];
+    eTag = [NSString stringWithFormat:@"-----END %@ KEY-----", tag];
+    
     NSMutableString *mString = [[NSMutableString alloc] init];
-    [mString appendString:@"-----BEGIN PUBLIC KEY-----\n"];
+    [mString appendString:sTag];
     NSUInteger pos1, pos2, len = content.length;
     NSString *substr;
     for (pos1 = 0, pos2 = 64; pos1 < len; pos1 = pos2, pos2 += 64) {
@@ -133,23 +125,72 @@ NSString *NSStringFromRSAPublicKeyContent(NSString *content) {
         [mString appendString:substr];
         [mString appendString:@"\n"];
     }
-    [mString appendString:@"-----END PUBLIC KEY-----\n"];
+    [mString appendString:eTag];
     return mString;
 }
 
-NSString *NSStringFromRSAPrivateKeyContent(NSString *content) {
-    NSMutableString *mString = [[NSMutableString alloc] init];
-    [mString appendString:@"-----BEGIN RSA PRIVATE KEY-----\n"];
-    NSUInteger pos1, pos2, len = content.length;
-    NSString *substr;
-    for (pos1 = 0, pos2 = 64; pos1 < len; pos1 = pos2, pos2 += 64) {
-        if (pos2 > len) {
-            pos2 = len;
-        }
-        substr = [content substringWithRange:NSMakeRange(pos1, pos2 - pos1)];
-        [mString appendString:substr];
-        [mString appendString:@"\n"];
+@implementation MKMSecKeyHelper
+
++ (NSData *)publicKeyDataFromContent:(NSString *)pem algorithm:(NSString *)name {
+    if ([name isEqualToString:ACAlgorithmECC]) {
+        name = @"EC";
     }
-    [mString appendString:@"-----END RSA PRIVATE KEY-----\n"];
-    return mString;
+    NSString *base64 = KeyContentFromPEM(pem, name, @"PUBLIC");
+    return MKMBase64Decode(base64);
 }
+
++ (SecKeyRef)publicKeyFromData:(NSData *)data algorithm:(NSString *)name {
+    if ([name isEqualToString:ACAlgorithmECC]) {
+        name = @"EC";
+    }
+    if ([name isEqualToString:ACAlgorithmRSA]) {
+        return SecKeyRefFromData(data, (__bridge id)kSecAttrKeyTypeRSA, (__bridge id)kSecAttrKeyClassPublic);
+    } else if ([name isEqualToString:@"EC"]) {
+        return SecKeyRefFromData(data, (__bridge id)kSecAttrKeyTypeEC, (__bridge id)kSecAttrKeyClassPublic);
+    }
+    NSAssert(false, @"unknown algorithm: %@", name);
+    return nil;
+}
+
++ (NSData *)privateKeyDataFromContent:(NSString *)pem algorithm:(NSString *)name {
+    if ([name isEqualToString:ACAlgorithmECC]) {
+        name = @"EC";
+    }
+    NSString *base64 = KeyContentFromPEM(pem, name, @"PRIVATE");
+    return MKMBase64Decode(base64);
+}
+
++ (SecKeyRef)privateKeyFromData:(NSData *)data algorithm:(NSString *)name {
+    if ([name isEqualToString:ACAlgorithmECC]) {
+        name = @"EC";
+    }
+    if ([name isEqualToString:ACAlgorithmRSA]) {
+        return SecKeyRefFromData(data, (__bridge id)kSecAttrKeyTypeRSA, (__bridge id)kSecAttrKeyClassPrivate);
+    } else if ([name isEqualToString:@"EC"]) {
+        return SecKeyRefFromData(data, (__bridge id)kSecAttrKeyTypeEC, (__bridge id)kSecAttrKeyClassPrivate);
+    }
+    NSAssert(false, @"unknown algorithm: %@", name);
+    return nil;
+}
+
++ (NSData *)dataFromKey:(SecKeyRef)key {
+    return NSDataFromSecKeyRef(key);
+}
+
++ (NSString *)serializePublicKey:(SecKeyRef)pKey algorithm:(NSString *)name {
+    NSData *data = NSDataFromSecKeyRef(pKey);
+    NSString *base64 = MKMBase64Encode(data);
+    return NSStringFromKeyContent(base64, @"PUBLIC");
+}
+
++ (NSString *)serializePrivateKey:(SecKeyRef)sKey algorithm:(NSString *)name {
+    if ([name isEqualToString:ACAlgorithmECC]) {
+        name = @"EC";
+    }
+    NSString *tag = [NSString stringWithFormat:@"%@ PRIVATE", name];
+    NSData *data = NSDataFromSecKeyRef(sKey);
+    NSString *base64 = MKMBase64Encode(data);
+    return NSStringFromKeyContent(base64, tag);
+}
+
+@end

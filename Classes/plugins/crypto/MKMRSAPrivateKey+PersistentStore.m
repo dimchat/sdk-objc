@@ -35,7 +35,7 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "MKMRSAHelper.h"
+#import "MKMSecKeyHelper.h"
 
 #import "MKMRSAPrivateKey.h"
 
@@ -76,14 +76,10 @@ static NSString *s_application_tag = @"chat.dim.rsa.private";
         NSString *base64;
         // private key
         SecKeyRef privateKeyRef = (SecKeyRef)result;
-        data = NSDataFromSecKeyRef(privateKeyRef);
-        base64 = MKMBase64Encode(data);
-        NSString *skc = NSStringFromRSAPrivateKeyContent(base64);
+        NSString *skc = [MKMSecKeyHelper serializePrivateKey:privateKeyRef algorithm:ACAlgorithmRSA];
         // public key
         SecKeyRef publicKeyRef = SecKeyCopyPublicKey(privateKeyRef);
-        data = NSDataFromSecKeyRef(publicKeyRef);
-        base64 = MKMBase64Encode(data);
-        NSString *pkc = NSStringFromRSAPublicKeyContent(base64);
+        NSString *pkc = [MKMSecKeyHelper serializePublicKey:publicKeyRef algorithm:ACAlgorithmRSA];
         // key content
         NSString *content = [NSString stringWithFormat:@"%@%@", pkc, skc];
         NSString *algorithm = ACAlgorithmRSA;

@@ -37,7 +37,7 @@
 
 #import <secp256k1/secp256k1.h>
 
-#import "MKMECCHelper.h"
+#import "MKMSecKeyHelper.h"
 
 #import "MKMECCPublicKey.h"
 
@@ -114,22 +114,11 @@
 
 - (secp256k1_pubkey *)pubkey {
     if (_pubkey == NULL) {
-        NSString *pem = [self objectForKey:@"data"];
-        NSUInteger len = pem.length;
-        NSAssert(len > 0, @"ECC key data empty");
-        NSData *data;
-        if (len == 128 || len == 130) {
-            // Hex encoded
-            data = MKMHexDecode(pem);
-        } else if (len > 0) {
-            // PEM
-            NSString *base64 = ECCPublicKeyContentFromNSString(pem);
-            data = MKMBase64Decode(base64);
-        }
+        NSData *data = self.data;
         _pubkey = malloc(sizeof(secp256k1_pubkey));
         memset(_pubkey, 0, sizeof(secp256k1_pubkey));
         int res = secp256k1_ec_pubkey_parse(self.context, _pubkey, data.bytes, data.length);
-        NSAssert(res == 1, @"failed to parse ECC public key: %@", pem);
+        NSAssert(res == 1, @"failed to parse ECC public key: %@", self);
     }
     return _pubkey;
 }
@@ -140,11 +129,15 @@
 
 - (NSData *)data {
     if (!_data) {
-        unsigned char result[65] = {0};
-        size_t size = sizeof(result);
-        int res = secp256k1_ec_pubkey_serialize(self.context, result, &size, self.pubkey, SECP256K1_EC_UNCOMPRESSED);
-        NSAssert(res == 1, @"failed to serialize ECC public key");
-        _data = [[NSData alloc] initWithBytes:result length:size];
+        NSString *pem = [self objectForKey:@"data"];
+        NSUInteger len = pem.length;
+        if (len == 64) {
+            // Hex encode
+            _data = MKMHexDecode(pem);
+        } else if (len > 0) {
+            // PEM
+            _data = [MKMSecKeyHelper publicKeyDataFromContent:pem algorithm:ACAlgorithmECC];
+        }
     }
     return _data;
 }

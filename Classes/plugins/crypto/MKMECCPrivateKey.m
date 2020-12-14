@@ -37,7 +37,7 @@
 
 #import <secp256k1/secp256k1.h>
 
-#import "MKMECCHelper.h"
+#import "MKMSecKeyHelper.h"
 #import "MKMECCPublicKey.h"
 
 #import "MKMECCPrivateKey.h"
@@ -124,8 +124,7 @@
             _data = MKMHexDecode(pem);
         } else if (len > 0) {
             // PEM
-            NSString *base64 = ECCPrivateKeyContentFromNSString(pem);
-            _data = MKMBase64Decode(base64);
+            _data = [MKMSecKeyHelper privateKeyDataFromContent:pem algorithm:ACAlgorithmECC];
         } else {
             // generate it
             unsigned char seed[32];
@@ -163,10 +162,9 @@
         secp256k1_ec_pubkey_serialize(self.context, result, &len, &pKey, SECP256K1_EC_COMPRESSED);
         
         NSData *data = [[NSData alloc] initWithBytes:result length:len];
-        NSString *base64 = MKMBase64Encode(data);
-        NSString *pem = NSStringFromECCPublicKeyContent(base64);
+        NSString *hex = MKMHexEncode(data);
         NSDictionary *dict = @{@"algorithm":ACAlgorithmECC,
-                               @"data"     :pem,
+                               @"data"     :hex,
                                @"curve"    :@"secp256k1",
                                @"digest"   :@"SHA256",
                                };

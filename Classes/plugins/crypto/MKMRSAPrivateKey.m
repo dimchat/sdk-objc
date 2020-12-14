@@ -35,7 +35,7 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "MKMRSAHelper.h"
+#import "MKMSecKeyHelper.h"
 #import "MKMRSAPublicKey.h"
 
 #import "MKMRSAPrivateKey.h"
@@ -107,7 +107,8 @@
 
 - (NSData *)data {
     if (!_data) {
-        _data = NSDataFromSecKeyRef(self.privateKeyRef);
+        NSString *pem = [self objectForKey:@"data"];
+        _data = [MKMSecKeyHelper privateKeyDataFromContent:pem algorithm:ACAlgorithmRSA];
     }
     return _data;
 }
@@ -149,9 +150,8 @@
         NSString *pem = [self objectForKey:@"data"];
         if (pem) {
             // key from data
-            NSString *base64 = RSAPrivateKeyContentFromNSString(pem);
-            NSData *data = MKMBase64Decode(base64);
-            _privateKeyRef = SecKeyRefFromPrivateData(data);
+            NSData *data = [MKMSecKeyHelper privateKeyDataFromContent:pem algorithm:ACAlgorithmRSA];
+            _privateKeyRef = [MKMSecKeyHelper privateKeyFromData:data algorithm:ACAlgorithmRSA];
             return _privateKeyRef;
         }
         
@@ -180,9 +180,7 @@
         NSAssert(_privateKeyRef, @"RSA private key ref should be set here");
         
         // 2.4. key to data
-        NSData *data = NSDataFromSecKeyRef(_privateKeyRef);
-        NSString *base64 = MKMBase64Encode(data);
-        pem = NSStringFromRSAPrivateKeyContent(base64);
+        pem = [MKMSecKeyHelper serializePrivateKey:_privateKeyRef algorithm:ACAlgorithmRSA];
         [self setObject:pem forKey:@"data"];
         
         // 3. other parameters
@@ -197,9 +195,7 @@
     if (!_publicKey) {
         // get public key content from private key
         SecKeyRef publicKeyRef = SecKeyCopyPublicKey(self.privateKeyRef);
-        NSData *data = NSDataFromSecKeyRef(publicKeyRef);
-        NSString *base64 = MKMBase64Encode(data);
-        NSString *pem = NSStringFromRSAPublicKeyContent(base64);
+        NSString *pem = [MKMSecKeyHelper serializePublicKey:publicKeyRef algorithm:ACAlgorithmRSA];
         NSDictionary *dict = @{@"algorithm":ACAlgorithmRSA,
                                @"data"     :pem,
                                @"mode"     :@"ECB",
