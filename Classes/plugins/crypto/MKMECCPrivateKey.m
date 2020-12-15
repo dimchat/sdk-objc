@@ -84,10 +84,7 @@
 - (void)dealloc {
     
     // clear context
-    if (_context) {
-        secp256k1_context_destroy(_context);
-        _context = NULL;
-    }
+    self.context = NULL;
     
     //[super dealloc];
 }
@@ -98,7 +95,7 @@
         key.data = _data;
         key.keySize = _keySize;
         key.publicKey = _publicKey;
-        key.context = _context;
+        //key.context = _context;
     }
     return key;
 }
@@ -110,9 +107,13 @@
     }
     return _context;
 }
-
-- (void)setData:(NSData *)data {
-    _data = data;
+- (void)setContext:(secp256k1_context *)context {
+    if (_context != context) {
+        if (_context != NULL) {
+            secp256k1_context_destroy(_context);
+        }
+        _context = context;
+    }
 }
 
 - (NSData *)data {
@@ -137,6 +138,9 @@
         }
     }
     return _data;
+}
+- (void)setData:(NSData *)data {
+    _data = data;
 }
 
 - (NSUInteger)keySize {

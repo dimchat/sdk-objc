@@ -79,16 +79,10 @@
 
 - (void)dealloc {
     
-    // clear key ref
-    if (_pubkey) {
-        free(_pubkey);
-        _pubkey = NULL;
-    }
+    // clear pubkey
+    self.pubkey = NULL;
     // clear context
-    if (_context) {
-        secp256k1_context_destroy(_context);
-        _context = NULL;
-    }
+    self.context = NULL;
     
     //[super dealloc];
 }
@@ -98,7 +92,7 @@
     if (key) {
         key.data = _data;
         key.keySize = _keySize;
-        key.context = _context;
+        //key.context = _context;
         //key.pubkey = _pubkey;
     }
     return key;
@@ -111,6 +105,14 @@
     }
     return _context;
 }
+- (void)setContext:(secp256k1_context *)context {
+    if (_context != context) {
+        if (_context != NULL) {
+            secp256k1_context_destroy(_context);
+        }
+        _context = context;
+    }
+}
 
 - (secp256k1_pubkey *)pubkey {
     if (_pubkey == NULL) {
@@ -122,9 +124,13 @@
     }
     return _pubkey;
 }
-
-- (void)setData:(NSData *)data {
-    _data = data;
+- (void)setPubkey:(secp256k1_pubkey *)pubkey {
+    if (_pubkey != pubkey) {
+        if (_pubkey != NULL) {
+            free(_pubkey);
+        }
+        _pubkey = pubkey;
+    }
 }
 
 - (NSData *)data {
@@ -153,6 +159,9 @@
     }
     return _data;
 }
+- (void)setData:(NSData *)data {
+    _data = data;
+}
 
 - (NSUInteger)keySize {
     if (_keySize == 0) {
@@ -169,8 +178,10 @@
 - (BOOL)verify:(NSData *)data withSignature:(NSData *)signature {
     secp256k1_ecdsa_signature sig;
     secp256k1_ecdsa_signature_parse_der(self.context, &sig, signature.bytes, signature.length);
+    secp256k1_ecdsa_signature lowerS;
+    secp256k1_ecdsa_signature_normalize(self.context, &lowerS, &sig);
     NSData *hash = MKMSHA256Digest(data);
-    return secp256k1_ecdsa_verify(self.context, &sig, hash.bytes, self.pubkey) == 1;
+    return secp256k1_ecdsa_verify(self.context, &lowerS, hash.bytes, self.pubkey) == 1;
 }
 
 @end
