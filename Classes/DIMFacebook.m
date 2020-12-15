@@ -35,8 +35,6 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import "NSObject+Singleton.h"
-
 #import "MKMPlugins.h"
 
 #import "DIMServiceProvider.h"
@@ -195,8 +193,8 @@
 
 + (void)loadPlugins {
     // load plugins
-    SingletonDispatchOnce(^{
-        
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
         [MKMPlugins registerAddressFactory];
         [MKMPlugins registerMetaFactory];
         [MKMPlugins registerDocumentFactory];

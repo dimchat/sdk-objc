@@ -39,8 +39,6 @@
 #import "ripemd160.h"
 #import "sha3.h"
 
-#import "NSObject+Singleton.h"
-
 #import "MKMAESKey.h"
 #import "MKMRSAPublicKey.h"
 #import "MKMRSAPrivateKey.h"
@@ -68,7 +66,17 @@
 
 @implementation PlainKey
 
-SingletonImplementations(PlainKey, sharedInstance)
+static PlainKey *s_sharedPlainKey = nil;
+
++ (instancetype)sharedInstance {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        if (!s_sharedPlainKey) {
+            s_sharedPlainKey = [[PlainKey alloc] init];
+        }
+    });
+    return s_sharedPlainKey;
+}
 
 - (instancetype)init {
     NSDictionary *dict = @{@"algorithm": SCAlgorithmPlain};

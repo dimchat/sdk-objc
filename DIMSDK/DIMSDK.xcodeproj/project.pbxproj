@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		E915CE5B243C62B700B98FE3 /* MKMImmortals.m in Sources */ = {isa = PBXBuildFile; fileRef = E915CE59243C62B700B98FE3 /* MKMImmortals.m */; };
-		E915CE5C243C62B700B98FE3 /* MKMImmortals.h in Headers */ = {isa = PBXBuildFile; fileRef = E915CE5A243C62B700B98FE3 /* MKMImmortals.h */; };
+		E915CE5C243C62B700B98FE3 /* MKMImmortals.h in Headers */ = {isa = PBXBuildFile; fileRef = E915CE5A243C62B700B98FE3 /* MKMImmortals.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E915CE65243C654300B98FE3 /* hulk_secret.js in Resources */ = {isa = PBXBuildFile; fileRef = E915CE5F243C654300B98FE3 /* hulk_secret.js */; };
 		E915CE66243C654400B98FE3 /* moki_secret.js in Resources */ = {isa = PBXBuildFile; fileRef = E915CE60243C654300B98FE3 /* moki_secret.js */; };
 		E915CE67243C654400B98FE3 /* hulk_meta.js in Resources */ = {isa = PBXBuildFile; fileRef = E915CE61243C654300B98FE3 /* hulk_meta.js */; };
@@ -24,10 +24,6 @@
 		E919B0152390FAA1004F7FF9 /* DIMAddressNameService.h in Headers */ = {isa = PBXBuildFile; fileRef = E919B00D2390FAA1004F7FF9 /* DIMAddressNameService.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E919B0172390FAA1004F7FF9 /* DIMFacebook.m in Sources */ = {isa = PBXBuildFile; fileRef = E919B00F2390FAA1004F7FF9 /* DIMFacebook.m */; };
 		E919B0182390FAA1004F7FF9 /* DIMAddressNameService.m in Sources */ = {isa = PBXBuildFile; fileRef = E919B0102390FAA1004F7FF9 /* DIMAddressNameService.m */; };
-		E946341F257F9BED00530E15 /* NSObject+Singleton.h in Headers */ = {isa = PBXBuildFile; fileRef = E946341E257F9BED00530E15 /* NSObject+Singleton.h */; };
-		E9463421257F9C1400530E15 /* NSObject+Compare.h in Headers */ = {isa = PBXBuildFile; fileRef = E9463420257F9C1400530E15 /* NSObject+Compare.h */; };
-		E9463424257FA28F00530E15 /* NSDictionary+Binary.h in Headers */ = {isa = PBXBuildFile; fileRef = E9463422257FA28F00530E15 /* NSDictionary+Binary.h */; };
-		E9463425257FA28F00530E15 /* NSDictionary+Binary.m in Sources */ = {isa = PBXBuildFile; fileRef = E9463423257FA28F00530E15 /* NSDictionary+Binary.m */; };
 		E9463428257FAD8000530E15 /* DIMMessageProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = E9463426257FAD8000530E15 /* DIMMessageProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9463429257FAD8000530E15 /* DIMMessageProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = E9463427257FAD8000530E15 /* DIMMessageProcessor.m */; };
 		E946343425839F6F00530E15 /* DIMFileContentProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = E946343225839F6F00530E15 /* DIMFileContentProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -176,10 +172,6 @@
 		E919B00D2390FAA1004F7FF9 /* DIMAddressNameService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMAddressNameService.h; sourceTree = "<group>"; };
 		E919B00F2390FAA1004F7FF9 /* DIMFacebook.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMFacebook.m; sourceTree = "<group>"; };
 		E919B0102390FAA1004F7FF9 /* DIMAddressNameService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMAddressNameService.m; sourceTree = "<group>"; };
-		E946341E257F9BED00530E15 /* NSObject+Singleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+Singleton.h"; sourceTree = "<group>"; };
-		E9463420257F9C1400530E15 /* NSObject+Compare.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+Compare.h"; sourceTree = "<group>"; };
-		E9463422257FA28F00530E15 /* NSDictionary+Binary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+Binary.h"; sourceTree = "<group>"; };
-		E9463423257FA28F00530E15 /* NSDictionary+Binary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+Binary.m"; sourceTree = "<group>"; };
 		E9463426257FAD8000530E15 /* DIMMessageProcessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMMessageProcessor.h; sourceTree = "<group>"; };
 		E9463427257FAD8000530E15 /* DIMMessageProcessor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMMessageProcessor.m; sourceTree = "<group>"; };
 		E946343225839F6F00530E15 /* DIMFileContentProcessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMFileContentProcessor.h; sourceTree = "<group>"; };
@@ -433,10 +425,6 @@
 		E95964EB239101D900DAA870 /* extends */ = {
 			isa = PBXGroup;
 			children = (
-				E946341E257F9BED00530E15 /* NSObject+Singleton.h */,
-				E9463420257F9C1400530E15 /* NSObject+Compare.h */,
-				E9463422257FA28F00530E15 /* NSDictionary+Binary.h */,
-				E9463423257FA28F00530E15 /* NSDictionary+Binary.m */,
 				E95964ED239101D900DAA870 /* DKDInstantMessage+Extension.h */,
 				E95964EC239101D900DAA870 /* DKDInstantMessage+Extension.m */,
 			);
@@ -626,7 +614,6 @@
 				E94DEB8B23A1053400FBFD3C /* DIMServiceProvider.h in Headers */,
 				E94DEB8A23A1053400FBFD3C /* DIMRobot.h in Headers */,
 				E94DEB9023A1053400FBFD3C /* DIMPolylogue.h in Headers */,
-				E9463421257F9C1400530E15 /* NSObject+Compare.h in Headers */,
 				E94DEB8F23A1053400FBFD3C /* DIMChatroom.h in Headers */,
 				E94DEB8123A1053400FBFD3C /* DIMStation.h in Headers */,
 				E95CB3342587972B00685B1B /* compiler.h in Headers */,
@@ -658,7 +645,6 @@
 				E95965322391273200DAA870 /* DIMCommandProcessor.h in Headers */,
 				E95CB35A2587E25300685B1B /* MKMAddressETH.h in Headers */,
 				E9D79E3A2583D51700C8E700 /* endian.h in Headers */,
-				E9463424257FA28F00530E15 /* NSDictionary+Binary.h in Headers */,
 				E946343425839F6F00530E15 /* DIMFileContentProcessor.h in Headers */,
 				E959653623912BDB00DAA870 /* DIMHistoryProcessor.h in Headers */,
 				E95965072391077F00DAA870 /* DIMMuteCommand.h in Headers */,
@@ -668,7 +654,6 @@
 				E95965062391077F00DAA870 /* DIMReceiptCommand.h in Headers */,
 				E9D79E4E2583DCBB00C8E700 /* MKMMetaBTC.h in Headers */,
 				E95964EF239101D900DAA870 /* DKDInstantMessage+Extension.h in Headers */,
-				E946341F257F9BED00530E15 /* NSObject+Singleton.h in Headers */,
 				E95CB35E2587E84000685B1B /* MKMMetaETH.h in Headers */,
 				E9D79E262583D39200C8E700 /* MKMRSAPublicKey.h in Headers */,
 				E919B0152390FAA1004F7FF9 /* DIMAddressNameService.h in Headers */,
@@ -843,7 +828,6 @@
 				E919B0172390FAA1004F7FF9 /* DIMFacebook.m in Sources */,
 				E988C94D23F54BBE00BA5D66 /* DIMForwardContentProcessor.m in Sources */,
 				E94DEB8023A1053400FBFD3C /* DIMRobot.m in Sources */,
-				E9463425257FA28F00530E15 /* NSDictionary+Binary.m in Sources */,
 				E95964EE239101D900DAA870 /* DKDInstantMessage+Extension.m in Sources */,
 				E919B0182390FAA1004F7FF9 /* DIMAddressNameService.m in Sources */,
 				E95965332391273300DAA870 /* DIMCommandProcessor.m in Sources */,
@@ -1014,11 +998,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
-				HEADER_SEARCH_PATHS = (
-					"../../core-objc/Classes/**",
-					"../../dkd-objc/Classes/**",
-					"../../mkm-objc/Classes/**",
-				);
+				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = DIMSDK/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1046,11 +1026,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
-				HEADER_SEARCH_PATHS = (
-					"../../core-objc/Classes/**",
-					"../../dkd-objc/Classes/**",
-					"../../mkm-objc/Classes/**",
-				);
+				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = DIMSDK/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (

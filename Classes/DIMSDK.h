@@ -104,4 +104,6 @@ FOUNDATION_EXPORT const unsigned char DIMSDKVersionString[];
 #import <DIMSDK/DIMMessageProcessor.h>
 #import <DIMSDK/DIMMessenger.h>
 
+#import <DIMSDK/MKMImmortals.h>
+
 #endif /* ! __DIM_SDK__== */

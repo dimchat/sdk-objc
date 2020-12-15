@@ -35,8 +35,6 @@
 //  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
-#import "NSObject+Singleton.h"
-
 #import "DIMMessenger.h"
 
 #import "DIMMetaCommandProcessor.h"
@@ -94,7 +92,8 @@ static NSMutableDictionary<NSString *, DIMCommandProcessor *> *s_processors = ni
 
 + (void)registerProcessor:(DIMCommandProcessor *)processor
                forCommand:(NSString *)name {
-    SingletonDispatchOnce(^{
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
         if (!s_processors) {
             s_processors = [[NSMutableDictionary alloc] init];
         }

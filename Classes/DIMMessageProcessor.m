@@ -35,8 +35,6 @@
 //  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
-#import "NSObject+Singleton.h"
-
 #import "DIMReceiptCommand.h"
 #import "DIMHandshakeCommand.h"
 #import "DIMLoginCommand.h"
@@ -94,7 +92,8 @@ static inline void register_all_processors() {
                             cipherKeyDelegate:messenger.keyCache]) {
         _cpu = [self getContentProcessor];
         
-        SingletonDispatchOnce(^{
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
             register_all_parsers();
             register_all_processors();
         });

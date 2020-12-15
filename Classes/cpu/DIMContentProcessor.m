@@ -35,8 +35,6 @@
 //  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
-#import "NSObject+Singleton.h"
-
 #import "DIMFacebook.h"
 #import "DIMMessenger.h"
 
@@ -101,7 +99,8 @@ static NSMutableDictionary<NSNumber *, DIMContentProcessor *> *s_processors = ni
 
 + (void)registerProcessor:(DIMContentProcessor *)processor
                   forType:(DKDContentType)type {
-    SingletonDispatchOnce(^{
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
         if (!s_processors) {
             s_processors = [[NSMutableDictionary alloc] init];
         }

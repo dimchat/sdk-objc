@@ -35,9 +35,6 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import "NSObject+Compare.h"
-#import "NSDate+Timestamp.h"
-
 #import "DIMReceiptCommand.h"
 
 @implementation DIMReceiptCommand
@@ -84,7 +81,7 @@
         [self setObject:envelope.receiver forKey:@"receiver"];
         NSDate *time = envelope.time;
         if (time) {
-            [self setObject:NSNumberFromDate(time) forKey:@"time"];
+            [self setObject:@([time timeIntervalSince1970]) forKey:@"time"];
         }
     } else {
         [self removeObjectForKey:@"sender"];
