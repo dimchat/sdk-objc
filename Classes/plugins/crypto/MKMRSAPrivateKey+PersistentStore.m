@@ -72,8 +72,6 @@ static NSString *s_application_tag = @"chat.dim.rsa.private";
     CFTypeRef result = NULL;
     OSStatus status = SecItemCopyMatching((CFDictionaryRef)query, &result);
     if (status == errSecSuccess) { // noErr
-        NSData *data;
-        NSString *base64;
         // private key
         SecKeyRef privateKeyRef = (SecKeyRef)result;
         NSString *skc = [MKMSecKeyHelper serializePrivateKey:privateKeyRef algorithm:ACAlgorithmRSA];

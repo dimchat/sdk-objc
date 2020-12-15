@@ -39,8 +39,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class MKMAddressBTC;
-
 /*
  *  Default Meta to build ID with 'name@address'
  *
@@ -55,10 +53,6 @@ NS_ASSUME_NONNULL_BEGIN
  *      number  = uint(code);
  */
 @interface MKMMetaDefault : MKMMeta
-
-- (MKMAddressBTC *)generateAddress:(MKMNetworkType)type;
-
-- (MKMID *)generateID:(MKMNetworkType)type;
 
 @end
 

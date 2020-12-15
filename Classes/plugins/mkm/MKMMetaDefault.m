@@ -41,7 +41,8 @@
 
 @interface MKMMetaDefault () {
     
-    NSMutableDictionary<NSNumber *, MKMID *> *_cachedIdentifiers;
+    // caches
+    NSMutableDictionary<NSNumber *, MKMAddressBTC *> *_cachedAddresses;
 }
 
 @end
@@ -51,7 +52,7 @@
 /* designated initializer */
 - (instancetype)initWithDictionary:(NSDictionary *)dict {
     if (self = [super initWithDictionary:dict]) {
-        _cachedIdentifiers = [[NSMutableDictionary alloc] init];
+        _cachedAddresses = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
@@ -61,37 +62,32 @@
                          key:(id<MKMVerifyKey>)publicKey
                         seed:(NSString *)seed
                  fingerprint:(NSData *)fingerprint {
-    if (self = [super initWithType:version key:publicKey seed:seed fingerprint:fingerprint]) {
-        _cachedIdentifiers = [[NSMutableDictionary alloc] init];
+    if (self = [super initWithType:version
+                               key:publicKey
+                              seed:seed
+                       fingerprint:fingerprint]) {
+        _cachedAddresses = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
 
+- (nullable __kindof id<MKMAddress>)generateAddress:(MKMNetworkType)type {
+    NSAssert(self.type == MKMMetaVersion_MKM, @"meta version error: %d", self.type);
+    // check caches
+    MKMAddressBTC *address = [_cachedAddresses objectForKey:@(type)];
+    if (!address && [self isValid]) {
+        // generate and cache it
+        address = [MKMAddressBTC generate:self.fingerprint network:type];
+        [_cachedAddresses setObject:address forKey:@(type)];
+    }
+    return address;
+}
+
 - (BOOL)matchID:(id<MKMID>)ID {
     if ([ID.address isKindOfClass:[MKMAddressBTC class]]) {
-        return [[self generateID:ID.type] isEqual:ID];
+        return [super matchID:ID];
     }
     return NO;
-}
-
-- (MKMAddressBTC *)generateAddress:(MKMNetworkType)type {
-    if ([self isValid]) {
-        return [MKMAddressBTC generate:self.fingerprint network:type];
-    }
-    NSAssert(false, @"meta invalid: %@", self);
-    return nil;
-}
-
-- (MKMID *)generateID:(MKMNetworkType)type {
-    MKMID *ID = [_cachedIdentifiers objectForKey:@(type)];
-    if (!ID) {
-        id<MKMAddress> address = [self generateAddress:type];
-        if (address) {
-            ID = [[MKMID alloc] initWithName:self.seed address:address];
-            [_cachedIdentifiers setObject:ID forKey:@(type)];
-        }
-    }
-    return ID;
 }
 
 @end

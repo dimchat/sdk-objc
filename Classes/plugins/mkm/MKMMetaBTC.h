@@ -39,8 +39,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class MKMAddressBTC;
-
 /*
  *  Meta to build BTC address for ID
  *
@@ -56,11 +54,6 @@ NS_ASSUME_NONNULL_BEGIN
  *      number  = uint(code);
  */
 @interface MKMMetaBTC : MKMMeta
-
- // generate address with network type: BTCMain
-- (MKMAddressBTC *)generateAddress;
-
-- (MKMID *)generateID;
 
 @end
 

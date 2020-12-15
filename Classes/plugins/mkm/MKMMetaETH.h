@@ -39,8 +39,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class MKMAddressETH;
-
 /**
  *  Meta to build ETH address for ID
  *
@@ -54,10 +52,6 @@ NS_ASSUME_NONNULL_BEGIN
  *      address = hex_encode(digest.suffix(20));
  */
 @interface MKMMetaETH : MKMMeta
-
-- (MKMAddressETH *)generateAddress;
-
-- (MKMID *)generateID;
 
 @end
 

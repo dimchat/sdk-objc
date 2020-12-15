@@ -110,7 +110,7 @@ NSData *NSDataFromSecKeyRef(SecKeyRef keyRef) {
 
 NSString *NSStringFromKeyContent(NSString *content, NSString *tag) {
     NSString *sTag, *eTag;
-    sTag = [NSString stringWithFormat:@"-----BEGIN %@ KEY-----", tag];
+    sTag = [NSString stringWithFormat:@"-----BEGIN %@ KEY-----\n", tag];
     eTag = [NSString stringWithFormat:@"-----END %@ KEY-----", tag];
     
     NSMutableString *mString = [[NSMutableString alloc] init];
