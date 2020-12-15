@@ -62,7 +62,7 @@ static inline NSString *eip55(NSString *hex) {
 
 + (instancetype)generate:(NSData *)fingerprint {
     if (fingerprint.length == 65) {
-        fingerprint = [fingerprint subdataWithRange:NSMakeRange(0, 64)];
+        fingerprint = [fingerprint subdataWithRange:NSMakeRange(1, 64)];
     }
     NSAssert(fingerprint.length == 64, @"key data length error: %lu", fingerprint.length);
     // 1. digest = keccak256(fingerprint);

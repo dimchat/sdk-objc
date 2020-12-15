@@ -146,7 +146,7 @@ NSString *NSStringFromKeyContent(NSString *content, NSString *tag) {
     if ([name isEqualToString:ACAlgorithmRSA]) {
         return SecKeyRefFromData(data, (__bridge id)kSecAttrKeyTypeRSA, (__bridge id)kSecAttrKeyClassPublic);
     } else if ([name isEqualToString:@"EC"]) {
-        return SecKeyRefFromData(data, (__bridge id)kSecAttrKeyTypeEC, (__bridge id)kSecAttrKeyClassPublic);
+        return SecKeyRefFromData(data, (__bridge id)kSecAttrKeyTypeECSECPrimeRandom, (__bridge id)kSecAttrKeyClassPublic);
     }
     NSAssert(false, @"unknown algorithm: %@", name);
     return nil;
@@ -167,7 +167,7 @@ NSString *NSStringFromKeyContent(NSString *content, NSString *tag) {
     if ([name isEqualToString:ACAlgorithmRSA]) {
         return SecKeyRefFromData(data, (__bridge id)kSecAttrKeyTypeRSA, (__bridge id)kSecAttrKeyClassPrivate);
     } else if ([name isEqualToString:@"EC"]) {
-        return SecKeyRefFromData(data, (__bridge id)kSecAttrKeyTypeEC, (__bridge id)kSecAttrKeyClassPrivate);
+        return SecKeyRefFromData(data, (__bridge id)kSecAttrKeyTypeECSECPrimeRandom, (__bridge id)kSecAttrKeyClassPrivate);
     }
     NSAssert(false, @"unknown algorithm: %@", name);
     return nil;

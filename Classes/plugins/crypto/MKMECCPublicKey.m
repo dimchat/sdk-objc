@@ -137,6 +137,17 @@
         } else if (len > 0) {
             // PEM
             _data = [MKMSecKeyHelper publicKeyDataFromContent:pem algorithm:ACAlgorithmECC];
+            
+            if (_data.length > 65) {
+                NSAssert(_data.length == 88, @"unexpected ECC public key: %@", self);
+                // FIXME: X.509 -> Uncompressed Point
+                unsigned char *bytes = (unsigned char *)_data.bytes;
+                if (bytes[88 - 65] == 0x04) {
+                    _data = [_data subdataWithRange:NSMakeRange(88 - 65, 65)];
+                } else {
+                    @throw [NSException exceptionWithName:@"ECCKeyError" reason:@"not support" userInfo:self.dictionary];
+                }
+            }
         }
     }
     return _data;
