@@ -81,7 +81,7 @@
     
     // clear key ref
     if (_pubkey) {
-        CFRelease(_pubkey);
+        free(_pubkey);
         _pubkey = NULL;
     }
     // clear context
@@ -130,8 +130,9 @@
 - (NSData *)data {
     if (!_data) {
         NSString *pem = [self objectForKey:@"data"];
+        // check for raw data (33/65 bytes)
         NSUInteger len = pem.length;
-        if (len == 64) {
+        if (len == 66 || len == 130) {
             // Hex encode
             _data = MKMHexDecode(pem);
         } else if (len > 0) {
@@ -139,8 +140,8 @@
             _data = [MKMSecKeyHelper publicKeyDataFromContent:pem algorithm:ACAlgorithmECC];
             
             if (_data.length > 65) {
-                NSAssert(_data.length == 88, @"unexpected ECC public key: %@", self);
                 // FIXME: X.509 -> Uncompressed Point
+                NSAssert(_data.length == 88, @"unexpected ECC public key: %@", self);
                 unsigned char *bytes = (unsigned char *)_data.bytes;
                 if (bytes[88 - 65] == 0x04) {
                     _data = [_data subdataWithRange:NSMakeRange(88 - 65, 65)];

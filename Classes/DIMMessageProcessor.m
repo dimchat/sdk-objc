@@ -164,7 +164,10 @@ static inline void register_all_processors() {
     // check local storage
     id<MKMDocument> doc = [facebook documentForID:sender type:MKMDocument_Any];
     if ([doc conformsToProtocol:@protocol(MKMVisa)]) {
-        return YES;
+        if ([(id<MKMVisa>)doc key]) {
+            // visa.key exists
+            return YES;
+        }
     }
     if (!meta) {
         meta = [facebook metaForID:sender];
@@ -173,7 +176,7 @@ static inline void register_all_processors() {
         }
     }
     // if meta.key can be used to encrypt message,
-    // then visa is not necessary
+    // then visa.key is not necessary
     return [meta.key conformsToProtocol:@protocol(MKMEncryptKey)];
 }
 

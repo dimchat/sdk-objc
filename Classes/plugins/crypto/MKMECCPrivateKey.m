@@ -118,6 +118,7 @@
 - (NSData *)data {
     if (!_data) {
         NSString *pem = [self objectForKey:@"data"];
+        // check for raw data (32 bytes)
         NSUInteger len = pem.length;
         if (len == 64) {
             // Hex encode
@@ -159,7 +160,7 @@
         NSAssert(res == 1, @"failed to create ECC public key");
         unsigned char result[65] = {0};
         size_t len = sizeof(result);
-        secp256k1_ec_pubkey_serialize(self.context, result, &len, &pKey, SECP256K1_EC_COMPRESSED);
+        secp256k1_ec_pubkey_serialize(self.context, result, &len, &pKey, SECP256K1_EC_UNCOMPRESSED);
         
         NSData *data = [[NSData alloc] initWithBytes:result length:len];
         NSString *hex = MKMHexEncode(data);
@@ -179,11 +180,13 @@
 
 - (NSData *)sign:(NSData *)data {
     NSData *hash = MKMSHA256Digest(data);
-    secp256k1_context *ctx = [self context];
     secp256k1_ecdsa_signature sig;
-    secp256k1_ecdsa_sign(ctx, &sig, hash.bytes, self.data.bytes,
+    secp256k1_ecdsa_sign(self.context, &sig, hash.bytes, self.data.bytes,
                          secp256k1_nonce_function_rfc6979, NULL);
-    return [[NSData alloc] initWithBytes:sig.data length:sizeof(sig.data)];
+    unsigned char vchSig[72];
+    size_t nSigLen = sizeof(vchSig);
+    secp256k1_ecdsa_signature_serialize_der(self.context, vchSig, &nSigLen, &sig);
+    return [[NSData alloc] initWithBytes:vchSig length:nSigLen];
 }
 
 @end

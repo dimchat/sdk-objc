@@ -112,22 +112,6 @@ static NSMutableDictionary<NSString *, DIMCommandProcessor *> *s_processors = ni
     return cpu;
 }
 
-- (nullable DIMCommandProcessor *)newProcessorForName:(NSString *)name {
-    if ([name isEqualToString:DIMCommand_Meta]) {
-        return [[DIMMetaCommandProcessor alloc] initWithMessenger:self.messenger];
-    }
-    
-    if ([name isEqualToString:DIMCommand_Profile]) {
-        return [[DIMDocumentCommandProcessor alloc] initWithMessenger:self.messenger];
-    }
-    if ([name isEqualToString:DIMCommand_Document]) {
-        return [[DIMDocumentCommandProcessor alloc] initWithMessenger:self.messenger];
-    }
-
-    // UNKNOWN
-    return nil;
-}
-
 @end
 
 @implementation DIMCommandProcessor (Register)
