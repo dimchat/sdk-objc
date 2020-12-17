@@ -54,22 +54,22 @@ static inline void register_all_parsers() {
     //
     //  Register core parsers
     //
-    [DIMContentParser registerCoreParsers];
+    [DIMContentFactory registerCoreFactories];
     
     //
     //  Register command parsers
     //
-    DIMCommandParserRegisterClass(DIMCommand_Receipt, DIMReceiptCommand);
-    DIMCommandParserRegisterClass(DIMCommand_Handshake, DIMHandshakeCommand);
-    DIMCommandParserRegisterClass(DIMCommand_Login, DIMLoginCommand);
+    DIMCommandFactoryRegisterClass(DIMCommand_Receipt, DIMReceiptCommand);
+    DIMCommandFactoryRegisterClass(DIMCommand_Handshake, DIMHandshakeCommand);
+    DIMCommandFactoryRegisterClass(DIMCommand_Login, DIMLoginCommand);
     
-    DIMCommandParserRegisterClass(DIMCommand_Mute, DIMMuteCommand);
-    DIMCommandParserRegisterClass(DIMCommand_Block, DIMBlockCommand);
+    DIMCommandFactoryRegisterClass(DIMCommand_Mute, DIMMuteCommand);
+    DIMCommandFactoryRegisterClass(DIMCommand_Block, DIMBlockCommand);
     
     // storage (contacts, private_key)
-    DIMCommandParserRegisterClass(DIMCommand_Storage, DIMStorageCommand);
-    DIMCommandParserRegisterClass(DIMCommand_Contacts, DIMStorageCommand);
-    DIMCommandParserRegisterClass(DIMCommand_PrivateKey, DIMStorageCommand);
+    DIMCommandFactoryRegisterClass(DIMCommand_Storage, DIMStorageCommand);
+    DIMCommandFactoryRegisterClass(DIMCommand_Contacts, DIMStorageCommand);
+    DIMCommandFactoryRegisterClass(DIMCommand_PrivateKey, DIMStorageCommand);
 }
 
 static inline void register_all_processors() {
@@ -77,21 +77,13 @@ static inline void register_all_processors() {
     [DIMCommandProcessor registerAllProcessors];
 }
 
-@interface DIMMessageProcessor () {
-    
-    DIMContentProcessor *_cpu;
-}
-
-@end
-
 @implementation DIMMessageProcessor
 
 - (instancetype)initWithMessenger:(DIMMessenger *)messenger {
     if (self = [super initWithMessageDelegate:messenger
                                entityDelegate:messenger.barrack
                             cipherKeyDelegate:messenger.keyCache]) {
-        _cpu = [self getContentProcessor];
-        
+        // register
         static dispatch_once_t onceToken;
         dispatch_once(&onceToken, ^{
             register_all_parsers();
@@ -101,12 +93,17 @@ static inline void register_all_processors() {
     return self;
 }
 
-- (DIMContentProcessor *)getContentProcessor {
-    return [[DIMContentProcessor alloc] initWithMessenger:self.messenger];
+- (nullable DIMContentProcessor *)getProcessorForContent:(id<DKDContent>)content {
+    return [self getProcessorForContentType:content.type];
 }
-
-- (DIMContentProcessor *)getContentProcessorForType:(DKDContentType)type {
-    return [_cpu getProcessorForType:type];
+- (nullable DIMContentProcessor *)getProcessorForContentType:(DKDContentType)type {
+    DIMContentProcessor *cpu = [DIMContentProcessor getProcessorForType:type];
+    if (!cpu) {
+        cpu = [DIMContentProcessor getProcessorForType:0];  // unknown
+        NSAssert(cpu, @"failed to get CPU for type: %d", type);
+    }
+    cpu.messenger = self.messenger;
+    return cpu;
 }
 
 - (DIMMessenger *)messenger {
@@ -162,7 +159,7 @@ static inline void register_all_processors() {
         return [facebook saveDocument:visa];
     }
     // check local storage
-    id<MKMDocument> doc = [facebook documentForID:sender type:MKMDocument_Any];
+    id<MKMDocument> doc = [facebook documentForID:sender type:MKMDocument_Visa];
     if ([doc conformsToProtocol:@protocol(MKMVisa)]) {
         if ([(id<MKMVisa>)doc key]) {
             // visa.key exists
@@ -220,7 +217,9 @@ static inline void register_all_processors() {
 - (nullable id<DKDContent>)processContent:(id<DKDContent>)content
                               withMessage:(id<DKDReliableMessage>)rMsg {
     // TODO: override to check group
-    return [_cpu processContent:content withMessage:rMsg];
+    DIMContentProcessor *cpu = [self getProcessorForContent:content];
+    NSAssert(cpu, @"failed to get CPU for content: %@", content);
+    return [cpu processContent:content withMessage:rMsg];
     // TODO: override to filter the response
 }
 

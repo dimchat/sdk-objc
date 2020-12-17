@@ -73,10 +73,7 @@
     return [[DIMReceiptCommand alloc] initWithMessage:text];
 }
 
-//
-//  Main
-//
-- (nullable id<DKDContent>)processContent:(id<DKDContent>)content
+- (nullable id<DKDContent>)executeCommand:(DIMCommand *)content
                               withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMMetaCommand class]], @"meta command error: %@", content);
     DIMMetaCommand *cmd = (DIMMetaCommand *)content;

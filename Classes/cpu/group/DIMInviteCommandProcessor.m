@@ -61,7 +61,7 @@
 - (nullable id<DKDContent>)_callReset:(DIMGroupCommand *)cmd sender:(id<MKMID>)sender message:(id<DKDReliableMessage>)rMsg {
     DIMCommandProcessor *cpu = [self processorForCommand:DIMGroupCommand_Reset];
     NSAssert(cpu, @"reset CPU not set yet");
-    return [cpu processContent:cmd withMessage:rMsg];
+    return [cpu executeCommand:cmd withMessage:rMsg];
 }
 
 - (nullable NSArray<id<MKMID>> *)_doInvite:(NSArray<id<MKMID>> *)inviteList group:(id<MKMID>)group {
@@ -87,21 +87,18 @@
     return nil;
 }
 
-//
-//  Main
-//
-- (nullable id<DKDContent>)processContent:(id<DKDContent>)content
+- (nullable id<DKDContent>)executeCommand:(DIMCommand *)cmd
                               withMessage:(id<DKDReliableMessage>)rMsg {
-    NSAssert([content isKindOfClass:[DIMInviteCommand class]], @"invite command error: %@", content);
-    DIMInviteCommand *cmd = (DIMInviteCommand *)content;
+    NSAssert([cmd isKindOfClass:[DIMInviteCommand class]], @"invite command error: %@", cmd);
+    DIMInviteCommand *gmd = (DIMInviteCommand *)cmd;
     id<MKMID> sender = rMsg.sender;
-    id<MKMID>group = content.group;
+    id<MKMID>group = cmd.group;
     // 0. check whether group info empty
     if ([self isEmpty:group]) {
         // NOTICE:
         //     group membership lost?
         //     reset group members
-        return [self _callReset:cmd sender:sender message:rMsg];
+        return [self _callReset:gmd sender:sender message:rMsg];
     }
     // 1. check permission
     if (![self.facebook group:group containsMember:sender]) {
@@ -113,7 +110,7 @@
         }
     }
     // 2. get inviting members
-    NSArray<id<MKMID>> *inviteList = [self membersFromCommand:cmd];
+    NSArray<id<MKMID>> *inviteList = [self membersFromCommand:gmd];
     if ([inviteList count] == 0) {
         NSAssert(false, @"invite command error: %@", cmd);
         return nil;
@@ -122,12 +119,12 @@
     if ([self _isReset:inviteList sender:sender group:group]) {
         // NOTICE: owner invites owner?
         //         it means this should be a 'reset' command
-        return [self _callReset:cmd sender:sender message:rMsg];
+        return [self _callReset:gmd sender:sender message:rMsg];
     }
     // 2.2. get added-list
     NSArray<id<MKMID>> *added = [self _doInvite:inviteList group:group];
     if (added) {
-        [content setObject:added forKey:@"added"];
+        [cmd setObject:added forKey:@"added"];
     }
     // 3. respond nothing (DON'T respond group command directly)
     return nil;

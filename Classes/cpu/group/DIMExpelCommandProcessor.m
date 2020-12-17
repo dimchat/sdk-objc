@@ -68,15 +68,12 @@
     return nil;
 }
 
-//
-//  Main
-//
-- (nullable id<DKDContent>)processContent:(id<DKDContent>)content
+- (nullable id<DKDContent>)executeCommand:(DIMCommand *)cmd
                               withMessage:(id<DKDReliableMessage>)rMsg {
-    NSAssert([content isKindOfClass:[DIMExpelCommand class]], @"expel command error: %@", content);
-    DIMExpelCommand *cmd = (DIMExpelCommand *)content;
+    NSAssert([cmd isKindOfClass:[DIMExpelCommand class]], @"expel command error: %@", cmd);
+    DIMExpelCommand *gmd = (DIMExpelCommand *)cmd;
     id<MKMID> sender = rMsg.sender;
-    id<MKMID>group = content.group;
+    id<MKMID>group = cmd.group;
     // 1. check permission
     if (![self.facebook group:group isOwner:sender]) {
         if (![self.facebook group:group containsAssistant:sender]) {
@@ -85,7 +82,7 @@
         }
     }
     // 2. get expelling members
-    NSArray<id<MKMID>> *expelList = [self membersFromCommand:cmd];
+    NSArray<id<MKMID>> *expelList = [self membersFromCommand:gmd];
     if ([expelList count] == 0) {
         NSAssert(false, @"expel command error: %@", cmd);
         return nil;
@@ -93,7 +90,7 @@
     // 2.1. get removed-list
     NSArray<id<MKMID>> *removed = [self _doExpel:expelList group:group];
     if (removed) {
-        [content setObject:removed forKey:@"removed"];
+        [cmd setObject:removed forKey:@"removed"];
     }
     // 3. respond nothing (DON'T respond group command directly)
     return nil;

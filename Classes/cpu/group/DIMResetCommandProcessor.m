@@ -101,17 +101,14 @@
     return res;
 }
 
-//
-//  Main
-//
-- (nullable id<DKDContent>)processContent:(id<DKDContent>)content
+- (nullable id<DKDContent>)executeCommand:(DIMCommand *)cmd
                               withMessage:(id<DKDReliableMessage>)rMsg {
-    NSAssert([content isKindOfClass:[DIMResetGroupCommand class]] ||
-             [content isKindOfClass:[DIMInviteCommand class]], @"invite command error: %@", content);
-    DIMGroupCommand *cmd = (DIMGroupCommand *)content;
-    id<MKMID>group = content.group;
+    NSAssert([cmd isKindOfClass:[DIMResetGroupCommand class]] ||
+             [cmd isKindOfClass:[DIMInviteCommand class]], @"invite command error: %@", cmd);
+    DIMGroupCommand *gmd = (DIMGroupCommand *)cmd;
+    id<MKMID>group = cmd.group;
     // new members
-    NSArray<id<MKMID>> *newMembers = [self membersFromCommand:cmd];
+    NSArray<id<MKMID>> *newMembers = [self membersFromCommand:gmd];
     if ([newMembers count] == 0) {
         NSAssert(false, @"invite/reset command error: %@", cmd);
         return nil;
@@ -134,11 +131,11 @@
     NSDictionary *result = [self _doReset:newMembers group:group];
     NSArray *added = [result objectForKey:@"added"];
     if (added) {
-        [content setObject:added forKey:@"added"];
+        [cmd setObject:added forKey:@"added"];
     }
     NSArray *removed = [result objectForKey:@"removed"];
     if (removed) {
-        [content setObject:removed forKey:@"removed"];
+        [cmd setObject:removed forKey:@"removed"];
     }
     // 3. respond nothing
     return nil;

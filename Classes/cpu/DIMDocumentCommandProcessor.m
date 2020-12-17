@@ -44,7 +44,7 @@
 
 - (nullable id<DKDContent>)_getProfileForID:(id<MKMID>)ID {
     // query profile for ID
-    id<MKMDocument>profile = [self.facebook documentForID:ID type:MKMDocument_Any];
+    id<MKMDocument>profile = [self.facebook documentForID:ID type:@"*"];
     if (profile) {
         return [[DIMDocumentCommand alloc] initWithID:ID profile:profile];
     }
@@ -85,10 +85,7 @@
     return [[DIMReceiptCommand alloc] initWithMessage:text];
 }
 
-//
-//  Main
-//
-- (nullable id<DKDContent>)processContent:(id<DKDContent>)content
+- (nullable id<DKDContent>)executeCommand:(DIMCommand *)content
                               withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMDocumentCommand class]], @"document command error: %@", content);
     DIMDocumentCommand *cmd = (DIMDocumentCommand *)content;

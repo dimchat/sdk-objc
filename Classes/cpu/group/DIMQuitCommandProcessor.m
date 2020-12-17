@@ -57,14 +57,11 @@
     [self.facebook saveMembers:mArray group:group];
 }
 
-//
-//  Main
-//
-- (nullable id<DKDContent>)processContent:(id<DKDContent>)content
+- (nullable id<DKDContent>)executeCommand:(DIMCommand *)cmd
                               withMessage:(id<DKDReliableMessage>)rMsg {
-    NSAssert([content isKindOfClass:[DIMQuitCommand class]], @"quit command error: %@", content);
+    NSAssert([cmd isKindOfClass:[DIMQuitCommand class]], @"quit command error: %@", cmd);
     id<MKMID> sender = rMsg.sender;
-    id<MKMID> group = content.group;
+    id<MKMID> group = cmd.group;
     // 1. check permission
     if ([self.facebook group:group isOwner:sender]) {
         NSAssert(false, @"owner cannot quit: %@ -> %@", sender, group);

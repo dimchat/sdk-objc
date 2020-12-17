@@ -71,7 +71,7 @@
     return self;
 }
 
-- (nullable __kindof id<MKMAddress>)generateAddress {
+- (nullable id<MKMAddress>)generateAddress {
     if (!_cachedAddress && [self isValid]) {
         // generate and cache it
         NSData *data = [self.key data];
@@ -80,7 +80,7 @@
     return _cachedAddress;
 }
 
-- (nullable __kindof id<MKMAddress>)generateAddress:(MKMNetworkType)type {
+- (nullable id<MKMAddress>)generateAddress:(MKMNetworkType)type {
     NSAssert(type == MKMNetwork_Main, @"ETH address type error: %d", type);
     NSAssert(self.type == MKMMetaVersion_ETH || self.type == MKMMetaVersion_ExETH,
              @"meta version error: %d", self.type);

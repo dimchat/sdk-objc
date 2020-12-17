@@ -50,6 +50,18 @@
 
 @implementation DIMCommandProcessor
 
+- (nullable id<DKDContent>)executeCommand:(DIMCommand *)cmd
+                              withMessage:(id<DKDReliableMessage>)rMsg {
+    NSString *text = [NSString stringWithFormat:@"Command (%@) not support yet!", cmd.command];
+    id<DKDContent>res = [[DIMTextContent alloc] initWithText:text];
+    // check group message
+    id<MKMID> group = cmd.group;
+    if (group) {
+        res.group = group;
+    }
+    return res;
+}
+
 //
 //  Main
 //
@@ -63,25 +75,10 @@
             cpu = [self getProcessorForName:@"group"];
         }
         if (!cpu) {
-            cpu = [self getProcessorForName:DIMCommand_Unknown];
+            cpu = self;
         }
     }
-    if (!cpu || cpu == self) {
-        return [self processUnknownCommand:cmd withMessage:rMsg];
-    }
-    return [cpu processContent:content withMessage:rMsg];
-}
-
-- (id<DKDContent>)processUnknownCommand:(DIMCommand *)cmd
-                            withMessage:(id<DKDReliableMessage>)rMsg {
-    NSString *text = [NSString stringWithFormat:@"Command (%@) not support yet!", cmd.command];
-    id<DKDContent>res = [[DIMTextContent alloc] initWithText:text];
-    // check group message
-    id<MKMID> group = cmd.group;
-    if (group) {
-        res.group = group;
-    }
-    return res;
+    return [cpu executeCommand:cmd withMessage:rMsg];
 }
 
 @end

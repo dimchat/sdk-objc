@@ -50,8 +50,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithMessenger:(DIMMessenger *)messenger;
 
-- (DIMContentProcessor *)getContentProcessor;
-- (DIMContentProcessor *)getContentProcessorForType:(DKDContentType)type;
+- (nullable DIMContentProcessor *)getProcessorForContent:(id<DKDContent>)content;
+- (nullable DIMContentProcessor *)getProcessorForContentType:(DKDContentType)type;
 
 @end
 

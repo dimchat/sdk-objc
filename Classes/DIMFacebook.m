@@ -200,7 +200,7 @@
         [MKMPlugins registerDocumentFactory];
         
         [MKMPlugins registerKeyFactories];
-        [MKMPlugins registerCoders];
+        [MKMPlugins registerDataCoders];
         [MKMPlugins registerDigesters];
     });
 }

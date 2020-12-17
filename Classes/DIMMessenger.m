@@ -46,13 +46,9 @@
 
 @interface DIMMessenger () {
     
-    NSMutableDictionary *_context;
-    
     __weak id<DIMMessengerDelegate> _delegate;
     
     __weak DIMFacebook *_facebook;
-    
-    DIMContentProcessor *_cpu;
 }
 
 @end
@@ -62,14 +58,9 @@
 - (instancetype)init {
     if (self = [super init]) {
         
-        // context
-        _context = [[NSMutableDictionary alloc] init];
-        
         _delegate = nil;
         
         _facebook = nil;
-        
-        _cpu = [[DIMContentProcessor alloc] initWithMessenger:self];
     }
     return self;
 }
@@ -83,23 +74,12 @@
 }
 
 - (DIMFileContentProcessor *)fileContentProcessor {
-    DIMContentProcessor *cpu = [self.processor getContentProcessorForType:DKDContentType_File];
-    return (DIMFileContentProcessor *)cpu;
-}
-
-#pragma mark DKDInstantMessageDelegate
-
-- (nullable NSData *)message:(id<DKDInstantMessage>)iMsg
-            serializeContent:(id<DKDContent>)content
-                     withKey:(id<MKMSymmetricKey>)password {
-    // check attachment for File/Image/Audio/Video message content
-    if ([content isKindOfClass:[DIMFileContent class]]) {
-        DIMFileContentProcessor *fpu = [self fileContentProcessor];
-        [fpu uploadFileContent:(id<DIMFileContent>)content
-                           key:password
-                       message:iMsg];
+    id fpu = [self.processor getProcessorForContentType:DKDContentType_File];
+    if ([fpu isKindOfClass:[DIMFileContentProcessor class]]) {
+        return fpu;
     }
-    return [super message:iMsg serializeContent:content withKey:password];
+    NSAssert(false, @"failed to get file content processor");
+    return nil;
 }
 
 - (nullable id<MKMEncryptKey>)publicKeyForEncryption:(id<MKMID>)receiver {
@@ -116,6 +96,21 @@
         return key;
     }
     return nil;
+}
+
+#pragma mark DKDInstantMessageDelegate
+
+- (nullable NSData *)message:(id<DKDInstantMessage>)iMsg
+            serializeContent:(id<DKDContent>)content
+                     withKey:(id<MKMSymmetricKey>)password {
+    // check attachment for File/Image/Audio/Video message content
+    if ([content isKindOfClass:[DIMFileContent class]]) {
+        DIMFileContentProcessor *fpu = [self fileContentProcessor];
+        [fpu uploadFileContent:(id<DIMFileContent>)content
+                           key:password
+                       message:iMsg];
+    }
+    return [super message:iMsg serializeContent:content withKey:password];
 }
 
 - (nullable NSData *)message:(id<DKDInstantMessage>)iMsg

@@ -53,12 +53,6 @@
     }
     return self;
 }
-- (instancetype)initWithMessenger:(DIMMessenger *)messenger {
-    if (self = [super init]) {
-        self.messenger = messenger;
-    }
-    return self;
-}
 
 - (DIMFacebook *)facebook {
     return self.messenger.facebook;
@@ -69,18 +63,6 @@
 //
 - (nullable id<DKDContent>)processContent:(id<DKDContent>)content
                               withMessage:(id<DKDReliableMessage>)rMsg {
-    DIMContentProcessor *cpu = [self getProcessorForContent:content];
-    if (!cpu) {
-        cpu = [self getProcessorForType:DKDContentType_Unknown];
-    }
-    if (!cpu || cpu == self) {
-        return [self processUnknownContent:content withMessage:rMsg];
-    }
-    return [cpu processContent:content withMessage:rMsg];
-}
-
-- (id<DKDContent>)processUnknownContent:(id<DKDContent>)content
-                            withMessage:(id<DKDReliableMessage>)rMsg {
     NSString *text = [NSString stringWithFormat:@"Content (type: %u) not support yet!", content.type];
     id<DKDContent>res = [[DIMTextContent alloc] initWithText:text];
     // check group message
@@ -108,15 +90,12 @@ static NSMutableDictionary<NSNumber *, DIMContentProcessor *> *s_processors = ni
     [s_processors setObject:processor forKey:@(type)];
 }
 
-- (nullable DIMContentProcessor *)getProcessorForContent:(id<DKDContent>)content {
++ (nullable DIMContentProcessor *)getProcessorForContent:(id<DKDContent>)content {
     return [self getProcessorForType:content.type];
 }
 
-- (nullable DIMContentProcessor *)getProcessorForType:(DKDContentType)type {
-    DIMContentProcessor *cpu = [s_processors objectForKey:@(type)];
-    //NSAssert(cpu, @"failed to get CPU for content type: %d", type);
-    cpu.messenger = self.messenger;
-    return cpu;
++ (nullable DIMContentProcessor *)getProcessorForType:(DKDContentType)type {
+    return [s_processors objectForKey:@(type)];
 }
 
 @end

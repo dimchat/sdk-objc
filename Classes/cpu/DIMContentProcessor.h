@@ -48,7 +48,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly, weak, nonatomic) DIMFacebook *facebook;
 
 - (instancetype)init;
-- (instancetype)initWithMessenger:(DIMMessenger *)messenger;
 
 /**
  *  Process message content
@@ -60,9 +59,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable id<DKDContent>)processContent:(id<DKDContent>)content
                               withMessage:(id<DKDReliableMessage>)rMsg;
 
-- (id<DKDContent>)processUnknownContent:(id<DKDContent>)content
-                            withMessage:(id<DKDReliableMessage>)rMsg;
-
 @end
 
 @interface DIMContentProcessor (CPU)
@@ -70,9 +66,9 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)registerProcessor:(DIMContentProcessor *)processor
                   forType:(DKDContentType)type;
 
-- (nullable DIMContentProcessor *)getProcessorForType:(DKDContentType)type;
++ (nullable DIMContentProcessor *)getProcessorForType:(DKDContentType)type;
 
-- (nullable DIMContentProcessor *)getProcessorForContent:(id<DKDContent>)content;
++ (nullable DIMContentProcessor *)getProcessorForContent:(id<DKDContent>)content;
 
 @end
 

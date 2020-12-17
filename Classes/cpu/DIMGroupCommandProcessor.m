@@ -40,19 +40,7 @@
 
 #import "DIMGroupCommandProcessor.h"
 
-@interface DIMCommandProcessor (Hacking)
-
-- (DIMCommandProcessor *)processorForCommand:(NSString *)name;
-
-@end
-
 @implementation DIMGroupCommandProcessor
-
-- (instancetype)initWithMessenger:(DIMMessenger *)messenger {
-    if (self = [super initWithMessenger:messenger]) {
-    }
-    return self;
-}
 
 - (nullable NSArray<id<MKMID>> *)membersFromCommand:(DIMGroupCommand *)cmd {
     NSArray<id<MKMID>> *members = [cmd members];
@@ -84,6 +72,13 @@
     return !owner;
 }
 
+- (nullable id<DKDContent>)executeCommand:(DIMCommand *)cmd
+                              withMessage:(id<DKDReliableMessage>)rMsg {
+    NSString *text = [NSString stringWithFormat:@"Group command (%@) not support yet!", cmd.command];
+    id<DKDContent>res = [[DIMTextContent alloc] initWithText:text];
+    res.group = cmd.group;
+    return res;
+}
 
 //
 //  Main
@@ -91,23 +86,12 @@
 - (nullable id<DKDContent>)processContent:(id<DKDContent>)content
                               withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMGroupCommand class]], @"group command error: %@", content);
-    DIMGroupCommand *cmd = (DIMGroupCommand *)content;
+    DIMCommand *cmd = (DIMCommand *)content;
     DIMCommandProcessor *cpu = [self getProcessorForCommand:cmd];
     if (!cpu) {
-        cpu = [self getProcessorForName:DIMCommand_Unknown];
+        cpu = self;
     }
-    if (!cpu || cpu == self) {
-        return [self processUnknownCommand:cmd withMessage:rMsg];
-    }
-    return [cpu processContent:content withMessage:rMsg];
-}
-
-- (id<DKDContent>)processUnknownCommand:(DIMCommand *)cmd
-                            withMessage:(id<DKDReliableMessage>)rMsg {
-    NSString *text = [NSString stringWithFormat:@"Group command (%@) not support yet!", cmd.command];
-    id<DKDContent>res = [[DIMTextContent alloc] initWithText:text];
-    res.group = cmd.group;
-    return res;
+    return [cpu executeCommand:cmd withMessage:rMsg];
 }
 
 @end
