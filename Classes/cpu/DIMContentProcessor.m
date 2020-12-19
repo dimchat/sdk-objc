@@ -90,11 +90,11 @@ static NSMutableDictionary<NSNumber *, DIMContentProcessor *> *s_processors = ni
     [s_processors setObject:processor forKey:@(type)];
 }
 
-+ (nullable DIMContentProcessor *)getProcessorForContent:(id<DKDContent>)content {
++ (nullable __kindof DIMContentProcessor *)getProcessorForContent:(id<DKDContent>)content {
     return [self getProcessorForType:content.type];
 }
 
-+ (nullable DIMContentProcessor *)getProcessorForType:(DKDContentType)type {
++ (nullable __kindof DIMContentProcessor *)getProcessorForType:(DKDContentType)type {
     return [s_processors objectForKey:@(type)];
 }
 

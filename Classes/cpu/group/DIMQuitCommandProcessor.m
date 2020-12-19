@@ -41,38 +41,39 @@
 
 @implementation DIMQuitCommandProcessor
 
-- (void)_doQuit:(id<MKMID>)sender group:(id<MKMID>)group {
-    // existed members
-    NSArray<id<MKMID>> *members = [self.facebook membersOfGroup:group];
-    if ([members count] == 0) {
-        NSAssert(false, @"group members not found: %@", group);
-        return;
-    }
-    if (![members containsObject:sender]) {
-        // not a member
-        return;
-    }
-    NSMutableArray<id<MKMID>> *mArray = [members mutableCopy];
-    [mArray removeObject:sender];
-    [self.facebook saveMembers:mArray group:group];
-}
-
 - (nullable id<DKDContent>)executeCommand:(DIMCommand *)cmd
                               withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([cmd isKindOfClass:[DIMQuitCommand class]], @"quit command error: %@", cmd);
-    id<MKMID> sender = rMsg.sender;
+    DIMFacebook *facebook = self.facebook;
+    
+    // 0. check group
     id<MKMID> group = cmd.group;
+    id<MKMID> owner = [facebook ownerOfGroup:group];
+    NSArray<id<MKMID>> *members = [facebook membersOfGroup:group];
+    if (!owner || members.count == 0) {
+        NSAssert(false, @"group not ready: %@", group);
+        return nil;
+    }
+
     // 1. check permission
-    if ([self.facebook group:group isOwner:sender]) {
+    id<MKMID> sender = rMsg.sender;
+    if ([owner isEqual:sender]) {
         NSAssert(false, @"owner cannot quit: %@ -> %@", sender, group);
         return nil;
     }
-    if ([self.facebook group:group containsAssistant:sender]) {
+    NSArray<id<MKMID>> *assistants = [facebook assistantsOfGroup:group];
+    if ([assistants containsObject:sender]) {
         NSAssert(false, @"assistant cannot quit now: %@ -> %@", sender, group);
         return nil;
     }
+    
     // 2. remove the sender from group members
-    [self _doQuit:sender group:group];
+    if ([members containsObject:sender]) {
+        NSMutableArray<id<MKMID>> *mArray = [members mutableCopy];
+        [mArray removeObject:sender];
+        [self.facebook saveMembers:mArray group:group];
+    }
+    
     // 3. respond nothing (DON'T respond group command directly)
     return nil;
 }

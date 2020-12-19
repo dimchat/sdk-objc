@@ -71,7 +71,7 @@
         }
     }
     // received a profile for ID
-    if (![self.facebook verifyDocument:profile forID:ID]) {
+    if (![self.facebook isValidDocument:profile]) {
         // profile sitnature not match
         text = [NSString stringWithFormat:@"Profile not match ID: %@", ID];
         return [[DIMTextContent alloc] initWithText:text];

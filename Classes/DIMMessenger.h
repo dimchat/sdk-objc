@@ -59,9 +59,12 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
  *
  *  @param data - package`
  *  @param handler - completion handler
+ *  @param prior - task priority
  *  @return NO on data/delegate error
  */
-- (BOOL)sendPackage:(NSData *)data completionHandler:(nullable DIMMessengerCompletionHandler)handler;
+- (BOOL)sendPackageData:(NSData *)data
+      completionHandler:(nullable DIMMessengerCompletionHandler)handler
+               priority:(NSInteger)prior;
 
 /**
  *  Upload encrypted data to CDN
@@ -83,56 +86,7 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
 
 @end
 
-#pragma mark -
-
-@class DIMFacebook;
-@class DIMMessageProcessor;
-
-@interface DIMMessenger : DIMTransceiver
-
-@property (readonly, weak, nonatomic) DIMFacebook *facebook;
-@property (weak, nonatomic) id<DIMMessengerDelegate> delegate;
-
-@property (strong, nonatomic) DIMMessageProcessor *processor;
-
-@end
-
-@interface DIMMessenger (Send)
-
-/**
- *  Send message content to receiver
- *
- * @param content - message content
- * @param receiver - receiver ID
- * @param callback - callback function
- * @return true on success
- */
-- (BOOL)sendContent:(id<DKDContent>)content
-           receiver:(id<MKMID>)receiver
-           callback:(nullable DIMMessengerCallback)callback;
-
-/**
- *  Send instant message (encrypt and sign) onto DIM network
- *
- * @param iMsg - instant message
- * @param callback - callback function
- * @return NO on data/delegate error
- */
-- (BOOL)sendInstantMessage:(id<DKDInstantMessage>)iMsg
-                  callback:(nullable DIMMessengerCallback)callback;
-
-- (BOOL)sendReliableMessage:(id<DKDReliableMessage>)rMsg
-                   callback:(nullable DIMMessengerCallback)callback;
-
-@end
-
-@interface DIMMessenger (Process)
-
-- (NSData *)processData:(NSData *)data;
-
-@end
-
-@interface DIMMessenger (Storage)
+@protocol DIMMessengerDataSource <NSObject>
 
 /**
  * Save the message into local storage
@@ -148,6 +102,110 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
  * @param msg - message received from network / instant message to be sent
  * @return NO on error
  */
+- (BOOL)suspendMessage:(id<DKDMessage>)msg;
+
+@end
+
+#pragma mark -
+
+@class DIMFacebook;
+@class DIMMessageProcessor;
+@class DIMMessageTransmitter;
+
+@interface DIMMessenger : DIMTransceiver
+
+@property (weak, nonatomic) id<DIMMessengerDelegate> delegate;
+@property (weak, nonatomic) id<DIMMessengerDataSource> dataSource;
+
+@property (weak, nonatomic) DIMFacebook *facebook;
+
+@property (readonly, strong, nonatomic) DIMPacker *messagePacker;
+@property (readonly, strong, nonatomic) DIMMessageProcessor *messageProcessor;
+@property (readonly, strong, nonatomic) DIMMessageTransmitter *messageTransmitter;
+
+- (DIMPacker *)newMessagePacker;
+- (DIMMessageProcessor *)newMessageProcessor;
+- (DIMMessageTransmitter *)newMessageTransmitter;
+
+@end
+
+@interface DIMMessenger (Processing)
+
+//
+//  Interfaces for Processing Message
+//
+
+- (NSData *)processData:(NSData *)data;
+
+- (id<DKDReliableMessage>)processMessage:(id<DKDReliableMessage>)rMsg;
+
+@end
+
+@interface DIMMessenger (Sending)
+
+//
+//  Interfaces for Sending Message
+//
+
+- (BOOL)sendContent:(id<DKDContent>)content
+           receiver:(id<MKMID>)receiver
+           callback:(nullable DIMMessengerCallback)callback
+           priority:(NSInteger)prior;
+
+- (BOOL)sendInstantMessage:(id<DKDInstantMessage>)iMsg
+                  callback:(nullable DIMMessengerCallback)callback
+                  priority:(NSInteger)prior;
+
+- (BOOL)sendReliableMessage:(id<DKDReliableMessage>)rMsg
+                   callback:(nullable DIMMessengerCallback)callback
+                   priority:(NSInteger)prior;
+
+@end
+
+@interface DIMMessenger (Packing)
+
+//
+//  Interfaces for Packing Message
+//
+
+- (nullable id<DKDSecureMessage>)encryptMessage:(id<DKDInstantMessage>)iMsg;
+
+- (nullable id<DKDReliableMessage>)signMessage:(id<DKDSecureMessage>)sMsg;
+
+- (nullable NSData *)serializeMessage:(id<DKDReliableMessage>)rMsg;
+
+- (nullable id<DKDReliableMessage>)deserializeMessage:(NSData *)data;
+
+- (nullable id<DKDSecureMessage>)verifyMessage:(id<DKDReliableMessage>)rMsg;
+
+- (nullable id<DKDInstantMessage>)decryptMessage:(id<DKDSecureMessage>)sMsg;
+
+@end
+
+@interface DIMMessenger (Station)
+
+//
+//  Interfaces for Station
+//
+
+- (BOOL)sendPackageData:(NSData *)data
+      completionHandler:(nullable DIMMessengerCompletionHandler)handler
+               priority:(NSInteger)prior;
+
+- (nullable NSURL *)uploadData:(NSData *)CT forMessage:(id<DKDInstantMessage>)iMsg;
+
+- (nullable NSData *)downloadData:(NSURL *)url forMessage:(id<DKDInstantMessage>)iMsg;
+
+@end
+
+@interface DIMMessenger (Storage)
+
+//
+//  Interfaces for Message Storage
+//
+
+- (BOOL)saveMessage:(id<DKDInstantMessage>)iMsg;
+
 - (BOOL)suspendMessage:(id<DKDMessage>)msg;
 
 @end

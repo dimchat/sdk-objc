@@ -43,10 +43,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable NSArray<id<MKMID>> *)membersFromCommand:(DIMGroupCommand *)cmd;
 
-- (BOOL)containsOwnerInMembers:(NSArray<id<MKMID>> *)members group:(id<MKMID>)group;
-
-- (BOOL)isEmpty:(id<MKMID>)group;
-
 @end
 
 NS_ASSUME_NONNULL_END

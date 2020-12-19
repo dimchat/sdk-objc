@@ -40,35 +40,57 @@
 
 #import "DIMInviteCommandProcessor.h"
 
-@interface DIMCommandProcessor (Hacking)
-
-- (DIMCommandProcessor *)processorForCommand:(NSString *)name;
-
-@end
-
 @implementation DIMInviteCommandProcessor
 
-// check whether this is a Reset command
-- (BOOL)_isReset:(NSArray<id<MKMID>> *)inviteList sender:(id<MKMID>)sender group:(id<MKMID>)group {
-    // NOTICE: owner invite owner?
-    //         it's a Reset command!
-    if ([self containsOwnerInMembers:inviteList group:group]) {
-        return [self.facebook group:group isOwner:sender];
-    }
-    return NO;
-}
-
-- (nullable id<DKDContent>)_callReset:(DIMGroupCommand *)cmd sender:(id<MKMID>)sender message:(id<DKDReliableMessage>)rMsg {
-    DIMCommandProcessor *cpu = [self processorForCommand:DIMGroupCommand_Reset];
+- (nullable id<DKDContent>)callReset:(DIMCommand *)cmd
+                             message:(id<DKDReliableMessage>)rMsg {
+    DIMCommandProcessor *cpu = [self getProcessorForName:DIMGroupCommand_Reset];
     NSAssert(cpu, @"reset CPU not set yet");
     return [cpu executeCommand:cmd withMessage:rMsg];
 }
 
-- (nullable NSArray<id<MKMID>> *)_doInvite:(NSArray<id<MKMID>> *)inviteList group:(id<MKMID>)group {
-    // existed members
-    NSArray<id<MKMID>> *members = [self.facebook membersOfGroup:group];
+- (nullable id<DKDContent>)executeCommand:(DIMCommand *)cmd
+                              withMessage:(id<DKDReliableMessage>)rMsg {
+    NSAssert([cmd isKindOfClass:[DIMInviteCommand class]], @"invite command error: %@", cmd);
+    DIMFacebook *facebook = self.facebook;
+    
+    // 0. check group
+    id<MKMID> group = cmd.group;
+    id<MKMID> owner = [facebook ownerOfGroup:group];
+    NSArray<id<MKMID>> *members = [facebook membersOfGroup:group];
+    if (!owner || members.count == 0) {
+        // NOTICE:
+        //     group membership lost?
+        //     reset group members
+        return [self callReset:cmd message:rMsg];
+    }
+    
+    // 1. check permission
+    id<MKMID> sender = rMsg.sender;
+    if (![members containsObject:sender]) {
+        // not a member? check assistants
+        NSArray<id<MKMID>> *assistants = [facebook assistantsOfGroup:group];
+        if (![assistants containsObject:sender]) {
+            NSAssert(false, @"%@ is not a member/assistant of group %@, cannot invite", sender, group);
+            return nil;
+        }
+    }
+    
+    // 2. get inviting members
+    DIMInviteCommand *gmd = (DIMInviteCommand *)cmd;
+    NSArray<id<MKMID>> *inviteList = [self membersFromCommand:gmd];
+    if ([inviteList count] == 0) {
+        NSAssert(false, @"invite command error: %@", cmd);
+        return nil;
+    }
+    // 2.1. check for reset
+    if ([sender isEqual:owner] && [inviteList containsObject:owner]) {
+        // NOTICE: owner invite owner?
+        //         it means this should be a 'reset' command
+        return [self callReset:cmd message:rMsg];
+    }
+    // 2.2. build invited-list
     NSMutableArray<id<MKMID>> *mArray = [members mutableCopy];
-    // added list
     NSMutableArray *addedList = [[NSMutableArray alloc] initWithCapacity:inviteList.count];
     for (id<MKMID>item in inviteList) {
         if ([members containsObject:item]) {
@@ -78,54 +100,13 @@
         [addedList addObject:item];
         [mArray addObject:item];
     }
+    // 2.3. do invite
     if ([addedList count] > 0) {
         if ([self.facebook saveMembers:mArray group:group]) {
-            return addedList;
-        }
-        NSAssert(false, @"failed to update members for group: %@", group);
-    }
-    return nil;
-}
-
-- (nullable id<DKDContent>)executeCommand:(DIMCommand *)cmd
-                              withMessage:(id<DKDReliableMessage>)rMsg {
-    NSAssert([cmd isKindOfClass:[DIMInviteCommand class]], @"invite command error: %@", cmd);
-    DIMInviteCommand *gmd = (DIMInviteCommand *)cmd;
-    id<MKMID> sender = rMsg.sender;
-    id<MKMID>group = cmd.group;
-    // 0. check whether group info empty
-    if ([self isEmpty:group]) {
-        // NOTICE:
-        //     group membership lost?
-        //     reset group members
-        return [self _callReset:gmd sender:sender message:rMsg];
-    }
-    // 1. check permission
-    if (![self.facebook group:group containsMember:sender]) {
-        if (![self.facebook group:group containsAssistant:sender]) {
-            if (![self.facebook group:group isOwner:sender]) {
-                //NSAssert(false, @"%@ is not a member/assistant of group %@, cannot invite.", sender, group);
-                return nil;
-            }
+            [cmd setObject:addedList forKey:@"added"];
         }
     }
-    // 2. get inviting members
-    NSArray<id<MKMID>> *inviteList = [self membersFromCommand:gmd];
-    if ([inviteList count] == 0) {
-        NSAssert(false, @"invite command error: %@", cmd);
-        return nil;
-    }
-    // 2.1. check for reset
-    if ([self _isReset:inviteList sender:sender group:group]) {
-        // NOTICE: owner invites owner?
-        //         it means this should be a 'reset' command
-        return [self _callReset:gmd sender:sender message:rMsg];
-    }
-    // 2.2. get added-list
-    NSArray<id<MKMID>> *added = [self _doInvite:inviteList group:group];
-    if (added) {
-        [cmd setObject:added forKey:@"added"];
-    }
+    
     // 3. respond nothing (DON'T respond group command directly)
     return nil;
 }

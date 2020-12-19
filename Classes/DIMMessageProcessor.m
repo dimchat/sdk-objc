@@ -79,10 +79,12 @@ static inline void register_all_processors() {
 
 @implementation DIMMessageProcessor
 
-- (instancetype)initWithMessenger:(DIMMessenger *)messenger {
-    if (self = [super initWithMessageDelegate:messenger
-                               entityDelegate:messenger.barrack
-                            cipherKeyDelegate:messenger.keyCache]) {
+- (instancetype)initWithFacebook:(DIMFacebook *)barrack
+                       messenger:(DIMMessenger *)transceiver
+                          packer:(DIMPacker *)messagePacker {
+    if (self = [super initWithEntityDelegate:barrack
+                             messageDelegate:transceiver
+                                      packer:messagePacker]) {
         // register
         static dispatch_once_t onceToken;
         dispatch_once(&onceToken, ^{
@@ -93,48 +95,15 @@ static inline void register_all_processors() {
     return self;
 }
 
-- (nullable DIMContentProcessor *)getProcessorForContent:(id<DKDContent>)content {
-    return [self getProcessorForContentType:content.type];
-}
-- (nullable DIMContentProcessor *)getProcessorForContentType:(DKDContentType)type {
-    DIMContentProcessor *cpu = [DIMContentProcessor getProcessorForType:type];
-    if (!cpu) {
-        cpu = [DIMContentProcessor getProcessorForType:0];  // unknown
-        NSAssert(cpu, @"failed to get CPU for type: %d", type);
-    }
-    cpu.messenger = self.messenger;
-    return cpu;
-}
-
 - (DIMMessenger *)messenger {
-    return self.transceiver;
+    return (DIMMessenger *)[self transceiver];
 }
 
 - (DIMFacebook *)facebook {
-    return [[self messenger] facebook];
+    return [self.messenger facebook];
 }
 
-@end
-
-@implementation DIMMessageProcessor (Transform)
-
-- (nullable id<DKDSecureMessage>)trimMessage:(id<DKDSecureMessage>)sMsg {
-    // check message delegate
-    if (!sMsg.delegate) {
-        sMsg.delegate = self.transceiver;
-    }
-    id<MKMID>receiver = sMsg.receiver;
-    MKMUser *user = [[self facebook] selectLocalUserWithID:receiver];
-    if (!user) {
-        // local users not matched
-        sMsg = nil;
-    } else if (MKMIDIsGroup(receiver)) {
-        // trim group message
-        sMsg = [sMsg trimForMember:user.ID];
-    }
-    return sMsg;
-}
-
+// [VISA Protocol]
 - (BOOL)checkVisaForMessage:(id<DKDReliableMessage>)rMsg {
     // check message delegate
     if (!rMsg.delegate) {
@@ -177,48 +146,66 @@ static inline void register_all_processors() {
     return [meta.key conformsToProtocol:@protocol(MKMEncryptKey)];
 }
 
-- (nullable id<DKDSecureMessage>)verifyMessage:(id<DKDReliableMessage>)rMsg {
-    // Notice: check meta before calling me
+- (nullable id<DKDSecureMessage>)trimMessage:(id<DKDSecureMessage>)sMsg {
+    // check message delegate
+    if (!sMsg.delegate) {
+        sMsg.delegate = self.transceiver;
+    }
+    id<MKMID> receiver = sMsg.receiver;
+    MKMUser *user = [[self facebook] selectLocalUserWithID:receiver];
+    if (!user) {
+        // local users not matched
+        sMsg = nil;
+    } else if (MKMIDIsGroup(receiver)) {
+        // trim group message
+        sMsg = [sMsg trimForMember:user.ID];
+    }
+    return sMsg;
+}
+
+- (nullable id<DKDReliableMessage>)processMessage:(id<DKDReliableMessage>)rMsg {
     if ([self checkVisaForMessage:rMsg]) {
-        return [super verifyMessage:rMsg];
+        // visa key found
+        return [super processMessage:rMsg];
     }
     // NOTICE: the application will query meta automatically
     // save this message in a queue waiting sender's meta response
-    [[self messenger] suspendMessage:rMsg];
-    //NSAssert(false, @"failed to get meta for sender: %@", sender);
+    [self.messenger suspendMessage:rMsg];
     return nil;
 }
 
-- (nullable id<DKDInstantMessage>)decryptMessage:(id<DKDSecureMessage>)sMsg {
-    // trim message
-    id<DKDSecureMessage> msg = [self trimMessage:sMsg];
-    if (!msg) {
+- (nullable id<DKDSecureMessage>)processSecure:(id<DKDSecureMessage>)sMsg
+                                   withMessage:(id<DKDReliableMessage>)rMsg {
+    // try to trim message
+    if (![self trimMessage:sMsg]) {
         // not for you?
         @throw [NSException exceptionWithName:@"ReceiverError" reason:@"not for you?" userInfo:sMsg.dictionary];
     }
-    // decrypt message
-    return [super decryptMessage:msg];
+    return [super processSecure:sMsg withMessage:rMsg];
 }
-
-@end
-
-@implementation DIMMessageProcessor (Processing)
 
 - (nullable id<DKDInstantMessage>)processInstant:(id<DKDInstantMessage>)iMsg
                                      withMessage:(id<DKDReliableMessage>)rMsg {
     id<DKDInstantMessage> res = [super processInstant:iMsg withMessage:rMsg];
-    if (![self.messenger saveMessage:iMsg]) {
-        // error
-        return nil;
+    if ([self.messenger saveMessage:iMsg]) {
+        return res;
     }
-    return res;
+    // error
+    return nil;
 }
 
 - (nullable id<DKDContent>)processContent:(id<DKDContent>)content
                               withMessage:(id<DKDReliableMessage>)rMsg {
     // TODO: override to check group
-    DIMContentProcessor *cpu = [self getProcessorForContent:content];
-    NSAssert(cpu, @"failed to get CPU for content: %@", content);
+    DIMContentProcessor *cpu = [DIMContentProcessor getProcessorForContent:content];
+    if (!cpu) {
+        cpu = [DIMContentProcessor getProcessorForType:0];  // unknown
+        if (!cpu) {
+            NSAssert(false, @"cannot process content: %@", content);
+            return nil;
+        }
+    }
+    cpu.messenger = self.messenger;
     return [cpu processContent:content withMessage:rMsg];
     // TODO: override to filter the response
 }

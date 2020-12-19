@@ -2,12 +2,12 @@
 //
 //  DIM-SDK : Decentralized Instant Messaging Software Development Kit
 //
-//                               Written in 2019 by Moky <albert.moky@gmail.com>
+//                               Written in 2020 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Albert Moky
+// Copyright (c) 2020 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,61 +28,54 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMContentProcessor.h
+//  DIMMessageTransmitter.h
 //  DIMSDK
 //
-//  Created by Albert Moky on 2019/11/29.
-//  Copyright © 2019 Albert Moky. All rights reserved.
+//  Created by Albert Moky on 2020/12/19.
+//  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
-#import <DIMCore/DIMCore.h>
+#import "DIMMessenger.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class DIMMessenger;
-@class DIMFacebook;
+@interface DIMMessageTransmitter : NSObject
 
-@interface DIMContentProcessor : NSObject
-
-@property (weak, nonatomic) DIMMessenger *messenger;
 @property (readonly, weak, nonatomic) DIMFacebook *facebook;
+@property (readonly, weak, nonatomic) DIMMessenger *messenger;
+@property (readonly, weak, nonatomic) DIMPacker *packer;
 
-- (instancetype)init;
+- (instancetype)initWithFacebook:(DIMFacebook *)barrack
+                       messenger:(DIMMessenger *)transceiver
+                          packer:(DIMPacker *)messagePacker;
 
 /**
- *  Process message content
+ *  Send message content to receiver
  *
  * @param content - message content
- * @param rMsg - message with envelope
- * @return content to respond
+ * @param receiver - receiver ID
+ * @param callback - callback function
+ * @return true on success
  */
-- (nullable id<DKDContent>)processContent:(id<DKDContent>)content
-                              withMessage:(id<DKDReliableMessage>)rMsg;
+- (BOOL)sendContent:(id<DKDContent>)content
+           receiver:(id<MKMID>)receiver
+           callback:(nullable DIMMessengerCallback)callback
+           priority:(NSInteger)prior;
 
-@end
+/**
+ *  Send instant message (encrypt and sign) onto DIM network
+ *
+ * @param iMsg - instant message
+ * @param callback - callback function
+ * @return NO on data/delegate error
+ */
+- (BOOL)sendInstantMessage:(id<DKDInstantMessage>)iMsg
+                  callback:(nullable DIMMessengerCallback)callback
+                  priority:(NSInteger)prior;
 
-@interface DIMContentProcessor (CPU)
-
-+ (void)registerProcessor:(DIMContentProcessor *)processor
-                  forType:(DKDContentType)type;
-
-+ (nullable __kindof DIMContentProcessor *)getProcessorForType:(DKDContentType)type;
-
-+ (nullable __kindof DIMContentProcessor *)getProcessorForContent:(id<DKDContent>)content;
-
-@end
-
-#define DIMContentProcessorRegister(type, cpu)                                 \
-            [DIMContentProcessor registerProcessor:(cpu) forType:(type)]       \
-                              /* EOF 'DIMContentProcessorRegister(type, cpu)' */
-
-#define DIMContentProcessorRegisterClass(type, clazz)                          \
-            DIMContentProcessorRegister((type), [[clazz alloc] init])          \
-                       /* EOF 'DIMContentProcessorRegisterClass(type, clazz)' */
-
-@interface DIMContentProcessor (Register)
-
-+ (void)registerAllProcessors;
+- (BOOL)sendReliableMessage:(id<DKDReliableMessage>)rMsg
+                   callback:(nullable DIMMessengerCallback)callback
+                   priority:(NSInteger)prior;
 
 @end
 

@@ -53,9 +53,9 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)registerProcessor:(DIMCommandProcessor *)processor
                forCommand:(NSString *)name;
 
-- (nullable DIMCommandProcessor *)getProcessorForCommand:(DIMCommand *)cmd;
+- (nullable __kindof DIMCommandProcessor *)getProcessorForCommand:(DIMCommand *)cmd;
 
-- (nullable DIMCommandProcessor *)getProcessorForName:(NSString *)name;
+- (nullable __kindof DIMCommandProcessor *)getProcessorForName:(NSString *)name;
 
 @end
 

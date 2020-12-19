@@ -49,7 +49,7 @@
     id<DKDReliableMessage>secret = forward.forwardMessage;
     
     // call messenger to process it
-    secret = [self.messenger.processor processMessage:secret];
+    secret = [self.messenger processMessage:secret];
     // check response
     if (secret) {
         // Over The Top

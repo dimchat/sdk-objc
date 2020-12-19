@@ -54,24 +54,6 @@
     return nil;
 }
 
-- (BOOL)containsOwnerInMembers:(NSArray<id<MKMID>> *)members group:(id<MKMID>)group {
-    for (id<MKMID>item in members) {
-        if ([self.facebook group:group isOwner:item]) {
-            return YES;
-        }
-    }
-    return NO;
-}
-
-- (BOOL)isEmpty:(id<MKMID>)group {
-    NSArray *members = [self.facebook membersOfGroup:group];
-    if ([members count] == 0) {
-        return YES;
-    }
-    id<MKMID>owner = [self.facebook ownerOfGroup:group];
-    return !owner;
-}
-
 - (nullable id<DKDContent>)executeCommand:(DIMCommand *)cmd
                               withMessage:(id<DKDReliableMessage>)rMsg {
     NSString *text = [NSString stringWithFormat:@"Group command (%@) not support yet!", cmd.command];

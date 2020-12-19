@@ -45,27 +45,34 @@
 - (nullable id<DKDContent>)executeCommand:(DIMCommand *)cmd
                               withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([cmd isKindOfClass:[DIMQueryGroupCommand class]], @"query group command error: %@", cmd);
-    id<MKMID> sender = rMsg.sender;
-    id<MKMID>group = cmd.group;
-    // 1. check permission
-    if (![self.facebook group:group containsMember:sender]) {
-        if (![self.facebook group:group containsAssistant:sender]) {
-            NSAssert(false, @"%@ is not a member/assistant of group %@, cannot query", sender, group);
-            return nil;
-        }
-    }
-    // 2. get members
-    NSArray<id<MKMID>> *members = [self.facebook membersOfGroup:group];
-    if ([members count] == 0) {
+    DIMFacebook *facebook = self.facebook;
+    
+    // 0. check group
+    id<MKMID> group = cmd.group;
+    id<MKMID> owner = [facebook ownerOfGroup:group];
+    NSArray<id<MKMID>> *members = [facebook membersOfGroup:group];
+    if (!owner || members.count == 0) {
         NSString *text = [NSString stringWithFormat:@"Sorry, members not found in group: %@", group];
         id<DKDContent>res = [[DIMTextContent alloc] initWithText:text];
         res.group = group;
         return res;
     }
-    // 3. respond
+
+    // 1. check permission
+    id<MKMID> sender = rMsg.sender;
+    if (![members containsObject:sender]) {
+        // not a member? check assistants
+        NSArray<id<MKMID>> *assistants = [facebook assistantsOfGroup:group];
+        if (![assistants containsObject:sender]) {
+            NSAssert(false, @"%@ is not a member/assistant of group %@, cannot query", sender, group);
+            return nil;
+        }
+    }
+    
+    // 2. respond
     MKMUser *user = [self.facebook currentUser];
     NSAssert(user, @"current user not set");
-    if ([self.facebook group:group isOwner:user.ID]) {
+    if ([user.ID isEqual:owner]) {
         return [[DIMResetGroupCommand alloc] initWithGroup:group members:members];
     } else {
         return [[DIMInviteCommand alloc] initWithGroup:group members:members];

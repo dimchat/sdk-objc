@@ -58,14 +58,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (readonly, strong, nonatomic, nullable) MKMUser *currentUser;
 
-- (BOOL)isEmptyDocument:(id<MKMDocument>)doc;
-- (BOOL)verifyDocument:(id<MKMDocument>)doc forID:(id<MKMID>)ID;
-- (BOOL)verifyDocument:(id<MKMDocument>)doc;
-
-@end
-
-@interface DIMFacebook (Storage)
-
 /**
  *  Save meta for entity ID (must verify first)
  *
@@ -91,6 +83,10 @@ NS_ASSUME_NONNULL_BEGIN
  * @return true on success
  */
 - (BOOL)saveMembers:(NSArray<id<MKMID>> *)members group:(id<MKMID>)ID;
+
+- (BOOL)isEmptyDocument:(id<MKMDocument>)doc;
+
+- (BOOL)isValidDocument:(id<MKMDocument>)doc;
 
 @end
 

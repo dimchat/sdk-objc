@@ -56,20 +56,27 @@
     return [users firstObject];
 }
 
+- (BOOL)saveMeta:(id<MKMMeta>)meta forID:(id<MKMID>)ID {
+    NSAssert(false, @"implement me!");
+    return NO;
+}
+
+- (BOOL)saveDocument:(id<MKMDocument>)doc {
+    NSAssert(false, @"implement me!");
+    return NO;
+}
+
+- (BOOL)saveMembers:(NSArray<id<MKMID>> *)members group:(id<MKMID>)ID {
+    NSAssert(false, @"implement me!");
+    return NO;
+}
+
 - (BOOL)isEmptyDocument:(id<MKMDocument>)doc {
     NSString *data = [doc objectForKey:@"data"];
     return data.length == 0;
 }
 
-- (BOOL)verifyDocument:(id<MKMDocument>)doc forID:(id<MKMID>)ID {
-    if (![ID isEqual:doc.ID]) {
-        // profile ID not match
-        return NO;
-    }
-    return [self verifyDocument:doc];
-}
-
-- (BOOL)verifyDocument:(id<MKMDocument>)doc {
+- (BOOL)isValidDocument:(id<MKMDocument>)doc {
     id<MKMID> ID = doc.ID;
     if (!ID) {
         NSAssert(false, @"ID error: %@", doc);
@@ -127,10 +134,8 @@
         // create user 'anyone@anywhere'
         return [[MKMUser alloc] initWithID:ID];
     }
-    if (![self metaForID:ID]) {
-        //NSAssert(false, @"failed to get meta for user: %@", ID);
-        return nil;
-    }
+    NSAssert([self metaForID:ID], @"meta not found for user: %@", ID);
+    // TODO: make sure visa key exists before calling this
     MKMNetworkType type = ID.type;
     if (type == MKMNetwork_Main || type == MKMNetwork_BTCMain) {
         return [[MKMUser alloc] initWithID:ID];
@@ -150,10 +155,7 @@
         // create group 'everyone@everywhere'
         return [[MKMGroup alloc] initWithID:ID];
     }
-    if (![self metaForID:ID]) {
-        //NSAssert(false, @"failed to get meta for group: %@", ID);
-        return nil;
-    }
+    NSAssert([self metaForID:ID], @"failed to get meta for group: %@", ID);
     MKMNetworkType type = ID.type;
     if (type == MKMNetwork_Polylogue) {
         return [[DIMPolylogue alloc] initWithID:ID];
@@ -166,25 +168,6 @@
     }
     NSAssert(false, @"Unsupported group type: %d", type);
     return nil;
-}
-
-@end
-
-@implementation DIMFacebook (Storage)
-
-- (BOOL)saveMeta:(id<MKMMeta>)meta forID:(id<MKMID>)ID {
-    NSAssert(false, @"implement me!");
-    return NO;
-}
-
-- (BOOL)saveDocument:(id<MKMDocument>)doc {
-    NSAssert(false, @"implement me!");
-    return NO;
-}
-
-- (BOOL)saveMembers:(NSArray<id<MKMID>> *)members group:(id<MKMID>)ID {
-    NSAssert(false, @"implement me!");
-    return NO;
 }
 
 @end

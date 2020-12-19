@@ -42,101 +42,102 @@
 
 @implementation DIMResetGroupCommandProcessor
 
-- (nullable id<DKDContent>)_tempSave:(NSArray<id<MKMID>> *)newMembers sender:(id<MKMID>)sender group:(id<MKMID>)group {
-    if ([self containsOwnerInMembers:newMembers group:group]) {
-        // it's a full list, save it now
-        if ([self.facebook saveMembers:newMembers group:group]) {
-            id<MKMID>owner = [self.facebook ownerOfGroup:group];
-            if (owner && ![owner isEqual:sender]) {
-                // NOTICE: to prevent counterfeit,
-                //         query the owner for newest member-list
-                DIMQueryGroupCommand *query;
-                query = [[DIMQueryGroupCommand alloc] initWithGroup:group];
-                [self.messenger sendContent:query receiver:owner callback:NULL];
+- (nullable id<DKDContent>)temporarySave:(DIMGroupCommand *)cmd sender:(id<MKMID>)sender {
+    DIMFacebook *facebook = self.facebook;
+    id<MKMID> group = cmd.group;
+    // check whether the owner contained in the new members
+    NSArray<id<MKMID>> *newMembers = [self membersFromCommand:cmd];
+    for (id<MKMID> ID in newMembers) {
+        if ([facebook group:group isOwner:ID]) {
+            // it's a full list, save it now
+            if ([facebook saveMembers:newMembers group:group]) {
+                id<MKMID> owner = [facebook ownerOfGroup:group];
+                if (owner && ![owner isEqual:sender]) {
+                    // NOTICE: to prevent counterfeit,
+                    //         query the owner for newest member-list
+                    DIMQueryGroupCommand *query;
+                    query = [[DIMQueryGroupCommand alloc] initWithGroup:group];
+                    [self.messenger sendContent:query receiver:owner callback:NULL priority:1];
+                }
             }
-        }
-        // response (no need to response this group command)
-        return nil;
-    } else {
-        // NOTICE: this is a partial member-list
-        //         query the sender for full-list
-        return [[DIMQueryGroupCommand alloc] initWithGroup:group];
-    }
-}
-
-- (NSDictionary *)_doReset:(NSArray<id<MKMID>> *)newMembers group:(id<MKMID>)group {
-    // existed members
-    NSArray<id<MKMID>> *members = [self.facebook membersOfGroup:group];
-    // removed list
-    NSMutableArray<id<MKMID>> *removedList = [[NSMutableArray alloc] init];
-    for (id<MKMID>item in members) {
-        if ([newMembers containsObject:item]) {
-            continue;
-        }
-        // removing member found
-        [removedList addObject:item];
-    }
-    // added list
-    NSMutableArray<id<MKMID>> *addedList = [[NSMutableArray alloc] init];
-    for (id<MKMID>item in newMembers) {
-        if ([members containsObject:item]) {
-            continue;
-        }
-        // adding member found
-        [addedList addObject:item];
-    }
-    NSMutableDictionary *res = [[NSMutableDictionary alloc] initWithCapacity:2];
-    if ([addedList count] > 0 || [removedList count] > 0) {
-        if (![self.facebook saveMembers:newMembers group:group]) {
-            // failed to update members
-            return res;
-        }
-        if ([addedList count] > 0) {
-            [res setObject:addedList forKey:@"added"];
-        }
-        if ([removedList count] > 0) {
-            [res setObject:removedList forKey:@"removed"];
+            // response (no need to respond this group command
+            return nil;
         }
     }
-    return res;
+    // NOTICE: this is a partial member-list
+    //         query the sender for full-list
+    return [[DIMQueryGroupCommand alloc] initWithGroup:group];
 }
 
 - (nullable id<DKDContent>)executeCommand:(DIMCommand *)cmd
                               withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([cmd isKindOfClass:[DIMResetGroupCommand class]] ||
              [cmd isKindOfClass:[DIMInviteCommand class]], @"invite command error: %@", cmd);
+    DIMFacebook *facebook = self.facebook;
     DIMGroupCommand *gmd = (DIMGroupCommand *)cmd;
-    id<MKMID>group = cmd.group;
-    // new members
-    NSArray<id<MKMID>> *newMembers = [self membersFromCommand:gmd];
-    if ([newMembers count] == 0) {
-        NSAssert(false, @"invite/reset command error: %@", cmd);
-        return nil;
-    }
-    // 0. check whether group info empty
-    id<MKMID> sender = rMsg.sender;
-    if ([self isEmpty:group]) {
+
+    // 0. check group
+    id<MKMID> group = cmd.group;
+    id<MKMID> owner = [facebook ownerOfGroup:group];
+    NSArray<id<MKMID>> *members = [facebook membersOfGroup:group];
+    if (!owner || members.count == 0) {
         // FIXME: group info lost?
         // FIXME: how to avoid strangers impersonating group member?
-        return [self _tempSave:newMembers sender:sender group:group];
+        return [self temporarySave:gmd sender:rMsg.sender];
     }
+    
     // 1. check permission
-    if (![self.facebook group:group isOwner:sender]) {
-        if (![self.facebook group:group containsAssistant:sender]) {
+    id<MKMID> sender = rMsg.sender;
+    if (![owner isEqual:sender]) {
+        // not the owner? check assistants
+        NSArray<id<MKMID>> *assistants = [facebook assistantsOfGroup:group];
+        if (![assistants containsObject:sender]) {
             NSAssert(false, @"%@ is not the owner/assistant of group %@, cannot reset.", sender, group);
             return nil;
         }
     }
-    // 2. reset group members
-    NSDictionary *result = [self _doReset:newMembers group:group];
-    NSArray *added = [result objectForKey:@"added"];
-    if (added) {
-        [cmd setObject:added forKey:@"added"];
+    
+    // 2. resetting members
+    NSArray<id<MKMID>> *newMembers = [self membersFromCommand:gmd];
+    if ([newMembers count] == 0) {
+        NSAssert(false, @"group command error: %@", cmd);
+        return nil;
     }
-    NSArray *removed = [result objectForKey:@"removed"];
-    if (removed) {
-        [cmd setObject:removed forKey:@"removed"];
+    // 2.1. check owner
+    if (![newMembers containsObject:owner]) {
+        NSAssert(false, @"cannot expel owner(%@) of group: %@", owner, group);
+        return nil;
     }
+    // 2.2. build expelled-list
+    NSMutableArray<id<MKMID>> *removedList = [[NSMutableArray alloc] init];
+    for (id<MKMID> item in members) {
+        if ([newMembers containsObject:item]) {
+            continue;
+        }
+        // removing member found
+        [removedList addObject:item];
+    }
+    // 2.3. build invited-list
+    NSMutableArray<id<MKMID>> *addedList = [[NSMutableArray alloc] init];
+    for (id<MKMID> item in newMembers) {
+        if ([members containsObject:item]) {
+            continue;
+        }
+        // adding member found
+        [addedList addObject:item];
+    }
+    // 2.4. do reset
+    if ([addedList count] > 0 || [removedList count] > 0) {
+        if ([self.facebook saveMembers:newMembers group:group]) {
+            if ([addedList count] > 0) {
+                [cmd setObject:addedList forKey:@"added"];
+            }
+            if ([removedList count] > 0) {
+                [cmd setObject:removedList forKey:@"removed"];
+            }
+        }
+    }
+
     // 3. respond nothing
     return nil;
 }

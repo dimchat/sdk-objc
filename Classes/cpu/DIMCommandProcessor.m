@@ -98,11 +98,11 @@ static NSMutableDictionary<NSString *, DIMCommandProcessor *> *s_processors = ni
     [s_processors setObject:processor forKey:name];
 }
 
-- (nullable DIMCommandProcessor *)getProcessorForCommand:(DIMCommand *)cmd {
+- (nullable __kindof DIMCommandProcessor *)getProcessorForCommand:(DIMCommand *)cmd {
     return [self getProcessorForName:cmd.command];
 }
 
-- (nullable DIMCommandProcessor *)getProcessorForName:(NSString *)name {
+- (nullable __kindof DIMCommandProcessor *)getProcessorForName:(NSString *)name {
     DIMCommandProcessor *cpu = [s_processors objectForKey:name];
     //NSAssert(cpu, @"failed to get CPU for content type: %d", type);
     cpu.messenger = self.messenger;

@@ -45,13 +45,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMMessageProcessor : DIMProcessor
 
-@property (readonly, weak, nonatomic) DIMMessenger *messenger;
 @property (readonly, weak, nonatomic) DIMFacebook *facebook;
+@property (readonly, weak, nonatomic) DIMMessenger *messenger;
 
-- (instancetype)initWithMessenger:(DIMMessenger *)messenger;
-
-- (nullable DIMContentProcessor *)getProcessorForContent:(id<DKDContent>)content;
-- (nullable DIMContentProcessor *)getProcessorForContentType:(DKDContentType)type;
+- (instancetype)initWithFacebook:(DIMFacebook *)barrack
+                       messenger:(DIMMessenger *)transceiver
+                          packer:(DIMPacker *)messagePacker;
 
 @end
 

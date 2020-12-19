@@ -59,7 +59,7 @@
         NSAssert(false, @"failed to encrypt file data with key: %@", pwd);
         return NO;
     }
-    NSURL *url = [self.messenger.delegate uploadData:CT forMessage:iMsg];
+    NSURL *url = [self.messenger uploadData:CT forMessage:iMsg];
     if (url) {
         content.URL = url;
         content.fileData = nil;
@@ -77,7 +77,7 @@
         return NO;
     }
     id<DKDInstantMessage> iMsg = DKDInstantMessageCreate(sMsg.envelope, content);
-    NSData *CT = [self.messenger.delegate downloadData:url forMessage:iMsg];
+    NSData *CT = [self.messenger downloadData:url forMessage:iMsg];
     if (CT.length == 0) {
         // save symmetric key for decrypting file data after download from CDN
         content.password = pwd;

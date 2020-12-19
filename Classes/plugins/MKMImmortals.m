@@ -208,9 +208,56 @@
     return mArray;
 }
 
-- (nullable NSArray<id<MKMVerifyKey>> *)publicKeysForVerification:(id<MKMID>)user {
-    // return nil to use [visa.key, meta.key]
+- (id<MKMEncryptKey>)visaKeyForID:(id<MKMID>)user {
+    id<MKMDocument> doc = [self documentForID:user type:MKMDocument_Visa];
+    if ([doc conformsToProtocol:@protocol(MKMVisa)]) {
+        id<MKMVisa> visa = (id<MKMVisa>) doc;
+        if ([visa isValid]) {
+            return visa.key;
+        }
+    }
     return nil;
+}
+
+- (id<MKMVerifyKey>)metaKeyForID:(id<MKMID>)user {
+    id<MKMMeta> meta = [self metaForID:user];
+    NSAssert(meta, @"failed to get meta for ID: %@", user);
+    return meta.key;
+}
+
+- (nullable id<MKMEncryptKey>)publicKeyForEncryption:(id<MKMID>)user {
+    // 1. get key from visa
+    id<MKMEncryptKey> visaKey = [self visaKeyForID:user];
+    if (visaKey) {
+        return visaKey;
+    }
+    // 2. get key from meta
+    id metaKey = [self metaKeyForID:user];
+    if ([metaKey conformsToProtocol:@protocol(MKMEncryptKey)]) {
+        return metaKey;
+    }
+    NSAssert(false, @"failed to get encrypt key for user: %@", user);
+    return nil;
+}
+
+- (nullable NSArray<id<MKMVerifyKey>> *)publicKeysForVerification:(id<MKMID>)user {
+    NSMutableArray *mArray = [[NSMutableArray alloc] init];
+    // 1. get key from visa
+    id visaKey = [self visaKeyForID:user];
+    if ([visaKey conformsToProtocol:@protocol(MKMVerifyKey)]) {
+        // the sender may use communication key to sign message.data,
+        // so try to verify it with visa.key here
+        [mArray addObject:visaKey];
+    }
+    // 2. get key from meta
+    id<MKMVerifyKey> metaKey = [self metaKeyForID:user];
+    if (metaKey) {
+        // the sender may use identity key to sign message.data,
+        // try to verify it with meta.key
+        [mArray addObject:metaKey];
+    }
+    NSAssert(mArray.count > 0, @"failed to get verify key for user: %@", user);
+    return mArray;
 }
 
 - (NSArray<id<MKMDecryptKey>> *)privateKeysForDecryption:(id<MKMID>)user {
