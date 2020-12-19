@@ -125,7 +125,7 @@ static PlainKey *s_sharedPlainKey = nil;
 
 @implementation SymmetricKeyFactory
 
-- (nullable __kindof id<MKMSymmetricKey>)generateSymmetricKey {
+- (__kindof id<MKMSymmetricKey>)generateSymmetricKey {
     if ([self.algorithm isEqualToString:SCAlgorithmPlain]) {
         return [PlainKey sharedInstance];
     }
@@ -177,7 +177,7 @@ static PlainKey *s_sharedPlainKey = nil;
 
 @implementation PrivateKeyFactory
 
-- (nullable __kindof id<MKMPrivateKey>)generatePrivateKey {
+- (__kindof id<MKMPrivateKey>)generatePrivateKey {
     NSMutableDictionary *key = [[NSMutableDictionary alloc] init];
     [key setObject:self.algorithm forKey:@"algorithm"];
     return [self parsePrivateKey:key];

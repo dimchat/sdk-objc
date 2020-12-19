@@ -50,33 +50,6 @@
 
 #import "DIMMessageProcessor.h"
 
-static inline void register_all_parsers() {
-    //
-    //  Register core parsers
-    //
-    [DIMContentFactory registerCoreFactories];
-    
-    //
-    //  Register command parsers
-    //
-    DIMCommandFactoryRegisterClass(DIMCommand_Receipt, DIMReceiptCommand);
-    DIMCommandFactoryRegisterClass(DIMCommand_Handshake, DIMHandshakeCommand);
-    DIMCommandFactoryRegisterClass(DIMCommand_Login, DIMLoginCommand);
-    
-    DIMCommandFactoryRegisterClass(DIMCommand_Mute, DIMMuteCommand);
-    DIMCommandFactoryRegisterClass(DIMCommand_Block, DIMBlockCommand);
-    
-    // storage (contacts, private_key)
-    DIMCommandFactoryRegisterClass(DIMCommand_Storage, DIMStorageCommand);
-    DIMCommandFactoryRegisterClass(DIMCommand_Contacts, DIMStorageCommand);
-    DIMCommandFactoryRegisterClass(DIMCommand_PrivateKey, DIMStorageCommand);
-}
-
-static inline void register_all_processors() {
-    [DIMContentProcessor registerAllProcessors];
-    [DIMCommandProcessor registerAllProcessors];
-}
-
 @implementation DIMMessageProcessor
 
 - (instancetype)initWithFacebook:(DIMFacebook *)barrack
@@ -85,12 +58,7 @@ static inline void register_all_processors() {
     if (self = [super initWithEntityDelegate:barrack
                              messageDelegate:transceiver
                                       packer:messagePacker]) {
-        // register
-        static dispatch_once_t onceToken;
-        dispatch_once(&onceToken, ^{
-            register_all_parsers();
-            register_all_processors();
-        });
+        //
     }
     return self;
 }
@@ -208,6 +176,38 @@ static inline void register_all_processors() {
     cpu.messenger = self.messenger;
     return [cpu processContent:content withMessage:rMsg];
     // TODO: override to filter the response
+}
+
+@end
+
+@implementation DIMMessageProcessor (Plugins)
+
++ (void)loadPlugins {
+    //
+    //  Register core parsers
+    //
+    [DIMContentFactory registerCoreFactories];
+    
+    //
+    //  Register command parsers
+    //
+    DIMCommandFactoryRegisterClass(DIMCommand_Receipt, DIMReceiptCommand);
+    DIMCommandFactoryRegisterClass(DIMCommand_Handshake, DIMHandshakeCommand);
+    DIMCommandFactoryRegisterClass(DIMCommand_Login, DIMLoginCommand);
+    
+    DIMCommandFactoryRegisterClass(DIMCommand_Mute, DIMMuteCommand);
+    DIMCommandFactoryRegisterClass(DIMCommand_Block, DIMBlockCommand);
+    
+    // storage (contacts, private_key)
+    DIMCommandFactoryRegisterClass(DIMCommand_Storage, DIMStorageCommand);
+    DIMCommandFactoryRegisterClass(DIMCommand_Contacts, DIMStorageCommand);
+    DIMCommandFactoryRegisterClass(DIMCommand_PrivateKey, DIMStorageCommand);
+    
+    //
+    //  Register processors
+    //
+    [DIMContentProcessor registerAllProcessors];
+    [DIMCommandProcessor registerAllProcessors];
 }
 
 @end
