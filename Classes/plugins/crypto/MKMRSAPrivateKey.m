@@ -82,10 +82,7 @@
 - (void)dealloc {
     
     // clear key ref
-    if (_privateKeyRef) {
-        CFRelease(_privateKeyRef);
-        _privateKeyRef = NULL;
-    }
+    self.privateKeyRef = NULL;
     
     //[super dealloc];
 }
@@ -95,7 +92,7 @@
     if (key) {
         key.data = _data;
         key.keySize = _keySize;
-        //key.privateKeyRef = _privateKeyRef;
+        key.privateKeyRef = _privateKeyRef;
         key.publicKey = _publicKey;
     }
     return key;
@@ -134,13 +131,13 @@
 
 - (void)setPrivateKeyRef:(SecKeyRef)privateKeyRef {
     if (_privateKeyRef != privateKeyRef) {
-        if (privateKeyRef) {
-            privateKeyRef = (SecKeyRef)CFRetain(privateKeyRef);
-        }
         if (_privateKeyRef) {
             CFRelease(_privateKeyRef);
+            _privateKeyRef = NULL;
         }
-        _privateKeyRef = privateKeyRef;
+        if (privateKeyRef) {
+            _privateKeyRef = (SecKeyRef)CFRetain(privateKeyRef);
+        }
     }
 }
 
@@ -191,7 +188,7 @@
     return _privateKeyRef;
 }
 
-- (nullable __kindof MKMPublicKey *)publicKey {
+- (MKMRSAPublicKey *)publicKey {
     if (!_publicKey) {
         // get public key content from private key
         SecKeyRef publicKeyRef = SecKeyCopyPublicKey(self.privateKeyRef);

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E90E5122258F64D7003BC281 /* MKMECCPrivateKey+PersistentStore.m in Sources */ = {isa = PBXBuildFile; fileRef = E90E5120258F64D7003BC281 /* MKMECCPrivateKey+PersistentStore.m */; };
 		E915CE5B243C62B700B98FE3 /* MKMImmortals.m in Sources */ = {isa = PBXBuildFile; fileRef = E915CE59243C62B700B98FE3 /* MKMImmortals.m */; };
 		E915CE5C243C62B700B98FE3 /* MKMImmortals.h in Headers */ = {isa = PBXBuildFile; fileRef = E915CE5A243C62B700B98FE3 /* MKMImmortals.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E915CE65243C654300B98FE3 /* hulk_secret.js in Resources */ = {isa = PBXBuildFile; fileRef = E915CE5F243C654300B98FE3 /* hulk_secret.js */; };
@@ -154,6 +155,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		E90E5120258F64D7003BC281 /* MKMECCPrivateKey+PersistentStore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "MKMECCPrivateKey+PersistentStore.m"; sourceTree = "<group>"; };
 		E915CE59243C62B700B98FE3 /* MKMImmortals.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKMImmortals.m; sourceTree = "<group>"; };
 		E915CE5A243C62B700B98FE3 /* MKMImmortals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKMImmortals.h; sourceTree = "<group>"; };
 		E915CE5F243C654300B98FE3 /* hulk_secret.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = hulk_secret.js; sourceTree = "<group>"; };
@@ -535,6 +537,7 @@
 				E95CB3512587C29500685B1B /* MKMECCPublicKey.m */,
 				E95CB34C2587BDFA00685B1B /* MKMECCPrivateKey.h */,
 				E95CB34D2587BDFA00685B1B /* MKMECCPrivateKey.m */,
+				E90E5120258F64D7003BC281 /* MKMECCPrivateKey+PersistentStore.m */,
 				E9D79E1D2583D39200C8E700 /* MKMRSAPublicKey.h */,
 				E9D79E222583D39200C8E700 /* MKMRSAPublicKey.m */,
 				E9D79E1A2583D39200C8E700 /* MKMRSAPrivateKey.h */,
@@ -845,6 +848,7 @@
 				E99B200C2586834F001A05F1 /* MKMMetaDefault.m in Sources */,
 				E9D79E4F2583DCBB00C8E700 /* MKMMetaBTC.m in Sources */,
 				E94DEB8C23A1053400FBFD3C /* DIMStation.m in Sources */,
+				E90E5122258F64D7003BC281 /* MKMECCPrivateKey+PersistentStore.m in Sources */,
 				E919B0142390FAA1004F7FF9 /* DIMMessenger.m in Sources */,
 				E95CB35F2587E84000685B1B /* MKMMetaETH.m in Sources */,
 				E959650A2391077F00DAA870 /* DIMMuteCommand.m in Sources */,

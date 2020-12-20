@@ -36,6 +36,7 @@
 //
 
 #import "MKMRSAPrivateKey.h"
+#import "MKMECCPrivateKey.h"
 
 #import "MKMPrivateKey+PersistentStore.h"
 
@@ -46,7 +47,10 @@
     if (key) {
         return key;
     }
-    // TODO: ECC
+    key = [MKMECCPrivateKey loadKeyWithIdentifier:identifier];
+    if (key) {
+        return key;
+    }
     return nil;
 }
 

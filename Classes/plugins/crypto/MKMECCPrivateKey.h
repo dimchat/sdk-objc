@@ -52,4 +52,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@interface MKMECCPrivateKey (PersistentStore)
+
++ (nullable instancetype)loadKeyWithIdentifier:(NSString *)identifier;
+
+- (BOOL)saveKeyWithIdentifier:(NSString *)identifier;
+
+@end
+
 NS_ASSUME_NONNULL_END

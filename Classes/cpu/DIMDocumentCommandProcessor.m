@@ -44,7 +44,7 @@
 
 - (nullable id<DKDContent>)_getProfileForID:(id<MKMID>)ID {
     // query profile for ID
-    id<MKMDocument>profile = [self.facebook documentForID:ID type:@"*"];
+    id<MKMDocument> profile = [self.facebook documentForID:ID type:@"*"];
     if (profile) {
         return [[DIMDocumentCommand alloc] initWithID:ID profile:profile];
     }

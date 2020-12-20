@@ -68,7 +68,7 @@
 
 - (BOOL)matchReceipt:(DIMReceiptCommand *)cmd {
     
-    id<DKDContent>content = self.content;
+    id<DKDContent> content = self.content;
     
     // check signature
     NSString *sig1 = [cmd objectForKey:@"signature"];

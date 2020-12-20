@@ -92,8 +92,8 @@
     if (key) {
         key.data = _data;
         key.keySize = _keySize;
-        //key.context = _context;
-        //key.pubkey = _pubkey;
+        key.context = _context;
+        key.pubkey = _pubkey;
     }
     return key;
 }
@@ -109,8 +109,11 @@
     if (_context != context) {
         if (_context != NULL) {
             secp256k1_context_destroy(_context);
+            _context = NULL;
         }
-        _context = context;
+        if (context != NULL) {
+            _context = secp256k1_context_clone(context);
+        }
     }
 }
 
@@ -128,8 +131,12 @@
     if (_pubkey != pubkey) {
         if (_pubkey != NULL) {
             free(_pubkey);
+            _pubkey = NULL;
         }
-        _pubkey = pubkey;
+        if (pubkey != NULL) {
+            _pubkey = malloc(sizeof(secp256k1_pubkey));
+            memcpy(_pubkey, pubkey, sizeof(secp256k1_pubkey));
+        }
     }
 }
 

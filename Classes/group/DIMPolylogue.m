@@ -49,7 +49,7 @@
 }
 
 - (id<MKMID>)owner {
-    id<MKMID>ID = [super owner];
+    id<MKMID> ID = [super owner];
     if (ID) {
         NSAssert([[self founder] isEqual:ID], @"polylugue's owner is founder");
         return ID;

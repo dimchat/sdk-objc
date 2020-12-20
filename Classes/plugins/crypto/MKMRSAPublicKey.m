@@ -74,10 +74,7 @@
 - (void)dealloc {
     
     // clear key ref
-    if (_publicKeyRef) {
-        CFRelease(_publicKeyRef);
-        _publicKeyRef = NULL;
-    }
+    self.publicKeyRef = NULL;
     
     //[super dealloc];
 }
@@ -87,7 +84,7 @@
     if (key) {
         key.data = _data;
         key.keySize = _keySize;
-        //key.publicKeyRef = _publicKeyRef;
+        key.publicKeyRef = _publicKeyRef;
     }
     return key;
 }
@@ -125,13 +122,13 @@
 
 - (void)setPublicKeyRef:(SecKeyRef)publicKeyRef {
     if (_publicKeyRef != publicKeyRef) {
-        if (publicKeyRef) {
-            publicKeyRef = (SecKeyRef)CFRetain(publicKeyRef);
-        }
         if (_publicKeyRef) {
             CFRelease(_publicKeyRef);
+            _publicKeyRef = NULL;
         }
-        _publicKeyRef = publicKeyRef;
+        if (publicKeyRef) {
+            _publicKeyRef = (SecKeyRef)CFRetain(publicKeyRef);
+        }
     }
 }
 

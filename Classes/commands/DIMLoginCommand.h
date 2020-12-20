@@ -69,7 +69,7 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark Client Info
 
 // User ID
-@property (readonly, strong, nonatomic) id<MKMID>ID;
+@property (readonly, strong, nonatomic) id<MKMID> ID;
 // Device ID
 @property (strong, nonatomic, nullable) NSString *device;
 // User-Agent

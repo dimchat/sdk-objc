@@ -95,7 +95,7 @@
         key.data = _data;
         key.keySize = _keySize;
         key.publicKey = _publicKey;
-        //key.context = _context;
+        key.context = _context;
     }
     return key;
 }
@@ -111,8 +111,11 @@
     if (_context != context) {
         if (_context != NULL) {
             secp256k1_context_destroy(_context);
+            _context = NULL;
         }
-        _context = context;
+        if (context != NULL) {
+            _context = secp256k1_context_clone(context);
+        }
     }
 }
 
@@ -155,7 +158,7 @@
     return _keySize;
 }
 
-- (nullable __kindof MKMPublicKey *)publicKey {
+- (MKMECCPublicKey *)publicKey {
     if (!_publicKey) {
         // get public key content from private key
         secp256k1_pubkey pKey;

@@ -116,7 +116,7 @@
     }
 }
 - (void)copyStationInfo:(DIMStation *)station {
-    id<MKMID>ID = station.ID;
+    id<MKMID> ID = station.ID;
     NSString *host = station.host;
     UInt32 port = station.port;
     if (!ID || [host length] == 0) {
@@ -144,7 +144,7 @@
     }
 }
 - (void)copyProviderInfo:(DIMServiceProvider *)provider {
-    id<MKMID>ID = provider.ID;
+    id<MKMID> ID = provider.ID;
     if (!ID) {
         NSAssert(!provider, @"SP error: %@", provider);
         return;

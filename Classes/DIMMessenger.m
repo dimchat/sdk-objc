@@ -152,7 +152,7 @@
 - (nullable id<DKDContent>)message:(id<DKDSecureMessage>)sMsg
               deserializeContent:(NSData *)data
                          withKey:(id<MKMSymmetricKey>)password {
-    id<DKDContent>content = [super message:sMsg deserializeContent:data withKey:password];
+    id<DKDContent> content = [super message:sMsg deserializeContent:data withKey:password];
     NSAssert(content, @"failed to deserialize message content: %@", sMsg);
     // check attachment for File/Image/Audio/Video message content
     if ([content isKindOfClass:[DIMFileContent class]]) {
