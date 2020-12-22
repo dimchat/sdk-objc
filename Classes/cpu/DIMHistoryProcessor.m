@@ -42,7 +42,7 @@
 - (nullable id<DKDContent>)executeCommand:(DIMCommand *)cmd
                               withMessage:(id<DKDReliableMessage>)rMsg {
     NSString *text = [NSString stringWithFormat:@"History command (%@) not support yet!", cmd.command];
-    id<DKDContent>res = [[DIMTextContent alloc] initWithText:text];
+    id<DKDContent> res = [[DIMTextContent alloc] initWithText:text];
     // check group message
     id<MKMID> group = cmd.group;
     if (group) {

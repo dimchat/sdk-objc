@@ -57,7 +57,7 @@
 - (nullable id<DKDContent>)executeCommand:(DIMCommand *)cmd
                               withMessage:(id<DKDReliableMessage>)rMsg {
     NSString *text = [NSString stringWithFormat:@"Group command (%@) not support yet!", cmd.command];
-    id<DKDContent>res = [[DIMTextContent alloc] initWithText:text];
+    id<DKDContent> res = [[DIMTextContent alloc] initWithText:text];
     res.group = cmd.group;
     return res;
 }

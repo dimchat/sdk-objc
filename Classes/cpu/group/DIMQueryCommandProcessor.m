@@ -53,7 +53,7 @@
     NSArray<id<MKMID>> *members = [facebook membersOfGroup:group];
     if (!owner || members.count == 0) {
         NSString *text = [NSString stringWithFormat:@"Sorry, members not found in group: %@", group];
-        id<DKDContent>res = [[DIMTextContent alloc] initWithText:text];
+        id<DKDContent> res = [[DIMTextContent alloc] initWithText:text];
         res.group = group;
         return res;
     }

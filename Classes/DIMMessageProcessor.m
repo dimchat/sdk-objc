@@ -99,7 +99,7 @@
     //
     //  Register core parsers
     //
-    [DIMContentFactory registerCoreFactories];
+    [self registerCoreFactories];
     
     //
     //  Register command parsers

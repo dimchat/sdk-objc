@@ -64,7 +64,7 @@
 - (nullable id<DKDContent>)processContent:(id<DKDContent>)content
                               withMessage:(id<DKDReliableMessage>)rMsg {
     NSString *text = [NSString stringWithFormat:@"Content (type: %u) not support yet!", content.type];
-    id<DKDContent>res = [[DIMTextContent alloc] initWithText:text];
+    id<DKDContent> res = [[DIMTextContent alloc] initWithText:text];
     // check group message
     id<MKMID> group = content.group;
     if (group) {
