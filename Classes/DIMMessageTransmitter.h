@@ -58,7 +58,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @return true on success
  */
 - (BOOL)sendContent:(id<DKDContent>)content
-             sender:(nullable id<MKMID>)from
+             sender:(id<MKMID>)from
            receiver:(id<MKMID>)to
            callback:(nullable DIMMessengerCallback)fn
            priority:(NSInteger)prior;

@@ -60,7 +60,7 @@
     return [self.messenger messagePacker];
 }
 
-- (BOOL)sendContent:(id<DKDContent>)content sender:(nullable id<MKMID>)from receiver:(id<MKMID>)to callback:(nullable DIMMessengerCallback)fn priority:(NSInteger)prior {
+- (BOOL)sendContent:(id<DKDContent>)content sender:(id<MKMID>)from receiver:(id<MKMID>)to callback:(nullable DIMMessengerCallback)fn priority:(NSInteger)prior {
     // Application Layer should make sure user is already login before it send message to server.
     // Application layer should put message into queue so that it will send automatically after user login
     id<DKDEnvelope> env = DKDEnvelopeCreate(from, to, nil);
@@ -103,10 +103,12 @@
 }
 
 - (BOOL)sendReliableMessage:(id<DKDReliableMessage>)rMsg callback:(nullable DIMMessengerCallback)fn priority:(NSInteger)prior {
-    
-    DIMMessengerCompletionHandler handler = ^(NSError * _Nullable error) {
-        !fn ?: fn(rMsg, error);
-    };
+    DIMMessengerCompletionHandler handler;
+    if (fn) {
+        handler = ^(NSError * _Nullable error) {
+            fn(rMsg, error);
+        };
+    }
     NSData *data = [self.messenger serializeMessage:rMsg];
     return [self.messenger sendPackageData:data completionHandler:handler priority:prior];
 }

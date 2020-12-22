@@ -175,6 +175,16 @@
 @implementation DIMMessenger (Send)
 
 - (BOOL)sendContent:(id<DKDContent>)content sender:(nullable id<MKMID>)from receiver:(id<MKMID>)to callback:(nullable DIMMessengerCallback)fn priority:(NSInteger)prior {
+    if (!from) {
+        // Application Layer should make sure user is already login before it send message to server.
+        // Application layer should put message into queue so that it will send automatically after user login
+        MKMUser *user = [self.facebook currentUser];
+        if (!user) {
+            NSAssert(false, @"current user not set");
+            return NO;
+        }
+        from = user.ID;
+    }
     return [self.messageTransmitter sendContent:content sender:from receiver:to callback:fn priority:prior];
 }
 

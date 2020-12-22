@@ -59,90 +59,84 @@
     return (DIMMessenger *) self.transceiver;
 }
 
-// [Meta Protocol]
-- (BOOL)checkMetaWithMessage:(id<DKDReliableMessage>)rMsg {
-    // check message delegate
-    if (!rMsg.delegate) {
-        rMsg.delegate = self.transceiver;
+- (BOOL)isWaiting:(id<MKMID>)ID {
+    if (MKMIDIsBroadcast(ID)) {
+        // broadcast ID doesn't contain meta or visa
+        return NO;
     }
-    // check meta attached to message
-    id<MKMMeta> meta = rMsg.meta;
-    if (!meta) {
-        return [self.facebook metaForID:rMsg.sender] != nil;
+    if (MKMIDIsGroup(ID)) {
+        // if group is not broadcast ID, its meta should be exists
+        return [self.facebook metaForID:ID] == nil;
     }
-    // [Meta Protocol]
-    // save meta for sender
-    return [self.facebook saveMeta:meta forID:rMsg.sender];
-}
-
-// [Visa Protocol]
-- (void)checkVisaWithMessage:(id<DKDReliableMessage>)rMsg {
-    // check visa attached to message
-    id<MKMVisa> visa = rMsg.visa;
-    if (visa) {
-        // [Visa Protocol]
-        // save visa for sender
-        [self.facebook saveDocument:visa];
-    }
-}
-
-- (BOOL)checkReceiver:(id<MKMID>)receiver {
-    if (MKMIDIsGroup(receiver)) {
-        // check group meta
-        return [self.facebook metaForID:receiver] != nil;
-    }
-    // 1. check key from visa
-    // 2. check key from meta
-    return [self.facebook publicKeyForEncryption:receiver] != nil;
+    // if receiver is not broadcast ID, its visa key should be exists
+    return [self.facebook publicKeyForEncryption:ID] == nil;
 }
 
 - (id<DKDSecureMessage>)encryptMessage:(id<DKDInstantMessage>)iMsg {
-    // make sure visa.key exists before encrypting message
-    if ([self checkReceiver:iMsg.receiver]) {
-        return [super encryptMessage:iMsg];
+    id<MKMID> receiver = iMsg.receiver;
+    id<MKMID> group = iMsg.group;
+    if ([self isWaiting:receiver] || (group && [self isWaiting:group])) {
+        // NOTICE: the application will query visa automatically
+        // save this message in a queue waiting sender's visa response
+        [self.messenger suspendMessage:iMsg];
+        return nil;
     }
-    // NOTICE: the application will query visa automatically
-    // save this message in a queue waiting sender's visa response
-    [self.messenger suspendMessage:iMsg];
-    return nil;
+    
+    // make sure visa.key exists before encrypting message
+    return [super encryptMessage:iMsg];
 }
 
 - (id<DKDSecureMessage>)verifyMessage:(id<DKDReliableMessage>)rMsg {
-    // make sure meta.key exists before verifying message
-    if ([self checkMetaWithMessage:rMsg]) {
-        [self checkVisaWithMessage:rMsg];  // check and save visa attached to message
-        return [super verifyMessage:rMsg];
+    id<MKMID> sender = rMsg.sender;
+    // [Meta Protocol]
+    id<MKMMeta> meta = rMsg.meta;
+    if (!meta) {
+        // get from local storage
+        meta = [self.facebook metaForID:sender];
+    } else if (![self.facebook saveMeta:meta forID:sender]) {
+        // failed to save meta attached to message
+        meta = nil;
     }
-    // NOTICE: the application will query meta & profile automatically
-    // save this message in a queue waiting sender's meta response
-    [self.messenger suspendMessage:rMsg];
-    return nil;
+    if (!meta) {
+        // NOTICE: the application will query meta automatically
+        // save this message in a queue waiting sender's meta response
+        [self.messenger suspendMessage:rMsg];
+        return nil;
+    }
+    // [Visa Protocol]
+    id<MKMVisa> visa = rMsg.visa;
+    if (visa) {
+        [self.facebook saveDocument:visa];
+    }
+    
+    // make sure meta exists before verifying message
+    return [super verifyMessage:rMsg];
 }
 
 - (id<DKDInstantMessage>)decryptMessage:(id<DKDSecureMessage>)sMsg {
-    // try to trim message
-    id<DKDSecureMessage> tMsg = [self trimMessage:sMsg];
-    if (!tMsg) {
-        @throw [NSException exceptionWithName:@"ReceiverError" reason:@"not for you?" userInfo:sMsg.dictionary];
-    }
-    return [super decryptMessage:sMsg];
-}
-
-- (nullable id<DKDSecureMessage>)trimMessage:(id<DKDSecureMessage>)sMsg {
     // check message delegate
     if (!sMsg.delegate) {
         sMsg.delegate = self.transceiver;
     }
     id<MKMID> receiver = sMsg.receiver;
     MKMUser *user = [self.facebook selectLocalUserWithID:receiver];
+    id<DKDSecureMessage> trimmed;
     if (!user) {
         // local users not matched
-        sMsg = nil;
+        trimmed = nil;
     } else if (MKMIDIsGroup(receiver)) {
         // trim group message
-        sMsg = [sMsg trimForMember:user.ID];
+        trimmed = [sMsg trimForMember:user.ID];
+    } else {
+        trimmed = sMsg;
     }
-    return sMsg;
+    if (!trimmed) {
+        // not for you?
+        @throw [NSException exceptionWithName:@"ReceiverError" reason:@"not for you?" userInfo:sMsg.dictionary];
+    }
+    
+    // make sure private key (decrypt key) exists before decrypting message
+    return [super decryptMessage:sMsg];
 }
 
 @end
