@@ -57,7 +57,7 @@
                     //         query the owner for newest member-list
                     DIMQueryGroupCommand *query;
                     query = [[DIMQueryGroupCommand alloc] initWithGroup:group];
-                    [self.messenger sendContent:query receiver:owner callback:NULL priority:1];
+                    [self.messenger sendContent:query sender:nil receiver:owner callback:NULL priority:1];
                 }
             }
             // response (no need to respond this group command

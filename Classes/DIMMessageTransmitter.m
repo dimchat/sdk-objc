@@ -37,61 +37,46 @@
 
 #import "DKDInstantMessage+Extension.h"
 
-#import "DIMFacebook.h"
+#import "DIMMessagePacker.h"
 
 #import "DIMMessageTransmitter.h"
 
 @interface DIMMessageTransmitter ()
 
-@property (weak, nonatomic) DIMFacebook *facebook;
 @property (weak, nonatomic) DIMMessenger *messenger;
-@property (weak, nonatomic) DIMPacker *packer;
 
 @end
 
 @implementation DIMMessageTransmitter
 
-- (instancetype)initWithFacebook:(DIMFacebook *)barrack
-                       messenger:(DIMMessenger *)transceiver
-                          packer:(DIMPacker *)messagePacker {
+- (instancetype)initWithMessenger:(DIMMessenger *)transceiver {
     if (self = [super init]) {
-        self.facebook = barrack;
         self.messenger = transceiver;
-        self.packer = messagePacker;
     }
     return self;
 }
 
-- (BOOL)sendContent:(id<DKDContent>)content receiver:(id<MKMID>)receiver callback:(nullable DIMMessengerCallback)callback priority:(NSInteger)prior {
-    
-    // Application Layer should make sure user is already login before it send message to server.
-    // Application layer should put message into queue so that it will send automatically after user login
-    MKMUser *user = [self.facebook currentUser];
-    NSAssert(user, @"current user not found");
-    /*
-    if ([receiver isGroup]) {
-        if (content.group) {
-            NSAssert([receiver isEqual:content.group], @"group ID not match: %@, %@", receiver, content);
-        } else {
-            content.group = receiver;
-        }
-    }
-     */
-    id<DKDEnvelope> env = DKDEnvelopeCreate(user.ID, receiver, nil);
-    id<DKDInstantMessage> iMsg = DKDInstantMessageCreate(env, content);
-    return [self sendInstantMessage:iMsg callback:callback priority:prior];
+- (DIMMessagePacker *)messagePacker {
+    return [self.messenger messagePacker];
 }
 
-- (BOOL)sendInstantMessage:(id<DKDInstantMessage>)iMsg callback:(nullable DIMMessengerCallback)callback priority:(NSInteger)prior {
-    
+- (BOOL)sendContent:(id<DKDContent>)content sender:(nullable id<MKMID>)from receiver:(id<MKMID>)to callback:(nullable DIMMessengerCallback)fn priority:(NSInteger)prior {
+    // Application Layer should make sure user is already login before it send message to server.
+    // Application layer should put message into queue so that it will send automatically after user login
+    id<DKDEnvelope> env = DKDEnvelopeCreate(from, to, nil);
+    id<DKDInstantMessage> iMsg = DKDInstantMessageCreate(env, content);
+    return [self sendInstantMessage:iMsg callback:fn priority:prior];
+}
+
+- (BOOL)sendInstantMessage:(id<DKDInstantMessage>)iMsg callback:(nullable DIMMessengerCallback)fn priority:(NSInteger)prior {
     // Send message (secured + certified) to target station
-    id<DKDSecureMessage> sMsg = [self.packer encryptMessage:iMsg];
+    id<DKDSecureMessage> sMsg = [self.messagePacker encryptMessage:iMsg];
     if (!sMsg) {
         // public key not found?
         NSAssert(false, @"failed to encrypt message: %@", iMsg);
         return NO;
     }
-    id<DKDReliableMessage> rMsg = [self.packer signMessage:sMsg];
+    id<DKDReliableMessage> rMsg = [self.messagePacker signMessage:sMsg];
     if (!rMsg) {
         NSAssert(false, @"failed to sign message: %@", sMsg);
         DKDContent *content = iMsg.content;
@@ -100,7 +85,7 @@
         return NO;
     }
     
-    BOOL OK = [self sendReliableMessage:rMsg callback:callback priority:prior];
+    BOOL OK = [self sendReliableMessage:rMsg callback:fn priority:prior];
     // sending status
     if (OK) {
         DKDContent *content = iMsg.content;
@@ -117,10 +102,10 @@
     return OK;
 }
 
-- (BOOL)sendReliableMessage:(id<DKDReliableMessage>)rMsg callback:(nullable DIMMessengerCallback)callback priority:(NSInteger)prior {
+- (BOOL)sendReliableMessage:(id<DKDReliableMessage>)rMsg callback:(nullable DIMMessengerCallback)fn priority:(NSInteger)prior {
     
     DIMMessengerCompletionHandler handler = ^(NSError * _Nullable error) {
-        !callback ?: callback(rMsg, error);
+        !fn ?: fn(rMsg, error);
     };
     NSData *data = [self.messenger serializeMessage:rMsg];
     return [self.messenger sendPackageData:data completionHandler:handler priority:prior];

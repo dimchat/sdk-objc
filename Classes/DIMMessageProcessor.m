@@ -46,18 +46,16 @@
 #import "DIMCommandProcessor.h"
 
 #import "DIMMessenger.h"
-#import "DIMFacebook.h"
+#import "DIMMessagePacker.h"
 
 #import "DIMMessageProcessor.h"
 
 @implementation DIMMessageProcessor
 
-- (instancetype)initWithFacebook:(DIMFacebook *)barrack
-                       messenger:(DIMMessenger *)transceiver
-                          packer:(DIMPacker *)messagePacker {
-    if (self = [super initWithEntityDelegate:barrack
+- (instancetype)initWithMessenger:(DIMMessenger *)transceiver {
+    if (self = [super initWithEntityDelegate:transceiver.barrack
                              messageDelegate:transceiver
-                                      packer:messagePacker]) {
+                                      packer:transceiver.messagePacker]) {
         //
     }
     return self;
@@ -65,91 +63,6 @@
 
 - (DIMMessenger *)messenger {
     return (DIMMessenger *)[self transceiver];
-}
-
-- (DIMFacebook *)facebook {
-    return [self.messenger facebook];
-}
-
-// [VISA Protocol]
-- (BOOL)checkVisaForMessage:(id<DKDReliableMessage>)rMsg {
-    // check message delegate
-    if (!rMsg.delegate) {
-        rMsg.delegate = self.transceiver;
-    }
-    DIMFacebook *facebook = self.facebook;
-    id<MKMID> sender = rMsg.sender;
-    // check meta
-    id<MKMMeta> meta = rMsg.meta;
-    if (meta) {
-        // [Meta Protocol]
-        // save meta for sender
-        if (![facebook saveMeta:meta forID:sender]) {
-            return NO;
-        }
-    }
-    // check visa
-    id<MKMVisa> visa = rMsg.visa;
-    if (visa) {
-        // [Visa Protocol]
-        // save visa for sender
-        return [facebook saveDocument:visa];
-    }
-    // check local storage
-    id<MKMDocument> doc = [facebook documentForID:sender type:MKMDocument_Visa];
-    if ([doc conformsToProtocol:@protocol(MKMVisa)]) {
-        if ([(id<MKMVisa>)doc key]) {
-            // visa.key exists
-            return YES;
-        }
-    }
-    if (!meta) {
-        meta = [facebook metaForID:sender];
-        if (!meta) {
-            return NO;
-        }
-    }
-    // if meta.key can be used to encrypt message,
-    // then visa.key is not necessary
-    return [meta.key conformsToProtocol:@protocol(MKMEncryptKey)];
-}
-
-- (nullable id<DKDSecureMessage>)trimMessage:(id<DKDSecureMessage>)sMsg {
-    // check message delegate
-    if (!sMsg.delegate) {
-        sMsg.delegate = self.transceiver;
-    }
-    id<MKMID> receiver = sMsg.receiver;
-    MKMUser *user = [[self facebook] selectLocalUserWithID:receiver];
-    if (!user) {
-        // local users not matched
-        sMsg = nil;
-    } else if (MKMIDIsGroup(receiver)) {
-        // trim group message
-        sMsg = [sMsg trimForMember:user.ID];
-    }
-    return sMsg;
-}
-
-- (nullable id<DKDReliableMessage>)processMessage:(id<DKDReliableMessage>)rMsg {
-    if ([self checkVisaForMessage:rMsg]) {
-        // visa key found
-        return [super processMessage:rMsg];
-    }
-    // NOTICE: the application will query meta automatically
-    // save this message in a queue waiting sender's meta response
-    [self.messenger suspendMessage:rMsg];
-    return nil;
-}
-
-- (nullable id<DKDSecureMessage>)processSecure:(id<DKDSecureMessage>)sMsg
-                                   withMessage:(id<DKDReliableMessage>)rMsg {
-    // try to trim message
-    if (![self trimMessage:sMsg]) {
-        // not for you?
-        @throw [NSException exceptionWithName:@"ReceiverError" reason:@"not for you?" userInfo:sMsg.dictionary];
-    }
-    return [super processSecure:sMsg withMessage:rMsg];
 }
 
 - (nullable id<DKDInstantMessage>)processInstant:(id<DKDInstantMessage>)iMsg

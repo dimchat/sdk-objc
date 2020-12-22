@@ -98,6 +98,8 @@
 		E99D9F3D2444E8E50003BC1B /* DIMHandshakeCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = E99D9F3B2444E8E50003BC1B /* DIMHandshakeCommand.m */; };
 		E99D9F442444EC0C0003BC1B /* DIMLoginCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = E99D9F422444EC0C0003BC1B /* DIMLoginCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E99D9F452444EC0C0003BC1B /* DIMLoginCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = E99D9F432444EC0C0003BC1B /* DIMLoginCommand.m */; };
+		E9B0CE4B259208FD0082BCFD /* DIMMessagePacker.h in Headers */ = {isa = PBXBuildFile; fileRef = E9B0CE49259208FD0082BCFD /* DIMMessagePacker.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E9B0CE4C259208FD0082BCFD /* DIMMessagePacker.m in Sources */ = {isa = PBXBuildFile; fileRef = E9B0CE4A259208FD0082BCFD /* DIMMessagePacker.m */; };
 		E9D79E232583D39200C8E700 /* MKMRSAPrivateKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E9D79E1A2583D39200C8E700 /* MKMRSAPrivateKey.h */; };
 		E9D79E252583D39200C8E700 /* MKMAESKey.m in Sources */ = {isa = PBXBuildFile; fileRef = E9D79E1C2583D39200C8E700 /* MKMAESKey.m */; };
 		E9D79E262583D39200C8E700 /* MKMRSAPublicKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E9D79E1D2583D39200C8E700 /* MKMRSAPublicKey.h */; };
@@ -253,6 +255,8 @@
 		E99D9F3B2444E8E50003BC1B /* DIMHandshakeCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMHandshakeCommand.m; sourceTree = "<group>"; };
 		E99D9F422444EC0C0003BC1B /* DIMLoginCommand.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMLoginCommand.h; sourceTree = "<group>"; };
 		E99D9F432444EC0C0003BC1B /* DIMLoginCommand.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMLoginCommand.m; sourceTree = "<group>"; };
+		E9B0CE49259208FD0082BCFD /* DIMMessagePacker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMMessagePacker.h; sourceTree = "<group>"; };
+		E9B0CE4A259208FD0082BCFD /* DIMMessagePacker.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMMessagePacker.m; sourceTree = "<group>"; };
 		E9D79E1A2583D39200C8E700 /* MKMRSAPrivateKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKMRSAPrivateKey.h; sourceTree = "<group>"; };
 		E9D79E1C2583D39200C8E700 /* MKMAESKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKMAESKey.m; sourceTree = "<group>"; };
 		E9D79E1D2583D39200C8E700 /* MKMRSAPublicKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKMRSAPublicKey.h; sourceTree = "<group>"; };
@@ -382,6 +386,8 @@
 				E919B0102390FAA1004F7FF9 /* DIMAddressNameService.m */,
 				E919B00A2390FAA1004F7FF9 /* DIMFacebook.h */,
 				E919B00F2390FAA1004F7FF9 /* DIMFacebook.m */,
+				E9B0CE49259208FD0082BCFD /* DIMMessagePacker.h */,
+				E9B0CE4A259208FD0082BCFD /* DIMMessagePacker.m */,
 				E9463426257FAD8000530E15 /* DIMMessageProcessor.h */,
 				E9463427257FAD8000530E15 /* DIMMessageProcessor.m */,
 				E9538145258E2F620016F2F4 /* DIMMessageTransmitter.h */,
@@ -665,6 +671,7 @@
 				E95964EF239101D900DAA870 /* DKDInstantMessage+Extension.h in Headers */,
 				E95CB35E2587E84000685B1B /* MKMMetaETH.h in Headers */,
 				E9D79E262583D39200C8E700 /* MKMRSAPublicKey.h in Headers */,
+				E9B0CE4B259208FD0082BCFD /* DIMMessagePacker.h in Headers */,
 				E919B0152390FAA1004F7FF9 /* DIMAddressNameService.h in Headers */,
 				E919B0122390FAA1004F7FF9 /* DIMFacebook.h in Headers */,
 				E9463428257FAD8000530E15 /* DIMMessageProcessor.h in Headers */,
@@ -821,6 +828,7 @@
 				E9D79E252583D39200C8E700 /* MKMAESKey.m in Sources */,
 				E946343525839F6F00530E15 /* DIMFileContentProcessor.m in Sources */,
 				E9D79E2B2583D39200C8E700 /* MKMRSAPublicKey.m in Sources */,
+				E9B0CE4C259208FD0082BCFD /* DIMMessagePacker.m in Sources */,
 				E9705CCC2395034900289441 /* DIMStorageCommand.m in Sources */,
 				E9D79E392583D51700C8E700 /* ripemd160.cpp in Sources */,
 				E959653B23912C7B00DAA870 /* DIMGroupCommandProcessor.m in Sources */,

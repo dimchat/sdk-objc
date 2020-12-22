@@ -28,55 +28,24 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMMessageTransmitter.h
+//  DIMMessagePacker.h
 //  DIMSDK
 //
-//  Created by Albert Moky on 2020/12/19.
+//  Created by Albert Moky on 2020/12/22.
 //  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
+#import "DIMFacebook.h"
 #import "DIMMessenger.h"
-#import "DIMMessagePacker.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMMessageTransmitter : NSObject
+@interface DIMMessagePacker : DIMPacker
 
+@property (readonly, weak, nonatomic) DIMFacebook *facebook;
 @property (readonly, weak, nonatomic) DIMMessenger *messenger;
-@property (readonly, weak, nonatomic) DIMMessagePacker *messagePacker;
 
-- (instancetype)initWithMessenger:(DIMMessenger *)transceiver;
-
-/**
- *  Send message content to receiver
- *
- * @param content - message content
- * @param from - sender ID
- * @param to - receiver ID
- * @param fn - callback function
- * @param prior - task priority
- * @return true on success
- */
-- (BOOL)sendContent:(id<DKDContent>)content
-             sender:(nullable id<MKMID>)from
-           receiver:(id<MKMID>)to
-           callback:(nullable DIMMessengerCallback)fn
-           priority:(NSInteger)prior;
-
-/**
- *  Send instant message (encrypt and sign) onto DIM network
- *
- * @param iMsg - instant message
- * @param callback - callback function
- * @return NO on data/delegate error
- */
-- (BOOL)sendInstantMessage:(id<DKDInstantMessage>)iMsg
-                  callback:(nullable DIMMessengerCallback)callback
-                  priority:(NSInteger)prior;
-
-- (BOOL)sendReliableMessage:(id<DKDReliableMessage>)rMsg
-                   callback:(nullable DIMMessengerCallback)callback
-                   priority:(NSInteger)prior;
+- (instancetype)initWithMessenger:(DIMMessenger *)messenger;
 
 @end
 

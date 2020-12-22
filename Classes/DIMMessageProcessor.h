@@ -35,22 +35,15 @@
 //  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
-#import <DIMCore/DIMCore.h>
+#import "DIMMessenger.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class DIMMessenger;
-@class DIMFacebook;
-@class DIMContentProcessor;
-
 @interface DIMMessageProcessor : DIMProcessor
 
-@property (readonly, weak, nonatomic) DIMFacebook *facebook;
 @property (readonly, weak, nonatomic) DIMMessenger *messenger;
 
-- (instancetype)initWithFacebook:(DIMFacebook *)barrack
-                       messenger:(DIMMessenger *)transceiver
-                          packer:(DIMPacker *)messagePacker;
+- (instancetype)initWithMessenger:(DIMMessenger *)transceiver;
 
 @end
 

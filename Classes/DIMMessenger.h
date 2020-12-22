@@ -109,6 +109,7 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
 #pragma mark -
 
 @class DIMFacebook;
+@class DIMMessagePacker;
 @class DIMMessageProcessor;
 @class DIMMessageTransmitter;
 
@@ -119,11 +120,11 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
 
 @property (weak, nonatomic) DIMFacebook *facebook;
 
-@property (readonly, strong, nonatomic) DIMPacker *messagePacker;
+@property (readonly, strong, nonatomic) DIMMessagePacker *messagePacker;
 @property (readonly, strong, nonatomic) DIMMessageProcessor *messageProcessor;
 @property (readonly, strong, nonatomic) DIMMessageTransmitter *messageTransmitter;
 
-- (DIMPacker *)newMessagePacker;
+- (DIMMessagePacker *)newMessagePacker;
 - (DIMMessageProcessor *)newMessageProcessor;
 - (DIMMessageTransmitter *)newMessageTransmitter;
 
@@ -148,8 +149,9 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
 //
 
 - (BOOL)sendContent:(id<DKDContent>)content
-           receiver:(id<MKMID>)receiver
-           callback:(nullable DIMMessengerCallback)callback
+             sender:(nullable id<MKMID>)from
+           receiver:(id<MKMID>)to
+           callback:(nullable DIMMessengerCallback)fn
            priority:(NSInteger)prior;
 
 - (BOOL)sendInstantMessage:(id<DKDInstantMessage>)iMsg

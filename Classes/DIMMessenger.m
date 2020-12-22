@@ -47,7 +47,7 @@
 
 @interface DIMMessenger ()
 
-@property (strong, nonatomic) DIMPacker *messagePacker;
+@property (strong, nonatomic) DIMMessagePacker *messagePacker;
 @property (strong, nonatomic) DIMMessageProcessor *messageProcessor;
 @property (strong, nonatomic) DIMMessageTransmitter *messageTransmitter;
 
@@ -75,16 +75,14 @@
     self.barrack = facebook;
 }
 
-- (DIMPacker *)messagePacker {
+- (DIMMessagePacker *)messagePacker {
     if (!_messagePacker) {
         _messagePacker = [self newMessagePacker];
     }
     return _messagePacker;
 }
-- (DIMPacker *)newMessagePacker {
-    return [[DIMPacker alloc] initWithEntityDelegate:self.barrack
-                                   cipherKeyDelegate:self.keyCache
-                                     messageDelegate:self];
+- (DIMMessagePacker *)newMessagePacker {
+    return [[DIMMessagePacker alloc] initWithMessenger:self];
 }
 
 - (DIMMessageProcessor *)messageProcessor {
@@ -94,9 +92,7 @@
     return _messageProcessor;
 }
 - (DIMMessageProcessor *)newMessageProcessor {
-    return [[DIMMessageProcessor alloc] initWithFacebook:self.facebook
-                                               messenger:self
-                                                  packer:self.messagePacker];
+    return [[DIMMessageProcessor alloc] initWithMessenger:self];
 }
 
 - (DIMMessageTransmitter *)messageTransmitter {
@@ -106,9 +102,7 @@
     return _messageTransmitter;
 }
 - (DIMMessageTransmitter *)newMessageTransmitter {
-    return [[DIMMessageTransmitter alloc] initWithFacebook:self.facebook
-                                                 messenger:self
-                                                    packer:self.messagePacker];
+    return [[DIMMessageTransmitter alloc] initWithMessenger:self];
 }
 
 - (DIMFileContentProcessor *)fileContentProcessor {
@@ -180,8 +174,8 @@
 
 @implementation DIMMessenger (Send)
 
-- (BOOL)sendContent:(id<DKDContent>)content receiver:(id<MKMID>)receiver callback:(nullable DIMMessengerCallback)callback priority:(NSInteger)prior {
-    return [self.messageTransmitter sendContent:content receiver:receiver callback:callback priority:prior];
+- (BOOL)sendContent:(id<DKDContent>)content sender:(nullable id<MKMID>)from receiver:(id<MKMID>)to callback:(nullable DIMMessengerCallback)fn priority:(NSInteger)prior {
+    return [self.messageTransmitter sendContent:content sender:from receiver:to callback:fn priority:prior];
 }
 
 - (BOOL)sendInstantMessage:(id<DKDInstantMessage>)iMsg callback:(nullable DIMMessengerCallback)callback priority:(NSInteger)prior {
