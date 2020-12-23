@@ -77,31 +77,31 @@
 
 - (DIMMessagePacker *)messagePacker {
     if (!_messagePacker) {
-        _messagePacker = [self newMessagePacker];
+        _messagePacker = [self createMessagePacker];
     }
     return _messagePacker;
 }
-- (DIMMessagePacker *)newMessagePacker {
+- (DIMMessagePacker *)createMessagePacker {
     return [[DIMMessagePacker alloc] initWithMessenger:self];
 }
 
 - (DIMMessageProcessor *)messageProcessor {
     if (!_messageProcessor) {
-        _messageProcessor = [self newMessageProcessor];
+        _messageProcessor = [self createMessageProcessor];
     }
     return _messageProcessor;
 }
-- (DIMMessageProcessor *)newMessageProcessor {
+- (DIMMessageProcessor *)createMessageProcessor {
     return [[DIMMessageProcessor alloc] initWithMessenger:self];
 }
 
 - (DIMMessageTransmitter *)messageTransmitter {
     if (!_messageTransmitter) {
-        _messageTransmitter = [self newMessageTransmitter];
+        _messageTransmitter = [self createMessageTransmitter];
     }
     return _messageTransmitter;
 }
-- (DIMMessageTransmitter *)newMessageTransmitter {
+- (DIMMessageTransmitter *)createMessageTransmitter {
     return [[DIMMessageTransmitter alloc] initWithMessenger:self];
 }
 

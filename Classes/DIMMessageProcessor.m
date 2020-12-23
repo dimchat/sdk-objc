@@ -93,9 +93,9 @@
 
 @end
 
-@implementation DIMMessageProcessor (Plugins)
+@implementation DIMMessageProcessor (Register)
 
-+ (void)loadPlugins {
++ (void)registerAllFactories {
     //
     //  Register core parsers
     //
@@ -115,7 +115,9 @@
     DIMCommandFactoryRegisterClass(DIMCommand_Storage, DIMStorageCommand);
     DIMCommandFactoryRegisterClass(DIMCommand_Contacts, DIMStorageCommand);
     DIMCommandFactoryRegisterClass(DIMCommand_PrivateKey, DIMStorageCommand);
-    
+}
+
++ (void)registerAllProcessors {
     //
     //  Register processors
     //

@@ -124,9 +124,9 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
 @property (readonly, strong, nonatomic) DIMMessageProcessor *messageProcessor;
 @property (readonly, strong, nonatomic) DIMMessageTransmitter *messageTransmitter;
 
-- (DIMMessagePacker *)newMessagePacker;
-- (DIMMessageProcessor *)newMessageProcessor;
-- (DIMMessageTransmitter *)newMessageTransmitter;
+- (DIMMessagePacker *)createMessagePacker;
+- (DIMMessageProcessor *)createMessageProcessor;
+- (DIMMessageTransmitter *)createMessageTransmitter;
 
 @end
 

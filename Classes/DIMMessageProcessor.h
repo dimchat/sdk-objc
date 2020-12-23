@@ -47,9 +47,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface DIMMessageProcessor (Plugins)
+@interface DIMMessageProcessor (Register)
 
-+ (void)loadPlugins;
++ (void)registerAllFactories;
++ (void)registerAllProcessors;
 
 @end
 
