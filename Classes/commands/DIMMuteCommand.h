@@ -41,11 +41,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 #define DIMCommand_Mute   @"mute"
 
-@interface DIMMuteCommand : DIMCommand
-
-// mute-list
-@property (strong, nonatomic, nullable) NSArray<id<MKMID>> *list;
-
 /*
  *  MuteCommand message: {
  *      type : 0x88,
@@ -54,6 +49,15 @@ NS_ASSUME_NONNULL_BEGIN
  *      list    : [] // mute-list; if it's None, means querying mute-list from station
  *  }
  */
+@protocol DIMMuteCommand <DIMCommand>
+
+// mute-list
+@property (strong, nonatomic, nullable) NSArray<id<MKMID>> *list;
+
+@end
+
+@interface DIMMuteCommand : DIMCommand <DIMMuteCommand>
+
 - (instancetype)initWithList:(nullable NSArray<id<MKMID>> *)muteList;
 
 @end

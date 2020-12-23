@@ -43,7 +43,22 @@ NS_ASSUME_NONNULL_BEGIN
 #define DIMCommand_Contacts   @"contacts"
 #define DIMCommand_PrivateKey @"private_key"
 
-@interface DIMStorageCommand : DIMCommand
+/*
+ *  Command message: {
+ *      type : 0x88,
+ *      sn   : 123,
+ *
+ *      command : "storage",
+ *      title   : "key name",  // "contacts", "private_key", ...
+ *
+ *      data    : "...",       // base64_encode(symmetric)
+ *      key     : "...",       // base64_encode(asymmetric)
+ *
+ *      // -- extra info
+ *      //...
+ *  }
+ */
+@protocol DIMStorageCommand <DIMCommand>
 
 @property (readonly, strong, nonatomic) NSString *title;
 
@@ -66,21 +81,10 @@ NS_ASSUME_NONNULL_BEGIN
 //
 @property (strong, nonatomic, nullable) NSData *key;
 
-/*
-*  Command message: {
-*      type : 0x88,
-*      sn   : 123,
-*
-*      command : "storage",
-*      title   : "key name",  // "contacts", "private_key", ...
-*
-*      data    : "...",       // base64_encode(symmetric)
-*      key     : "...",       // base64_encode(asymmetric)
-*
-*      // -- extra info
-*      //...
-*  }
-*/
+@end
+
+@interface DIMStorageCommand : DIMCommand <DIMStorageCommand>
+
 - (instancetype)initWithTitle:(NSString *)title;
 
 #pragma mark Decryption

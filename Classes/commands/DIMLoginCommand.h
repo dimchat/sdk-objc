@@ -64,7 +64,7 @@ NS_ASSUME_NONNULL_BEGIN
  *      }
  *  }
  */
-@interface DIMLoginCommand : DIMCommand
+@protocol DIMLoginCommand <DIMCommand>
 
 #pragma mark Client Info
 
@@ -81,6 +81,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (strong, nonatomic) NSDictionary *stationInfo;
 // SP
 @property (strong, nonatomic, nullable) NSDictionary *providerInfo;
+
+@end
+
+@interface DIMLoginCommand : DIMCommand <DIMLoginCommand>
 
 - (instancetype)initWithID:(id<MKMID>)ID;
 

@@ -41,11 +41,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 #define DIMCommand_Block   @"block"
 
-@interface DIMBlockCommand : DIMCommand
-
-// block-list
-@property (strong, nonatomic, nullable) NSArray<id<MKMID>> *list;
-
 /*
  *  BlockCommand message: {
  *      type : 0x88,
@@ -54,6 +49,15 @@ NS_ASSUME_NONNULL_BEGIN
  *      list    : [] // block-list; if it's None, means querying block-list from station
  *  }
  */
+@protocol DIMBlockCommand <DIMCommand>
+
+// block-list
+@property (strong, nonatomic, nullable) NSArray<id<MKMID>> *list;
+
+@end
+
+@interface DIMBlockCommand : DIMCommand <DIMBlockCommand>
+
 - (instancetype)initWithList:(nullable NSArray<id<MKMID>> *)blockList;
 
 @end
