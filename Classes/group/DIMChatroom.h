@@ -114,7 +114,7 @@ typedef UInt8 DIMMemberRole;
 
 #pragma mark - Chatroom
 
-@interface DIMChatroom : MKMGroup
+@interface DIMChatroom : DIMGroup
 
 @property (readonly, copy, nonatomic) NSArray<id<MKMID>> *admins;
 
@@ -126,7 +126,7 @@ typedef UInt8 DIMMemberRole;
 
 #pragma mark - Chatroom Delegate
 
-@protocol DIMChatroomDataSource <MKMGroupDataSource>
+@protocol DIMChatroomDataSource <DIMGroupDataSource>
 
 /**
  *  Get chatroom admin list

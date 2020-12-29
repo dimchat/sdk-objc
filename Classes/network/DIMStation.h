@@ -35,7 +35,7 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import <MingKeMing/MingKeMing.h>
+#import <DIMCore/DIMCore.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -43,7 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol DIMStationDelegate;
 
-@interface DIMStation : MKMUser
+@interface DIMStation : DIMUser
 
 @property (readonly, strong, nonatomic) NSString *host; // Domain/IP
 @property (readonly, nonatomic)         UInt32    port; // default: 9394

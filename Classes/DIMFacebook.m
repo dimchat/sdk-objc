@@ -48,8 +48,8 @@
 
 @implementation DIMFacebook
 
-- (nullable MKMUser *)currentUser {
-    NSArray<MKMUser *> *users = self.localUsers;
+- (nullable DIMUser *)currentUser {
+    NSArray<DIMUser *> *users = self.localUsers;
     if ([users count] == 0) {
         return nil;
     }
@@ -129,16 +129,16 @@
 
 #pragma mark DIMBarrack
 
-- (nullable MKMUser *)createUser:(id<MKMID>)ID {
+- (nullable DIMUser *)createUser:(id<MKMID>)ID {
     if (MKMIDIsBroadcast(ID)) {
         // create user 'anyone@anywhere'
-        return [[MKMUser alloc] initWithID:ID];
+        return [[DIMUser alloc] initWithID:ID];
     }
     NSAssert([self metaForID:ID], @"meta not found for user: %@", ID);
     // TODO: make sure visa key exists before calling this
     MKMNetworkType type = ID.type;
     if (type == MKMNetwork_Main || type == MKMNetwork_BTCMain) {
-        return [[MKMUser alloc] initWithID:ID];
+        return [[DIMUser alloc] initWithID:ID];
     }
     if (type == MKMNetwork_Robot) {
         return [[DIMRobot alloc] initWithID:ID];
@@ -150,10 +150,10 @@
     return nil;
 }
 
-- (nullable MKMGroup *)createGroup:(id<MKMID>)ID {
+- (nullable DIMGroup *)createGroup:(id<MKMID>)ID {
     if (MKMIDIsBroadcast(ID)) {
         // create group 'everyone@everywhere'
-        return [[MKMGroup alloc] initWithID:ID];
+        return [[DIMGroup alloc] initWithID:ID];
     }
     NSAssert([self metaForID:ID], @"failed to get meta for group: %@", ID);
     MKMNetworkType type = ID.type;

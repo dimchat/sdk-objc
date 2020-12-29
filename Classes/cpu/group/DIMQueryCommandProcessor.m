@@ -70,7 +70,7 @@
     }
     
     // 2. respond
-    MKMUser *user = [self.facebook currentUser];
+    DIMUser *user = [self.facebook currentUser];
     NSAssert(user, @"current user not set");
     if ([user.ID isEqual:owner]) {
         return [[DIMResetGroupCommand alloc] initWithGroup:group members:members];

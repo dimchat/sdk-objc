@@ -43,7 +43,7 @@
     NSMutableDictionary<id<MKMID>, id<MKMPrivateKey>> *_privateTable;
     NSMutableDictionary<id<MKMID>, id<MKMMeta>>       *_metaTable;
     NSMutableDictionary<id<MKMID>, id<MKMDocument>>   *_profileTable;
-    NSMutableDictionary<id<MKMID>, MKMUser *>         *_userTable;
+    NSMutableDictionary<id<MKMID>, DIMUser *>         *_userTable;
 }
 
 @end
@@ -166,7 +166,7 @@
     return YES;
 }
 
-- (BOOL)cacheUser:(MKMUser *)user {
+- (BOOL)cacheUser:(DIMUser *)user {
     if (user.dataSource == nil) {
         user.dataSource = self;
     }
@@ -176,11 +176,11 @@
 
 #pragma mark -
 
-- (nullable MKMUser *)userWithID:(id<MKMID>)ID {
-    MKMUser *user = [_userTable objectForKey:ID];
+- (nullable DIMUser *)userWithID:(id<MKMID>)ID {
+    DIMUser *user = [_userTable objectForKey:ID];
     if (!user) {
         if ([_idTable objectForKey:ID.string]) {
-            user = [[MKMUser alloc] initWithID:ID];
+            user = [[DIMUser alloc] initWithID:ID];
             [self cacheUser:user];
         }
     }

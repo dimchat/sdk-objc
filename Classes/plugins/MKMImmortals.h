@@ -35,7 +35,7 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import <MingKeMing/MingKeMing.h>
+#import <DIMCore/DIMCore.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -50,10 +50,10 @@ NS_ASSUME_NONNULL_BEGIN
  *      1. Immortal Hulk
  *      2. Monkey King
  */
-@interface MKMImmortals : NSObject <MKMEntityDataSource,
-                                    MKMUserDataSource>
+@interface MKMImmortals : NSObject <DIMEntityDataSource,
+                                    DIMUserDataSource>
 
-- (nullable MKMUser *)userWithID:(id<MKMID>)ID;
+- (nullable DIMUser *)userWithID:(id<MKMID>)ID;
 
 @end
 

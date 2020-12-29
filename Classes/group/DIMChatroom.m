@@ -52,7 +52,7 @@
 
 - (NSArray<id<MKMID>> *)admins {
     NSAssert(self.dataSource, @"chatroom data source not set yet");
-    NSArray *list = [self.dataSource adminsOfChatroom:_ID];
+    NSArray *list = [self.dataSource adminsOfChatroom:self.ID];
     return [list mutableCopy];
 }
 

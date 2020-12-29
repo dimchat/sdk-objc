@@ -35,13 +35,13 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import <MingKeMing/MingKeMing.h>
+#import <DIMCore/DIMCore.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 @class DIMStation;
 
-@interface DIMServiceProvider : MKMGroup
+@interface DIMServiceProvider : DIMGroup
 
 @property (readonly, copy, nonatomic) NSArray<id<MKMID>> *stations;
 

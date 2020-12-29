@@ -54,7 +54,7 @@
 
 - (NSArray<id<MKMID>> *)stations {
     NSAssert(self.dataSource, @"data source not set yet");
-    NSArray *list = [self.dataSource membersOfGroup:_ID];
+    NSArray *list = [self.dataSource membersOfGroup:self.ID];
     return [list mutableCopy];
 }
 

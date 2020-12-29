@@ -56,7 +56,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @return first local user
  */
-@property (readonly, strong, nonatomic, nullable) MKMUser *currentUser;
+@property (readonly, strong, nonatomic, nullable) DIMUser *currentUser;
 
 /**
  *  Save meta for entity ID (must verify first)
