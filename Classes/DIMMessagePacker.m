@@ -42,21 +42,26 @@
 
 @implementation DIMMessagePacker
 
+- (instancetype)initWithTransceiver:(DIMTransceiver *)transceiver {
+    NSAssert(false, @"don't call me!");
+    DIMMessenger *messenger = (DIMMessenger *)transceiver;
+    return [self initWithMessenger:messenger];
+}
+
+/* designated initializer */
 - (instancetype)initWithMessenger:(DIMMessenger *)messenger {
-    if (self = [super initWithEntityDelegate:messenger.barrack
-                           cipherKeyDelegate:messenger.keyCache
-                             messageDelegate:messenger]) {
+    if (self = [super initWithTransceiver:messenger]) {
         //
     }
     return self;
 }
 
-- (DIMFacebook *)facebook {
-    return [self.messenger facebook];
-}
-
 - (DIMMessenger *)messenger {
     return (DIMMessenger *) self.transceiver;
+}
+
+- (DIMFacebook *)facebook {
+    return [self.messenger facebook];
 }
 
 - (BOOL)isWaiting:(id<MKMID>)ID {

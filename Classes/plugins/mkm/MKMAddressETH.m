@@ -58,7 +58,56 @@ static inline NSString *eip55(NSString *hex) {
     return [[NSString alloc] initWithBytes:buffer length:40 encoding:NSUTF8StringEncoding];
 }
 
+static inline BOOL is_eth(NSString *address) {
+    if (address.length != 42) {
+        return NO;
+    }
+    NSData *data = MKMUTF8Encode(address);
+    UInt8 *buffer = (UInt8 *)data.bytes;
+    if (buffer[0] != '0' || buffer[1]!= 'x') {
+        return NO;
+    }
+    char ch;
+    for (int i = 2; i < 42; ++i) {
+        ch = buffer[i];
+        if (ch >= '0' && ch <= '9') {
+            continue;
+        }
+        if (ch >= 'A' && ch <= 'Z') {
+            continue;
+        }
+        if (ch >= 'a' && ch <= 'z') {
+            continue;
+        }
+        // unexpected character
+        return NO;
+    }
+    return YES;
+}
+
 @implementation MKMAddressETH
+
+- (BOOL)isUser {
+    return YES;
+}
+
+- (BOOL)isGroup {
+    return NO;
+}
+
++ (NSString *)validateAddress:(NSString *)address {
+    if (is_eth(address)) {
+        address = [address substringFromIndex:2];
+        address = [address lowercaseString];
+        return [NSString stringWithFormat:@"0x%@", eip55(address)];
+    }
+    return nil;
+}
+
++ (BOOL)isValidate:(NSString *)address {
+    NSString *validate = [self validateAddress:address];
+    return [validate isEqualToString:address];
+}
 
 + (instancetype)generate:(NSData *)fingerprint {
     if (fingerprint.length == 65) {
@@ -75,67 +124,10 @@ static inline NSString *eip55(NSString *hex) {
 }
 
 + (instancetype)parse:(NSString *)string {
-    NSUInteger len = string.length;
-    if (len != 42) {
-        return nil;
+    if (is_eth(string)) {
+        return [[self alloc] initWithString:string network:MKMNetwork_Main];
     }
-    NSData *data = MKMUTF8Encode(string);
-    UInt8 *buffer = (UInt8 *)data.bytes;
-    if (buffer[0] != '0' || buffer[1] != 'x') {
-        return nil;
-    }
-    UInt8 ch;
-    for (int i = 2; i < len; ++i) {
-        ch = buffer[i];
-        if (ch >= '0' && ch <= '9') {
-            continue;
-        }
-        if (ch >= 'A' && ch <= 'F') {
-            continue;
-        }
-        if (ch >= 'a' && ch <= 'f') {
-            continue;
-        }
-        return nil;
-    }
-    return [[self alloc] initWithString:string network:MKMNetwork_Main];
-}
-
-+ (NSString *)validateAddress:(NSString *)address {
-    address = [address lowercaseString];
-    if ([address hasPrefix:@"0x"]) {
-        address = [address substringFromIndex:2];
-    }
-    return [NSString stringWithFormat:@"0x%@", eip55(address)];
-}
-
-+ (BOOL)isValidate:(NSString *)address {
-    NSUInteger len = address.length;
-    if (len != 42) {
-        return NO;
-    }
-    NSData *data = MKMUTF8Encode(address);
-    UInt8 *buffer = (UInt8 *)data.bytes;
-    if (buffer[0] != '0' || buffer[1]!= 'x') {
-        return false;
-    }
-    char ch;
-    for (int i = 2; i < 42; ++i) {
-        ch = buffer[i];
-        if (ch >= '0' && ch <= '9') {
-            continue;
-        }
-        if (ch >= 'A' && ch <= 'Z') {
-            continue;
-        }
-        if (ch >= 'a' && ch <= 'z') {
-            continue;
-        }
-        // unexpected character
-        return false;
-    }
-    NSString *hex = [address substringFromIndex:2];
-    return [eip55([hex lowercaseString]) isEqualToString:hex];
+    return nil;
 }
 
 @end

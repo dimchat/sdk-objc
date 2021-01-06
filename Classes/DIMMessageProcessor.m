@@ -52,10 +52,15 @@
 
 @implementation DIMMessageProcessor
 
-- (instancetype)initWithMessenger:(DIMMessenger *)transceiver {
-    if (self = [super initWithEntityDelegate:transceiver.barrack
-                             messageDelegate:transceiver
-                                      packer:transceiver.messagePacker]) {
+- (instancetype)initWithTransceiver:(DIMTransceiver *)transceiver {
+    NSAssert(false, @"don't call me!");
+    DIMMessenger *messenger = (DIMMessenger *)transceiver;
+    return [self initWithMessenger:messenger];
+}
+
+/* designated initializer */
+- (instancetype)initWithMessenger:(DIMMessenger *)messenger {
+    if (self = [super initWithTransceiver:messenger]) {
         //
     }
     return self;

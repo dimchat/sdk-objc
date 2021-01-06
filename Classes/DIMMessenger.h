@@ -108,6 +108,7 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
 
 #pragma mark -
 
+@protocol DIMTransmitter;
 @class DIMFacebook;
 @class DIMMessagePacker;
 @class DIMMessageProcessor;
@@ -118,12 +119,14 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
 @property (weak, nonatomic) id<DIMMessengerDelegate> delegate;
 @property (weak, nonatomic) id<DIMMessengerDataSource> dataSource;
 
-@property (weak, nonatomic) DIMFacebook *facebook;
+@property (weak, nonatomic) id<DIMTransmitter> transmitter;
 
-@property (readonly, strong, nonatomic) DIMMessagePacker *messagePacker;
-@property (readonly, strong, nonatomic) DIMMessageProcessor *messageProcessor;
-@property (readonly, strong, nonatomic) DIMMessageTransmitter *messageTransmitter;
+@property (strong, nonatomic) DIMFacebook *facebook;
+@property (strong, nonatomic) DIMMessagePacker *messagePacker;
+@property (strong, nonatomic) DIMMessageProcessor *messageProcessor;
+@property (strong, nonatomic) DIMMessageTransmitter *messageTransmitter;
 
+- (DIMFacebook *)createFacebook;
 - (DIMMessagePacker *)createMessagePacker;
 - (DIMMessageProcessor *)createMessageProcessor;
 - (DIMMessageTransmitter *)createMessageTransmitter;

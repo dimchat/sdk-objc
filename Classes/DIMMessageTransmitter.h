@@ -40,12 +40,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMMessageTransmitter : NSObject
-
-@property (readonly, weak, nonatomic) DIMMessenger *messenger;
-@property (readonly, weak, nonatomic) DIMMessagePacker *messagePacker;
-
-- (instancetype)initWithMessenger:(DIMMessenger *)transceiver;
+@protocol DIMTransmitter <NSObject>
 
 /**
  *  Send message content to receiver
@@ -77,6 +72,15 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)sendReliableMessage:(id<DKDReliableMessage>)rMsg
                    callback:(nullable DIMMessengerCallback)callback
                    priority:(NSInteger)prior;
+
+@end
+
+@interface DIMMessageTransmitter : NSObject <DIMTransmitter>
+
+@property (readonly, weak, nonatomic) DIMMessenger *messenger;
+@property (readonly, weak, nonatomic) id<DIMPacker> packer;
+
+- (instancetype)initWithMessenger:(DIMMessenger *)transceiver;
 
 @end
 

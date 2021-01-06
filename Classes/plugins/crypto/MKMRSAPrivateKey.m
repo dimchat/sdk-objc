@@ -105,7 +105,7 @@
 - (NSData *)data {
     if (!_data) {
         NSString *pem = [self objectForKey:@"data"];
-        _data = [MKMSecKeyHelper privateKeyDataFromContent:pem algorithm:ACAlgorithmRSA];
+        _data = [MKMSecKeyHelper privateKeyDataFromContent:pem algorithm:MKMAlgorithmRSA];
     }
     return _data;
 }
@@ -147,8 +147,8 @@
         NSString *pem = [self objectForKey:@"data"];
         if (pem) {
             // key from data
-            NSData *data = [MKMSecKeyHelper privateKeyDataFromContent:pem algorithm:ACAlgorithmRSA];
-            _privateKeyRef = [MKMSecKeyHelper privateKeyFromData:data algorithm:ACAlgorithmRSA];
+            NSData *data = [MKMSecKeyHelper privateKeyDataFromContent:pem algorithm:MKMAlgorithmRSA];
+            _privateKeyRef = [MKMSecKeyHelper privateKeyFromData:data algorithm:MKMAlgorithmRSA];
             return _privateKeyRef;
         }
         
@@ -177,7 +177,7 @@
         NSAssert(_privateKeyRef, @"RSA private key ref should be set here");
         
         // 2.4. key to data
-        pem = [MKMSecKeyHelper serializePrivateKey:_privateKeyRef algorithm:ACAlgorithmRSA];
+        pem = [MKMSecKeyHelper serializePrivateKey:_privateKeyRef algorithm:MKMAlgorithmRSA];
         [self setObject:pem forKey:@"data"];
         
         // 3. other parameters
@@ -192,8 +192,8 @@
     if (!_publicKey) {
         // get public key content from private key
         SecKeyRef publicKeyRef = SecKeyCopyPublicKey(self.privateKeyRef);
-        NSString *pem = [MKMSecKeyHelper serializePublicKey:publicKeyRef algorithm:ACAlgorithmRSA];
-        NSDictionary *dict = @{@"algorithm":ACAlgorithmRSA,
+        NSString *pem = [MKMSecKeyHelper serializePublicKey:publicKeyRef algorithm:MKMAlgorithmRSA];
+        NSDictionary *dict = @{@"algorithm":MKMAlgorithmRSA,
                                @"data"     :pem,
                                @"mode"     :@"ECB",
                                @"padding"  :@"PKCS1",
@@ -263,6 +263,10 @@
     
     NSAssert(signature, @"RSA sign failed");
     return signature;
+}
+
+- (BOOL)isMatch:(id<MKMEncryptKey>)pKey {
+    return MKMCryptographyKeysMatch(self, pKey);
 }
 
 @end

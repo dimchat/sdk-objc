@@ -42,10 +42,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMMessagePacker : DIMPacker
 
-@property (readonly, weak, nonatomic) DIMFacebook *facebook;
 @property (readonly, weak, nonatomic) DIMMessenger *messenger;
+@property (readonly, weak, nonatomic) DIMFacebook *facebook;
 
-- (instancetype)initWithMessenger:(DIMMessenger *)messenger;
+- (instancetype)initWithMessenger:(DIMMessenger *)messenger
+NS_DESIGNATED_INITIALIZER;
 
 @end
 

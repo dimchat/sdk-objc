@@ -69,7 +69,7 @@ static NSString *s_application_tag = @"chat.dim.ecc.private";
         // private key
         NSData *privateKeyData = (__bridge NSData *)result;
         NSString *hex = MKMHexEncode(privateKeyData);
-        NSString *algorithm = ACAlgorithmECC;
+        NSString *algorithm = MKMAlgorithmECC;
         NSDictionary *keyInfo = @{@"algorithm":algorithm,
                                   @"data"     :hex,
                                   };

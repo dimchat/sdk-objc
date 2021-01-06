@@ -51,6 +51,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface MKMAddressETH : MKMAddress
 
++ (NSString *)validateAddress:(NSString *)address;
++ (BOOL)isValidate:(NSString *)address;
+
 /**
  *  Generate ETH address with key.data
  *
@@ -66,9 +69,6 @@ NS_ASSUME_NONNULL_BEGIN
  * @return null on error
  */
 + (instancetype)parse:(NSString *)string;
-
-+ (NSString *)validateAddress:(NSString *)address;
-+ (BOOL)isValidate:(NSString *)address;
 
 @end
 

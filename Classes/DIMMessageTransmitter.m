@@ -56,8 +56,8 @@
     return self;
 }
 
-- (DIMMessagePacker *)messagePacker {
-    return [self.messenger messagePacker];
+- (id<DIMPacker>)packer {
+    return [self.messenger packer];
 }
 
 - (BOOL)sendContent:(id<DKDContent>)content sender:(id<MKMID>)from receiver:(id<MKMID>)to callback:(nullable DIMMessengerCallback)fn priority:(NSInteger)prior {
@@ -70,13 +70,13 @@
 
 - (BOOL)sendInstantMessage:(id<DKDInstantMessage>)iMsg callback:(nullable DIMMessengerCallback)fn priority:(NSInteger)prior {
     // Send message (secured + certified) to target station
-    id<DKDSecureMessage> sMsg = [self.messagePacker encryptMessage:iMsg];
+    id<DKDSecureMessage> sMsg = [self.packer encryptMessage:iMsg];
     if (!sMsg) {
         // public key not found?
         NSAssert(false, @"failed to encrypt message: %@", iMsg);
         return NO;
     }
-    id<DKDReliableMessage> rMsg = [self.messagePacker signMessage:sMsg];
+    id<DKDReliableMessage> rMsg = [self.packer signMessage:sMsg];
     if (!rMsg) {
         NSAssert(false, @"failed to sign message: %@", sMsg);
         DKDContent *content = iMsg.content;

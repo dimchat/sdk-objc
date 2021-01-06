@@ -43,7 +43,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (readonly, weak, nonatomic) DIMMessenger *messenger;
 
-- (instancetype)initWithMessenger:(DIMMessenger *)transceiver;
+- (instancetype)initWithMessenger:(DIMMessenger *)transceiver
+NS_DESIGNATED_INITIALIZER;
 
 @end
 

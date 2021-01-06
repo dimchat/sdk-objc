@@ -150,7 +150,7 @@
             _data = MKMHexDecode(pem);
         } else if (len > 0) {
             // PEM
-            _data = [MKMSecKeyHelper publicKeyDataFromContent:pem algorithm:ACAlgorithmECC];
+            _data = [MKMSecKeyHelper publicKeyDataFromContent:pem algorithm:MKMAlgorithmECC];
             
             if (_data.length > 65) {
                 // FIXME: X.509 -> Uncompressed Point

@@ -132,7 +132,7 @@ NSString *NSStringFromKeyContent(NSString *content, NSString *tag) {
 @implementation MKMSecKeyHelper
 
 + (NSData *)publicKeyDataFromContent:(NSString *)pem algorithm:(NSString *)name {
-    if ([name isEqualToString:ACAlgorithmECC]) {
+    if ([name isEqualToString:MKMAlgorithmECC]) {
         name = @"EC";
     }
     NSString *base64 = KeyContentFromPEM(pem, name, @"PUBLIC");
@@ -140,10 +140,10 @@ NSString *NSStringFromKeyContent(NSString *content, NSString *tag) {
 }
 
 + (SecKeyRef)publicKeyFromData:(NSData *)data algorithm:(NSString *)name {
-    if ([name isEqualToString:ACAlgorithmECC]) {
+    if ([name isEqualToString:MKMAlgorithmECC]) {
         name = @"EC";
     }
-    if ([name isEqualToString:ACAlgorithmRSA]) {
+    if ([name isEqualToString:MKMAlgorithmRSA]) {
         return SecKeyRefFromData(data, (__bridge id)kSecAttrKeyTypeRSA, (__bridge id)kSecAttrKeyClassPublic);
     } else if ([name isEqualToString:@"EC"]) {
         return SecKeyRefFromData(data, (__bridge id)kSecAttrKeyTypeECSECPrimeRandom, (__bridge id)kSecAttrKeyClassPublic);
@@ -153,7 +153,7 @@ NSString *NSStringFromKeyContent(NSString *content, NSString *tag) {
 }
 
 + (NSData *)privateKeyDataFromContent:(NSString *)pem algorithm:(NSString *)name {
-    if ([name isEqualToString:ACAlgorithmECC]) {
+    if ([name isEqualToString:MKMAlgorithmECC]) {
         name = @"EC";
     }
     NSString *base64 = KeyContentFromPEM(pem, name, @"PRIVATE");
@@ -161,10 +161,10 @@ NSString *NSStringFromKeyContent(NSString *content, NSString *tag) {
 }
 
 + (SecKeyRef)privateKeyFromData:(NSData *)data algorithm:(NSString *)name {
-    if ([name isEqualToString:ACAlgorithmECC]) {
+    if ([name isEqualToString:MKMAlgorithmECC]) {
         name = @"EC";
     }
-    if ([name isEqualToString:ACAlgorithmRSA]) {
+    if ([name isEqualToString:MKMAlgorithmRSA]) {
         return SecKeyRefFromData(data, (__bridge id)kSecAttrKeyTypeRSA, (__bridge id)kSecAttrKeyClassPrivate);
     } else if ([name isEqualToString:@"EC"]) {
         return SecKeyRefFromData(data, (__bridge id)kSecAttrKeyTypeECSECPrimeRandom, (__bridge id)kSecAttrKeyClassPrivate);
@@ -184,7 +184,7 @@ NSString *NSStringFromKeyContent(NSString *content, NSString *tag) {
 }
 
 + (NSString *)serializePrivateKey:(SecKeyRef)sKey algorithm:(NSString *)name {
-    if ([name isEqualToString:ACAlgorithmECC]) {
+    if ([name isEqualToString:MKMAlgorithmECC]) {
         name = @"EC";
     }
     NSString *tag = [NSString stringWithFormat:@"%@ PRIVATE", name];

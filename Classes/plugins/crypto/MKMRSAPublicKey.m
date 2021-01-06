@@ -96,7 +96,7 @@
 - (NSData *)data {
     if (!_data) {
         NSString *pem = [self objectForKey:@"data"];
-        _data = [MKMSecKeyHelper publicKeyDataFromContent:pem algorithm:ACAlgorithmRSA];
+        _data = [MKMSecKeyHelper publicKeyDataFromContent:pem algorithm:MKMAlgorithmRSA];
     }
     return _data;
 }
@@ -134,7 +134,7 @@
 
 - (SecKeyRef)publicKeyRef {
     if (!_publicKeyRef) {
-        _publicKeyRef = [MKMSecKeyHelper publicKeyFromData:self.data algorithm:ACAlgorithmRSA];
+        _publicKeyRef = [MKMSecKeyHelper publicKeyFromData:self.data algorithm:MKMAlgorithmRSA];
     }
     return _publicKeyRef;
 }

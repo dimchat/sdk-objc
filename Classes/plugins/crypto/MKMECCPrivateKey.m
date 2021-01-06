@@ -129,7 +129,7 @@
             _data = MKMHexDecode(pem);
         } else if (len > 0) {
             // PEM
-            _data = [MKMSecKeyHelper privateKeyDataFromContent:pem algorithm:ACAlgorithmECC];
+            _data = [MKMSecKeyHelper privateKeyDataFromContent:pem algorithm:MKMAlgorithmECC];
         } else {
             // generate it
             unsigned char seed[32];
@@ -171,7 +171,7 @@
         
         NSData *data = [[NSData alloc] initWithBytes:result length:len];
         NSString *hex = MKMHexEncode(data);
-        NSDictionary *dict = @{@"algorithm":ACAlgorithmECC,
+        NSDictionary *dict = @{@"algorithm":MKMAlgorithmECC,
                                @"data"     :hex,
                                @"curve"    :@"secp256k1",
                                @"digest"   :@"SHA256",

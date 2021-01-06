@@ -38,20 +38,12 @@
 #import "DIMContentProcessor.h"
 #import "DIMFileContentProcessor.h"
 
+#import "DIMFacebook.h"
+#import "DIMMessagePacker.h"
 #import "DIMMessageProcessor.h"
 #import "DIMMessageTransmitter.h"
 
-#import "DIMFacebook.h"
-
 #import "DIMMessenger.h"
-
-@interface DIMMessenger ()
-
-@property (strong, nonatomic) DIMMessagePacker *messagePacker;
-@property (strong, nonatomic) DIMMessageProcessor *messageProcessor;
-@property (strong, nonatomic) DIMMessageTransmitter *messageTransmitter;
-
-@end
 
 @implementation DIMMessenger
 
@@ -61,6 +53,9 @@
         _delegate = nil;
         _dataSource = nil;
         
+        _transmitter = nil;
+        
+        _facebook = nil;
         _messagePacker = nil;
         _messageProcessor = nil;
         _messageTransmitter = nil;
@@ -68,13 +63,45 @@
     return self;
 }
 
-- (DIMFacebook *)facebook {
-    return (DIMFacebook *)self.barrack;
+- (id<DIMEntityDelegate>)barrack {
+    id<DIMEntityDelegate> delegate = [super barrack];
+    if (!delegate) {
+        delegate = [self facebook];
+        self.barrack = delegate;
+    }
+    return delegate;
 }
-- (void)setFacebook:(DIMFacebook *)facebook {
-    self.barrack = facebook;
+- (void)setBarrack:(id<DIMEntityDelegate>)barrack {
+    [super setBarrack:barrack];
+    if ([barrack isKindOfClass:[DIMFacebook class]]) {
+        _facebook = (DIMFacebook *)barrack;
+    }
+}
+- (DIMFacebook *)facebook {
+    if (!_facebook) {
+        _facebook = [self createFacebook];
+    }
+    return _facebook;
+}
+- (DIMFacebook *)createFacebook {
+    NSAssert(false, @"implement me!");
+    return nil;
 }
 
+- (id<DIMPacker>)packer {
+    id<DIMPacker> delegate = [super packer];
+    if (!delegate) {
+        delegate = [self messagePacker];
+        self.packer = delegate;
+    }
+    return delegate;
+}
+- (void)setPacker:(id<DIMPacker>)packer {
+    [super setPacker:packer];
+    if ([packer isKindOfClass:[DIMMessagePacker class]]) {
+        _messagePacker = (DIMMessagePacker *)packer;
+    }
+}
 - (DIMMessagePacker *)messagePacker {
     if (!_messagePacker) {
         _messagePacker = [self createMessagePacker];
@@ -85,6 +112,20 @@
     return [[DIMMessagePacker alloc] initWithMessenger:self];
 }
 
+- (id<DIMProcessor>)processor {
+    id<DIMProcessor> delegate = [super processor];
+    if (!delegate) {
+        delegate = [self messageProcessor];
+        self.processor = delegate;
+    }
+    return delegate;
+}
+- (void)setProcessor:(id<DIMProcessor>)processor {
+    [super setProcessor:processor];
+    if ([processor isKindOfClass:[DIMMessageProcessor class]]) {
+        _messageProcessor = (DIMMessageProcessor *)processor;
+    }
+}
 - (DIMMessageProcessor *)messageProcessor {
     if (!_messageProcessor) {
         _messageProcessor = [self createMessageProcessor];
@@ -95,6 +136,12 @@
     return [[DIMMessageProcessor alloc] initWithMessenger:self];
 }
 
+- (id<DIMTransmitter>)transmitter {
+    if (!_transmitter) {
+        _transmitter = [self messageTransmitter];
+    }
+    return _transmitter;
+}
 - (DIMMessageTransmitter *)messageTransmitter {
     if (!_messageTransmitter) {
         _messageTransmitter = [self createMessageTransmitter];
