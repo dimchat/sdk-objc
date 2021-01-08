@@ -45,6 +45,21 @@
 
 #import "DIMMessenger.h"
 
+@interface DIMMessenger () {
+    
+    //id<DIMMessengerDelegate> _delegate;
+    //id<DIMMessengerDataSource> _dataSource;
+    
+    id<DIMTransmitter> _transmitter;
+    
+    DIMFacebook *_facebook;
+    DIMMessagePacker *_messagePacker;
+    DIMMessageProcessor *_messageProcessor;
+    DIMMessageTransmitter *_messageTransmitter;
+}
+
+@end
+
 @implementation DIMMessenger
 
 - (instancetype)init {
@@ -63,11 +78,13 @@
     return self;
 }
 
+#pragma mark Facebook (EntityDelegate)
+
 - (id<DIMEntityDelegate>)barrack {
     id<DIMEntityDelegate> delegate = [super barrack];
     if (!delegate) {
         delegate = [self facebook];
-        self.barrack = delegate;
+        [super setBarrack:delegate];
     }
     return delegate;
 }
@@ -88,11 +105,13 @@
     return nil;
 }
 
+#pragma mark Message Packer
+
 - (id<DIMPacker>)packer {
     id<DIMPacker> delegate = [super packer];
     if (!delegate) {
         delegate = [self messagePacker];
-        self.packer = delegate;
+        [super setPacker:delegate];
     }
     return delegate;
 }
@@ -112,11 +131,13 @@
     return [[DIMMessagePacker alloc] initWithMessenger:self];
 }
 
+#pragma mark Message Processor
+
 - (id<DIMProcessor>)processor {
     id<DIMProcessor> delegate = [super processor];
     if (!delegate) {
         delegate = [self messageProcessor];
-        self.processor = delegate;
+        [super setProcessor:delegate];
     }
     return delegate;
 }
@@ -136,11 +157,20 @@
     return [[DIMMessageProcessor alloc] initWithMessenger:self];
 }
 
+#pragma mark Message Transmitter
+
 - (id<DIMTransmitter>)transmitter {
-    if (!_transmitter) {
-        _transmitter = [self messageTransmitter];
+    id<DIMTransmitter> delegate = _transmitter;
+    if (!delegate) {
+        delegate = _transmitter = [self messageTransmitter];
     }
-    return _transmitter;
+    return delegate;
+}
+- (void)setTransmitter:(id<DIMTransmitter>)transmitter {
+    _transmitter = transmitter;
+    if ([transmitter isKindOfClass:[DIMMessageTransmitter class]]) {
+        _messageTransmitter = (DIMMessageTransmitter *)transmitter;
+    }
 }
 - (DIMMessageTransmitter *)messageTransmitter {
     if (!_messageTransmitter) {
@@ -151,6 +181,8 @@
 - (DIMMessageTransmitter *)createMessageTransmitter {
     return [[DIMMessageTransmitter alloc] initWithMessenger:self];
 }
+
+#pragma mark FPU
 
 - (DIMFileContentProcessor *)fileContentProcessor {
     DIMFileContentProcessor *fpu = [DIMContentProcessor getProcessorForType:DKDContentType_File];

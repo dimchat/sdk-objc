@@ -121,10 +121,10 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
 
 @property (weak, nonatomic) id<DIMTransmitter> transmitter;
 
-@property (strong, nonatomic) DIMFacebook *facebook;
-@property (strong, nonatomic) DIMMessagePacker *messagePacker;
-@property (strong, nonatomic) DIMMessageProcessor *messageProcessor;
-@property (strong, nonatomic) DIMMessageTransmitter *messageTransmitter;
+@property (readonly, strong, nonatomic) DIMFacebook *facebook;
+//@property (readonly, strong, nonatomic) DIMMessagePacker *messagePacker;
+//@property (readonly, strong, nonatomic) DIMMessageProcessor *messageProcessor;
+//@property (readonly, strong, nonatomic) DIMMessageTransmitter *messageTransmitter;
 
 - (DIMFacebook *)createFacebook;
 - (DIMMessagePacker *)createMessagePacker;
