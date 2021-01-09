@@ -92,7 +92,7 @@
     // 2.2. build invited-list
     NSMutableArray<id<MKMID>> *mArray = [members mutableCopy];
     NSMutableArray *addedList = [[NSMutableArray alloc] initWithCapacity:inviteList.count];
-    for (id<MKMID>item in inviteList) {
+    for (id<MKMID> item in inviteList) {
         if ([members containsObject:item]) {
             continue;
         }
@@ -103,7 +103,7 @@
     // 2.3. do invite
     if ([addedList count] > 0) {
         if ([self.facebook saveMembers:mArray group:group]) {
-            [cmd setObject:addedList forKey:@"added"];
+            [cmd setObject:[MKMID revert:addedList] forKey:@"added"];
         }
     }
     

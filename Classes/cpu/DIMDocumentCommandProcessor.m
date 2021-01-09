@@ -43,13 +43,13 @@
 @implementation DIMDocumentCommandProcessor
 
 - (nullable id<DKDContent>)_getProfileForID:(id<MKMID>)ID {
-    // query profile for ID
-    id<MKMDocument> profile = [self.facebook documentForID:ID type:@"*"];
-    if (profile) {
-        return [[DIMDocumentCommand alloc] initWithID:ID profile:profile];
+    // query document for ID
+    id<MKMDocument> doc = [self.facebook documentForID:ID type:@"*"];
+    if (doc) {
+        return [[DIMDocumentCommand alloc] initWithID:ID document:doc];
     }
     // profile not found
-    NSString *text = [NSString stringWithFormat:@"Sorry, profile not found for ID: %@", ID];
+    NSString *text = [NSString stringWithFormat:@"Sorry, document not found for ID: %@", ID];
     return [[DIMTextContent alloc] initWithText:text];
 }
 

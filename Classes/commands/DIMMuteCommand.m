@@ -45,7 +45,7 @@
     if (self = [self initWithCommand:DIMCommand_Mute]) {
         // mute-list
         if (muteList) {
-            [self setObject:muteList forKey:@"list"];
+            [self setList:muteList];
         }
     }
     return self;
@@ -57,7 +57,7 @@
 
 - (void)setList:(NSArray<id<MKMID>> *)list {
     if (list) {
-        [self setObject:list forKey:@"list"];
+        [self setObject:[MKMID revert:list] forKey:@"list"];
     } else {
         [self removeObjectForKey:@"list"];
     }

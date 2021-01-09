@@ -90,7 +90,7 @@
     if (MKMIDIsGroup(ID)) {
         // check by each member
         NSArray<id<MKMID>> *members = [self membersOfGroup:ID];
-        for (id<MKMID>item in members) {
+        for (id<MKMID> item in members) {
             meta = [self metaForID:item];
             if (!meta) {
                 // FIXME: meta not found for this member

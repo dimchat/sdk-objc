@@ -77,8 +77,8 @@
 
 - (void)setEnvelope:(id<DKDEnvelope>)envelope {
     if (envelope) {
-        [self setObject:envelope.sender forKey:@"sender"];
-        [self setObject:envelope.receiver forKey:@"receiver"];
+        [self setObject:[envelope.sender string] forKey:@"sender"];
+        [self setObject:[envelope.receiver string] forKey:@"receiver"];
         NSDate *time = envelope.time;
         if (time) {
             [self setObject:@([time timeIntervalSince1970]) forKey:@"time"];

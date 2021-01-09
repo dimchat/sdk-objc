@@ -45,7 +45,7 @@
     if (self = [self initWithCommand:DIMCommand_Block]) {
         // block-list
         if (blockList) {
-            [self setObject:blockList forKey:@"list"];
+            [self setList:blockList];
         }
     }
     return self;
@@ -57,7 +57,7 @@
 
 - (void)setList:(NSArray<id<MKMID>> *)list {
     if (list) {
-        [self setObject:list forKey:@"list"];
+        [self setObject:[MKMID revert:list] forKey:@"list"];
     } else {
         [self removeObjectForKey:@"list"];
     }

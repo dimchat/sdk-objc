@@ -65,7 +65,7 @@
 }
 
 - (void)_loadBuiltInAccount:(id<MKMID>)ID {
-    [_idTable setObject:ID forKey:ID.string];
+    [_idTable setObject:ID forKey:[ID string]];
     NSString *filename;
     
     // load meta for ID
@@ -179,7 +179,7 @@
 - (nullable DIMUser *)userWithID:(id<MKMID>)ID {
     DIMUser *user = [_userTable objectForKey:ID];
     if (!user) {
-        if ([_idTable objectForKey:ID.string]) {
+        if ([_idTable objectForKey:[ID string]]) {
             user = [[DIMUser alloc] initWithID:ID];
             [self cacheUser:user];
         }
@@ -199,7 +199,7 @@
 }
 
 - (nullable NSArray<id<MKMID>> *)contactsOfUser:(id<MKMID>)user {
-    if (![_idTable objectForKey:user.string]) {
+    if (![_idTable objectForKey:[user string]]) {
         return nil;
     }
     NSArray *list = [_idTable allValues];
