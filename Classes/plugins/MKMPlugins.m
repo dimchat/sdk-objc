@@ -189,7 +189,7 @@
     return [[MKMDocument alloc] initWithID:ID data:data signature:CT];
 }
 
-// create a new empty profile with entity ID
+// create a new empty document with entity ID
 - (__kindof id<MKMDocument>)createDocument:(id<MKMID>)ID {
     NSString *type = [self typeForID:ID];
     if ([type isEqualToString:MKMDocument_Visa]) {

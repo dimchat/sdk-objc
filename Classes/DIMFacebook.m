@@ -121,7 +121,7 @@
             meta = [self metaForID:owner];
         }
     } else {
-        NSAssert(MKMIDIsUser(ID), @"profile ID error: %@", ID);
+        NSAssert(MKMIDIsUser(ID), @"document ID error: %@", ID);
         meta = [self metaForID:ID];
     }
     return [doc verify:meta.key];

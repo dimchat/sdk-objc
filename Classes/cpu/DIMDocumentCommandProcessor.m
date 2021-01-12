@@ -42,20 +42,20 @@
 
 @implementation DIMDocumentCommandProcessor
 
-- (nullable id<DKDContent>)_getProfileForID:(id<MKMID>)ID {
+- (nullable id<DKDContent>)_getDocumentForID:(id<MKMID>)ID {
     // query document for ID
     id<MKMDocument> doc = [self.facebook documentForID:ID type:@"*"];
     if (doc) {
         return [[DIMDocumentCommand alloc] initWithID:ID document:doc];
     }
-    // profile not found
+    // document not found
     NSString *text = [NSString stringWithFormat:@"Sorry, document not found for ID: %@", ID];
     return [[DIMTextContent alloc] initWithText:text];
 }
 
-- (nullable id<DKDContent>)_putProfile:(id<MKMDocument>)profile
-                                meta:(nullable id<MKMMeta>)meta
-                               forID:(id<MKMID>)ID {
+- (nullable id<DKDContent>)_putDocument:(id<MKMDocument>)doc
+                                   meta:(nullable id<MKMMeta>)meta
+                                  forID:(id<MKMID>)ID {
     NSString *text;
     if (meta) {
         // received a meta for ID
@@ -70,18 +70,18 @@
             return nil;
         }
     }
-    // received a profile for ID
-    if (![self.facebook isValidDocument:profile]) {
-        // profile sitnature not match
-        text = [NSString stringWithFormat:@"Profile not match ID: %@", ID];
+    // received a document for ID
+    if (![self.facebook isValidDocument:doc]) {
+        // document sitnature not match
+        text = [NSString stringWithFormat:@"Document not match ID: %@", ID];
         return [[DIMTextContent alloc] initWithText:text];
     }
-    if (![self.facebook saveDocument:profile]) {
+    if (![self.facebook saveDocument:doc]) {
         // save failed
-        NSAssert(false, @"failed to save profile for ID: %@, %@", ID, profile);
+        NSAssert(false, @"failed to save document for ID: %@, %@", ID, doc);
         return nil;
     }
-    text = [NSString stringWithFormat:@"Profile updated for ID: %@", ID];
+    text = [NSString stringWithFormat:@"Document updated for ID: %@", ID];
     return [[DIMReceiptCommand alloc] initWithMessage:text];
 }
 
@@ -90,13 +90,13 @@
     NSAssert([content isKindOfClass:[DIMDocumentCommand class]], @"document command error: %@", content);
     DIMDocumentCommand *cmd = (DIMDocumentCommand *)content;
     id<MKMID> ID = cmd.ID;
-    id<MKMDocument> profile = cmd.document;
-    if (profile) {
+    id<MKMDocument> doc = cmd.document;
+    if (doc) {
         // check meta
         id<MKMMeta> meta = cmd.meta;
-        return [self _putProfile:profile meta:meta forID:ID];
+        return [self _putDocument:doc meta:meta forID:ID];
     } else {
-        return [self _getProfileForID:ID];
+        return [self _getDocumentForID:ID];
     }
 }
 

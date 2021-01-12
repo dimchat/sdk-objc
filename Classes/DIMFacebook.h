@@ -68,9 +68,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)saveMeta:(id<MKMMeta>)meta forID:(id<MKMID>)ID;
 
 /**
- *  Save profile with entity ID (must verify first)
+ *  Save document with entity ID (must verify first)
  *
- * @param doc - entity profile
+ * @param doc - entity document
  * @return true on success
  */
 - (BOOL)saveDocument:(id<MKMDocument>)doc;
