@@ -35,7 +35,75 @@
 //  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
-#import <secp256k1/secp256k1.h>
+#import <string.h>
+
+#import "uECC.h"
+
+/**
+ *  Refs:
+ *      https://github.com/kmackay/micro-ecc
+ *      https://github.com/digitalbitbox/mcu/blob/master/src/ecc.c
+ */
+
+static inline int ecc_sig_to_der(const uint8_t *sig, uint8_t *der)
+{
+    int i;
+    uint8_t *p = der, *len, *len1, *len2;
+    *p = 0x30;
+    p++; // sequence
+    *p = 0x00;
+    len = p;
+    p++; // len(sequence)
+
+    *p = 0x02;
+    p++; // integer
+    *p = 0x00;
+    len1 = p;
+    p++; // len(integer)
+
+    // process R
+    i = 0;
+    while (sig[i] == 0 && i < 32) {
+        i++; // skip leading zeroes
+    }
+    if (sig[i] >= 0x80) { // put zero in output if MSB set
+        *p = 0x00;
+        p++;
+        *len1 = *len1 + 1;
+    }
+    while (i < 32) { // copy bytes to output
+        *p = sig[i];
+        p++;
+        *len1 = *len1 + 1;
+        i++;
+    }
+
+    *p = 0x02;
+    p++; // integer
+    *p = 0x00;
+    len2 = p;
+    p++; // len(integer)
+
+    // process S
+    i = 32;
+    while (sig[i] == 0 && i < 64) {
+        i++; // skip leading zeroes
+    }
+    if (sig[i] >= 0x80) { // put zero in output if MSB set
+        *p = 0x00;
+        p++;
+        *len2 = *len2 + 1;
+    }
+    while (i < 64) { // copy bytes to output
+        *p = sig[i];
+        p++;
+        *len2 = *len2 + 1;
+        i++;
+    }
+
+    *len = *len1 + *len2 + 4;
+    return *len + 2;
+}
 
 #import "MKMSecKeyHelper.h"
 #import "MKMECCPublicKey.h"
@@ -48,7 +116,7 @@
     
     NSUInteger _keySize;
     
-    secp256k1_context *_context;
+    const uint8_t *_prikey;
     
     MKMECCPublicKey *_publicKey;
 }
@@ -57,7 +125,7 @@
 
 @property (nonatomic) NSUInteger keySize;
 
-@property (nonatomic) secp256k1_context *context;
+@property (nonatomic) const uint8_t *prikey;
 
 @property (strong, atomic, nullable) MKMECCPublicKey *publicKey;
 
@@ -73,7 +141,7 @@
         
         _keySize = 0;
         
-        _context = NULL;
+        _prikey = NULL;
         
         _publicKey = nil;
     }
@@ -83,9 +151,9 @@
 
 - (void)dealloc {
     
-    // clear context
-    self.context = NULL;
-    
+    // clear prikey
+    self.prikey = NULL;
+
     //[super dealloc];
 }
 
@@ -94,29 +162,15 @@
     if (key) {
         key.data = _data;
         key.keySize = _keySize;
+        key.prikey = _prikey;
         key.publicKey = _publicKey;
-        key.context = _context;
     }
     return key;
 }
 
-- (secp256k1_context *)context {
-    if (_context == NULL) {
-        unsigned int flags = SECP256K1_CONTEXT_VERIFY | SECP256K1_CONTEXT_SIGN;
-        _context = secp256k1_context_create(flags);
-    }
-    return _context;
-}
-- (void)setContext:(secp256k1_context *)context {
-    if (_context != context) {
-        if (_context != NULL) {
-            secp256k1_context_destroy(_context);
-            _context = NULL;
-        }
-        if (context != NULL) {
-            _context = secp256k1_context_clone(context);
-        }
-    }
+- (uECC_Curve)curve {
+    // TODO: other curve?
+    return uECC_secp256k1();
 }
 
 - (NSData *)data {
@@ -132,11 +186,12 @@
             _data = [MKMSecKeyHelper privateKeyDataFromContent:pem algorithm:MKMAlgorithmECC];
         } else {
             // generate it
-            unsigned char seed[32];
-            arc4random_buf(seed, 32);
-            int res = secp256k1_context_randomize(self.context, seed);
+            // TODO: check key size?
+            uint8_t pubkey[64] = {0};
+            uint8_t prikey[32] = {0};
+            int res = uECC_make_key(pubkey, prikey, self.curve);
             NSAssert(res == 1, @"failed to generate ECC private key");
-            _data = [[NSData alloc] initWithBytes:seed length:32];
+            _data = [[NSData alloc] initWithBytes:prikey length:32];
             [self setObject:MKMHexEncode(_data) forKey:@"data"];
         }
     }
@@ -158,18 +213,23 @@
     return _keySize;
 }
 
+- (const uint8_t *)prikey {
+    if (_prikey == NULL) {
+        NSData *data = self.data;
+        _prikey = data.bytes;
+    }
+    return _prikey;
+}
+
 - (MKMECCPublicKey *)publicKey {
     if (!_publicKey) {
         // get public key content from private key
-        secp256k1_pubkey pKey;
-        memset(&pKey, 0, sizeof(pKey));
-        int res = secp256k1_ec_pubkey_create(self.context, &pKey, self.data.bytes);
+        uint8_t pubkey[65] = {0};
+        int res = uECC_compute_public_key(self.prikey, pubkey+1, self.curve);
         NSAssert(res == 1, @"failed to create ECC public key");
-        unsigned char result[65] = {0};
-        size_t len = sizeof(result);
-        secp256k1_ec_pubkey_serialize(self.context, result, &len, &pKey, SECP256K1_EC_UNCOMPRESSED);
+        size_t len = sizeof(pubkey);
         
-        NSData *data = [[NSData alloc] initWithBytes:result length:len];
+        NSData *data = [[NSData alloc] initWithBytes:pubkey length:len];
         NSString *hex = MKMHexEncode(data);
         NSDictionary *dict = @{@"algorithm":MKMAlgorithmECC,
                                @"data"     :hex,
@@ -187,12 +247,11 @@
 
 - (NSData *)sign:(NSData *)data {
     NSData *hash = MKMSHA256Digest(data);
-    secp256k1_ecdsa_signature sig;
-    secp256k1_ecdsa_sign(self.context, &sig, hash.bytes, self.data.bytes,
-                         secp256k1_nonce_function_rfc6979, NULL);
-    unsigned char vchSig[72];
-    size_t nSigLen = sizeof(vchSig);
-    secp256k1_ecdsa_signature_serialize_der(self.context, vchSig, &nSigLen, &sig);
+    uint8_t sig[64];
+    int res = uECC_sign(self.prikey, hash.bytes, (unsigned)hash.length, sig, self.curve);
+    NSAssert(res == 1, @"failed to sign with ECC private key");
+    uint8_t vchSig[72];
+    size_t nSigLen = ecc_sig_to_der(sig, vchSig);
     return [[NSData alloc] initWithBytes:vchSig length:nSigLen];
 }
 
