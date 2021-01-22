@@ -72,8 +72,8 @@
     // Send message (secured + certified) to target station
     id<DKDSecureMessage> sMsg = [self.packer encryptMessage:iMsg];
     if (!sMsg) {
-        // public key not found?
-        NSAssert(false, @"failed to encrypt message: %@", iMsg);
+        // FIXME: public key not found?
+        //NSAssert(false, @"failed to encrypt message: %@", iMsg);
         return NO;
     }
     id<DKDReliableMessage> rMsg = [self.packer signMessage:sMsg];

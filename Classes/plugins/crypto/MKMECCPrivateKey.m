@@ -225,6 +225,7 @@ static inline int ecc_sig_to_der(const uint8_t *sig, uint8_t *der)
     if (!_publicKey) {
         // get public key content from private key
         uint8_t pubkey[65] = {0};
+        pubkey[0] = 0x04;
         int res = uECC_compute_public_key(self.prikey, pubkey+1, self.curve);
         NSAssert(res == 1, @"failed to create ECC public key");
         size_t len = sizeof(pubkey);
