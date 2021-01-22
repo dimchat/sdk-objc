@@ -35,7 +35,7 @@
 //  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
-#import "DIMContentProcessor.h"
+#import <DIMSDK/DIMContentProcessor.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

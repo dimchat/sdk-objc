@@ -35,8 +35,8 @@
 //  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
-#import "DIMMessenger.h"
-#import "DIMMessagePacker.h"
+#import <DIMSDK/DIMMessenger.h>
+#import <DIMSDK/DIMMessagePacker.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

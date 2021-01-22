@@ -35,7 +35,7 @@
 //  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
-#import "DIMHistoryProcessor.h"
+#import <DIMSDK/DIMHistoryProcessor.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
