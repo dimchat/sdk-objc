@@ -87,10 +87,10 @@
         };
         
         // DIM founder
-        id<MKMID>founder = [[MKMID alloc] initWithName:@"moky" address:MKMAnywhere()];
+        id<MKMID> founder = MKMIDCreate(@"moky", MKMAnywhere(), nil);
         
-        id<MKMID>anyone = MKMAnyone();
-        id<MKMID>everyone = MKMEveryone();
+        id<MKMID> anyone = MKMAnyone();
+        id<MKMID> everyone = MKMEveryone();
         
         _caches = [[NSMutableDictionary alloc] init];
         

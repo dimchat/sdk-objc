@@ -43,7 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  Callback for sending message
  *  set by application and executed by DIM Core
  */
-typedef void (^DIMMessengerCallback)(id<DKDReliableMessage>rMsg,
+typedef void (^DIMMessengerCallback)(id<DKDReliableMessage> rMsg,
                                      NSError * _Nullable error);
 
 /**
