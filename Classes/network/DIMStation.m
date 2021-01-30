@@ -55,7 +55,6 @@
     if (self = [super initWithID:ID]) {
         _host = IP;
         _port = port;
-        _delegate = nil;
     }
     return self;
 }
@@ -69,7 +68,6 @@
     if (server) {
         server.host = _host;
         server.port = _port;
-        server.delegate = _delegate;
     }
     return server;
 }

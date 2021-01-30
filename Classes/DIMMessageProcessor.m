@@ -82,7 +82,7 @@
 
 - (nullable id<DKDContent>)processContent:(id<DKDContent>)content
                               withMessage:(id<DKDReliableMessage>)rMsg {
-    // TODO: override to check group
+    // NOTICE: override to check group before calling this
     DIMContentProcessor *cpu = [DIMContentProcessor getProcessorForContent:content];
     if (!cpu) {
         cpu = [DIMContentProcessor getProcessorForType:0];  // unknown
@@ -93,7 +93,7 @@
     }
     cpu.messenger = self.messenger;
     return [cpu processContent:content withMessage:rMsg];
-    // TODO: override to filter the response
+    // NOTICE: override to filter the response after called this
 }
 
 @end

@@ -135,7 +135,7 @@
         return [[DIMUser alloc] initWithID:ID];
     }
     NSAssert([self metaForID:ID], @"meta not found for user: %@", ID);
-    // TODO: make sure visa key exists before calling this
+    // NOTICE: make sure visa key exists before calling this
     MKMNetworkType type = ID.type;
     if (type == MKMNetwork_Main || type == MKMNetwork_BTCMain) {
         return [[DIMUser alloc] initWithID:ID];

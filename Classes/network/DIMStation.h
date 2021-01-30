@@ -41,14 +41,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class DIMServiceProvider;
 
-@protocol DIMStationDelegate;
-
 @interface DIMStation : DIMUser
 
 @property (readonly, strong, nonatomic) NSString *host; // Domain/IP
 @property (readonly, nonatomic)         UInt32    port; // default: 9394
-
-@property (weak, nonatomic) id<DIMStationDelegate> delegate;
 
 - (instancetype)initWithID:(id<MKMID>)ID
                       host:(NSString *)IP
@@ -56,47 +52,6 @@ NS_ASSUME_NONNULL_BEGIN
 NS_DESIGNATED_INITIALIZER;
 
 - (instancetype)initWithID:(id<MKMID>)ID;
-
-@end
-
-#pragma mark - Delegate
-
-@protocol DIMStationDelegate <NSObject>
-
-/**
- *  Received a new data package from the station
- *
- * @param server - current station
- * @param data - data package received
- */
-- (void)station:(DIMStation *)server onReceivePackage:(NSData *)data;
-
-@optional
-
-/**
- *  Send data package to station success
- *
- * @param server - current station
- * @param data - data package sent
- */
-- (void)station:(DIMStation *)server didSendPackage:(NSData *)data;
-
-/**
- *  Failed to send data package to station
- *
- * @param server - current station
- * @param data - data package to send
- * @param error - error information
- */
-- (void)station:(DIMStation *)server sendPackage:(NSData *)data didFailWithError:(NSError *)error;
-
-/**
- *  Callback for handshake accepted
- *
- * @param server - current station
- * @param session - new session key
- */
-- (void)station:(DIMStation *)server onHandshakeAccepted:(NSString *)session;
 
 @end
 
