@@ -56,10 +56,6 @@
     return self;
 }
 
-- (id<DIMPacker>)packer {
-    return [self.messenger packer];
-}
-
 - (BOOL)sendContent:(id<DKDContent>)content sender:(id<MKMID>)from receiver:(id<MKMID>)to callback:(nullable DIMMessengerCallback)fn priority:(NSInteger)prior {
     // Application Layer should make sure user is already login before it send message to server.
     // Application layer should put message into queue so that it will send automatically after user login
@@ -70,13 +66,13 @@
 
 - (BOOL)sendInstantMessage:(id<DKDInstantMessage>)iMsg callback:(nullable DIMMessengerCallback)fn priority:(NSInteger)prior {
     // Send message (secured + certified) to target station
-    id<DKDSecureMessage> sMsg = [self.packer encryptMessage:iMsg];
+    id<DKDSecureMessage> sMsg = [self.messenger encryptMessage:iMsg];
     if (!sMsg) {
         // FIXME: public key not found?
         //NSAssert(false, @"failed to encrypt message: %@", iMsg);
         return NO;
     }
-    id<DKDReliableMessage> rMsg = [self.packer signMessage:sMsg];
+    id<DKDReliableMessage> rMsg = [self.messenger signMessage:sMsg];
     if (!rMsg) {
         NSAssert(false, @"failed to sign message: %@", sMsg);
         DKDContent *content = iMsg.content;

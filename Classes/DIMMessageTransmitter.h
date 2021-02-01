@@ -78,7 +78,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface DIMMessageTransmitter : NSObject <DIMTransmitter>
 
 @property (readonly, weak, nonatomic) DIMMessenger *messenger;
-@property (readonly, weak, nonatomic) id<DIMPacker> packer;
 
 - (instancetype)initWithMessenger:(DIMMessenger *)transceiver;
 

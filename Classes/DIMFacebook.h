@@ -90,6 +90,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@interface DIMFacebook (MemberShip)
+
+- (BOOL)group:(id<MKMID>)group isFounder:(id<MKMID>)member;
+- (BOOL)group:(id<MKMID>)group isOwner:(id<MKMID>)member;
+
+@end
+
 @interface DIMFacebook (Plugins)
 
 + (void)loadPlugins;

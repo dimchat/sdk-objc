@@ -124,7 +124,7 @@
         sMsg.delegate = self.transceiver;
     }
     id<MKMID> receiver = sMsg.receiver;
-    DIMUser *user = [self.facebook selectLocalUserWithID:receiver];
+    DIMUser *user = [self.messenger selectLocalUserWithID:receiver];
     id<DKDSecureMessage> trimmed;
     if (!user) {
         // local users not matched
