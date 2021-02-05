@@ -46,8 +46,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-#define DIMCommand_Unknown      @"unknown"
-
 @interface DIMCommandProcessor (CPU)
 
 + (void)registerProcessor:(DIMCommandProcessor *)processor

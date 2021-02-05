@@ -84,9 +84,13 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (BOOL)saveMembers:(NSArray<id<MKMID>> *)members group:(id<MKMID>)ID;
 
-- (BOOL)isEmptyDocument:(id<MKMDocument>)doc;
-
-- (BOOL)isValidDocument:(id<MKMDocument>)doc;
+/**
+ *  Document checking
+ *
+ * @param doc - entity document
+ * @return true on accepted
+ */
+- (BOOL)checkDocument:(id<MKMDocument>)doc;
 
 @end
 

@@ -59,14 +59,9 @@
                             forID:(id<MKMID>)ID {
     NSString *text;
     // received a meta for ID
-    if (![meta matchID:ID]) {
-        // meta not match
-        text = [NSString stringWithFormat:@"Meta not match ID: %@", ID];
-        return [[DIMTextContent alloc] initWithText:text];
-    }
     if (![self.facebook saveMeta:meta forID:ID]) {
         // save failed
-        text = [NSString stringWithFormat:@"Sorry, meta error for ID: %@", ID];
+        text = [NSString stringWithFormat:@"Meta not accepted: %@", ID];
         return [[DIMTextContent alloc] initWithText:text];
     }
     text = [NSString stringWithFormat:@"Meta accepted for ID: %@", ID];

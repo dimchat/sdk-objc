@@ -58,28 +58,17 @@
                                   forID:(id<MKMID>)ID {
     NSString *text;
     if (meta) {
-        // received a meta for ID
-        if (![meta matchID:ID]) {
-            // meta not match
-            text = [NSString stringWithFormat:@"Meta not match ID: %@", ID];
-            return [[DIMTextContent alloc] initWithText:text];
-        }
         if (![self.facebook saveMeta:meta forID:ID]) {
             // save failed
-            NSAssert(false, @"failed to save meta for ID: %@, %@", ID, meta);
-            return nil;
+            text = [NSString stringWithFormat:@"Meta not accepted: %@", ID];
+            return [[DIMTextContent alloc] initWithText:text];
         }
     }
     // received a document for ID
-    if (![self.facebook isValidDocument:doc]) {
-        // document sitnature not match
-        text = [NSString stringWithFormat:@"Document not match ID: %@", ID];
-        return [[DIMTextContent alloc] initWithText:text];
-    }
     if (![self.facebook saveDocument:doc]) {
         // save failed
-        NSAssert(false, @"failed to save document for ID: %@, %@", ID, doc);
-        return nil;
+        text = [NSString stringWithFormat:@"Document not accepted: %@", ID];
+        return [[DIMTextContent alloc] initWithText:text];
     }
     text = [NSString stringWithFormat:@"Document updated for ID: %@", ID];
     return [[DIMReceiptCommand alloc] initWithMessage:text];

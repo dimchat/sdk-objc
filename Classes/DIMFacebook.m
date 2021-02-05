@@ -71,12 +71,7 @@
     return NO;
 }
 
-- (BOOL)isEmptyDocument:(id<MKMDocument>)doc {
-    NSString *data = [doc objectForKey:@"data"];
-    return data.length == 0;
-}
-
-- (BOOL)isValidDocument:(id<MKMDocument>)doc {
+- (BOOL)checkDocument:(id<MKMDocument>)doc {
     id<MKMID> ID = doc.ID;
     if (!ID) {
         NSAssert(false, @"ID error: %@", doc);
