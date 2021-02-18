@@ -62,7 +62,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param type - address type
  * @return Address object
  */
-+ (instancetype)generate:(NSData *)fingerprint network:(MKMNetworkType)type;
++ (instancetype)generate:(NSData *)fingerprint network:(UInt8)type;
 
 /**
  *  Parse a string for BTC address

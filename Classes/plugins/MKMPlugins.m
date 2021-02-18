@@ -65,15 +65,15 @@
 
 @interface MetaFactory : NSObject <MKMMetaFactory>
 
-@property (readonly, nonatomic) MKMMetaType type;
+@property (readonly, nonatomic) UInt8 type;
 
-- (instancetype)initWithType:(MKMMetaType)type;
+- (instancetype)initWithType:(UInt8)type;
 
 @end
 
 @implementation MetaFactory
 
-- (instancetype)initWithType:(MKMMetaType)type {
+- (instancetype)initWithType:(UInt8)type {
     if (self = [super init]) {
         _type = type;
     }
@@ -120,7 +120,7 @@
 }
 
 - (nullable __kindof id<MKMMeta>)parseMeta:(NSDictionary *)info {
-    MKMNetworkType version = [MKMMeta type:info];
+    UInt8 version = [MKMMeta type:info];
     switch (version) {
         case MKMMetaVersion_MKM:
             return [[MKMMetaDefault alloc] initWithDictionary:info];

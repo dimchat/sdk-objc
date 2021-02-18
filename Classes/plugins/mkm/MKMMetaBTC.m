@@ -58,7 +58,7 @@
 }
 
 /* designated initializer */
-- (instancetype)initWithType:(MKMMetaType)version
+- (instancetype)initWithType:(UInt8)version
                          key:(id<MKMVerifyKey>)publicKey
                         seed:(NSString *)seed
                  fingerprint:(NSData *)fingerprint {
@@ -80,7 +80,7 @@
     return _cachedAddress;
 }
 
-- (nullable id<MKMAddress>)generateAddress:(MKMNetworkType)type {
+- (nullable id<MKMAddress>)generateAddress:(UInt8)type {
     NSAssert(type == MKMNetwork_BTCMain, @"BTC address type error: %d", type);
     NSAssert(self.type == MKMMetaVersion_BTC || self.type == MKMMetaVersion_ExBTC,
              @"meta version error: %d", self.type);

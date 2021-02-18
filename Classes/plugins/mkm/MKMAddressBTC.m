@@ -51,7 +51,7 @@ static inline NSData *check_code(NSData *data) {
     return [sha256d subdataWithRange:NSMakeRange(0, 4)];
 }
 
-+ (instancetype)generate:(NSData *)fingerprint network:(MKMNetworkType)type {
++ (instancetype)generate:(NSData *)fingerprint network:(UInt8)type {
     // 1. digest = ripemd160(sha256(fingerprint))
     NSData *digest = MKMRIPEMD160Digest(MKMSHA256Digest(fingerprint));
     // 2. head = network + digest

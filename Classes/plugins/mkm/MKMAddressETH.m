@@ -87,14 +87,6 @@ static inline BOOL is_eth(NSString *address) {
 
 @implementation MKMAddressETH
 
-- (BOOL)isUser {
-    return YES;
-}
-
-- (BOOL)isGroup {
-    return NO;
-}
-
 + (NSString *)validateAddress:(NSString *)address {
     if (is_eth(address)) {
         address = [address substringFromIndex:2];
@@ -120,14 +112,26 @@ static inline BOOL is_eth(NSString *address) {
     NSData *tail = [digest subdataWithRange:NSMakeRange(digest.length - 20, 20)];
     NSString *hex = MKMHexEncode(tail);
     NSString *address = [NSString stringWithFormat:@"0x%@", eip55(hex)];
-    return [[self alloc] initWithString:address network:MKMNetwork_Main];
+    return [[self alloc] initWithString:address];
 }
 
 + (instancetype)parse:(NSString *)string {
     if (is_eth(string)) {
-        return [[self alloc] initWithString:string network:MKMNetwork_Main];
+        return [[self alloc] initWithString:string];
     }
     return nil;
+}
+
+- (UInt8)network {
+    return MKMNetwork_Main;
+}
+
+- (BOOL)isUser {
+    return YES;
+}
+
+- (BOOL)isGroup {
+    return NO;
 }
 
 @end

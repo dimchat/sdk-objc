@@ -190,7 +190,10 @@ static inline int ecc_sig_to_der(const uint8_t *sig, uint8_t *der)
             uint8_t pubkey[64] = {0};
             uint8_t prikey[32] = {0};
             int res = uECC_make_key(pubkey, prikey, self.curve);
-            NSAssert(res == 1, @"failed to generate ECC private key");
+            if (res != 1) {
+                NSAssert(false, @"failed to generate ECC private key");
+                return nil;
+            }
             _data = [[NSData alloc] initWithBytes:prikey length:32];
             [self setObject:MKMHexEncode(_data) forKey:@"data"];
         }
@@ -227,7 +230,10 @@ static inline int ecc_sig_to_der(const uint8_t *sig, uint8_t *der)
         uint8_t pubkey[65] = {0};
         pubkey[0] = 0x04;
         int res = uECC_compute_public_key(self.prikey, pubkey+1, self.curve);
-        NSAssert(res == 1, @"failed to create ECC public key");
+        if (res != 1) {
+            NSAssert(false, @"failed to create ECC public key");
+            return nil;
+        }
         size_t len = sizeof(pubkey);
         
         NSData *data = [[NSData alloc] initWithBytes:pubkey length:len];
@@ -250,7 +256,10 @@ static inline int ecc_sig_to_der(const uint8_t *sig, uint8_t *der)
     NSData *hash = MKMSHA256Digest(data);
     uint8_t sig[64];
     int res = uECC_sign(self.prikey, hash.bytes, (unsigned)hash.length, sig, self.curve);
-    NSAssert(res == 1, @"failed to sign with ECC private key");
+    if (res != 1) {
+        NSAssert(false, @"failed to sign with ECC private key");
+        return nil;
+    }
     uint8_t vchSig[72];
     size_t nSigLen = ecc_sig_to_der(sig, vchSig);
     return [[NSData alloc] initWithBytes:vchSig length:nSigLen];
