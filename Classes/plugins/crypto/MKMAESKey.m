@@ -168,6 +168,7 @@ static inline NSData *random_data(NSUInteger size) {
                                 initializationVector:self.iv];
     }
     
+    NSAssert(ciphertext, @"AES encrypt failed");
     return ciphertext;
 }
 
@@ -181,6 +182,7 @@ static inline NSData *random_data(NSUInteger size) {
                                 initializationVector:self.iv];
     }
     
+    //NSAssert(plaintext, @"AES decrypt failed");
     return plaintext;
 }
 

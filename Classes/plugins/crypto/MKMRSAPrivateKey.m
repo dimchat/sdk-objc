@@ -227,7 +227,7 @@
                                      &error);
     if (error) {
         NSAssert(!data, @"RSA decrypted data should be empty when failed");
-        NSAssert(false, @"RSA decrypt error: %@", error);
+        //NSAssert(false, @"RSA decrypt error: %@", error);
         CFRelease(error);
         error = NULL;
     } else {
@@ -235,7 +235,7 @@
         plaintext = (__bridge_transfer NSData *)data;
     }
     
-    NSAssert(plaintext, @"RSA decrypt failed");
+    //NSAssert(plaintext, @"RSA decrypt failed");
     return plaintext;
 }
 
