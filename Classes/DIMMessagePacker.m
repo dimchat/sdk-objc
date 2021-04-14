@@ -65,26 +65,26 @@
 }
 
 - (BOOL)isWaiting:(id<MKMID>)ID {
-    if (MKMIDIsBroadcast(ID)) {
-        // broadcast ID doesn't contain meta or visa
-        return NO;
-    }
     if (MKMIDIsGroup(ID)) {
-        // if group is not broadcast ID, its meta should be exists
+        // if group meta should be exists
         return [self.facebook metaForID:ID] == nil;
+    } else {
+        // if visa key should be exists
+        return [self.facebook publicKeyForEncryption:ID] == nil;
     }
-    // if receiver is not broadcast ID, its visa key should be exists
-    return [self.facebook publicKeyForEncryption:ID] == nil;
 }
 
 - (id<DKDSecureMessage>)encryptMessage:(id<DKDInstantMessage>)iMsg {
     id<MKMID> receiver = iMsg.receiver;
     id<MKMID> group = iMsg.group;
-    if ([self isWaiting:receiver] || (group && [self isWaiting:group])) {
-        // NOTICE: the application will query visa automatically
-        // save this message in a queue waiting sender's visa response
-        [self.messenger suspendMessage:iMsg];
-        return nil;
+    if (!MKMIDIsBroadcast(receiver) && !MKMIDIsBroadcast(group)) {
+        // this message is not a broadcast message
+        if ([self isWaiting:receiver] || (group && [self isWaiting:group])) {
+            // NOTICE: the application will query visa automatically
+            // save this message in a queue waiting sender's visa response
+            [self.messenger suspendMessage:iMsg];
+            return nil;
+        }
     }
     
     // make sure visa.key exists before encrypting message
