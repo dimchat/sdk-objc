@@ -66,10 +66,10 @@
 
 - (BOOL)isWaiting:(id<MKMID>)ID {
     if (MKMIDIsGroup(ID)) {
-        // if group meta should be exists
+        // checking group meta
         return [self.facebook metaForID:ID] == nil;
     } else {
-        // if visa key should be exists
+        // checking visa key
         return [self.facebook publicKeyForEncryption:ID] == nil;
     }
 }
