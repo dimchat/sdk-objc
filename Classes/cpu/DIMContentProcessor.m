@@ -39,7 +39,6 @@
 #import "DIMMessenger.h"
 
 #import "DIMForwardContentProcessor.h"
-#import "DIMFileContentProcessor.h"
 #import "DIMCommandProcessor.h"
 #import "DIMHistoryProcessor.h"
 #import "DIMReceiptCommand.h"
@@ -125,12 +124,6 @@ static NSMutableDictionary<NSNumber *, DIMContentProcessor *> *s_processors = ni
     //  Register content processors
     //
     DIMContentProcessorRegisterClass(DKDContentType_Forward, DIMForwardContentProcessor);
-    
-    DIMFileContentProcessor *fileProcessor = [[DIMFileContentProcessor alloc] init];
-    DIMContentProcessorRegister(DKDContentType_File, fileProcessor);
-    DIMContentProcessorRegister(DKDContentType_Image, fileProcessor);
-    DIMContentProcessorRegister(DKDContentType_Audio, fileProcessor);
-    DIMContentProcessorRegister(DKDContentType_Video, fileProcessor);
     
     DIMContentProcessorRegisterClass(DKDContentType_Command, DIMCommandProcessor);
     DIMContentProcessorRegisterClass(DKDContentType_History, DIMHistoryCommandProcessor);
