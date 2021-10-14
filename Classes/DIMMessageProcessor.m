@@ -66,7 +66,7 @@
     return self;
 }
 
-- (DIMMessenger *)messenger {
+- (__kindof DIMMessenger *)messenger {
     return (DIMMessenger *)[self transceiver];
 }
 

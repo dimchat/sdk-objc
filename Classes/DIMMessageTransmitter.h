@@ -53,7 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @return true on success
  */
 - (BOOL)sendContent:(id<DKDContent>)content
-             sender:(id<MKMID>)from
+             sender:(nullable id<MKMID>)from
            receiver:(id<MKMID>)to
            callback:(nullable DIMMessengerCallback)fn
            priority:(NSInteger)prior;
@@ -77,7 +77,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMMessageTransmitter : NSObject <DIMTransmitter>
 
-@property (readonly, weak, nonatomic) DIMMessenger *messenger;
+@property (readonly, weak, nonatomic) __kindof DIMMessenger *messenger;
+@property (readonly, weak, nonatomic) __kindof DIMFacebook *facebook;
 
 - (instancetype)initWithMessenger:(DIMMessenger *)transceiver;
 

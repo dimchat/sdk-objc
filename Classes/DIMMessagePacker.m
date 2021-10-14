@@ -56,57 +56,20 @@
     return self;
 }
 
-- (DIMMessenger *)messenger {
+- (__kindof DIMMessenger *)messenger {
     return (DIMMessenger *) self.transceiver;
 }
 
-- (DIMFacebook *)facebook {
+- (__kindof DIMFacebook *)facebook {
     return [self.messenger facebook];
-}
-
-- (BOOL)isWaiting:(id<MKMID>)ID {
-    if (MKMIDIsGroup(ID)) {
-        // checking group meta
-        return [self.facebook metaForID:ID] == nil;
-    } else {
-        // checking visa key
-        return [self.facebook publicKeyForEncryption:ID] == nil;
-    }
-}
-
-- (id<DKDSecureMessage>)encryptMessage:(id<DKDInstantMessage>)iMsg {
-    id<MKMID> receiver = iMsg.receiver;
-    id<MKMID> group = iMsg.group;
-    if (!MKMIDIsBroadcast(receiver) && !MKMIDIsBroadcast(group)) {
-        // this message is not a broadcast message
-        if ([self isWaiting:receiver] || (group && [self isWaiting:group])) {
-            // NOTICE: the application will query visa automatically
-            // save this message in a queue waiting sender's visa response
-            [self.messenger suspendMessage:iMsg];
-            return nil;
-        }
-    }
-    
-    // make sure visa.key exists before encrypting message
-    return [super encryptMessage:iMsg];
 }
 
 - (id<DKDSecureMessage>)verifyMessage:(id<DKDReliableMessage>)rMsg {
     id<MKMID> sender = rMsg.sender;
     // [Meta Protocol]
     id<MKMMeta> meta = rMsg.meta;
-    if (!meta) {
-        // get from local storage
-        meta = [self.facebook metaForID:sender];
-    } else if (![self.facebook saveMeta:meta forID:sender]) {
-        // failed to save meta attached to message
-        meta = nil;
-    }
-    if (!meta) {
-        // NOTICE: the application will query meta automatically
-        // save this message in a queue waiting sender's meta response
-        [self.messenger suspendMessage:rMsg];
-        return nil;
+    if (meta) {
+        [self.facebook saveMeta:meta forID:sender];
     }
     // [Visa Protocol]
     id<MKMVisa> visa = rMsg.visa;

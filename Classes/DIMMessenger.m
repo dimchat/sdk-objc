@@ -48,7 +48,6 @@
 @interface DIMMessenger () {
     
     //id<DIMMessengerDelegate> _delegate;
-    //id<DIMMessengerDataSource> _dataSource;
     
     id<DIMTransmitter> _transmitter;
     
@@ -66,7 +65,6 @@
     if (self = [super init]) {
         
         _delegate = nil;
-        _dataSource = nil;
         
         _transmitter = nil;
         
@@ -179,7 +177,8 @@
     return _messageTransmitter;
 }
 - (DIMMessageTransmitter *)createMessageTransmitter {
-    return [[DIMMessageTransmitter alloc] initWithMessenger:self];
+    NSAssert(false, @"implements me!");
+    return nil;
 }
 
 #pragma mark FPU
@@ -205,19 +204,6 @@
                        message:iMsg];
     }
     return [super message:iMsg serializeContent:content withKey:password];
-}
-
-- (nullable NSData *)message:(id<DKDInstantMessage>)iMsg
-                  encryptKey:(NSData *)data
-                 forReceiver:(id<MKMID>)receiver {
-    id<MKMEncryptKey> key = [self.facebook publicKeyForEncryption:receiver];
-    if (!key) {
-        // save this message in a queue waiting receiver's meta response
-        [self suspendMessage:iMsg];
-        //NSAssert(false, @"failed to get encrypt key for receiver: %@", receiver);
-        return nil;
-    }
-    return [super message:iMsg encryptKey:data forReceiver:receiver];
 }
 
 #pragma mark DKDSecureMessageDelegate
@@ -321,18 +307,6 @@
 
 - (nullable NSData *)downloadData:(NSURL *)url forMessage:(id<DKDInstantMessage>)iMsg {
     return [self.delegate downloadData:url forMessage:iMsg];
-}
-
-@end
-
-@implementation DIMMessenger (Storage)
-
-- (BOOL)saveMessage:(id<DKDInstantMessage>)iMsg {
-    return [self.dataSource saveMessage:iMsg];
-}
-
-- (BOOL)suspendMessage:(id<DKDMessage>)msg {
-    return [self.dataSource suspendMessage:msg];
 }
 
 @end

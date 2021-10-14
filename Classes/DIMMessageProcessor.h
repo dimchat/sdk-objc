@@ -41,7 +41,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMMessageProcessor : DIMProcessor
 
-@property (readonly, weak, nonatomic) DIMMessenger *messenger;
+@property (readonly, weak, nonatomic) __kindof DIMMessenger *messenger;
 
 - (instancetype)initWithMessenger:(DIMMessenger *)transceiver
 NS_DESIGNATED_INITIALIZER;

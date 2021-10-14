@@ -86,26 +86,6 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
 
 @end
 
-@protocol DIMMessengerDataSource <NSObject>
-
-/**
- * Save the message into local storage
- *
- * @param iMsg - instant message
- * @return true on success
- */
-- (BOOL)saveMessage:(id<DKDInstantMessage>)iMsg;
-
-/**
- *  Suspend message for the contact's meta
- *
- * @param msg - message received from network / instant message to be sent
- * @return NO on error
- */
-- (BOOL)suspendMessage:(id<DKDMessage>)msg;
-
-@end
-
 #pragma mark -
 
 @protocol DIMTransmitter;
@@ -117,7 +97,6 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
 @interface DIMMessenger : DIMTransceiver
 
 @property (weak, nonatomic) id<DIMMessengerDelegate> delegate;
-@property (weak, nonatomic) id<DIMMessengerDataSource> dataSource;
 
 @property (weak, nonatomic) id<DIMTransmitter> transmitter;
 
@@ -200,18 +179,6 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
 - (nullable NSURL *)uploadData:(NSData *)CT forMessage:(id<DKDInstantMessage>)iMsg;
 
 - (nullable NSData *)downloadData:(NSURL *)url forMessage:(id<DKDInstantMessage>)iMsg;
-
-@end
-
-@interface DIMMessenger (Storage)
-
-//
-//  Interfaces for Message Storage
-//
-
-- (BOOL)saveMessage:(id<DKDInstantMessage>)iMsg;
-
-- (BOOL)suspendMessage:(id<DKDMessage>)msg;
 
 @end
 

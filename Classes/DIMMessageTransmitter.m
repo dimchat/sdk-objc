@@ -43,7 +43,7 @@
 
 @interface DIMMessageTransmitter ()
 
-@property (weak, nonatomic) DIMMessenger *messenger;
+@property (weak, nonatomic) __kindof DIMMessenger *messenger;
 
 @end
 
@@ -56,9 +56,22 @@
     return self;
 }
 
-- (BOOL)sendContent:(id<DKDContent>)content sender:(id<MKMID>)from receiver:(id<MKMID>)to callback:(nullable DIMMessengerCallback)fn priority:(NSInteger)prior {
+- (__kindof DIMFacebook *)facebook {
+    return [self.messenger facebook];
+}
+
+- (BOOL)sendContent:(id<DKDContent>)content
+             sender:(nullable id<MKMID>)from
+           receiver:(id<MKMID>)to
+           callback:(nullable DIMMessengerCallback)fn
+           priority:(NSInteger)prior {
     // Application Layer should make sure user is already login before it send message to server.
     // Application layer should put message into queue so that it will send automatically after user login
+    if (!from) {
+        DIMUser *user = [self.facebook currentUser];
+        NSAssert(user, @"current user not set");
+        from = user.ID;
+    }
     id<DKDEnvelope> env = DKDEnvelopeCreate(from, to, nil);
     id<DKDInstantMessage> iMsg = DKDInstantMessageCreate(env, content);
     return [self sendInstantMessage:iMsg callback:fn priority:prior];
@@ -74,39 +87,17 @@
     }
     id<DKDReliableMessage> rMsg = [self.messenger signMessage:sMsg];
     if (!rMsg) {
-        NSAssert(false, @"failed to sign message: %@", sMsg);
-        DKDContent *content = iMsg.content;
-        content.state = DIMMessageState_Error;
-        content.error = @"Encryption failed.";
+        // TODO: set iMsg.state = error
         return NO;
     }
     
-    BOOL OK = [self sendReliableMessage:rMsg callback:fn priority:prior];
-    // sending status
-    if (OK) {
-        DKDContent *content = iMsg.content;
-        content.state = DIMMessageState_Sending;
-    } else {
-        NSLog(@"cannot send message now, put in waiting queue: %@", iMsg);
-        DKDContent *content = iMsg.content;
-        content.state = DIMMessageState_Waiting;
-    }
-    
-    if (![self.messenger saveMessage:iMsg]) {
-        return NO;
-    }
-    return OK;
+    // TODO: if OK, set iMsg.state = sending; else set iMsg.state = waiting
+    return [self sendReliableMessage:rMsg callback:fn priority:prior];
 }
 
 - (BOOL)sendReliableMessage:(id<DKDReliableMessage>)rMsg callback:(nullable DIMMessengerCallback)fn priority:(NSInteger)prior {
-    DIMMessengerCompletionHandler handler;
-    if (fn) {
-        handler = ^(NSError * _Nullable error) {
-            fn(rMsg, error);
-        };
-    }
-    NSData *data = [self.messenger serializeMessage:rMsg];
-    return [self.messenger sendPackageData:data completionHandler:handler priority:prior];
+    NSAssert(false, @"implements me!");
+    return false;
 }
 
 @end
