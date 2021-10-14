@@ -46,14 +46,7 @@
 
 @interface DIMMessenger () {
     
-    //id<DIMMessengerDelegate> _delegate;
-    
-    id<DIMTransmitter> _transmitter;
-    
     DIMFacebook *_facebook;
-    DIMMessagePacker *_messagePacker;
-    DIMMessageProcessor *_messageProcessor;
-    DIMMessageTransmitter *_messageTransmitter;
 }
 
 @end
@@ -63,14 +56,9 @@
 - (instancetype)init {
     if (self = [super init]) {
         
-        _delegate = nil;
-        
         _transmitter = nil;
         
         _facebook = nil;
-        _messagePacker = nil;
-        _messageProcessor = nil;
-        _messageTransmitter = nil;
     }
     return self;
 }
@@ -102,94 +90,16 @@
     return nil;
 }
 
-#pragma mark Message Packer
-
-- (id<DIMPacker>)packer {
-    id<DIMPacker> delegate = [super packer];
-    if (!delegate) {
-        delegate = [self messagePacker];
-        [super setPacker:delegate];
-    }
-    return delegate;
-}
-- (void)setPacker:(id<DIMPacker>)packer {
-    [super setPacker:packer];
-    if ([packer isKindOfClass:[DIMMessagePacker class]]) {
-        _messagePacker = (DIMMessagePacker *)packer;
-    }
-}
-- (DIMMessagePacker *)messagePacker {
-    if (!_messagePacker) {
-        _messagePacker = [self createMessagePacker];
-    }
-    return _messagePacker;
-}
-- (DIMMessagePacker *)createMessagePacker {
-    return [[DIMMessagePacker alloc] initWithMessenger:self];
-}
-
-#pragma mark Message Processor
-
-- (id<DIMProcessor>)processor {
-    id<DIMProcessor> delegate = [super processor];
-    if (!delegate) {
-        delegate = [self messageProcessor];
-        [super setProcessor:delegate];
-    }
-    return delegate;
-}
-- (void)setProcessor:(id<DIMProcessor>)processor {
-    [super setProcessor:processor];
-    if ([processor isKindOfClass:[DIMMessageProcessor class]]) {
-        _messageProcessor = (DIMMessageProcessor *)processor;
-    }
-}
-- (DIMMessageProcessor *)messageProcessor {
-    if (!_messageProcessor) {
-        _messageProcessor = [self createMessageProcessor];
-    }
-    return _messageProcessor;
-}
-- (DIMMessageProcessor *)createMessageProcessor {
-    return [[DIMMessageProcessor alloc] initWithMessenger:self];
-}
-
-#pragma mark Message Transmitter
-
-- (id<DIMTransmitter>)transmitter {
-    id<DIMTransmitter> delegate = _transmitter;
-    if (!delegate) {
-        delegate = _transmitter = [self messageTransmitter];
-    }
-    return delegate;
-}
-- (void)setTransmitter:(id<DIMTransmitter>)transmitter {
-    _transmitter = transmitter;
-    if ([transmitter isKindOfClass:[DIMMessageTransmitter class]]) {
-        _messageTransmitter = (DIMMessageTransmitter *)transmitter;
-    }
-}
-- (DIMMessageTransmitter *)messageTransmitter {
-    if (!_messageTransmitter) {
-        _messageTransmitter = [self createMessageTransmitter];
-    }
-    return _messageTransmitter;
-}
-- (DIMMessageTransmitter *)createMessageTransmitter {
-    NSAssert(false, @"implements me!");
-    return nil;
-}
-
 @end
 
 @implementation DIMMessenger (Processing)
 
 - (NSArray<NSData *> *)processData:(NSData *)data {
-    return [self.messageProcessor processData:data];
+    return [self.processor processData:data];
 }
 
 - (NSArray<id<DKDReliableMessage>> *)processMessage:(id<DKDReliableMessage>)rMsg {
-    return [self.messageProcessor processMessage:rMsg];
+    return [self.processor processMessage:rMsg];
 }
 
 @end
@@ -207,15 +117,15 @@
         }
         from = user.ID;
     }
-    return [self.messageTransmitter sendContent:content sender:from receiver:to callback:fn priority:prior];
+    return [self.transmitter sendContent:content sender:from receiver:to callback:fn priority:prior];
 }
 
 - (BOOL)sendInstantMessage:(id<DKDInstantMessage>)iMsg callback:(nullable DIMMessengerCallback)callback priority:(NSInteger)prior {
-    return [self.messageTransmitter sendInstantMessage:iMsg callback:callback priority:prior];
+    return [self.transmitter sendInstantMessage:iMsg callback:callback priority:prior];
 }
 
 - (BOOL)sendReliableMessage:(id<DKDReliableMessage>)rMsg callback:(nullable DIMMessengerCallback)callback priority:(NSInteger)prior {
-    return [self.messageTransmitter sendReliableMessage:rMsg callback:callback priority:prior];
+    return [self.transmitter sendReliableMessage:rMsg callback:callback priority:prior];
 }
 
 @end
@@ -223,47 +133,27 @@
 @implementation DIMMessenger (Packing)
 
 - (nullable id<DKDSecureMessage>)encryptMessage:(id<DKDInstantMessage>)iMsg {
-    return [self.messagePacker encryptMessage:iMsg];
+    return [self.packer encryptMessage:iMsg];
 }
 
 - (nullable id<DKDReliableMessage>)signMessage:(id<DKDSecureMessage>)sMsg {
-    return [self.messagePacker signMessage:sMsg];
+    return [self.packer signMessage:sMsg];
 }
 
 - (nullable NSData *)serializeMessage:(id<DKDReliableMessage>)rMsg {
-    return [self.messagePacker serializeMessage:rMsg];
+    return [self.packer serializeMessage:rMsg];
 }
 
 - (nullable id<DKDReliableMessage>)deserializeMessage:(NSData *)data {
-    return [self.messagePacker deserializeMessage:data];
+    return [self.packer deserializeMessage:data];
 }
 
 - (nullable id<DKDSecureMessage>)verifyMessage:(id<DKDReliableMessage>)rMsg {
-    return [self.messagePacker verifyMessage:rMsg];
+    return [self.packer verifyMessage:rMsg];
 }
 
 - (nullable id<DKDInstantMessage>)decryptMessage:(id<DKDSecureMessage>)sMsg {
-    return [self.messagePacker decryptMessage:sMsg];
-}
-
-@end
-
-@implementation DIMMessenger (Station)
-
-- (BOOL)sendPackageData:(NSData *)data
-      completionHandler:(nullable DIMMessengerCompletionHandler)handler
-               priority:(NSInteger)prior {
-    return [self.delegate sendPackageData:data
-                        completionHandler:handler
-                                 priority:prior];
-}
-
-- (nullable NSURL *)uploadData:(NSData *)CT forMessage:(id<DKDInstantMessage>)iMsg {
-    return [self.delegate uploadData:CT forMessage:iMsg];
-}
-
-- (nullable NSData *)downloadData:(NSURL *)url forMessage:(id<DKDInstantMessage>)iMsg {
-    return [self.delegate downloadData:url forMessage:iMsg];
+    return [self.packer decryptMessage:sMsg];
 }
 
 @end

@@ -43,72 +43,22 @@ NS_ASSUME_NONNULL_BEGIN
  *  Callback for sending message
  *  set by application and executed by DIM Core
  */
-typedef void (^DIMMessengerCallback)(id<DKDReliableMessage> rMsg,
-                                     NSError * _Nullable error);
-
-/**
- *  Handler to call after sending package complete
- *  executed by application
- */
-typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
-
-@protocol DIMMessengerDelegate <NSObject>
-
-/**
- *  Send out a data package onto network
- *
- *  @param data - package`
- *  @param handler - completion handler
- *  @param prior - task priority
- *  @return NO on data/delegate error
- */
-- (BOOL)sendPackageData:(NSData *)data
-      completionHandler:(nullable DIMMessengerCompletionHandler)handler
-               priority:(NSInteger)prior;
-
-/**
- *  Upload encrypted data to CDN
- *
- *  @param CT - encrypted file data
- *  @param iMsg - instant message
- *  @return download URL
- */
-- (nullable NSURL *)uploadData:(NSData *)CT forMessage:(id<DKDInstantMessage>)iMsg;
-
-/**
- *  Download encrypted data from CDN
- *
- *  @param url - download URL
- *  @param iMsg - instant message
- *  @return encrypted file data
- */
-- (nullable NSData *)downloadData:(NSURL *)url forMessage:(id<DKDInstantMessage>)iMsg;
-
-@end
-
-#pragma mark -
+typedef void (^DIMMessengerCallback)(id<DKDReliableMessage> rMsg, NSError * _Nullable error);
 
 @protocol DIMTransmitter;
+
 @class DIMFacebook;
-@class DIMMessagePacker;
-@class DIMMessageProcessor;
-@class DIMMessageTransmitter;
 
 @interface DIMMessenger : DIMTransceiver
 
-@property (weak, nonatomic) id<DIMMessengerDelegate> delegate;
-
-@property (weak, nonatomic) id<DIMTransmitter> transmitter;
+/**
+ *  Delegate for transmitting message
+ */
+@property (weak, nonatomic) __kindof id<DIMTransmitter> transmitter;
 
 @property (readonly, strong, nonatomic) DIMFacebook *facebook;
-//@property (readonly, strong, nonatomic) DIMMessagePacker *messagePacker;
-//@property (readonly, strong, nonatomic) DIMMessageProcessor *messageProcessor;
-//@property (readonly, strong, nonatomic) DIMMessageTransmitter *messageTransmitter;
 
 - (DIMFacebook *)createFacebook;
-- (DIMMessagePacker *)createMessagePacker;
-- (DIMMessageProcessor *)createMessageProcessor;
-- (DIMMessageTransmitter *)createMessageTransmitter;
 
 @end
 
@@ -163,22 +113,6 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
 - (nullable id<DKDSecureMessage>)verifyMessage:(id<DKDReliableMessage>)rMsg;
 
 - (nullable id<DKDInstantMessage>)decryptMessage:(id<DKDSecureMessage>)sMsg;
-
-@end
-
-@interface DIMMessenger (Station)
-
-//
-//  Interfaces for Station
-//
-
-- (BOOL)sendPackageData:(NSData *)data
-      completionHandler:(nullable DIMMessengerCompletionHandler)handler
-               priority:(NSInteger)prior;
-
-- (nullable NSURL *)uploadData:(NSData *)CT forMessage:(id<DKDInstantMessage>)iMsg;
-
-- (nullable NSData *)downloadData:(NSURL *)url forMessage:(id<DKDInstantMessage>)iMsg;
 
 @end
 

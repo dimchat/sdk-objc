@@ -65,16 +65,17 @@
 }
 
 - (id<DKDSecureMessage>)verifyMessage:(id<DKDReliableMessage>)rMsg {
+    DIMFacebook *facebook = [self facebook];
     id<MKMID> sender = rMsg.sender;
     // [Meta Protocol]
     id<MKMMeta> meta = rMsg.meta;
     if (meta) {
-        [self.facebook saveMeta:meta forID:sender];
+        [facebook saveMeta:meta forID:sender];
     }
     // [Visa Protocol]
     id<MKMVisa> visa = rMsg.visa;
     if (visa) {
-        [self.facebook saveDocument:visa];
+        [facebook saveDocument:visa];
     }
     
     // make sure meta exists before verifying message
@@ -82,12 +83,13 @@
 }
 
 - (id<DKDInstantMessage>)decryptMessage:(id<DKDSecureMessage>)sMsg {
+    DIMMessenger *messenger = [self messenger];
     // check message delegate
     if (!sMsg.delegate) {
-        sMsg.delegate = self.transceiver;
+        sMsg.delegate = messenger;
     }
     id<MKMID> receiver = sMsg.receiver;
-    DIMUser *user = [self.messenger selectLocalUserWithID:receiver];
+    DIMUser *user = [messenger selectLocalUserWithID:receiver];
     id<DKDSecureMessage> trimmed;
     if (!user) {
         // local users not matched

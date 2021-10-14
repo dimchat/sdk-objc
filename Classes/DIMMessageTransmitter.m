@@ -74,7 +74,7 @@
     }
     id<DKDEnvelope> env = DKDEnvelopeCreate(from, to, nil);
     id<DKDInstantMessage> iMsg = DKDInstantMessageCreate(env, content);
-    return [self sendInstantMessage:iMsg callback:fn priority:prior];
+    return [self.messenger sendInstantMessage:iMsg callback:fn priority:prior];
 }
 
 - (BOOL)sendInstantMessage:(id<DKDInstantMessage>)iMsg callback:(nullable DIMMessengerCallback)fn priority:(NSInteger)prior {
