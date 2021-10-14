@@ -57,7 +57,7 @@
 }
 
 - (__kindof DIMMessenger *)messenger {
-    return (DIMMessenger *) self.transceiver;
+    return [self transceiver];
 }
 
 - (__kindof DIMFacebook *)facebook {

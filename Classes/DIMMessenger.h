@@ -56,21 +56,9 @@ typedef void (^DIMMessengerCallback)(id<DKDReliableMessage> rMsg, NSError * _Nul
  */
 @property (weak, nonatomic) __kindof id<DIMTransmitter> transmitter;
 
-@property (readonly, strong, nonatomic) DIMFacebook *facebook;
+@property (readonly, strong, nonatomic) __kindof DIMFacebook *facebook;
 
-- (DIMFacebook *)createFacebook;
-
-@end
-
-@interface DIMMessenger (Processing)
-
-//
-//  Interfaces for Processing Message
-//
-
-- (NSData *)processData:(NSData *)data;
-
-- (id<DKDReliableMessage>)processMessage:(id<DKDReliableMessage>)rMsg;
+- (__kindof DIMFacebook *)createFacebook;
 
 @end
 
@@ -93,26 +81,6 @@ typedef void (^DIMMessengerCallback)(id<DKDReliableMessage> rMsg, NSError * _Nul
 - (BOOL)sendReliableMessage:(id<DKDReliableMessage>)rMsg
                    callback:(nullable DIMMessengerCallback)callback
                    priority:(NSInteger)prior;
-
-@end
-
-@interface DIMMessenger (Packing)
-
-//
-//  Interfaces for Packing Message
-//
-
-- (nullable id<DKDSecureMessage>)encryptMessage:(id<DKDInstantMessage>)iMsg;
-
-- (nullable id<DKDReliableMessage>)signMessage:(id<DKDSecureMessage>)sMsg;
-
-- (nullable NSData *)serializeMessage:(id<DKDReliableMessage>)rMsg;
-
-- (nullable id<DKDReliableMessage>)deserializeMessage:(NSData *)data;
-
-- (nullable id<DKDSecureMessage>)verifyMessage:(id<DKDReliableMessage>)rMsg;
-
-- (nullable id<DKDInstantMessage>)decryptMessage:(id<DKDSecureMessage>)sMsg;
 
 @end
 

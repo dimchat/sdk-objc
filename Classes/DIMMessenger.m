@@ -65,7 +65,7 @@
 
 #pragma mark Facebook (EntityDelegate)
 
-- (id<DIMEntityDelegate>)barrack {
+- (__kindof id<DIMEntityDelegate>)barrack {
     id<DIMEntityDelegate> delegate = [super barrack];
     if (!delegate) {
         delegate = [self facebook];
@@ -79,27 +79,15 @@
         _facebook = (DIMFacebook *)barrack;
     }
 }
-- (DIMFacebook *)facebook {
+- (__kindof DIMFacebook *)facebook {
     if (!_facebook) {
         _facebook = [self createFacebook];
     }
     return _facebook;
 }
-- (DIMFacebook *)createFacebook {
+- (__kindof DIMFacebook *)createFacebook {
     NSAssert(false, @"implement me!");
     return nil;
-}
-
-@end
-
-@implementation DIMMessenger (Processing)
-
-- (NSArray<NSData *> *)processData:(NSData *)data {
-    return [self.processor processData:data];
-}
-
-- (NSArray<id<DKDReliableMessage>> *)processMessage:(id<DKDReliableMessage>)rMsg {
-    return [self.processor processMessage:rMsg];
 }
 
 @end
@@ -107,16 +95,6 @@
 @implementation DIMMessenger (Send)
 
 - (BOOL)sendContent:(id<DKDContent>)content sender:(nullable id<MKMID>)from receiver:(id<MKMID>)to callback:(nullable DIMMessengerCallback)fn priority:(NSInteger)prior {
-    if (!from) {
-        // Application Layer should make sure user is already login before it send message to server.
-        // Application layer should put message into queue so that it will send automatically after user login
-        DIMUser *user = [self.facebook currentUser];
-        if (!user) {
-            NSAssert(false, @"current user not set");
-            return NO;
-        }
-        from = user.ID;
-    }
     return [self.transmitter sendContent:content sender:from receiver:to callback:fn priority:prior];
 }
 
@@ -126,34 +104,6 @@
 
 - (BOOL)sendReliableMessage:(id<DKDReliableMessage>)rMsg callback:(nullable DIMMessengerCallback)callback priority:(NSInteger)prior {
     return [self.transmitter sendReliableMessage:rMsg callback:callback priority:prior];
-}
-
-@end
-
-@implementation DIMMessenger (Packing)
-
-- (nullable id<DKDSecureMessage>)encryptMessage:(id<DKDInstantMessage>)iMsg {
-    return [self.packer encryptMessage:iMsg];
-}
-
-- (nullable id<DKDReliableMessage>)signMessage:(id<DKDSecureMessage>)sMsg {
-    return [self.packer signMessage:sMsg];
-}
-
-- (nullable NSData *)serializeMessage:(id<DKDReliableMessage>)rMsg {
-    return [self.packer serializeMessage:rMsg];
-}
-
-- (nullable id<DKDReliableMessage>)deserializeMessage:(NSData *)data {
-    return [self.packer deserializeMessage:data];
-}
-
-- (nullable id<DKDSecureMessage>)verifyMessage:(id<DKDReliableMessage>)rMsg {
-    return [self.packer verifyMessage:rMsg];
-}
-
-- (nullable id<DKDInstantMessage>)decryptMessage:(id<DKDSecureMessage>)sMsg {
-    return [self.packer decryptMessage:sMsg];
 }
 
 @end

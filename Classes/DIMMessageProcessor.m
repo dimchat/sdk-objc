@@ -67,7 +67,7 @@
 }
 
 - (__kindof DIMMessenger *)messenger {
-    return (DIMMessenger *)[self transceiver];
+    return [self transceiver];
 }
 
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
@@ -116,8 +116,8 @@
     //
     //  Register processors
     //
-    [DIMContentProcessor registerAllProcessors];
-    [DIMCommandProcessor registerAllProcessors];
+    [DIMContentProcessor registerContentProcessors];
+    [DIMCommandProcessor registerCommandProcessors];
 }
 
 @end

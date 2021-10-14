@@ -119,12 +119,11 @@ static NSMutableDictionary<NSNumber *, DIMContentProcessor *> *s_processors = ni
 
 @implementation DIMContentProcessor (Register)
 
-+ (void)registerAllProcessors {
-    //
-    //  Register content processors
-    //
++ (void)registerContentProcessors {
+    // contents
+    DIMContentProcessorRegisterClass(0, DIMContentProcessor);  // default
     DIMContentProcessorRegisterClass(DKDContentType_Forward, DIMForwardContentProcessor);
-    
+    // commands
     DIMContentProcessorRegisterClass(DKDContentType_Command, DIMCommandProcessor);
     DIMContentProcessorRegisterClass(DKDContentType_History, DIMHistoryCommandProcessor);
 }

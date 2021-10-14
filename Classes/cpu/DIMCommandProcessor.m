@@ -106,18 +106,16 @@ static NSMutableDictionary<NSString *, DIMCommandProcessor *> *s_processors = ni
 
 @implementation DIMCommandProcessor (Register)
 
-+ (void)registerAllProcessors {
-    //
-    //  Register command processors
-    //
++ (void)registerCommandProcessors {
+    // meta
     DIMCommandProcessorRegisterClass(DIMCommand_Meta, DIMMetaCommandProcessor);
-    
+    // document
     DIMDocumentCommandProcessor *docProcessor = [[DIMDocumentCommandProcessor alloc] init];
     DIMCommandProcessorRegister(DIMCommand_Document, docProcessor);
     DIMCommandProcessorRegister(@"profile", docProcessor);
     DIMCommandProcessorRegister(@"visa", docProcessor);
     DIMCommandProcessorRegister(@"bulletin", docProcessor);
-
+    // group
     DIMCommandProcessorRegisterClass(@"group", DIMGroupCommandProcessor);
     DIMCommandProcessorRegisterClass(DIMGroupCommand_Invite, DIMInviteCommandProcessor);
     DIMCommandProcessorRegisterClass(DIMGroupCommand_Expel, DIMExpelCommandProcessor);

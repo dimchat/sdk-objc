@@ -67,7 +67,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMCommandProcessor (Register)
 
-+ (void)registerAllProcessors;
++ (void)registerCommandProcessors;
 
 @end
 
