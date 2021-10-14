@@ -41,8 +41,8 @@
 
 @implementation DIMExpelCommandProcessor
 
-- (nullable id<DKDContent>)executeCommand:(DIMCommand *)cmd
-                              withMessage:(id<DKDReliableMessage>)rMsg {
+- (NSArray<id<DKDContent>> *)executeCommand:(DIMCommand *)cmd
+                                withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([cmd isKindOfClass:[DIMExpelCommand class]], @"expel command error: %@", cmd);
     DIMFacebook *facebook = self.facebook;
     
@@ -51,8 +51,7 @@
     id<MKMID> owner = [facebook ownerOfGroup:group];
     NSArray<id<MKMID>> *members = [facebook membersOfGroup:group];
     if (!owner || members.count == 0) {
-        NSAssert(false, @"group not ready: %@", group);
-        return nil;
+        return [self respondText:@"Group empty." withGroup:group];
     }
     
     // 1. check permission
@@ -61,8 +60,8 @@
         // not the owner? check assistants
         NSArray<id<MKMID>> *assistants = [facebook assistantsOfGroup:group];
         if (![assistants containsObject:sender]) {
-            NSAssert(false, @"%@ is not the owner/assistant of group %@, cannot expel.", sender, group);
-            return nil;
+            return [self respondText:@"Sorry, you are not allowed to expel member from this group."
+                           withGroup:group];
         }
     }
     
@@ -70,13 +69,11 @@
     DIMExpelCommand *gmd = (DIMExpelCommand *)cmd;
     NSArray<id<MKMID>> *expelList = [self membersFromCommand:gmd];
     if ([expelList count] == 0) {
-        NSAssert(false, @"expel command error: %@", cmd);
-        return nil;
+        return [self respondText:@"Expel command error." withGroup:group];
     }
     // 2.1. check owner
     if ([expelList containsObject:owner]) {
-        NSAssert(false, @"cannot expel owner(%@) of group: %@", owner, group);
-        return nil;
+        return [self respondText:@"Group owner cannot be expelled." withGroup:group];
     }
     // 2.2. build expelled-list
     NSMutableArray<id<MKMID>> *mArray = [members mutableCopy];

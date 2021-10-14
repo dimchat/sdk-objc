@@ -50,23 +50,17 @@
 
 @implementation DIMCommandProcessor
 
-- (nullable id<DKDContent>)executeCommand:(DIMCommand *)cmd
-                              withMessage:(id<DKDReliableMessage>)rMsg {
-    NSString *text = [NSString stringWithFormat:@"Command (%@) not support yet!", cmd.command];
-    id<DKDContent> res = [[DIMTextContent alloc] initWithText:text];
-    // check group message
-    id<MKMID> group = cmd.group;
-    if (group) {
-        res.group = group;
-    }
-    return res;
+- (NSArray<id<DKDContent>> *)executeCommand:(DIMCommand *)cmd
+                                withMessage:(id<DKDReliableMessage>)rMsg {
+    NSString *text = [NSString stringWithFormat:@"Command (name: %@) not support yet!", cmd.command];
+    return [self respondText:text withGroup:cmd.group];
 }
 
 //
 //  Main
 //
-- (nullable id<DKDContent>)processContent:(id<DKDContent>)content
-                              withMessage:(id<DKDReliableMessage>)rMsg {
+- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
+                                withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMCommand class]], @"command error: %@", content);
     DIMCommand *cmd = (DIMCommand *)content;
     DIMCommandProcessor *cpu = [self getProcessorForCommand:cmd];
@@ -74,9 +68,11 @@
         if ([cmd isKindOfClass:[DIMGroupCommand class]]) {
             cpu = [self getProcessorForName:@"group"];
         }
-        if (!cpu) {
-            cpu = self;
-        }
+    }
+    if (cpu) {
+        cpu.messenger = self.messenger;
+    } else {
+        cpu = self;
     }
     return [cpu executeCommand:cmd withMessage:rMsg];
 }
@@ -103,10 +99,7 @@ static NSMutableDictionary<NSString *, DIMCommandProcessor *> *s_processors = ni
 }
 
 - (nullable __kindof DIMCommandProcessor *)getProcessorForName:(NSString *)name {
-    DIMCommandProcessor *cpu = [s_processors objectForKey:name];
-    //NSAssert(cpu, @"failed to get CPU for content type: %d", type);
-    cpu.messenger = self.messenger;
-    return cpu;
+    return [s_processors objectForKey:name];
 }
 
 @end
@@ -120,9 +113,11 @@ static NSMutableDictionary<NSString *, DIMCommandProcessor *> *s_processors = ni
     DIMCommandProcessorRegisterClass(DIMCommand_Meta, DIMMetaCommandProcessor);
     
     DIMDocumentCommandProcessor *docProcessor = [[DIMDocumentCommandProcessor alloc] init];
-    DIMCommandProcessorRegister(DIMCommand_Profile, docProcessor);
     DIMCommandProcessorRegister(DIMCommand_Document, docProcessor);
-    
+    DIMCommandProcessorRegister(@"profile", docProcessor);
+    DIMCommandProcessorRegister(@"visa", docProcessor);
+    DIMCommandProcessorRegister(@"bulletin", docProcessor);
+
     DIMCommandProcessorRegisterClass(@"group", DIMGroupCommandProcessor);
     DIMCommandProcessorRegisterClass(DIMGroupCommand_Invite, DIMInviteCommandProcessor);
     DIMCommandProcessorRegisterClass(DIMGroupCommand_Expel, DIMExpelCommandProcessor);

@@ -35,11 +35,11 @@
 //  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
-#import <DIMSDK/DIMCommandProcessor.h>
+#import <DIMSDK/DIMMetaCommandProcessor.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMDocumentCommandProcessor : DIMCommandProcessor
+@interface DIMDocumentCommandProcessor : DIMMetaCommandProcessor
 
 @end
 

@@ -54,19 +54,17 @@
     return nil;
 }
 
-- (nullable id<DKDContent>)executeCommand:(DIMCommand *)cmd
-                              withMessage:(id<DKDReliableMessage>)rMsg {
-    NSString *text = [NSString stringWithFormat:@"Group command (%@) not support yet!", cmd.command];
-    id<DKDContent> res = [[DIMTextContent alloc] initWithText:text];
-    res.group = cmd.group;
-    return res;
+- (NSArray<id<DKDContent>> *)executeCommand:(DIMCommand *)cmd
+                                withMessage:(id<DKDReliableMessage>)rMsg {
+    NSString *text = [NSString stringWithFormat:@"Group command (name: %@) not support yet!", cmd.command];
+    return [self respondText:text withGroup:cmd.group];
 }
 
 //
 //  Main
 //
-- (nullable id<DKDContent>)processContent:(id<DKDContent>)content
-                              withMessage:(id<DKDReliableMessage>)rMsg {
+- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
+                                withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMGroupCommand class]], @"group command error: %@", content);
     DIMCommand *cmd = (DIMCommand *)content;
     DIMCommandProcessor *cpu = [self getProcessorForCommand:cmd];

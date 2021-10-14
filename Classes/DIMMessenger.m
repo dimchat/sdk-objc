@@ -241,11 +241,11 @@
 
 @implementation DIMMessenger (Processing)
 
-- (NSData *)processData:(NSData *)data {
+- (NSArray<NSData *> *)processData:(NSData *)data {
     return [self.messageProcessor processData:data];
 }
 
-- (id<DKDReliableMessage>)processMessage:(id<DKDReliableMessage>)rMsg {
+- (NSArray<id<DKDReliableMessage>> *)processMessage:(id<DKDReliableMessage>)rMsg {
     return [self.messageProcessor processMessage:rMsg];
 }
 

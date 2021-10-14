@@ -35,6 +35,7 @@
 //  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
+#import "DIMMessenger.h"
 #import "DIMForwardContentProcessor.h"
 
 @implementation DIMForwardContentProcessor
@@ -42,27 +43,28 @@
 //
 //  Main
 //
-- (nullable id<DKDContent>)processContent:(id<DKDContent>)content
-                              withMessage:(id<DKDReliableMessage>)rMsg {
+- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
+                                withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMForwardContent class]], @"forward content error: %@", content);
     DIMForwardContent *forward = (DIMForwardContent *)content;
     id<DKDReliableMessage> secret = forward.forwardMessage;
-    
     // call messenger to process it
-    secret = [self.messenger processMessage:secret];
-    // check response
-    if (secret) {
-        // Over The Top
-        return [[DIMForwardContent alloc] initWithForwardMessage:secret];
-    }/* else {
-        id receiver = forward.forwardMessage.receiver;
-        NSString *text = [NSString stringWithFormat:@"Message forwarded: %@", receiver];
-        return [[DIMReceiptCommand alloc] initWithMessage:text];
-    }*/
-
-    // NOTICE: decrypt failed, not for you?
-    //         it means you are asked to re-pack and forward this message
-    return nil;
+    DIMMessenger *messenger = [self messenger];
+    // 1. verify message
+    id<DKDSecureMessage> sMsg = [messenger verifyMessage:secret];
+    if (!sMsg) {
+        // waiting for sender's meta if not exists
+        return nil;
+    }
+    // 2. decrypt message
+    id<DKDInstantMessage> iMsg = [messenger decryptMessage:sMsg];
+    if (!iMsg) {
+        // NOTICE: decrypt failed, not for you?
+        //         it means you are asked to re-pack and forward this message
+        return nil;
+    }
+    // 3. process message content
+    return [messenger processContent:iMsg.content withMessage:secret];
 }
 
 @end

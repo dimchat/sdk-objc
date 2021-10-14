@@ -42,8 +42,8 @@
 
 @implementation DIMQueryGroupCommandProcessor
 
-- (nullable id<DKDContent>)executeCommand:(DIMCommand *)cmd
-                              withMessage:(id<DKDReliableMessage>)rMsg {
+- (NSArray<id<DKDContent>> *)executeCommand:(DIMCommand *)cmd
+                                withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([cmd isKindOfClass:[DIMQueryGroupCommand class]], @"query group command error: %@", cmd);
     DIMFacebook *facebook = self.facebook;
     
@@ -52,10 +52,7 @@
     id<MKMID> owner = [facebook ownerOfGroup:group];
     NSArray<id<MKMID>> *members = [facebook membersOfGroup:group];
     if (!owner || members.count == 0) {
-        NSString *text = [NSString stringWithFormat:@"Sorry, members not found in group: %@", group];
-        id<DKDContent> res = [[DIMTextContent alloc] initWithText:text];
-        res.group = group;
-        return res;
+        return [self respondText:@"Group empty." withGroup:group];
     }
 
     // 1. check permission
@@ -64,19 +61,20 @@
         // not a member? check assistants
         NSArray<id<MKMID>> *assistants = [facebook assistantsOfGroup:group];
         if (![assistants containsObject:sender]) {
-            NSAssert(false, @"%@ is not a member/assistant of group %@, cannot query", sender, group);
-            return nil;
+            return [self respondText:@"Sorry, you are not allowed to query this group." withGroup:group];
         }
     }
     
     // 2. respond
     DIMUser *user = [self.facebook currentUser];
     NSAssert(user, @"current user not set");
+    DIMCommand *res;
     if ([user.ID isEqual:owner]) {
-        return [[DIMResetGroupCommand alloc] initWithGroup:group members:members];
+        res = [[DIMResetGroupCommand alloc] initWithGroup:group members:members];
     } else {
-        return [[DIMInviteCommand alloc] initWithGroup:group members:members];
+        res = [[DIMInviteCommand alloc] initWithGroup:group members:members];
     }
+    return [self respondContent:res];
 }
 
 @end

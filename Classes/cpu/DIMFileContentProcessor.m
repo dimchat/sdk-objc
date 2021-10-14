@@ -98,8 +98,8 @@
 //
 //  Main
 //
-- (nullable id<DKDContent>)processContent:(id<DKDContent>)content
-                              withMessage:(id<DKDReliableMessage>)rMsg {
+- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
+                                withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMFileContent class]], @"file content error: %@", content);
     // TODO: process file content
     

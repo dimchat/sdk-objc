@@ -42,15 +42,16 @@
 
 @implementation DIMInviteCommandProcessor
 
-- (nullable id<DKDContent>)callReset:(DIMCommand *)cmd
-                             message:(id<DKDReliableMessage>)rMsg {
+- (NSArray<id<DKDContent>> *)callReset:(DIMCommand *)cmd
+                               message:(id<DKDReliableMessage>)rMsg {
     DIMCommandProcessor *cpu = [self getProcessorForName:DIMGroupCommand_Reset];
     NSAssert(cpu, @"reset CPU not set yet");
+    cpu.messenger = self.messenger;
     return [cpu executeCommand:cmd withMessage:rMsg];
 }
 
-- (nullable id<DKDContent>)executeCommand:(DIMCommand *)cmd
-                              withMessage:(id<DKDReliableMessage>)rMsg {
+- (NSArray<id<DKDContent>> *)executeCommand:(DIMCommand *)cmd
+                                withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([cmd isKindOfClass:[DIMInviteCommand class]], @"invite command error: %@", cmd);
     DIMFacebook *facebook = self.facebook;
     
@@ -71,8 +72,8 @@
         // not a member? check assistants
         NSArray<id<MKMID>> *assistants = [facebook assistantsOfGroup:group];
         if (![assistants containsObject:sender]) {
-            NSAssert(false, @"%@ is not a member/assistant of group %@, cannot invite", sender, group);
-            return nil;
+            return [self respondText:@"Sorry, you are not allowed to invite new members into this group."
+                           withGroup:group];
         }
     }
     
@@ -80,8 +81,7 @@
     DIMInviteCommand *gmd = (DIMInviteCommand *)cmd;
     NSArray<id<MKMID>> *inviteList = [self membersFromCommand:gmd];
     if ([inviteList count] == 0) {
-        NSAssert(false, @"invite command error: %@", cmd);
-        return nil;
+        return [self respondText:@"Invite command error." withGroup:group];
     }
     // 2.1. check for reset
     if ([sender isEqual:owner] && [inviteList containsObject:owner]) {

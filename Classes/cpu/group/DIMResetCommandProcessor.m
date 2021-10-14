@@ -42,35 +42,46 @@
 
 @implementation DIMResetGroupCommandProcessor
 
-- (nullable id<DKDContent>)temporarySave:(DIMGroupCommand *)cmd sender:(id<MKMID>)sender {
+- (void)queryOwner:(id<MKMID>)owner forGroup:(id<MKMID>)group {
+    DIMCommand *query = [[DIMQueryGroupCommand alloc] initWithGroup:group];
+    [self.messenger sendContent:query sender:nil receiver:owner callback:NULL priority:1];
+}
+
+- (NSArray<id<DKDContent>> *)temporarySave:(DIMGroupCommand *)cmd sender:(id<MKMID>)sender {
     DIMFacebook *facebook = self.facebook;
     id<MKMID> group = cmd.group;
     // check whether the owner contained in the new members
     NSArray<id<MKMID>> *newMembers = [self membersFromCommand:cmd];
-    for (id<MKMID> ID in newMembers) {
-        if ([facebook group:group isOwner:ID]) {
-            // it's a full list, save it now
-            if ([facebook saveMembers:newMembers group:group]) {
-                id<MKMID> owner = [facebook ownerOfGroup:group];
-                if (owner && ![owner isEqual:sender]) {
-                    // NOTICE: to prevent counterfeit,
-                    //         query the owner for newest member-list
-                    DIMQueryGroupCommand *query;
-                    query = [[DIMQueryGroupCommand alloc] initWithGroup:group];
-                    [self.messenger sendContent:query sender:nil receiver:owner callback:NULL priority:1];
-                }
-            }
-            // response (no need to respond this group command
-            return nil;
+    if ([newMembers count] == 0) {
+        return [self respondText:@"Reset command error." withGroup:group];
+    }
+    for (id<MKMID> item in newMembers) {
+        if (![facebook metaForID:item]) {
+            // TODO: waiting for member's meta?
+            continue;
+        } else if (![facebook group:group isOwner:item]) {
+            // not owner, skip it
+            continue;
         }
+        // it's a full list, save it now
+        if ([facebook saveMembers:newMembers group:group]) {
+            if (![item isEqual:sender]) {
+                // NOTICE: to prevent counterfeit,
+                //         query the owner for newest member-list
+                [self queryOwner:item forGroup:group];
+            }
+        }
+        // response (no need to respond this group command
+        return nil;
     }
     // NOTICE: this is a partial member-list
     //         query the sender for full-list
-    return [[DIMQueryGroupCommand alloc] initWithGroup:group];
+    DIMCommand *query = [[DIMQueryGroupCommand alloc] initWithGroup:group];
+    return [self respondContent:query];
 }
 
-- (nullable id<DKDContent>)executeCommand:(DIMCommand *)cmd
-                              withMessage:(id<DKDReliableMessage>)rMsg {
+- (NSArray<id<DKDContent>> *)executeCommand:(DIMCommand *)cmd
+                                withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([cmd isKindOfClass:[DIMResetGroupCommand class]] ||
              [cmd isKindOfClass:[DIMInviteCommand class]], @"invite command error: %@", cmd);
     DIMFacebook *facebook = self.facebook;
@@ -92,21 +103,19 @@
         // not the owner? check assistants
         NSArray<id<MKMID>> *assistants = [facebook assistantsOfGroup:group];
         if (![assistants containsObject:sender]) {
-            NSAssert(false, @"%@ is not the owner/assistant of group %@, cannot reset.", sender, group);
-            return nil;
+            return [self respondText:@"Sorry, you are not allowed to reset this group."
+                           withGroup:group];
         }
     }
     
     // 2. resetting members
     NSArray<id<MKMID>> *newMembers = [self membersFromCommand:gmd];
     if ([newMembers count] == 0) {
-        NSAssert(false, @"group command error: %@", cmd);
-        return nil;
+        return [self respondText:@"Reset command error." withGroup:group];
     }
     // 2.1. check owner
     if (![newMembers containsObject:owner]) {
-        NSAssert(false, @"cannot expel owner(%@) of group: %@", owner, group);
-        return nil;
+        return [self respondText:@"Reset command error." withGroup:group];
     }
     // 2.2. build expelled-list
     NSMutableArray<id<MKMID>> *removedList = [[NSMutableArray alloc] init];

@@ -41,8 +41,8 @@
 
 @implementation DIMQuitCommandProcessor
 
-- (nullable id<DKDContent>)executeCommand:(DIMCommand *)cmd
-                              withMessage:(id<DKDReliableMessage>)rMsg {
+- (NSArray<id<DKDContent>> *)executeCommand:(DIMCommand *)cmd
+                                withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([cmd isKindOfClass:[DIMQuitCommand class]], @"quit command error: %@", cmd);
     DIMFacebook *facebook = self.facebook;
     
@@ -51,20 +51,17 @@
     id<MKMID> owner = [facebook ownerOfGroup:group];
     NSArray<id<MKMID>> *members = [facebook membersOfGroup:group];
     if (!owner || members.count == 0) {
-        NSAssert(false, @"group not ready: %@", group);
-        return nil;
+        return [self respondText:@"Group empty." withGroup:group];
     }
 
     // 1. check permission
     id<MKMID> sender = rMsg.sender;
     if ([owner isEqual:sender]) {
-        NSAssert(false, @"owner cannot quit: %@ -> %@", sender, group);
-        return nil;
+        return [self respondText:@"Sorry, owner cannot quit." withGroup:group];
     }
     NSArray<id<MKMID>> *assistants = [facebook assistantsOfGroup:group];
     if ([assistants containsObject:sender]) {
-        NSAssert(false, @"assistant cannot quit now: %@ -> %@", sender, group);
-        return nil;
+        return [self respondText:@"Sorry, assistant cannot quit." withGroup:group];
     }
     
     // 2. remove the sender from group members

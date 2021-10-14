@@ -42,51 +42,60 @@
 
 @implementation DIMDocumentCommandProcessor
 
-- (nullable id<DKDContent>)_getDocumentForID:(id<MKMID>)ID {
+- (NSArray<id<DKDContent>> *)getDocumentForID:(id<MKMID>)ID withType:(NSString *)type {
+    DIMFacebook *facebook = [self facebook];
     // query document for ID
-    id<MKMDocument> doc = [self.facebook documentForID:ID type:@"*"];
+    id<MKMDocument> doc = [facebook documentForID:ID type:type];
     if (doc) {
-        return [[DIMDocumentCommand alloc] initWithID:ID document:doc];
+        DIMCommand *cmd = [[DIMDocumentCommand alloc] initWithID:ID document:doc];
+        return [self respondContent:cmd];
+    } else {
+        NSString *text = [NSString stringWithFormat:@"Sorry, document not found for ID: %@", ID];
+        return [self respondText:text withGroup:nil];
     }
-    // document not found
-    NSString *text = [NSString stringWithFormat:@"Sorry, document not found for ID: %@", ID];
-    return [[DIMTextContent alloc] initWithText:text];
 }
 
-- (nullable id<DKDContent>)_putDocument:(id<MKMDocument>)doc
-                                   meta:(nullable id<MKMMeta>)meta
-                                  forID:(id<MKMID>)ID {
+- (NSArray<id<DKDContent>> *)putDocument:(id<MKMDocument>)doc meta:(nullable id<MKMMeta>)meta forID:(id<MKMID>)ID {
+    DIMFacebook *facebook = [self facebook];
     NSString *text;
     if (meta) {
-        if (![self.facebook saveMeta:meta forID:ID]) {
-            // save failed
+        // received a meta for ID
+        if (![facebook saveMeta:meta forID:ID]) {
             text = [NSString stringWithFormat:@"Meta not accepted: %@", ID];
-            return [[DIMTextContent alloc] initWithText:text];
+            return [self respondText:text withGroup:nil];
         }
     }
     // received a document for ID
-    if (![self.facebook saveDocument:doc]) {
-        // save failed
+    if ([facebook saveDocument:doc]) {
+        text = [NSString stringWithFormat:@"Document received %@", ID];
+        return [self respondReceipt:text];
+    } else {
         text = [NSString stringWithFormat:@"Document not accepted: %@", ID];
-        return [[DIMTextContent alloc] initWithText:text];
+        return [self respondText:text withGroup:nil];
     }
-    text = [NSString stringWithFormat:@"Document updated for ID: %@", ID];
-    return [[DIMReceiptCommand alloc] initWithMessage:text];
 }
 
-- (nullable id<DKDContent>)executeCommand:(DIMCommand *)content
-                              withMessage:(id<DKDReliableMessage>)rMsg {
+- (NSArray<id<DKDContent>> *)executeCommand:(DIMCommand *)content
+                                withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMDocumentCommand class]], @"document command error: %@", content);
     DIMDocumentCommand *cmd = (DIMDocumentCommand *)content;
     id<MKMID> ID = cmd.ID;
-    id<MKMDocument> doc = cmd.document;
-    if (doc) {
-        // check meta
-        id<MKMMeta> meta = cmd.meta;
-        return [self _putDocument:doc meta:meta forID:ID];
-    } else {
-        return [self _getDocumentForID:ID];
+    if (ID) {
+        id<MKMDocument> doc = cmd.document;
+        if (!doc) {
+            // query entity document for ID
+            NSString *type = [cmd objectForKey:@"doc_type"];
+            if ([type length] == 0) {
+                type = @"*";  // ANY
+            }
+            return [self getDocumentForID:ID withType:type];
+        } else if ([ID isEqual:doc.ID]) {
+            // received a new document for ID
+            return [self putDocument:doc meta:cmd.meta forID:ID];
+        }
     }
+    // error
+    return [self respondText:@"Document command error." withGroup:nil];
 }
 
 @end

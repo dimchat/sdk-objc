@@ -74,13 +74,13 @@ static inline int ecc_der_to_sig(const uint8_t *der, int der_len, uint8_t *sig_6
      *   0xMM 0xNN  ..   s_length bytes of "s" (offset 6 + r_len)
      */
     int seq_len;
-    uint8_t r_bytes[32];
-    uint8_t s_bytes[32];
+    //uint8_t r_bytes[32];
+    //uint8_t s_bytes[32];
     int r_len;
     int s_len;
 
-    memset(r_bytes, 0, sizeof(r_bytes));
-    memset(s_bytes, 0, sizeof(s_bytes));
+    //memset(r_bytes, 0, sizeof(r_bytes));
+    //memset(s_bytes, 0, sizeof(s_bytes));
 
     /*
      * Must have at least:

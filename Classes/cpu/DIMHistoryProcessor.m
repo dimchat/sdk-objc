@@ -39,16 +39,10 @@
 
 @implementation DIMHistoryCommandProcessor
 
-- (nullable id<DKDContent>)executeCommand:(DIMCommand *)cmd
-                              withMessage:(id<DKDReliableMessage>)rMsg {
-    NSString *text = [NSString stringWithFormat:@"History command (%@) not support yet!", cmd.command];
-    id<DKDContent> res = [[DIMTextContent alloc] initWithText:text];
-    // check group message
-    id<MKMID> group = cmd.group;
-    if (group) {
-        res.group = group;
-    }
-    return res;
+- (NSArray<id<DKDContent>> *)executeCommand:(DIMCommand *)cmd
+                                withMessage:(id<DKDReliableMessage>)rMsg {
+    NSString *text = [NSString stringWithFormat:@"History command (name: %@) not support yet!", cmd.command];
+    return [self respondText:text withGroup:cmd.group];
 }
 
 @end

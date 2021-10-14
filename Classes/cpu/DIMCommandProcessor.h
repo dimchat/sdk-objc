@@ -41,8 +41,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMCommandProcessor : DIMContentProcessor
 
-- (nullable id<DKDContent>)executeCommand:(DIMCommand *)cmd
-                              withMessage:(id<DKDReliableMessage>)rMsg;
+- (NSArray<id<DKDContent>> *)executeCommand:(DIMCommand *)cmd
+                                withMessage:(id<DKDReliableMessage>)rMsg;
 
 @end
 

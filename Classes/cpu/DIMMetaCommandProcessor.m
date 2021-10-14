@@ -44,40 +44,43 @@
 
 @implementation DIMMetaCommandProcessor
 
-- (nullable id<DKDContent>)_getMetaForID:(id<MKMID>)ID {
-    // query meta for ID
+- (NSArray<id<DKDContent>> *)getMetaForID:(id<MKMID>)ID {
     id<MKMMeta> meta = [self.facebook metaForID:ID];
     if (meta) {
-        return [[DIMMetaCommand alloc] initWithID:ID meta:meta];
+        DIMCommand *cmd = [[DIMMetaCommand alloc] initWithID:ID meta:meta];
+        return [self respondContent:cmd];
+    } else {
+        NSString *text = [NSString stringWithFormat:@"Sorry, meta not found for ID: %@", ID];
+        return [self respondText:text withGroup:nil];
     }
-    // meta not found
-    NSString *text = [NSString stringWithFormat:@"Sorry, meta not found for ID: %@", ID];
-    return [[DIMTextContent alloc] initWithText:text];
 }
 
-- (nullable id<DKDContent>)_putMeta:(id<MKMMeta>)meta
-                            forID:(id<MKMID>)ID {
+- (NSArray<id<DKDContent>> *)putMeta:(id<MKMMeta>)meta forID:(id<MKMID>)ID {
     NSString *text;
-    // received a meta for ID
-    if (![self.facebook saveMeta:meta forID:ID]) {
-        // save failed
+    if ([self.facebook saveMeta:meta forID:ID]) {
+        text = [NSString stringWithFormat:@"Meta received %@", ID];
+        return [self respondReceipt:text];
+    } else {
         text = [NSString stringWithFormat:@"Meta not accepted: %@", ID];
-        return [[DIMTextContent alloc] initWithText:text];
+        return [self respondText:text withGroup:nil];
     }
-    text = [NSString stringWithFormat:@"Meta accepted for ID: %@", ID];
-    return [[DIMReceiptCommand alloc] initWithMessage:text];
 }
 
-- (nullable id<DKDContent>)executeCommand:(DIMCommand *)content
-                              withMessage:(id<DKDReliableMessage>)rMsg {
+- (NSArray<id<DKDContent>> *)executeCommand:(DIMCommand *)content
+                                withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMMetaCommand class]], @"meta command error: %@", content);
     DIMMetaCommand *cmd = (DIMMetaCommand *)content;
     id<MKMID> ID = cmd.ID;
     id<MKMMeta> meta = cmd.meta;
-    if (meta) {
-        return [self _putMeta:meta forID:ID];
+    if (!ID) {
+        // error
+        return [self respondText:@"Meta command error." withGroup:nil];
+    } else if (meta) {
+        // received a meta for ID
+        return [self putMeta:meta forID:ID];
     } else {
-        return [self _getMetaForID:ID];
+        // query meta for ID
+        return [self getMetaForID:ID];
     }
 }
 

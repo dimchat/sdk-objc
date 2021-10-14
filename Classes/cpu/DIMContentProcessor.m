@@ -42,6 +42,7 @@
 #import "DIMFileContentProcessor.h"
 #import "DIMCommandProcessor.h"
 #import "DIMHistoryProcessor.h"
+#import "DIMReceiptCommand.h"
 
 #import "DIMContentProcessor.h"
 
@@ -61,16 +62,31 @@
 //
 //  Main
 //
-- (nullable id<DKDContent>)processContent:(id<DKDContent>)content
-                              withMessage:(id<DKDReliableMessage>)rMsg {
-    NSString *text = [NSString stringWithFormat:@"Content (type: %u) not support yet!", content.type];
-    id<DKDContent> res = [[DIMTextContent alloc] initWithText:text];
-    // check group message
-    id<MKMID> group = content.group;
+- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
+                                withMessage:(id<DKDReliableMessage>)rMsg {
+    NSString *text = [NSString stringWithFormat:@"Content (type: %d) not support yet!", content.type];
+    return [self respondText:text withGroup:content.group];
+}
+
+- (NSArray<id<DKDContent>> *)respondText:(NSString *)text withGroup:(nullable id<MKMID>)group {
+    DIMTextContent *res = [[DIMTextContent alloc] initWithText:text];
     if (group) {
         res.group = group;
     }
-    return res;
+    return @[res];
+}
+
+- (NSArray<id<DKDContent>> *)respondReceipt:(NSString *)text {
+    DIMReceiptCommand *res = [[DIMReceiptCommand alloc] initWithMessage:text];
+    return @[res];
+}
+
+- (NSArray<id<DKDContent>> *)respondContent:(nullable id<DKDContent>)res {
+    if (!res) {
+        return nil;
+    } else {
+        return @[res];
+    }
 }
 
 @end

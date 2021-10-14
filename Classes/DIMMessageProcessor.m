@@ -70,17 +70,7 @@
     return (DIMMessenger *)[self transceiver];
 }
 
-- (nullable id<DKDInstantMessage>)processInstant:(id<DKDInstantMessage>)iMsg
-                                     withMessage:(id<DKDReliableMessage>)rMsg {
-    id<DKDInstantMessage> res = [super processInstant:iMsg withMessage:rMsg];
-    if ([self.messenger saveMessage:iMsg]) {
-        return res;
-    }
-    // error
-    return nil;
-}
-
-- (nullable id<DKDContent>)processContent:(id<DKDContent>)content
+- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                               withMessage:(id<DKDReliableMessage>)rMsg {
     // NOTICE: override to check group before calling this
     DIMContentProcessor *cpu = [DIMContentProcessor getProcessorForContent:content];

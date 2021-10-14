@@ -56,8 +56,12 @@ NS_ASSUME_NONNULL_BEGIN
  * @param rMsg - message with envelope
  * @return content to respond
  */
-- (nullable id<DKDContent>)processContent:(id<DKDContent>)content
-                              withMessage:(id<DKDReliableMessage>)rMsg;
+- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
+                                withMessage:(id<DKDReliableMessage>)rMsg;
+
+- (NSArray<id<DKDContent>> *)respondText:(NSString *)text withGroup:(nullable id<MKMID>)group;
+- (NSArray<id<DKDContent>> *)respondReceipt:(NSString *)text;
+- (NSArray<id<DKDContent>> *)respondContent:(nullable id<DKDContent>)res;
 
 @end
 
