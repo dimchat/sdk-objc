@@ -38,23 +38,33 @@
 #import "DIMFacebook.h"
 #import "DIMMessenger.h"
 
-#import "DIMForwardContentProcessor.h"
-#import "DIMCommandProcessor.h"
-#import "DIMHistoryProcessor.h"
 #import "DIMReceiptCommand.h"
 
 #import "DIMContentProcessor.h"
 
+@interface DIMContentProcessor ()
+
+@property (weak, nonatomic) __kindof DIMMessenger *messenger;
+
+@end
+
 @implementation DIMContentProcessor
 
 - (instancetype)init {
+    NSAssert(false, @"don't call me!");
+    DIMMessenger *messenger = nil;
+    return [self initWithMessenger:messenger];
+}
+
+/* designated initializer */
+- (instancetype)initWithMessenger:(DIMMessenger *)messenger {
     if (self = [super init]) {
-        self.messenger = nil;
+        _messenger = messenger;
     }
     return self;
 }
 
-- (DIMFacebook *)facebook {
+- (__kindof DIMFacebook *)facebook {
     return self.messenger.facebook;
 }
 
@@ -63,7 +73,7 @@
 //
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
-    NSString *text = [NSString stringWithFormat:@"Content (type: %d) not support yet!", content.type];
+    NSString *text = [NSString stringWithFormat:DIM_CONTENT_NOT_SUPPORT_FMT, content.type];
     return [self respondText:text withGroup:content.group];
 }
 
@@ -86,46 +96,6 @@
     } else {
         return @[res];
     }
-}
-
-@end
-
-@implementation DIMContentProcessor (CPU)
-
-static NSMutableDictionary<NSNumber *, DIMContentProcessor *> *s_processors = nil;
-
-+ (void)registerProcessor:(DIMContentProcessor *)processor
-                  forType:(DKDContentType)type {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        if (!s_processors) {
-            s_processors = [[NSMutableDictionary alloc] init];
-        }
-    });
-    [s_processors setObject:processor forKey:@(type)];
-}
-
-+ (nullable __kindof DIMContentProcessor *)getProcessorForContent:(id<DKDContent>)content {
-    return [self getProcessorForType:content.type];
-}
-
-+ (nullable __kindof DIMContentProcessor *)getProcessorForType:(DKDContentType)type {
-    return [s_processors objectForKey:@(type)];
-}
-
-@end
-
-#pragma mark - Register Processors
-
-@implementation DIMContentProcessor (Register)
-
-+ (void)registerContentProcessors {
-    // contents
-    DIMContentProcessorRegisterClass(0, DIMContentProcessor);  // default
-    DIMContentProcessorRegisterClass(DKDContentType_Forward, DIMForwardContentProcessor);
-    // commands
-    DIMContentProcessorRegisterClass(DKDContentType_Command, DIMCommandProcessor);
-    DIMContentProcessorRegisterClass(DKDContentType_History, DIMHistoryCommandProcessor);
 }
 
 @end

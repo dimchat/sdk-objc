@@ -39,35 +39,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#define DIM_CMD_NOT_SUPPORT @"Command (name: %@) not support yet!"
+
 @interface DIMCommandProcessor : DIMContentProcessor
 
 - (NSArray<id<DKDContent>> *)executeCommand:(DIMCommand *)cmd
                                 withMessage:(id<DKDReliableMessage>)rMsg;
-
-@end
-
-@interface DIMCommandProcessor (CPU)
-
-+ (void)registerProcessor:(DIMCommandProcessor *)processor
-               forCommand:(NSString *)name;
-
-- (nullable __kindof DIMCommandProcessor *)getProcessorForCommand:(DIMCommand *)cmd;
-
-- (nullable __kindof DIMCommandProcessor *)getProcessorForName:(NSString *)name;
-
-@end
-
-#define DIMCommandProcessorRegister(name, cpu)                                 \
-            [DIMCommandProcessor registerProcessor:(cpu) forCommand:(name)]    \
-                              /* EOF 'DIMCommandProcessorRegister(name, cpu)' */
-
-#define DIMCommandProcessorRegisterClass(name, clazz)                          \
-            DIMCommandProcessorRegister((name), [[clazz alloc] init])          \
-                       /* EOF 'DIMCommandProcessorRegisterClass(name, clazz)' */
-
-@interface DIMCommandProcessor (Register)
-
-+ (void)registerCommandProcessors;
 
 @end
 

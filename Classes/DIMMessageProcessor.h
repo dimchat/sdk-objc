@@ -39,6 +39,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class DIMContentProcessor;
+@class DIMCommandProcessor;
+@class DIMProcessorFactory;
+
 @interface DIMMessageProcessor : DIMProcessor
 
 @property (readonly, weak, nonatomic) __kindof DIMMessenger *messenger;
@@ -46,12 +50,27 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithMessenger:(DIMMessenger *)transceiver
 NS_DESIGNATED_INITIALIZER;
 
+- (DIMProcessorFactory *)createProcessorFactory;
+
+@end
+
+@interface DIMMessageProcessor (CPU)
+
+/**
+ *  Get content/command processor
+ */
+- (nullable __kindof DIMContentProcessor *)processorForContent:(id<DKDContent>)content;
+
+/**
+ *  Get content processor
+ */
+- (nullable __kindof DIMContentProcessor *)processorForType:(DKDContentType)type;
+
 @end
 
 @interface DIMMessageProcessor (Register)
 
 + (void)registerAllFactories;
-+ (void)registerAllProcessors;
 
 @end
 

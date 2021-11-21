@@ -2,12 +2,12 @@
 //
 //  DIM-SDK : Decentralized Instant Messaging Software Development Kit
 //
-//                               Written in 2019 by Moky <albert.moky@gmail.com>
+//                               Written in 2021 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Albert Moky
+// Copyright (c) 2021 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,31 +28,52 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMCommandProcessor.m
+//  DIMProcessorFactory.h
 //  DIMSDK
 //
-//  Created by Albert Moky on 2019/11/29.
-//  Copyright © 2019 Albert Moky. All rights reserved.
+//  Created by Albert Moky on 2021/11/22.
+//  Copyright © 2021 Albert Moky. All rights reserved.
 //
 
-#import "DIMCommandProcessor.h"
+#import <DIMSDK/DIMContentProcessor.h>
+#import <DIMSDK/DIMCommandProcessor.h>
 
-@implementation DIMCommandProcessor
+NS_ASSUME_NONNULL_BEGIN
 
-- (NSArray<id<DKDContent>> *)executeCommand:(DIMCommand *)cmd
-                                withMessage:(id<DKDReliableMessage>)rMsg {
-    NSString *text = [NSString stringWithFormat:DIM_CMD_NOT_SUPPORT, cmd.command];
-    return [self respondText:text withGroup:cmd.group];
-}
+@interface DIMProcessorFactory : NSObject
 
-//
-//  Main
-//
-- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
-                                withMessage:(id<DKDReliableMessage>)rMsg {
-    NSAssert([content isKindOfClass:[DIMCommand class]], @"command error: %@", content);
-    DIMCommand *cmd = (DIMCommand *)content;
-    return [self executeCommand:cmd withMessage:rMsg];
-}
+@property (readonly, weak, nonatomic) __kindof DIMMessenger *messenger;
+
+- (instancetype)initWithMessenger:(DIMMessenger *)messenger
+NS_DESIGNATED_INITIALIZER;
+
+/**
+ *  Get content/command processor
+ */
+- (nullable __kindof DIMContentProcessor *)processorForContent:(id<DKDContent>)content;
+
+/**
+ *  Get content processor
+ */
+- (nullable __kindof DIMContentProcessor *)processorForType:(DKDContentType)type;
+
+/**
+ *  Get command processor
+ */
+- (nullable __kindof DIMCommandProcessor *)processorForType:(DKDContentType)type command:(NSString *)name;
+
+#pragma mark -
+
+/**
+ *  Create content processor with type
+ */
+- (DIMContentProcessor *)createProcessorWithType:(DKDContentType)type;
+
+/**
+ *  Create command processor with type & name
+ */
+- (DIMCommandProcessor *)createProcessorWithType:(DKDContentType)type command:(NSString *)name;
 
 @end
+
+NS_ASSUME_NONNULL_END

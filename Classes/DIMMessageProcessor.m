@@ -44,11 +44,19 @@
 
 #import "DIMContentProcessor.h"
 #import "DIMCommandProcessor.h"
+#import "DIMProcessorFactory.h"
 
 #import "DIMMessenger.h"
 #import "DIMMessagePacker.h"
 
 #import "DIMMessageProcessor.h"
+
+@interface DIMMessageProcessor () {
+    
+    DIMProcessorFactory *_cpm;
+}
+
+@end
 
 @implementation DIMMessageProcessor
 
@@ -61,9 +69,13 @@
 /* designated initializer */
 - (instancetype)initWithMessenger:(DIMMessenger *)messenger {
     if (self = [super initWithTransceiver:messenger]) {
-        //
+        _cpm = [self createProcessorFactory];
     }
     return self;
+}
+
+- (DIMProcessorFactory *)createProcessorFactory {
+    return [[DIMProcessorFactory alloc] initWithMessenger:self.messenger];
 }
 
 - (__kindof DIMMessenger *)messenger {
@@ -73,17 +85,21 @@
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                               withMessage:(id<DKDReliableMessage>)rMsg {
     // NOTICE: override to check group before calling this
-    DIMContentProcessor *cpu = [DIMContentProcessor getProcessorForContent:content];
-    if (!cpu) {
-        cpu = [DIMContentProcessor getProcessorForType:0];  // unknown
-        if (!cpu) {
-            NSAssert(false, @"cannot process content: %@", content);
-            return nil;
-        }
-    }
-    cpu.messenger = self.messenger;
+    DIMContentProcessor *cpu = [self processorForContent:content];
     return [cpu processContent:content withMessage:rMsg];
     // NOTICE: override to filter the response after called this
+}
+
+@end
+
+@implementation DIMMessageProcessor (CPU)
+
+- (nullable __kindof DIMContentProcessor *)processorForContent:(id<DKDContent>)content {
+    return [_cpm processorForContent:content];
+}
+
+- (nullable __kindof DIMContentProcessor *)processorForType:(DKDContentType)type {
+    return [_cpm processorForType:type];
 }
 
 @end
@@ -110,14 +126,6 @@
     DIMCommandFactoryRegisterClass(DIMCommand_Storage, DIMStorageCommand);
     DIMCommandFactoryRegisterClass(DIMCommand_Contacts, DIMStorageCommand);
     DIMCommandFactoryRegisterClass(DIMCommand_PrivateKey, DIMStorageCommand);
-}
-
-+ (void)registerAllProcessors {
-    //
-    //  Register processors
-    //
-    [DIMContentProcessor registerContentProcessors];
-    [DIMCommandProcessor registerCommandProcessors];
 }
 
 @end

@@ -60,18 +60,4 @@
     return [self respondText:text withGroup:cmd.group];
 }
 
-//
-//  Main
-//
-- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
-                                withMessage:(id<DKDReliableMessage>)rMsg {
-    NSAssert([content isKindOfClass:[DIMGroupCommand class]], @"group command error: %@", content);
-    DIMCommand *cmd = (DIMCommand *)content;
-    DIMCommandProcessor *cpu = [self getProcessorForCommand:cmd];
-    if (!cpu) {
-        cpu = self;
-    }
-    return [cpu executeCommand:cmd withMessage:rMsg];
-}
-
 @end

@@ -94,6 +94,7 @@ FOUNDATION_EXPORT const unsigned char DIMSDKVersionString[];
 #import <DIMSDK/DIMQuitCommandProcessor.h>
 #import <DIMSDK/DIMResetCommandProcessor.h>
 #import <DIMSDK/DIMQueryCommandProcessor.h>
+#import <DIMSDK/DIMProcessorFactory.h>
 
 #import <DIMSDK/DIMAddressNameService.h>
 #import <DIMSDK/DIMFacebook.h>

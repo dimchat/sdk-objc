@@ -35,11 +35,11 @@
 //  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
-#import <DIMSDK/DIMGroupCommandProcessor.h>
+#import <DIMSDK/DIMResetCommandProcessor.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMInviteCommandProcessor : DIMGroupCommandProcessor
+@interface DIMInviteCommandProcessor : DIMResetGroupCommandProcessor
 
 @end
 

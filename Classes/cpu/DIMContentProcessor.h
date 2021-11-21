@@ -39,15 +39,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#define DIM_CONTENT_NOT_SUPPORT_FMT @"Content (type: %d) not support yet!"
+
 @class DIMMessenger;
 @class DIMFacebook;
 
 @interface DIMContentProcessor : NSObject
 
-@property (weak, nonatomic) DIMMessenger *messenger;
-@property (readonly, weak, nonatomic) DIMFacebook *facebook;
+@property (readonly, weak, nonatomic) __kindof DIMMessenger *messenger;
+@property (readonly, weak, nonatomic) __kindof DIMFacebook *facebook;
 
-- (instancetype)init;
+- (instancetype)initWithMessenger:(DIMMessenger *)messenger
+NS_DESIGNATED_INITIALIZER;
 
 /**
  *  Process message content
@@ -62,31 +65,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSArray<id<DKDContent>> *)respondText:(NSString *)text withGroup:(nullable id<MKMID>)group;
 - (NSArray<id<DKDContent>> *)respondReceipt:(NSString *)text;
 - (NSArray<id<DKDContent>> *)respondContent:(nullable id<DKDContent>)res;
-
-@end
-
-@interface DIMContentProcessor (CPU)
-
-+ (void)registerProcessor:(DIMContentProcessor *)processor
-                  forType:(DKDContentType)type;
-
-+ (nullable __kindof DIMContentProcessor *)getProcessorForType:(DKDContentType)type;
-
-+ (nullable __kindof DIMContentProcessor *)getProcessorForContent:(id<DKDContent>)content;
-
-@end
-
-#define DIMContentProcessorRegister(type, cpu)                                 \
-            [DIMContentProcessor registerProcessor:(cpu) forType:(type)]       \
-                              /* EOF 'DIMContentProcessorRegister(type, cpu)' */
-
-#define DIMContentProcessorRegisterClass(type, clazz)                          \
-            DIMContentProcessorRegister((type), [[clazz alloc] init])          \
-                       /* EOF 'DIMContentProcessorRegisterClass(type, clazz)' */
-
-@interface DIMContentProcessor (Register)
-
-+ (void)registerContentProcessors;
 
 @end
 
