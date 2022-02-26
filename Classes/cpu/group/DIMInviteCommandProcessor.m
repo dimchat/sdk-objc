@@ -95,7 +95,7 @@
     // 2.3. do invite
     if ([addedList count] > 0) {
         if ([self.facebook saveMembers:mArray group:group]) {
-            [cmd setObject:[MKMID revert:addedList] forKey:@"added"];
+            [cmd setObject:MKMIDRevert(addedList) forKey:@"added"];
         }
     }
     

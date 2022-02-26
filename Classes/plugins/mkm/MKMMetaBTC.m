@@ -72,7 +72,7 @@
 }
 
 - (nullable id<MKMAddress>)generateAddress {
-    if (!_cachedAddress && [self isValid]) {
+    if (!_cachedAddress) {
         // generate and cache it
         NSData *data = [self.key data];
         _cachedAddress = [MKMAddressBTC generate:data network:MKMNetwork_BTCMain];
@@ -85,13 +85,6 @@
     NSAssert(self.type == MKMMetaVersion_BTC || self.type == MKMMetaVersion_ExBTC,
              @"meta version error: %d", self.type);
     return [self generateAddress];
-}
-
-- (BOOL)matchID:(id<MKMID>)ID {
-    if ([ID.address isKindOfClass:[MKMAddressBTC class]]) {
-        return [super matchID:ID];
-    }
-    return NO;
 }
 
 @end

@@ -80,9 +80,7 @@
     return self;
 }
 
-- (id<MKMMeta>)createMetaWithPublicKey:(id<MKMPublicKey>)PK
-                                  seed:(nullable NSString *)name
-                           fingerprint:(nullable NSData *)CT {
+- (id<MKMMeta>)createMeta:(id<MKMPublicKey>)PK seed:(nullable NSString *)name fingerprint:(nullable NSData *)CT {
     id<MKMMeta> meta;
     switch (_type) {
         case MKMMetaVersion_MKM:
@@ -107,8 +105,7 @@
     return meta;
 }
 
-- (id<MKMMeta>)generateMetaWithPrivateKey:(id<MKMPrivateKey>)SK
-                                     seed:(nullable NSString *)name {
+- (id<MKMMeta>)generateMeta:(id<MKMPrivateKey>)SK seed:(nullable NSString *)name {
     NSData *CT;
     if (name.length > 0) {
         CT = [SK sign:MKMUTF8Encode(name)];
@@ -116,11 +113,11 @@
         CT = nil;
     }
     id<MKMPublicKey> PK = [SK publicKey];
-    return [self createMetaWithPublicKey:PK seed:name fingerprint:CT];
+    return [self createMeta:PK seed:name fingerprint:CT];
 }
 
 - (nullable __kindof id<MKMMeta>)parseMeta:(NSDictionary *)info {
-    UInt8 version = [MKMMeta type:info];
+    UInt8 version = MKMMetaGetType(info);
     switch (version) {
         case MKMMetaVersion_MKM:
             return [[MKMMetaDefault alloc] initWithDictionary:info];
@@ -229,15 +226,20 @@
 
 + (void)registerAddressFactory {
     AddressFactory *factory = [[AddressFactory alloc] init];
-    [MKMAddress setFactory:factory];
+    MKMAddressSetFactory(factory);
 }
 
 + (void)registerMetaFactory {
-    [MKMMeta setFactory:[[MetaFactory alloc] initWithType:MKMMetaVersion_MKM] forType:MKMMetaVersion_MKM];
-    [MKMMeta setFactory:[[MetaFactory alloc] initWithType:MKMMetaVersion_BTC] forType:MKMMetaVersion_BTC];
-    [MKMMeta setFactory:[[MetaFactory alloc] initWithType:MKMMetaVersion_ExBTC] forType:MKMMetaVersion_ExBTC];
-    [MKMMeta setFactory:[[MetaFactory alloc] initWithType:MKMMetaVersion_ETH] forType:MKMMetaVersion_ETH];
-    [MKMMeta setFactory:[[MetaFactory alloc] initWithType:MKMMetaVersion_ExETH] forType:MKMMetaVersion_ExETH];
+    MKMMetaSetFactory(MKMMetaVersion_MKM,
+                      [[MetaFactory alloc] initWithType:MKMMetaVersion_MKM]);
+    MKMMetaSetFactory(MKMMetaVersion_BTC,
+                      [[MetaFactory alloc] initWithType:MKMMetaVersion_BTC]);
+    MKMMetaSetFactory(MKMMetaVersion_ExBTC,
+                      [[MetaFactory alloc] initWithType:MKMMetaVersion_ExBTC]);
+    MKMMetaSetFactory(MKMMetaVersion_ETH,
+                      [[MetaFactory alloc] initWithType:MKMMetaVersion_ETH]);
+    MKMMetaSetFactory(MKMMetaVersion_ExETH,
+                      [[MetaFactory alloc] initWithType:MKMMetaVersion_ExETH]);
 }
 
 + (void)registerDocumentFactory {

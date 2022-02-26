@@ -139,10 +139,10 @@
     if ([addedList count] > 0 || [removedList count] > 0) {
         if ([self.facebook saveMembers:newMembers group:group]) {
             if ([addedList count] > 0) {
-                [cmd setObject:[MKMID revert:addedList] forKey:@"added"];
+                [cmd setObject:MKMIDRevert(addedList) forKey:@"added"];
             }
             if ([removedList count] > 0) {
-                [cmd setObject:[MKMID revert:removedList] forKey:@"removed"];
+                [cmd setObject:MKMIDRevert(removedList) forKey:@"removed"];
             }
         }
     }

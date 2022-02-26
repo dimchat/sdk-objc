@@ -89,7 +89,7 @@
     // 2.3. do expel
     if ([removedList count] > 0) {
         if ([facebook saveMembers:mArray group:group]) {
-            [cmd setObject:[MKMID revert:removedList] forKey:@"removed"];
+            [cmd setObject:MKMIDRevert(removedList) forKey:@"removed"];
         }
     }
     

@@ -175,7 +175,7 @@
     NSAssert(gMeta, @"failed to get meta for group: %@", group);
     id<MKMMeta> mMeta = [self metaForID:member];
     //NSAssert(mMeta, @"failed to get meta for member: %@", member);
-    return [gMeta matchPublicKey:mMeta.key];
+    return MKMMetaMatchKey(mMeta.key, gMeta);
 }
 
 - (BOOL)group:(id<MKMID>)group isOwner:(id<MKMID>)member {

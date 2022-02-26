@@ -52,12 +52,12 @@
 }
 
 - (nullable NSArray<id<MKMID>> *)list {
-    return [MKMID convert:[self objectForKey:@"list"]];
+    return MKMIDConvert([self objectForKey:@"list"]);
 }
 
 - (void)setList:(NSArray<id<MKMID>> *)list {
     if (list) {
-        [self setObject:[MKMID revert:list] forKey:@"list"];
+        [self setObject:MKMIDRevert(list) forKey:@"list"];
     } else {
         [self removeObjectForKey:@"list"];
     }

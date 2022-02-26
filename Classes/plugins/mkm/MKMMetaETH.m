@@ -72,7 +72,7 @@
 }
 
 - (nullable id<MKMAddress>)generateAddress {
-    if (!_cachedAddress && [self isValid]) {
+    if (!_cachedAddress) {
         // generate and cache it
         NSData *data = [self.key data];
         _cachedAddress = [MKMAddressETH generate:data];
@@ -85,13 +85,6 @@
     NSAssert(self.type == MKMMetaVersion_ETH || self.type == MKMMetaVersion_ExETH,
              @"meta version error: %d", self.type);
     return [self generateAddress];
-}
-
-- (BOOL)matchID:(id<MKMID>)ID {
-    if ([ID.address isKindOfClass:[MKMAddressETH class]]) {
-        return [super matchID:ID];
-    }
-    return NO;
 }
 
 @end

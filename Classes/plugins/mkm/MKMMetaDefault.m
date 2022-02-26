@@ -75,19 +75,12 @@
     NSAssert(self.type == MKMMetaVersion_MKM, @"meta version error: %d", self.type);
     // check caches
     MKMAddressBTC *address = [_cachedAddresses objectForKey:@(type)];
-    if (!address && [self isValid]) {
+    if (!address) {
         // generate and cache it
         address = [MKMAddressBTC generate:self.fingerprint network:type];
         [_cachedAddresses setObject:address forKey:@(type)];
     }
     return address;
-}
-
-- (BOOL)matchID:(id<MKMID>)ID {
-    if ([ID.address isKindOfClass:[MKMAddressBTC class]]) {
-        return [super matchID:ID];
-    }
-    return NO;
 }
 
 @end
