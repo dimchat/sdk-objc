@@ -39,12 +39,17 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MKMPrivateKey (PersistentStore)
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
-+ (nullable instancetype)loadKeyWithIdentifier:(NSString *)identifier;
+__kindof id<MKMPrivateKey> MKMPrivateKeyLoad(NSString * identifier);
 
-- (BOOL)saveKeyWithIdentifier:(NSString *)identifier;
+BOOL MKMPrivateKeySave(NSString * identifier, id<MKMPrivateKey> sKey);
 
-@end
+#ifdef __cplusplus
+} /* end of extern "C" */
+#endif
 
 NS_ASSUME_NONNULL_END

@@ -98,6 +98,14 @@
     return key;
 }
 
+- (NSString *)algorithm {
+    return MKMCryptographyKeyAlgorithm(self.dictionary);
+}
+
+- (BOOL)isMatch:(id<MKMEncryptKey>)pKey {
+    return MKMCryptographyKeysMatch(pKey, self);
+}
+
 - (void)setData:(NSData *)data {
     _data = data;
 }
@@ -263,10 +271,6 @@
     
     NSAssert(signature, @"RSA sign failed");
     return signature;
-}
-
-- (BOOL)isMatch:(id<MKMEncryptKey>)pKey {
-    return MKMCryptographyKeysMatch(self, pKey);
 }
 
 @end

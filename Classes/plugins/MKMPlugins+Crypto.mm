@@ -58,7 +58,7 @@
  *          data     : ""       // empty data
  *      }
  */
-@interface PlainKey : MKMSymmetricKey
+@interface PlainKey : MKMDictionary <MKMSymmetricKey>
 
 + (instancetype)sharedInstance;
 
@@ -84,6 +84,14 @@ static PlainKey *s_sharedPlainKey = nil;
         //
     }
     return self;
+}
+
+- (NSString *)algorithm {
+    return MKMCryptographyKeyAlgorithm(self.dictionary);
+}
+
+- (BOOL)isMatch:(id<MKMEncryptKey>)pKey {
+    return MKMCryptographyKeysMatch(pKey, self);
 }
 
 - (NSData *)data {
@@ -202,22 +210,22 @@ static PlainKey *s_sharedPlainKey = nil;
 
 + (void)registerKeyFactories {
     // Symmetric key
-    [MKMSymmetricKey setFactory:[[SymmetricKeyFactory alloc] initWithAlgorithm:MKMAlgorithmAES]
-                   forAlgorithm:MKMAlgorithmAES];
-    [MKMSymmetricKey setFactory:[[SymmetricKeyFactory alloc] initWithAlgorithm:SCAlgorithmPlain]
-                   forAlgorithm:SCAlgorithmPlain];
+    MKMSymmetricKeySetFactory(MKMAlgorithmAES,
+                              [[SymmetricKeyFactory alloc] initWithAlgorithm:MKMAlgorithmAES]);
+    MKMSymmetricKeySetFactory(SCAlgorithmPlain,
+                              [[SymmetricKeyFactory alloc] initWithAlgorithm:SCAlgorithmPlain]);
 
     // public key
-    [MKMPublicKey setFactory:[[PublicKeyFactory alloc] initWithAlgorithm:MKMAlgorithmRSA]
-                forAlgorithm:MKMAlgorithmRSA];
-    [MKMPublicKey setFactory:[[PublicKeyFactory alloc] initWithAlgorithm:MKMAlgorithmECC]
-                forAlgorithm:MKMAlgorithmECC];
+    MKMPublicKeySetFactory(MKMAlgorithmRSA,
+                           [[PublicKeyFactory alloc] initWithAlgorithm:MKMAlgorithmRSA]);
+    MKMPublicKeySetFactory(MKMAlgorithmECC,
+                           [[PublicKeyFactory alloc] initWithAlgorithm:MKMAlgorithmECC]);
 
     // private key
-    [MKMPrivateKey setFactory:[[PrivateKeyFactory alloc] initWithAlgorithm:MKMAlgorithmRSA]
-                 forAlgorithm:MKMAlgorithmRSA];
-    [MKMPrivateKey setFactory:[[PrivateKeyFactory alloc] initWithAlgorithm:MKMAlgorithmECC]
-                 forAlgorithm:MKMAlgorithmECC];
+    MKMPrivateKeySetFactory(MKMAlgorithmRSA,
+                            [[PrivateKeyFactory alloc] initWithAlgorithm:MKMAlgorithmRSA]);
+    MKMPrivateKeySetFactory(MKMAlgorithmECC,
+                            [[PrivateKeyFactory alloc] initWithAlgorithm:MKMAlgorithmECC]);
 }
 
 @end

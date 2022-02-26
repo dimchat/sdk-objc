@@ -49,7 +49,7 @@ NS_ASSUME_NONNULL_BEGIN
  *          iv       : "{BASE64_ENCODE}", // initialization vector
  *      }
  */
-@interface MKMAESKey : MKMSymmetricKey
+@interface MKMAESKey : MKMDictionary <MKMSymmetricKey>
 
 @end
 

@@ -40,9 +40,7 @@
 
 #import "MKMPrivateKey+PersistentStore.h"
 
-@implementation MKMPrivateKey (PersistentStore)
-
-+ (nullable instancetype)loadKeyWithIdentifier:(NSString *)identifier {
+id<MKMPrivateKey> MKMPrivateKeyLoad(NSString * identifier) {
     id key = [MKMRSAPrivateKey loadKeyWithIdentifier:identifier];
     if (key) {
         return key;
@@ -54,9 +52,12 @@
     return nil;
 }
 
-- (BOOL)saveKeyWithIdentifier:(NSString *)identifier {
-    NSAssert(false, @"implement me!");
+BOOL MKMPrivateKeySave(NSString * identifier, id<MKMPrivateKey> sKey) {
+    if ([sKey isKindOfClass:[MKMRSAPrivateKey class]]) {
+        return [(MKMRSAPrivateKey *)sKey saveKeyWithIdentifier:identifier];
+    }
+    if ([sKey isKindOfClass:[MKMECCPrivateKey class]]) {
+        return [(MKMECCPrivateKey *)sKey saveKeyWithIdentifier:identifier];
+    }
     return NO;
 }
-
-@end
