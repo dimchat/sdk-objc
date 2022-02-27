@@ -89,14 +89,6 @@
     return key;
 }
 
-- (NSString *)algorithm {
-    return MKMCryptographyKeyAlgorithm(self.dictionary);
-}
-
-- (BOOL)isMatch:(id<MKMSignKey>)sKey {
-    return MKMAsymmetricKeysMatch(self, sKey);
-}
-
 - (void)setData:(NSData *)data {
     _data = data;
 }

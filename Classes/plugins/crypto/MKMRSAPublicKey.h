@@ -47,7 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
  *          data: "..."       // base64
  *      }
  */
-@interface MKMRSAPublicKey : MKMDictionary <MKMPublicKey, MKMEncryptKey>
+@interface MKMRSAPublicKey : MKMPublicKey <MKMEncryptKey>
 
 @end
 

@@ -168,10 +168,6 @@ static inline int ecc_sig_to_der(const uint8_t *sig, uint8_t *der)
     return key;
 }
 
-- (NSString *)algorithm {
-    return MKMCryptographyKeyAlgorithm(self.dictionary);
-}
-
 - (uECC_Curve)curve {
     // TODO: other curve?
     return uECC_secp256k1();

@@ -58,7 +58,7 @@ FOUNDATION_EXPORT const unsigned char DIMSDKVersionString[];
 #define __DIM_SDK__ 1
 
 // Extensions
-#import <DIMSDK/MKMPrivateKey+PersistentStore.h>
+#import <DIMSDK/MKMPrivateKey+Store.h>
 #import <DIMSDK/MKMAddressBTC.h>
 #import <DIMSDK/MKMAddressETH.h>
 #import <DIMSDK/DKDInstantMessage+Extension.h>

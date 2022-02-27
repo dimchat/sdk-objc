@@ -186,14 +186,6 @@ static inline int ecc_der_to_sig(const uint8_t *der, int der_len, uint8_t *sig_6
     return key;
 }
 
-- (NSString *)algorithm {
-    return MKMCryptographyKeyAlgorithm(self.dictionary);
-}
-
-- (BOOL)isMatch:(id<MKMSignKey>)sKey {
-    return MKMAsymmetricKeysMatch(self, sKey);
-}
-
 - (uECC_Curve)curve {
     // TODO: other curve?
     return uECC_secp256k1();

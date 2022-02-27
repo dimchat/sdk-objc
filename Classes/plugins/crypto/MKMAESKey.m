@@ -82,14 +82,6 @@ static inline NSData *random_data(NSUInteger size) {
     return key;
 }
 
-- (NSString *)algorithm {
-    return MKMCryptographyKeyAlgorithm(self.dictionary);
-}
-
-- (BOOL)isMatch:(id<MKMEncryptKey>)pKey {
-    return MKMCryptographyKeysMatch(pKey, self);
-}
-
 - (NSUInteger)keySize {
     // TODO: get from key data
     //...

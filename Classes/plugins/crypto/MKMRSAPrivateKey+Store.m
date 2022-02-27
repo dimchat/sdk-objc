@@ -2,12 +2,12 @@
 //
 //  Ming-Ke-Ming : Decentralized User Identity Authentication
 //
-//                               Written in 2020 by Moky <albert.moky@gmail.com>
+//                               Written in 2018 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2020 Albert Moky
+// Copyright (c) 2019 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,23 +28,29 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  MKMECCPrivateKey+PersistentStore.m
-//  DIMSDK
+//  MKMRSAPrivateKey+Store.m
+//  MingKeMing
 //
-//  Created by Albert Moky on 2020/12/20.
-//  Copyright © 2020 Albert Moky. All rights reserved.
+//  Created by Albert Moky on 2018/11/25.
+//  Copyright © 2018 DIM Group. All rights reserved.
 //
 
 #import "MKMSecKeyHelper.h"
 
-#import "MKMECCPrivateKey.h"
+#import "MKMRSAPrivateKey.h"
 
-@implementation MKMECCPrivateKey (PersistentStore)
+@interface MKMRSAPrivateKey (Hacking)
 
-static NSString *s_application_tag = @"chat.dim.ecc.private";
+@property (nonatomic) SecKeyRef privateKeyRef;
+
+@end
+
+@implementation MKMRSAPrivateKey (PersistentStore)
+
+static NSString *s_application_tag = @"chat.dim.rsa.private";
 
 + (nullable instancetype)loadKeyWithIdentifier:(NSString *)identifier {
-    MKMECCPrivateKey *SK = nil;
+    MKMRSAPrivateKey *SK = nil;
     
     NSString *label = identifier;
     NSData *tag = MKMUTF8Encode(s_application_tag);
@@ -53,12 +59,12 @@ static NSString *s_application_tag = @"chat.dim.ecc.private";
     query = @{(id)kSecClass               :(id)kSecClassKey,
               (id)kSecAttrApplicationLabel:label,
               (id)kSecAttrApplicationTag  :tag,
-              (id)kSecAttrKeyType         :(id)kSecAttrKeyTypeECSECPrimeRandom,
+              (id)kSecAttrKeyType         :(id)kSecAttrKeyTypeRSA,
               (id)kSecAttrKeyClass        :(id)kSecAttrKeyClassPrivate,
               (id)kSecAttrSynchronizable  :(id)kCFBooleanTrue,
               
               (id)kSecMatchLimit          :(id)kSecMatchLimitOne,
-              (id)kSecReturnData          :(id)kCFBooleanTrue,
+              (id)kSecReturnRef           :(id)kCFBooleanTrue,
 
               // FIXME: 'Status = -25308'
               (id)kSecAttrAccessible      :(id)kSecAttrAccessibleWhenUnlocked,
@@ -67,16 +73,21 @@ static NSString *s_application_tag = @"chat.dim.ecc.private";
     OSStatus status = SecItemCopyMatching((CFDictionaryRef)query, &result);
     if (status == errSecSuccess) { // noErr
         // private key
-        NSData *privateKeyData = (__bridge NSData *)result;
-        NSString *hex = MKMHexEncode(privateKeyData);
-        NSString *algorithm = MKMAlgorithmECC;
+        SecKeyRef privateKeyRef = (SecKeyRef)result;
+        NSString *skc = [MKMSecKeyHelper serializePrivateKey:privateKeyRef algorithm:MKMAlgorithmRSA];
+        // public key
+        SecKeyRef publicKeyRef = SecKeyCopyPublicKey(privateKeyRef);
+        NSString *pkc = [MKMSecKeyHelper serializePublicKey:publicKeyRef algorithm:MKMAlgorithmRSA];
+        // key content
+        NSString *content = [NSString stringWithFormat:@"%@%@", pkc, skc];
+        NSString *algorithm = MKMAlgorithmRSA;
         NSDictionary *keyInfo = @{@"algorithm":algorithm,
-                                  @"data"     :hex,
+                                  @"data"     :content,
                                   };
-        SK = [[MKMECCPrivateKey alloc] initWithDictionary:keyInfo];
+        SK = [[MKMRSAPrivateKey alloc] initWithDictionary:keyInfo];
     } else {
         // sec key item not found
-        NSAssert(status == errSecItemNotFound, @"ECC item status error: %d", status);
+        NSAssert(status == errSecItemNotFound, @"RSA item status error: %d", status);
     }
     if (result) {
         CFRelease(result);
@@ -87,6 +98,10 @@ static NSString *s_application_tag = @"chat.dim.ecc.private";
 }
 
 - (BOOL)saveKeyWithIdentifier:(NSString *)identifier {
+    if (!self.privateKeyRef) {
+        NSAssert(false, @"RSA privateKeyRef cannot be empty");
+        return NO;
+    }
     
     NSString *label = identifier;
     NSData *tag = MKMUTF8Encode(s_application_tag);
@@ -95,12 +110,12 @@ static NSString *s_application_tag = @"chat.dim.ecc.private";
     query = @{(id)kSecClass               :(id)kSecClassKey,
               (id)kSecAttrApplicationLabel:label,
               (id)kSecAttrApplicationTag  :tag,
-              (id)kSecAttrKeyType         :(id)kSecAttrKeyTypeECSECPrimeRandom,
+              (id)kSecAttrKeyType         :(id)kSecAttrKeyTypeRSA,
               (id)kSecAttrKeyClass        :(id)kSecAttrKeyClassPrivate,
               (id)kSecAttrSynchronizable  :(id)kCFBooleanTrue,
               
               (id)kSecMatchLimit          :(id)kSecMatchLimitOne,
-              (id)kSecReturnData          :(id)kCFBooleanTrue,
+              (id)kSecReturnRef           :(id)kCFBooleanTrue,
 
               // FIXME: 'Status = -25308'
               (id)kSecAttrAccessible      :(id)kSecAttrAccessibleWhenUnlocked,
@@ -111,15 +126,15 @@ static NSString *s_application_tag = @"chat.dim.ecc.private";
         // already exists, delete it firest
         NSMutableDictionary *mQuery = [query mutableCopy];
         [mQuery removeObjectForKey:(id)kSecMatchLimit];
-        [mQuery removeObjectForKey:(id)kSecReturnData];
+        [mQuery removeObjectForKey:(id)kSecReturnRef];
         
         status = SecItemDelete((CFDictionaryRef)mQuery);
         if (status != errSecSuccess) {
-            NSAssert(false, @"ECC failed to erase key: %@", mQuery);
+            NSAssert(false, @"RSA failed to erase key: %@", mQuery);
         }
     } else {
         // sec key item not found
-        NSAssert(status == errSecItemNotFound, @"ECC item status error: %d", status);
+        NSAssert(status == errSecItemNotFound, @"RSA item status error: %d", status);
     }
     if (result) {
         CFRelease(result);
@@ -129,7 +144,7 @@ static NSString *s_application_tag = @"chat.dim.ecc.private";
     // add key item
     NSMutableDictionary *attributes = [query mutableCopy];
     [attributes removeObjectForKey:(id)kSecMatchLimit];
-    [attributes removeObjectForKey:(id)kSecReturnData];
+    [attributes removeObjectForKey:(id)kSecReturnRef];
     //[attributes setObject:(__bridge id)self.privateKeyRef forKey:(id)kSecValueRef];
     [attributes setObject:self.data forKey:(id)kSecValueData];
     
@@ -141,7 +156,7 @@ static NSString *s_application_tag = @"chat.dim.ecc.private";
     if (status == errSecSuccess) {
         return YES;
     } else {
-        NSAssert(false, @"ECC failed to update key");
+        NSAssert(false, @"RSA failed to update key");
         return NO;
     }
 }

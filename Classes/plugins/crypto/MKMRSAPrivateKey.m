@@ -98,10 +98,6 @@
     return key;
 }
 
-- (NSString *)algorithm {
-    return MKMCryptographyKeyAlgorithm(self.dictionary);
-}
-
 - (BOOL)isMatch:(id<MKMEncryptKey>)pKey {
     return MKMCryptographyKeysMatch(pKey, self);
 }

@@ -28,7 +28,7 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  MKMPrivateKey+PersistentStore.h
+//  MKMPrivateKey+Store.h
 //  DIMSDK
 //
 //  Created by Albert Moky on 2020/12/13.

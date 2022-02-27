@@ -28,7 +28,7 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  MKMPrivateKey+PersistentStore.m
+//  MKMPrivateKey+Store.m
 //  DIMSDK
 //
 //  Created by Albert Moky on 2020/12/13.
@@ -38,7 +38,7 @@
 #import "MKMRSAPrivateKey.h"
 #import "MKMECCPrivateKey.h"
 
-#import "MKMPrivateKey+PersistentStore.h"
+#import "MKMPrivateKey+Store.h"
 
 id<MKMPrivateKey> MKMPrivateKeyLoad(NSString * identifier) {
     id key = [MKMRSAPrivateKey loadKeyWithIdentifier:identifier];

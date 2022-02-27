@@ -58,7 +58,7 @@
  *          data     : ""       // empty data
  *      }
  */
-@interface PlainKey : MKMDictionary <MKMSymmetricKey>
+@interface PlainKey : MKMSymmetricKey
 
 + (instancetype)sharedInstance;
 
@@ -84,14 +84,6 @@ static PlainKey *s_sharedPlainKey = nil;
         //
     }
     return self;
-}
-
-- (NSString *)algorithm {
-    return MKMCryptographyKeyAlgorithm(self.dictionary);
-}
-
-- (BOOL)isMatch:(id<MKMEncryptKey>)pKey {
-    return MKMCryptographyKeysMatch(pKey, self);
 }
 
 - (NSData *)data {
