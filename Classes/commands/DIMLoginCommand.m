@@ -60,7 +60,7 @@
     if (self = [self initWithCommand:DIMCommand_Login]) {
         // ID
         if (ID) {
-            [self setObject:[ID string] forKey:@"ID"];
+            [self setObject:ID forKey:@"ID"];
         }
     }
     return self;

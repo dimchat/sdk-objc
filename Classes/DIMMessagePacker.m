@@ -56,11 +56,11 @@
     return self;
 }
 
-- (__kindof DIMMessenger *)messenger {
+- (DIMMessenger *)messenger {
     return [self transceiver];
 }
 
-- (__kindof DIMFacebook *)facebook {
+- (DIMFacebook *)facebook {
     return [self.messenger facebook];
 }
 

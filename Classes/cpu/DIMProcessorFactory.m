@@ -55,7 +55,7 @@
     NSMutableDictionary<NSString *, DIMCommandProcessor *> *_commandProcessors;
 }
 
-@property (weak, nonatomic) __kindof DIMMessenger *messenger;
+@property (weak, nonatomic) DIMMessenger *messenger;
 
 @end
 
@@ -77,7 +77,7 @@
     return self;
 }
 
-- (nullable __kindof DIMContentProcessor *)processorForContent:(id<DKDContent>)content {
+- (nullable DIMContentProcessor *)processorForContent:(id<DKDContent>)content {
     DKDContentType type = content.type;
     if ([content conformsToProtocol:@protocol(DIMCommand)]) {
         id<DIMCommand> cmd = (id<DIMCommand>)content;
@@ -88,7 +88,7 @@
     }
 }
 
-- (nullable __kindof DIMContentProcessor *)processorForType:(DKDContentType)type {
+- (nullable DIMContentProcessor *)processorForType:(DKDContentType)type {
     DIMContentProcessor *cpu = [_contentProcessors objectForKey:@(type)];
     if (!cpu) {
         cpu = [self createProcessorWithType:type];
@@ -99,7 +99,7 @@
     return cpu;
 }
 
-- (nullable __kindof DIMCommandProcessor *)processorForType:(DKDContentType)type command:(NSString *)name {
+- (nullable DIMCommandProcessor *)processorForType:(DKDContentType)type command:(NSString *)name {
     DIMCommandProcessor *cpu = [_commandProcessors objectForKey:name];
     if (!cpu) {
         cpu = [self createProcessorWithType:type command:name];

@@ -44,7 +44,7 @@
 
 @interface DIMContentProcessor ()
 
-@property (weak, nonatomic) __kindof DIMMessenger *messenger;
+@property (weak, nonatomic) DIMMessenger *messenger;
 
 @end
 
@@ -64,7 +64,7 @@
     return self;
 }
 
-- (__kindof DIMFacebook *)facebook {
+- (DIMFacebook *)facebook {
     return self.messenger.facebook;
 }
 

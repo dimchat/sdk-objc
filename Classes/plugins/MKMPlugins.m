@@ -49,7 +49,7 @@
 
 @implementation AddressFactory
 
-- (nullable __kindof id<MKMAddress>)createAddress:(NSString *)address {
+- (nullable id<MKMAddress>)createAddress:(NSString *)address {
     NSUInteger len = [address length];
     if (len == 42) {
         // ETH address
@@ -116,7 +116,7 @@
     return [self createMeta:PK seed:name fingerprint:CT];
 }
 
-- (nullable __kindof id<MKMMeta>)parseMeta:(NSDictionary *)info {
+- (nullable id<MKMMeta>)parseMeta:(NSDictionary *)info {
     UInt8 version = MKMMetaGetType(info);
     switch (version) {
         case MKMMetaVersion_MKM:
@@ -173,21 +173,19 @@
     return _type;
 }
 
-- (__kindof id<MKMDocument>)createDocument:(id<MKMID>)ID
-                                      data:(NSData *)data
-                                 signature:(NSData *)CT {
+- (id<MKMDocument>)createDocument:(id<MKMID>)ID data:(NSString *)json signature:(NSString *)base64 {
     NSString *type = [self typeForID:ID];
     if ([type isEqualToString:MKMDocument_Visa]) {
-        return [[MKMVisa alloc] initWithID:ID data:data signature:CT];
+        return [[MKMVisa alloc] initWithID:ID data:json signature:base64];
     }
     if ([type isEqualToString:MKMDocument_Bulletin]) {
-        return [[MKMBulletin alloc] initWithID:ID data:data signature:CT];
+        return [[MKMBulletin alloc] initWithID:ID data:json signature:base64];
     }
-    return [[MKMDocument alloc] initWithID:ID data:data signature:CT];
+    return [[MKMDocument alloc] initWithID:ID data:json signature:base64];
 }
 
 // create a new empty document with entity ID
-- (__kindof id<MKMDocument>)createDocument:(id<MKMID>)ID {
+- (id<MKMDocument>)createDocument:(id<MKMID>)ID {
     NSString *type = [self typeForID:ID];
     if ([type isEqualToString:MKMDocument_Visa]) {
         return [[MKMVisa alloc] initWithID:ID];
@@ -198,7 +196,7 @@
     return [[MKMDocument alloc] initWithID:ID type:type];
 }
 
-- (nullable __kindof id<MKMDocument>)parseDocument:(NSDictionary *)doc {
+- (nullable id<MKMDocument>)parseDocument:(NSDictionary *)doc {
     id<MKMID> ID = MKMIDFromString([doc objectForKey:@"ID"]);
     if (!ID) {
         return nil;
@@ -230,23 +228,27 @@
 }
 
 + (void)registerMetaFactory {
-    MKMMetaSetFactory(MKMMetaVersion_MKM,
-                      [[MetaFactory alloc] initWithType:MKMMetaVersion_MKM]);
-    MKMMetaSetFactory(MKMMetaVersion_BTC,
-                      [[MetaFactory alloc] initWithType:MKMMetaVersion_BTC]);
-    MKMMetaSetFactory(MKMMetaVersion_ExBTC,
-                      [[MetaFactory alloc] initWithType:MKMMetaVersion_ExBTC]);
-    MKMMetaSetFactory(MKMMetaVersion_ETH,
-                      [[MetaFactory alloc] initWithType:MKMMetaVersion_ETH]);
-    MKMMetaSetFactory(MKMMetaVersion_ExETH,
-                      [[MetaFactory alloc] initWithType:MKMMetaVersion_ExETH]);
+    MKMMetaRegister(MKMMetaVersion_MKM,
+                    [[MetaFactory alloc] initWithType:MKMMetaVersion_MKM]);
+    MKMMetaRegister(MKMMetaVersion_BTC,
+                    [[MetaFactory alloc] initWithType:MKMMetaVersion_BTC]);
+    MKMMetaRegister(MKMMetaVersion_ExBTC,
+                    [[MetaFactory alloc] initWithType:MKMMetaVersion_ExBTC]);
+    MKMMetaRegister(MKMMetaVersion_ETH,
+                    [[MetaFactory alloc] initWithType:MKMMetaVersion_ETH]);
+    MKMMetaRegister(MKMMetaVersion_ExETH,
+                    [[MetaFactory alloc] initWithType:MKMMetaVersion_ExETH]);
 }
 
 + (void)registerDocumentFactory {
-    [MKMDocument setFactory:[[DocumentFactory alloc] initWithType:@"*"] forType:@"*"];
-    [MKMDocument setFactory:[[DocumentFactory alloc] initWithType:MKMDocument_Visa] forType:MKMDocument_Visa];
-    [MKMDocument setFactory:[[DocumentFactory alloc] initWithType:MKMDocument_Profile] forType:MKMDocument_Profile];
-    [MKMDocument setFactory:[[DocumentFactory alloc] initWithType:MKMDocument_Bulletin] forType:MKMDocument_Bulletin];
+    MKMDocumentRegister(@"*",
+                        [[DocumentFactory alloc] initWithType:@"*"]);
+    MKMDocumentRegister(MKMDocument_Visa,
+                        [[DocumentFactory alloc] initWithType:MKMDocument_Visa]);
+    MKMDocumentRegister(MKMDocument_Profile,
+                        [[DocumentFactory alloc] initWithType:MKMDocument_Profile]);
+    MKMDocumentRegister(MKMDocument_Bulletin,
+                        [[DocumentFactory alloc] initWithType:MKMDocument_Bulletin]);
 }
 
 @end

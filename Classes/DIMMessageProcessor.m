@@ -78,7 +78,7 @@
     return [[DIMProcessorFactory alloc] initWithMessenger:self.messenger];
 }
 
-- (__kindof DIMMessenger *)messenger {
+- (DIMMessenger *)messenger {
     return [self transceiver];
 }
 
@@ -94,11 +94,11 @@
 
 @implementation DIMMessageProcessor (CPU)
 
-- (nullable __kindof DIMContentProcessor *)processorForContent:(id<DKDContent>)content {
+- (nullable DIMContentProcessor *)processorForContent:(id<DKDContent>)content {
     return [_cpm processorForContent:content];
 }
 
-- (nullable __kindof DIMContentProcessor *)processorForType:(DKDContentType)type {
+- (nullable DIMContentProcessor *)processorForType:(DKDContentType)type {
     return [_cpm processorForType:type];
 }
 

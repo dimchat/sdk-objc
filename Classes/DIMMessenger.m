@@ -65,7 +65,7 @@
 
 #pragma mark Facebook (EntityDelegate)
 
-- (__kindof id<DIMEntityDelegate>)barrack {
+- (id<DIMEntityDelegate>)barrack {
     id<DIMEntityDelegate> delegate = [super barrack];
     if (!delegate) {
         delegate = [self facebook];
@@ -79,13 +79,13 @@
         _facebook = (DIMFacebook *)barrack;
     }
 }
-- (__kindof DIMFacebook *)facebook {
+- (DIMFacebook *)facebook {
     if (!_facebook) {
         _facebook = [self createFacebook];
     }
     return _facebook;
 }
-- (__kindof DIMFacebook *)createFacebook {
+- (DIMFacebook *)createFacebook {
     NSAssert(false, @"implement me!");
     return nil;
 }
