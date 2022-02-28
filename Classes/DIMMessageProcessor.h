@@ -43,14 +43,16 @@ NS_ASSUME_NONNULL_BEGIN
 @class DIMCommandProcessor;
 @class DIMProcessorFactory;
 
-@interface DIMMessageProcessor : DIMProcessor
+@interface DIMMessageProcessor : NSObject <DIMProcessor>
 
 @property (readonly, weak, nonatomic) __kindof DIMMessenger *messenger;
+@property (readonly, weak, nonatomic) __kindof DIMFacebook *facebook;
 
-- (instancetype)initWithMessenger:(DIMMessenger *)transceiver
+- (instancetype)initWithFacebook:(DIMFacebook *)barrack
+                       messenger:(DIMMessenger *)transceiver
 NS_DESIGNATED_INITIALIZER;
 
-- (DIMProcessorFactory *)createProcessorFactory;
+- (__kindof DIMProcessorFactory *)createProcessorFactory;
 
 @end
 
@@ -66,19 +68,19 @@ NS_DESIGNATED_INITIALIZER;
  */
 - (nullable __kindof DIMContentProcessor *)processorForType:(DKDContentType)type;
 
+- (nullable __kindof DIMCommandProcessor *)processorForName:(NSString *)command;
+- (nullable __kindof DIMCommandProcessor *)processorForName:(NSString *)command
+                                                       type:(DKDContentType)type;
+
 @end
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+@interface DIMMessageProcessor (Register)
 
 /**
  *  Register All Content/Command Factories
  */
-void DIMRegisterAllFactories(void);
++ (void)registerAllFactories;
 
-#ifdef __cplusplus
-} /* end of extern "C" */
-#endif
+@end
 
 NS_ASSUME_NONNULL_END

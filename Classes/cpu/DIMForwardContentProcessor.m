@@ -49,7 +49,7 @@
     DIMForwardContent *forward = (DIMForwardContent *)content;
     id<DKDReliableMessage> secret = forward.forwardMessage;
     // call messenger to process it
-    DIMMessenger *messenger = [self messenger];
+    DIMMessenger *messenger = self.messenger;
     // 1. verify message
     id<DKDSecureMessage> sMsg = [messenger verifyMessage:secret];
     if (!sMsg) {

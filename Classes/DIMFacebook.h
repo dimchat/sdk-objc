@@ -59,6 +59,14 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly, strong, nonatomic, nullable) DIMUser *currentUser;
 
 /**
+ *  Select local user for receiver
+ *
+ * @param receiver - user/group ID
+ * @return local user
+ */
+- (nullable DIMUser *)selectLocalUserWithID:(id<MKMID>)receiver;
+
+/**
  *  Save meta for entity ID (must verify first)
  *
  * @param meta - entity meta

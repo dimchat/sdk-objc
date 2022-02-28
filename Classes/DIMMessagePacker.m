@@ -40,30 +40,154 @@
 
 #import "DIMMessagePacker.h"
 
+@interface DIMMessagePacker ()
+
+@property (weak, nonatomic) DIMMessenger *messenger;
+@property (weak, nonatomic) DIMFacebook *facebook;
+
+@end
+
 @implementation DIMMessagePacker
 
-- (instancetype)initWithTransceiver:(DIMTransceiver *)transceiver {
+- (instancetype)init {
     NSAssert(false, @"don't call me!");
-    DIMMessenger *messenger = (DIMMessenger *)transceiver;
-    return [self initWithMessenger:messenger];
+    DIMFacebook *barrack = nil;
+    DIMMessenger *transceiver = nil;
+    return [self initWithFacebook:barrack messenger:transceiver];
 }
 
 /* designated initializer */
-- (instancetype)initWithMessenger:(DIMMessenger *)messenger {
-    if (self = [super initWithTransceiver:messenger]) {
-        //
+- (instancetype)initWithFacebook:(DIMFacebook *)barrack
+                       messenger:(DIMMessenger *)transceiver {
+    if (self = [super init]) {
+        self.facebook = barrack;
+        self.messenger = transceiver;
     }
     return self;
 }
 
-- (DIMMessenger *)messenger {
-    return [self transceiver];
+- (nullable id<MKMID>)overtGroupForContent:(id<DKDContent>)content {
+    id<MKMID> group = content.group;
+    if (!group) {
+        return nil;
+    }
+    if (MKMIDIsBroadcast(group)) {
+        // broadcast message is always overt
+        return group;
+    }
+    if ([content isKindOfClass:[DIMCommand class]]) {
+        // group command should be sent to each member directly, so
+        // don't expose group ID
+        return nil;
+    }
+    return group;
 }
 
-- (DIMFacebook *)facebook {
-    return [self.messenger facebook];
+- (nullable id<DKDSecureMessage>)encryptMessage:(id<DKDInstantMessage>)iMsg {
+    DIMTransceiver *transceiver = self.messenger;
+    // check message delegate
+    if (!iMsg.delegate) {
+        iMsg.delegate = transceiver;
+    }
+    id<MKMID> sender = iMsg.sender;
+    id<MKMID> receiver = iMsg.receiver;
+    // if 'group' exists and the 'receiver' is a group ID,
+    // they must be equal
+    
+    // NOTICE: while sending group message, don't split it before encrypting.
+    //         this means you could set group ID into message content, but
+    //         keep the "receiver" to be the group ID;
+    //         after encrypted (and signed), you could split the message
+    //         with group members before sending out, or just send it directly
+    //         to the group assistant to let it split messages for you!
+    //    BUT,
+    //         if you don't want to share the symmetric key with other members,
+    //         you could split it (set group ID into message content and
+    //         set contact ID to the "receiver") before encrypting, this usually
+    //         for sending group command to assistant robot, which should not
+    //         share the symmetric key (group msg key) with other members.
+
+    // 1. get symmetric key
+    id<MKMID> group = [self overtGroupForContent:iMsg.content];
+    id<MKMSymmetricKey> password;
+    if (group) {
+        // group message (excludes group command)
+        password = [transceiver cipherKeyFrom:sender to:group generate:YES];
+        NSAssert(password, @"failed to get msg key: %@ -> %@", sender, group);
+    } else {
+        // personal message or (group) command
+        password = [transceiver cipherKeyFrom:sender to:receiver generate:YES];
+        NSAssert(password, @"failed to get msg key: %@ -> %@", sender, receiver);
+    }
+
+    NSAssert(iMsg.content, @"content cannot be empty");
+    
+    // 2. encrypt 'content' to 'data' for receiver/group members
+    id<DKDSecureMessage> sMsg = nil;
+    if (MKMIDIsGroup(receiver)) {
+        // group message
+        DIMGroup *grp = [transceiver groupWithID:receiver];
+        NSArray<id<MKMID>> *members = [grp members];
+        if (members.count == 0) {
+            // group not ready
+            // TODO: suspend this message for waiting group info
+            return nil;
+        }
+        sMsg = [iMsg encryptWithKey:password forMembers:members];
+    } else {
+        // personal message (or split group message)
+        sMsg = [iMsg encryptWithKey:password];
+    }
+    
+    // overt group ID
+    if (group && ![receiver isEqual:group]) {
+        // NOTICE: this help the receiver knows the group ID
+        //         when the group message separated to multi-messages,
+        //         if don't want the others know you are the group members,
+        //         remove it.
+        sMsg.envelope.group = group;
+    }
+    
+    // NOTICE: copy content type to envelope
+    //         this help the intermediate nodes to recognize message type
+    sMsg.envelope.type = iMsg.content.type;
+
+    // OK
+    return sMsg;
 }
 
+- (nullable id<DKDReliableMessage>)signMessage:(id<DKDSecureMessage>)sMsg {
+    // check message delegate
+    if (sMsg.delegate == nil) {
+        sMsg.delegate = self.messenger;
+    }
+    NSAssert(sMsg.data, @"message data cannot be empty");
+    // sign 'data' by sender
+    return [sMsg sign];
+}
+
+- (nullable NSData *)serializeMessage:(id<DKDReliableMessage>)rMsg {
+    return MKMJSONEncode(rMsg);
+}
+
+- (nullable id<DKDReliableMessage>)deserializeMessage:(NSData *)data {
+    NSDictionary *dict = MKMJSONDecode(data);
+    // TODO: translate short keys
+    //       'S' -> 'sender'
+    //       'R' -> 'receiver'
+    //       'W' -> 'time'
+    //       'T' -> 'type'
+    //       'G' -> 'group'
+    //       ------------------
+    //       'D' -> 'data'
+    //       'V' -> 'signature'
+    //       'K' -> 'key'
+    //       ------------------
+    //       'M' -> 'meta'
+    return DKDReliableMessageFromDictionary(dict);
+}
+
+// TODO: make sure meta exists before verifying message
 - (id<DKDSecureMessage>)verifyMessage:(id<DKDReliableMessage>)rMsg {
     DIMFacebook *facebook = [self facebook];
     id<MKMID> sender = rMsg.sender;
@@ -78,12 +202,24 @@
         [facebook saveDocument:visa];
     }
     
-    // make sure meta exists before verifying message
-    return [super verifyMessage:rMsg];
+    // check message delegate
+    if (rMsg.delegate == nil) {
+        rMsg.delegate = self.messenger;
+    }
+    //
+    //  NOTICE: check [Visa Protocol] before calling this
+    //        make sure the sender's meta(visa) exists
+    //        (do in by application)
+    //
+    
+    NSAssert(rMsg.signature, @"message signature cannot be empty");
+    // verify 'data' with 'signature'
+    return [rMsg verify];
 }
 
+// TODO: make sure private key (decrypt key) exists before decrypting message
 - (id<DKDInstantMessage>)decryptMessage:(id<DKDSecureMessage>)sMsg {
-    DIMMessenger *messenger = [self messenger];
+    DIMMessenger *messenger = self.messenger;
     // check message delegate
     if (!sMsg.delegate) {
         sMsg.delegate = messenger;
@@ -105,8 +241,22 @@
         @throw [NSException exceptionWithName:@"ReceiverError" reason:@"not for you?" userInfo:sMsg.dictionary];
     }
     
-    // make sure private key (decrypt key) exists before decrypting message
-    return [super decryptMessage:sMsg];
+    // check message delegate
+    if (sMsg.delegate == nil) {
+        sMsg.delegate = self.messenger;
+    }
+    //
+    //  NOTICE: make sure the receiver is YOU!
+    //          which means the receiver's private key exists;
+    //          if the receiver is a group ID, split it first
+    //
+    
+    NSAssert(sMsg.data, @"message data cannot be empty");
+    // decrypt 'data' to 'content'
+    return [sMsg decrypt];
+    
+    // NOTICE: check: top-secret message after called this
+    //       (do it by application)
 }
 
 @end

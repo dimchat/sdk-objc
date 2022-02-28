@@ -56,19 +56,26 @@
     DIMProcessorFactory *_cpm;
 }
 
+@property (weak, nonatomic) DIMMessenger *messenger;
+@property (weak, nonatomic) DIMFacebook *facebook;
+
 @end
 
 @implementation DIMMessageProcessor
 
-- (instancetype)initWithTransceiver:(DIMTransceiver *)transceiver {
+- (instancetype)init {
     NSAssert(false, @"don't call me!");
-    DIMMessenger *messenger = (DIMMessenger *)transceiver;
-    return [self initWithMessenger:messenger];
+    DIMFacebook *barrack = nil;
+    DIMMessenger *transceiver = nil;
+    return [self initWithFacebook:barrack messenger:transceiver];
 }
 
 /* designated initializer */
-- (instancetype)initWithMessenger:(DIMMessenger *)messenger {
-    if (self = [super initWithTransceiver:messenger]) {
+- (instancetype)initWithFacebook:(DIMFacebook *)barrack
+                       messenger:(DIMMessenger *)transceiver {
+    if (self = [super init]) {
+        self.facebook = barrack;
+        self.messenger = transceiver;
         _cpm = [self createProcessorFactory];
     }
     return self;
@@ -78,16 +85,127 @@
     return [[DIMProcessorFactory alloc] initWithMessenger:self.messenger];
 }
 
-- (DIMMessenger *)messenger {
-    return [self transceiver];
+- (NSArray<NSData *> *)processData:(NSData *)data {
+    DIMTransceiver *transceiver = self.messenger;
+    // 1. deserialize message
+    id<DKDReliableMessage> rMsg = [transceiver deserializeMessage:data];
+    if (!rMsg) {
+        // no message received
+        return nil;
+    }
+    // 2. process message
+    NSArray<id<DKDReliableMessage>> *responses = [transceiver processMessage:rMsg];
+    if ([responses count] == 0) {
+        // nothing to response
+        return nil;
+    }
+    // serialize messages
+    NSMutableArray<NSData *> *packages = [[NSMutableArray alloc] initWithCapacity:[responses count]];
+    NSData * pack;
+    for (id<DKDReliableMessage> res in responses) {
+        pack = [transceiver serializeMessage:res];
+        if ([pack length] > 0) {
+            [packages addObject:pack];
+        }
+    }
+    return packages;
+}
+
+- (NSArray<id<DKDReliableMessage>> *)processMessage:(id<DKDReliableMessage>)rMsg {
+    DIMTransceiver *transceiver = self.messenger;
+    // 1. verify message
+    id<DKDSecureMessage> sMsg = [transceiver verifyMessage:rMsg];
+    if (!sMsg) {
+        // waiting for sender's meta if not eixsts
+        return nil;
+    }
+    // 2. process message
+    NSArray<id<DKDSecureMessage>> *responses = [transceiver processSecure:sMsg withMessage:rMsg];
+    if ([responses count] == 0) {
+        // nothing to respond
+        return nil;
+    }
+    // 3. sign messages
+    NSMutableArray<id<DKDReliableMessage>> *messages = [[NSMutableArray alloc] initWithCapacity:[responses count]];
+    id<DKDReliableMessage> msg;
+    for (id<DKDSecureMessage> res in responses) {
+        msg = [transceiver signMessage:res];
+        if (msg) {
+            [messages addObject:msg];
+        }
+    }
+    return messages;
+}
+
+- (NSArray<id<DKDSecureMessage>> *)processSecure:(id<DKDSecureMessage>)sMsg
+                                     withMessage:(id<DKDReliableMessage>)rMsg {
+    DIMTransceiver *transceiver = self.messenger;
+    // 1. decrypt message
+    id<DKDInstantMessage> iMsg = [transceiver decryptMessage:sMsg];
+    if (!iMsg) {
+        // cannot decrypt this message, not for you?
+        // delivering message to other receiver?
+        return nil;
+    }
+    // 2. process message
+    NSArray<id<DKDInstantMessage>> *responses = [transceiver processInstant:iMsg withMessage:rMsg];
+    if ([responses count] == 0) {
+        // nothing to respond
+        return nil;
+    }
+    // 3. encrypt messages
+    NSMutableArray<id<DKDSecureMessage>> *messages = [[NSMutableArray alloc] initWithCapacity:[responses count]];
+    id<DKDSecureMessage> msg;
+    for (id<DKDInstantMessage> res in responses) {
+        msg = [transceiver encryptMessage:res];
+        if (msg) {
+            [messages addObject:msg];
+        }
+    }
+    return messages;
+}
+
+- (NSArray<id<DKDInstantMessage>> *)processInstant:(id<DKDInstantMessage>)iMsg
+                                       withMessage:(id<DKDReliableMessage>)rMsg {
+    DIMTransceiver *transceiver = self.messenger;
+    // 1. process content
+    id<DKDContent> content = iMsg.content;
+    NSArray<id<DKDContent>> * responses = [transceiver processContent:content withMessage:rMsg];
+    if ([responses count] == 0) {
+        // nothing to respond
+        return nil;
+    }
+    
+    // 2. select a local user to build message
+    id<MKMID> sender = iMsg.sender;
+    id<MKMID> receiver = iMsg.receiver;
+    DIMUser *user = [transceiver selectLocalUserWithID:receiver];
+    NSAssert(user, @"receiver error: %@", receiver);
+    
+    // 3. pack messages
+    NSMutableArray<id<DKDInstantMessage>> *messages = [[NSMutableArray alloc] initWithCapacity:[responses count]];
+    id<DKDEnvelope> env;
+    id<DKDInstantMessage> msg;
+    for (id<DKDContent> res in responses) {
+        if (!res) {
+            // should not happen
+            continue;
+        }
+        env = DKDEnvelopeCreate(user.ID, sender, nil);
+        msg = DKDInstantMessageCreate(env, res);
+        if (msg) {
+            [messages addObject:msg];
+        }
+    }
+    return messages;
 }
 
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                               withMessage:(id<DKDReliableMessage>)rMsg {
-    // NOTICE: override to check group before calling this
+    // TODO: override to check group before calling this
     DIMContentProcessor *cpu = [self processorForContent:content];
     return [cpu processContent:content withMessage:rMsg];
-    // NOTICE: override to filter the response after called this
+    // TODO: override to filter the response after called this
 }
 
 @end
@@ -102,16 +220,30 @@
     return [_cpm processorForType:type];
 }
 
+- (nullable DIMCommandProcessor *)processorForName:(NSString *)command {
+    return [_cpm processorForType:0 command:command];
+    //return [_cpm processorForType:DKDContentType_Command command:command];
+}
+
+- (nullable DIMCommandProcessor *)processorForName:(NSString *)command
+                                              type:(DKDContentType)type {
+    return [_cpm processorForType:type command:command];
+}
+
 @end
 
-void DIMRegisterAllFactories(void) {
-    //
-    //  Register core parsers
-    //
-    DIMRegisterCoreFactories();
+@implementation DIMMessageProcessor (Register)
+
++ (void)registerAllFactories {
     
     //
-    //  Register command parsers
+    //  Register core factories
+    //
+    DIMRegisterContentFactories();
+    DIMRegisterCommandFactories();
+
+    //
+    //  Register command factories
     //
     DIMCommandFactoryRegisterClass(DIMCommand_Receipt, DIMReceiptCommand);
     DIMCommandFactoryRegisterClass(DIMCommand_Handshake, DIMHandshakeCommand);
@@ -125,3 +257,5 @@ void DIMRegisterAllFactories(void) {
     DIMCommandFactoryRegisterClass(DIMCommand_Contacts, DIMStorageCommand);
     DIMCommandFactoryRegisterClass(DIMCommand_PrivateKey, DIMStorageCommand);
 }
+
+@end
