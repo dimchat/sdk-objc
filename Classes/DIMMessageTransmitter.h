@@ -40,41 +40,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol DIMTransmitter <NSObject>
-
-/**
- *  Send message content to receiver
- *
- * @param content - message content
- * @param from - sender ID
- * @param to - receiver ID
- * @param fn - callback function
- * @param prior - task priority
- * @return true on success
- */
-- (BOOL)sendContent:(id<DKDContent>)content
-             sender:(nullable id<MKMID>)from
-           receiver:(id<MKMID>)to
-           callback:(nullable DIMMessengerCallback)fn
-           priority:(NSInteger)prior;
-
-/**
- *  Send instant message (encrypt and sign) onto DIM network
- *
- * @param iMsg - instant message
- * @param callback - callback function
- * @return NO on data/delegate error
- */
-- (BOOL)sendInstantMessage:(id<DKDInstantMessage>)iMsg
-                  callback:(nullable DIMMessengerCallback)callback
-                  priority:(NSInteger)prior;
-
-- (BOOL)sendReliableMessage:(id<DKDReliableMessage>)rMsg
-                   callback:(nullable DIMMessengerCallback)callback
-                   priority:(NSInteger)prior;
-
-@end
-
 @interface DIMMessageTransmitter : NSObject <DIMTransmitter>
 
 @property (readonly, weak, nonatomic) __kindof DIMMessenger *messenger;

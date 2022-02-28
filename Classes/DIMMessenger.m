@@ -44,66 +44,144 @@
 
 #import "DIMMessenger.h"
 
-@interface DIMMessenger () {
-    
-    DIMFacebook *_facebook;
+static inline BOOL isBroadcast(id<DKDMessage> msg) {
+    id<MKMID> receiver = msg.group;
+    if (!receiver) {
+        receiver = msg.receiver;
+    }
+    return MKMIDIsBroadcast(receiver);
 }
-
-@end
 
 @implementation DIMMessenger
 
-- (instancetype)init {
-    if (self = [super init]) {
-        
-        _transmitter = nil;
-        
-        _facebook = nil;
-    }
-    return self;
+#pragma mark DIMCipherKeyDelegate
+
+- (nullable id<MKMSymmetricKey>)cipherKeyFrom:(id<MKMID>)sender
+                                           to:(id<MKMID>)receiver
+                                     generate:(BOOL)create {
+    return [self.keyCache cipherKeyFrom:sender to:receiver generate:create];
 }
 
-#pragma mark Facebook (EntityDelegate)
-
-- (id<DIMEntityDelegate>)barrack {
-    id<DIMEntityDelegate> delegate = [super barrack];
-    if (!delegate) {
-        delegate = [self facebook];
-        [super setBarrack:delegate];
-    }
-    return delegate;
-}
-- (void)setBarrack:(id<DIMEntityDelegate>)barrack {
-    [super setBarrack:barrack];
-    if ([barrack isKindOfClass:[DIMFacebook class]]) {
-        _facebook = (DIMFacebook *)barrack;
-    }
-}
-- (DIMFacebook *)facebook {
-    if (!_facebook) {
-        _facebook = [self createFacebook];
-    }
-    return _facebook;
-}
-- (DIMFacebook *)createFacebook {
-    NSAssert(false, @"implement me!");
-    return nil;
+- (void)cacheCipherKey:(id<MKMSymmetricKey>)key
+                  from:(id<MKMID>)sender
+                    to:(id<MKMID>)receiver {
+    [self.keyCache cacheCipherKey:key from:sender to:receiver];
 }
 
-@end
+#pragma mark DIMPacker
 
-@implementation DIMMessenger (Send)
+- (id<MKMID>)overtGroupForContent:(id<DKDContent>)content {
+    return [self.packer overtGroupForContent:content];
+}
 
-- (BOOL)sendContent:(id<DKDContent>)content sender:(nullable id<MKMID>)from receiver:(id<MKMID>)to callback:(nullable DIMMessengerCallback)fn priority:(NSInteger)prior {
+- (id<DKDSecureMessage>)encryptMessage:(id<DKDInstantMessage>)iMsg {
+    return [self.packer encryptMessage:iMsg];
+}
+
+- (id<DKDReliableMessage>)signMessage:(id<DKDSecureMessage>)sMsg {
+    return [self.packer signMessage:sMsg];
+}
+
+- (NSData *)serializeMessage:(id<DKDReliableMessage>)rMsg {
+    return [self.packer serializeMessage:rMsg];
+}
+
+- (id<DKDReliableMessage>)deserializeMessage:(NSData *)data {
+    return [self.packer deserializeMessage:data];
+}
+
+- (id<DKDSecureMessage>)verifyMessage:(id<DKDReliableMessage>)rMsg {
+    return [self.packer verifyMessage:rMsg];
+}
+
+- (id<DKDInstantMessage>)decryptMessage:(id<DKDSecureMessage>)sMsg {
+    return [self.packer decryptMessage:sMsg];
+}
+
+#pragma mark DIMProcessor
+
+- (NSArray<NSData *> *)processData:(NSData *)data {
+    return [self.processor processData:data];
+}
+
+- (NSArray<id<DKDReliableMessage>> *)processMessage:(id<DKDReliableMessage>)rMsg {
+    return [self.processor processMessage:rMsg];
+}
+
+- (NSArray<id<DKDSecureMessage>> *)processSecure:(id<DKDSecureMessage>)sMsg
+                                     withMessage:(id<DKDReliableMessage>)rMsg {
+    return [self.processor processSecure:sMsg withMessage:rMsg];
+}
+
+- (NSArray<id<DKDInstantMessage>> *)processInstant:(id<DKDInstantMessage>)iMsg
+                                       withMessage:(id<DKDReliableMessage>)rMsg {
+    return [self.processor processInstant:iMsg withMessage:rMsg];
+}
+
+- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
+                                withMessage:(id<DKDReliableMessage>)rMsg {
+    return [self.processor processContent:content withMessage:rMsg];
+}
+
+#pragma mark DIMTransmitter
+
+- (BOOL)sendContent:(id<DKDContent>)content
+             sender:(nullable id<MKMID>)from
+           receiver:(id<MKMID>)to
+           callback:(nullable DIMMessengerCallback)fn
+           priority:(NSInteger)prior {
     return [self.transmitter sendContent:content sender:from receiver:to callback:fn priority:prior];
 }
 
-- (BOOL)sendInstantMessage:(id<DKDInstantMessage>)iMsg callback:(nullable DIMMessengerCallback)callback priority:(NSInteger)prior {
+- (BOOL)sendInstantMessage:(id<DKDInstantMessage>)iMsg
+                  callback:(nullable DIMMessengerCallback)callback
+                  priority:(NSInteger)prior {
     return [self.transmitter sendInstantMessage:iMsg callback:callback priority:prior];
 }
 
-- (BOOL)sendReliableMessage:(id<DKDReliableMessage>)rMsg callback:(nullable DIMMessengerCallback)callback priority:(NSInteger)prior {
+- (BOOL)sendReliableMessage:(id<DKDReliableMessage>)rMsg
+                   callback:(nullable DIMMessengerCallback)callback
+                   priority:(NSInteger)prior {
     return [self.transmitter sendReliableMessage:rMsg callback:callback priority:prior];
+}
+
+#pragma mark DKDInstantMessageDelegate
+
+- (id<MKMSymmetricKey>)message:(id<DKDSecureMessage>)sMsg
+                       deserializeKey:(nullable NSData *)data
+                                 from:(id<MKMID>)sender
+                                   to:(id<MKMID>)receiver {
+    if ([data length] > 0) {
+        return [super message:sMsg deserializeKey:data from:sender to:receiver];
+    } else {
+        // get key from cache
+        return [self cipherKeyFrom:sender to:receiver generate:NO];
+    }
+}
+
+- (nullable id<DKDContent>)message:(id<DKDSecureMessage>)sMsg
+                deserializeContent:(NSData *)data
+                           withKey:(id<MKMSymmetricKey>)password {
+    id<DKDContent> content = [super message:sMsg deserializeContent:data withKey:password];
+    NSAssert(content, @"content error: %@", data);
+    if (!isBroadcast(sMsg)) {
+        // check and cache key for reuse
+        id<MKMID> sender = sMsg.sender;
+        id<MKMID> group = [self overtGroupForContent:content];
+        if (group) {
+            // group message (excludes group command)
+            // cache the key with direction (sender -> group)
+            [self cacheCipherKey:password from:sender to:group];
+        } else {
+            id<MKMID> receiver = sMsg.receiver;
+            // personal message or (group) command
+            // cache key with direction (sender -> receiver)
+            [self cacheCipherKey:password from:sender to:receiver];
+        }
+    }
+    // NOTICE: check attachment for File/Image/Audio/Video message content
+    //         after deserialize content, this job should be do in subclass
+    return content;
 }
 
 @end

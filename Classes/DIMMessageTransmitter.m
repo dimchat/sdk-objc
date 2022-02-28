@@ -57,7 +57,7 @@
 }
 
 - (DIMFacebook *)facebook {
-    return [self.messenger facebook];
+    return self.messenger.barrack;
 }
 
 - (BOOL)sendContent:(id<DKDContent>)content

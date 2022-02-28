@@ -65,7 +65,7 @@
 }
 
 - (DIMFacebook *)facebook {
-    return self.messenger.facebook;
+    return self.messenger.barrack;
 }
 
 //

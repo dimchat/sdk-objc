@@ -86,7 +86,7 @@
 }
 
 - (NSArray<NSData *> *)processData:(NSData *)data {
-    DIMTransceiver *transceiver = self.messenger;
+    DIMMessenger *transceiver = self.messenger;
     // 1. deserialize message
     id<DKDReliableMessage> rMsg = [transceiver deserializeMessage:data];
     if (!rMsg) {
@@ -99,7 +99,7 @@
         // nothing to response
         return nil;
     }
-    // serialize messages
+    // 3. serialize messages
     NSMutableArray<NSData *> *packages = [[NSMutableArray alloc] initWithCapacity:[responses count]];
     NSData * pack;
     for (id<DKDReliableMessage> res in responses) {
@@ -112,7 +112,8 @@
 }
 
 - (NSArray<id<DKDReliableMessage>> *)processMessage:(id<DKDReliableMessage>)rMsg {
-    DIMTransceiver *transceiver = self.messenger;
+    // TODO: override to check broadcast message before calling it
+    DIMMessenger *transceiver = self.messenger;
     // 1. verify message
     id<DKDSecureMessage> sMsg = [transceiver verifyMessage:rMsg];
     if (!sMsg) {
@@ -135,11 +136,12 @@
         }
     }
     return messages;
+    // TODO: override to deliver to the receiver when catch exception "receiver error ..."
 }
 
 - (NSArray<id<DKDSecureMessage>> *)processSecure:(id<DKDSecureMessage>)sMsg
                                      withMessage:(id<DKDReliableMessage>)rMsg {
-    DIMTransceiver *transceiver = self.messenger;
+    DIMMessenger *transceiver = self.messenger;
     // 1. decrypt message
     id<DKDInstantMessage> iMsg = [transceiver decryptMessage:sMsg];
     if (!iMsg) {
@@ -167,7 +169,7 @@
 
 - (NSArray<id<DKDInstantMessage>> *)processInstant:(id<DKDInstantMessage>)iMsg
                                        withMessage:(id<DKDReliableMessage>)rMsg {
-    DIMTransceiver *transceiver = self.messenger;
+    DIMMessenger *transceiver = self.messenger;
     // 1. process content
     id<DKDContent> content = iMsg.content;
     NSArray<id<DKDContent>> * responses = [transceiver processContent:content withMessage:rMsg];
@@ -179,7 +181,8 @@
     // 2. select a local user to build message
     id<MKMID> sender = iMsg.sender;
     id<MKMID> receiver = iMsg.receiver;
-    DIMUser *user = [transceiver selectLocalUserWithID:receiver];
+    DIMFacebook *barrack = self.facebook;
+    DIMUser *user = [barrack selectLocalUserWithID:receiver];
     NSAssert(user, @"receiver error: %@", receiver);
     
     // 3. pack messages

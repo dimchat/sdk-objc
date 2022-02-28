@@ -45,35 +45,35 @@ NS_ASSUME_NONNULL_BEGIN
  */
 typedef void (^DIMMessengerCallback)(id<DKDReliableMessage> rMsg, NSError * _Nullable error);
 
-@protocol DIMTransmitter;
-
-@class DIMFacebook;
-
-@interface DIMMessenger : DIMTransceiver
+/*
+ *  Message Transmitter
+ *  ~~~~~~~~~~~~~~~~~~~
+ */
+@protocol DIMTransmitter <NSObject>
 
 /**
- *  Delegate for transmitting message
+ *  Send message content to receiver
+ *
+ * @param content - message content
+ * @param from - sender ID
+ * @param to - receiver ID
+ * @param fn - callback function
+ * @param prior - task priority
+ * @return true on success
  */
-@property (weak, nonatomic) __kindof id<DIMTransmitter> transmitter;
-
-@property (readonly, strong, nonatomic) __kindof DIMFacebook *facebook;
-
-- (__kindof DIMFacebook *)createFacebook;
-
-@end
-
-@interface DIMMessenger (Sending)
-
-//
-//  Interfaces for Sending Message
-//
-
 - (BOOL)sendContent:(id<DKDContent>)content
              sender:(nullable id<MKMID>)from
            receiver:(id<MKMID>)to
            callback:(nullable DIMMessengerCallback)fn
            priority:(NSInteger)prior;
 
+/**
+ *  Send instant message (encrypt and sign) onto DIM network
+ *
+ * @param iMsg - instant message
+ * @param callback - callback function
+ * @return NO on data/delegate error
+ */
 - (BOOL)sendInstantMessage:(id<DKDInstantMessage>)iMsg
                   callback:(nullable DIMMessengerCallback)callback
                   priority:(NSInteger)prior;
@@ -81,6 +81,59 @@ typedef void (^DIMMessengerCallback)(id<DKDReliableMessage> rMsg, NSError * _Nul
 - (BOOL)sendReliableMessage:(id<DKDReliableMessage>)rMsg
                    callback:(nullable DIMMessengerCallback)callback
                    priority:(NSInteger)prior;
+
+@end
+
+@protocol DIMCipherKeyDelegate <NSObject>
+
+/**
+ *  Get cipher key for encrypt message from 'sender' to 'receiver'
+ *
+ * @param sender - user or contact ID
+ * @param receiver - contact or user/group ID
+ * @param create - generate when key not exists
+ * @return cipher key
+ */
+- (nullable id<MKMSymmetricKey>)cipherKeyFrom:(id<MKMID>)sender
+                                           to:(id<MKMID>)receiver
+                                     generate:(BOOL)create;
+
+/**
+ *  Cache cipher key for reusing, with the direction (from 'sender' to 'receiver')
+ *
+ * @param key - cipher key
+ * @param sender - user or contact ID
+ * @param receiver - contact or user/group ID
+ */
+- (void)cacheCipherKey:(id<MKMSymmetricKey>)key
+                  from:(id<MKMID>)sender
+                    to:(id<MKMID>)receiver;
+
+@end
+
+#pragma mark -
+
+@interface DIMMessenger : DIMTransceiver <DIMCipherKeyDelegate, DIMPacker, DIMProcessor, DIMTransmitter>
+
+/**
+ *  Delegate for getting message key
+ */
+@property (weak, nonatomic) __kindof id<DIMCipherKeyDelegate> keyCache;
+
+/**
+ *  Delegate for parsing message
+ */
+@property (weak, nonatomic) __kindof id<DIMPacker> packer;
+
+/**
+ *  Delegate for processing message
+ */
+@property (weak, nonatomic) __kindof id<DIMProcessor> processor;
+
+/**
+ *  Delegate for transmitting message
+ */
+@property (weak, nonatomic) __kindof id<DIMTransmitter> transmitter;
 
 @end
 

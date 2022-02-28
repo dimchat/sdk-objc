@@ -84,7 +84,7 @@
 }
 
 - (nullable id<DKDSecureMessage>)encryptMessage:(id<DKDInstantMessage>)iMsg {
-    DIMTransceiver *transceiver = self.messenger;
+    DIMMessenger *transceiver = self.messenger;
     // check message delegate
     if (!iMsg.delegate) {
         iMsg.delegate = transceiver;
@@ -126,7 +126,8 @@
     id<DKDSecureMessage> sMsg = nil;
     if (MKMIDIsGroup(receiver)) {
         // group message
-        DIMGroup *grp = [transceiver groupWithID:receiver];
+        DIMFacebook *barrack = self.facebook;
+        DIMGroup *grp = [barrack groupWithID:receiver];
         NSArray<id<MKMID>> *members = [grp members];
         if (members.count == 0) {
             // group not ready
@@ -219,13 +220,8 @@
 
 // TODO: make sure private key (decrypt key) exists before decrypting message
 - (id<DKDInstantMessage>)decryptMessage:(id<DKDSecureMessage>)sMsg {
-    DIMMessenger *messenger = self.messenger;
-    // check message delegate
-    if (!sMsg.delegate) {
-        sMsg.delegate = messenger;
-    }
     id<MKMID> receiver = sMsg.receiver;
-    DIMUser *user = [messenger selectLocalUserWithID:receiver];
+    DIMUser *user = [self.facebook selectLocalUserWithID:receiver];
     id<DKDSecureMessage> trimmed;
     if (!user) {
         // local users not matched
