@@ -53,11 +53,31 @@ static inline BOOL isBroadcast(id<DKDMessage> msg) {
 
 @implementation DIMMessenger
 
+- (id<DIMCipherKeyDelegate>)keyCache {
+    NSAssert(_keyCache, @"cipher key delegate not set yet!");
+    return _keyCache;
+}
+
+- (id<DIMPacker>)packer {
+    NSAssert(_packer, @"message packer not set yet!");
+    return _packer;
+}
+
+- (id<DIMProcessor>)processor {
+    NSAssert(_processor, @"message processor not set yet!");
+    return _processor;
+}
+
+- (id<DIMTransmitter>)transmitter {
+    NSAssert(_transmitter, @"message transmitter not set yet!");
+    return _transmitter;
+}
+
 #pragma mark DIMCipherKeyDelegate
 
-- (nullable id<MKMSymmetricKey>)cipherKeyFrom:(id<MKMID>)sender
-                                           to:(id<MKMID>)receiver
-                                     generate:(BOOL)create {
+- (id<MKMSymmetricKey>)cipherKeyFrom:(id<MKMID>)sender
+                                  to:(id<MKMID>)receiver
+                            generate:(BOOL)create {
     return [self.keyCache cipherKeyFrom:sender to:receiver generate:create];
 }
 
@@ -127,21 +147,16 @@ static inline BOOL isBroadcast(id<DKDMessage> msg) {
 - (BOOL)sendContent:(id<DKDContent>)content
              sender:(nullable id<MKMID>)from
            receiver:(id<MKMID>)to
-           callback:(nullable DIMMessengerCallback)fn
            priority:(NSInteger)prior {
-    return [self.transmitter sendContent:content sender:from receiver:to callback:fn priority:prior];
+    return [self.transmitter sendContent:content sender:from receiver:to priority:prior];
 }
 
-- (BOOL)sendInstantMessage:(id<DKDInstantMessage>)iMsg
-                  callback:(nullable DIMMessengerCallback)callback
-                  priority:(NSInteger)prior {
-    return [self.transmitter sendInstantMessage:iMsg callback:callback priority:prior];
+- (BOOL)sendInstantMessage:(id<DKDInstantMessage>)iMsg priority:(NSInteger)prior {
+    return [self.transmitter sendInstantMessage:iMsg priority:prior];
 }
 
-- (BOOL)sendReliableMessage:(id<DKDReliableMessage>)rMsg
-                   callback:(nullable DIMMessengerCallback)callback
-                   priority:(NSInteger)prior {
-    return [self.transmitter sendReliableMessage:rMsg callback:callback priority:prior];
+- (BOOL)sendReliableMessage:(id<DKDReliableMessage>)rMsg priority:(NSInteger)prior {
+    return [self.transmitter sendReliableMessage:rMsg priority:prior];
 }
 
 #pragma mark DKDInstantMessageDelegate

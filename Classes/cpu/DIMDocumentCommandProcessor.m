@@ -43,7 +43,7 @@
 @implementation DIMDocumentCommandProcessor
 
 - (NSArray<id<DKDContent>> *)getDocumentForID:(id<MKMID>)ID withType:(NSString *)type {
-    DIMFacebook *facebook = [self facebook];
+    DIMFacebook *facebook = self.facebook;
     // query document for ID
     id<MKMDocument> doc = [facebook documentForID:ID type:type];
     if (doc) {
@@ -56,7 +56,7 @@
 }
 
 - (NSArray<id<DKDContent>> *)putDocument:(id<MKMDocument>)doc meta:(nullable id<MKMMeta>)meta forID:(id<MKMID>)ID {
-    DIMFacebook *facebook = [self facebook];
+    DIMFacebook *facebook = self.facebook;
     NSString *text;
     if (meta) {
         // received a meta for ID

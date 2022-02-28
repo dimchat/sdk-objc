@@ -46,50 +46,60 @@
 
 #import "DIMFacebook.h"
 
-@implementation DIMFacebook
-
-- (nullable DIMUser *)currentUser {
-    NSArray<DIMUser *> *users = self.localUsers;
-    if ([users count] == 0) {
-        return nil;
+/**
+ *  Remove 1/2 objects from the dictionary
+ *
+ * @param mDict - mutable dictionary
+ */
+static inline NSInteger thanos(NSMutableDictionary *mDict, NSInteger finger) {
+    NSArray *keys = [mDict allKeys];
+    for (id addr in keys) {
+        if ((++finger & 1) == 1) {
+            // kill it
+            [mDict removeObjectForKey:addr];
+        }
+        // let it go
     }
-    return [users firstObject];
+    return finger;
 }
 
-- (nullable DIMUser *)selectLocalUserWithID:(id<MKMID>)receiver {
-    NSArray<DIMUser *> *users = self.localUsers;
-    if ([users count] == 0) {
-        NSAssert(false, @"local users should not be empty");
-        return nil;
-    } else if (MKMIDIsBroadcast(receiver)) {
-        // broadcast message can decrypt by anyone, so just return current user
-        return [users firstObject];
+@interface DIMFacebook () {
+    
+    NSMutableDictionary<id<MKMID>, DIMUser *> *_userTable;
+    NSMutableDictionary<id<MKMID>, DIMGroup *> *_groupTable;
+}
+
+@end
+
+@implementation DIMFacebook
+
+- (instancetype)init {
+    if (self = [super init]) {
+        _userTable = [[NSMutableDictionary alloc] init];
+        _groupTable = [[NSMutableDictionary alloc] init];
     }
-    if (MKMIDIsGroup(receiver)) {
-        // group message (recipient not designated)
-        NSArray<id<MKMID>> *members = [self membersOfGroup:receiver];
-        if (members.count == 0) {
-            // TODO: group not ready, waiting for group info
-            return nil;
-        }
-        for (DIMUser *item in users) {
-            if ([members containsObject:item.ID]) {
-                // DISCUSS: set this item to be current user?
-                return item;
-            }
-        }
-    } else {
-        // 1. personal message
-        // 2. split group message
-        for (DIMUser *item in users) {
-            if ([receiver isEqual:item.ID]) {
-                // DISCUSS: set this item to be current user?
-                return item;
-            }
-        }
+    return self;
+}
+
+- (NSInteger)reduceMemory {
+    NSInteger finger = 0;
+    finger = thanos(_userTable, finger);
+    finger = thanos(_groupTable, finger);
+    return finger >> 1;
+}
+
+- (void)cacheUser:(DIMUser *)user {
+    if (user.dataSource == nil) {
+        user.dataSource = self;
     }
-    NSAssert(false, @"receiver not in local users: %@, %@", receiver, users);
-    return nil;
+    [_userTable setObject:user forKey:user.ID];
+}
+
+- (void)cacheGroup:(DIMGroup *)group {
+    if (group.dataSource == nil) {
+        group.dataSource = self;
+    }
+    [_groupTable setObject:group forKey:group.ID];
 }
 
 - (BOOL)saveMeta:(id<MKMMeta>)meta forID:(id<MKMID>)ID {
@@ -158,8 +168,6 @@
     return [doc verify:meta.key];
 }
 
-#pragma mark DIMBarrack
-
 - (nullable DIMUser *)createUser:(id<MKMID>)ID {
     if (MKMIDIsBroadcast(ID)) {
         // create user 'anyone@anywhere'
@@ -199,6 +207,83 @@
     }
     NSAssert(false, @"Unsupported group type: %d", type);
     return nil;
+}
+
+- (nullable NSArray<DIMUser *> *)localUsers {
+    NSAssert(false, @"implement me!");
+    return nil;
+}
+
+- (nullable DIMUser *)currentUser {
+    NSArray<DIMUser *> *users = self.localUsers;
+    if ([users count] == 0) {
+        return nil;
+    }
+    return [users firstObject];
+}
+
+- (nullable DIMUser *)selectLocalUserWithID:(id<MKMID>)receiver {
+    NSArray<DIMUser *> *users = self.localUsers;
+    if ([users count] == 0) {
+        NSAssert(false, @"local users should not be empty");
+        return nil;
+    } else if (MKMIDIsBroadcast(receiver)) {
+        // broadcast message can decrypt by anyone, so just return current user
+        return [users firstObject];
+    }
+    if (MKMIDIsGroup(receiver)) {
+        // group message (recipient not designated)
+        NSArray<id<MKMID>> *members = [self membersOfGroup:receiver];
+        if (members.count == 0) {
+            // TODO: group not ready, waiting for group info
+            return nil;
+        }
+        for (DIMUser *item in users) {
+            if ([members containsObject:item.ID]) {
+                // DISCUSS: set this item to be current user?
+                return item;
+            }
+        }
+    } else {
+        // 1. personal message
+        // 2. split group message
+        for (DIMUser *item in users) {
+            if ([receiver isEqual:item.ID]) {
+                // DISCUSS: set this item to be current user?
+                return item;
+            }
+        }
+    }
+    NSAssert(false, @"receiver not in local users: %@, %@", receiver, users);
+    return nil;
+}
+
+#pragma mark - DIMEntityDelegate
+
+- (nullable DIMUser *)userWithID:(id<MKMID>)ID {
+    // 1. get from user cache
+    DIMUser *user = [_userTable objectForKey:ID];
+    if (!user) {
+        // 2. create user and cache it
+        user = [self createUser:ID];
+        if (user) {
+            [self cacheUser:user];
+        }
+    }
+    return user;
+}
+
+- (nullable DIMGroup *)groupWithID:(id<MKMID>)ID {
+    // 1. get from group cache
+    DIMGroup *group = [_groupTable objectForKey:ID];
+    if (!group) {
+        // 2. create group and cache it
+        group = [self createGroup:ID];
+        if (group) {
+            [self cacheGroup:group];
+        }
+    }
+    return group;
 }
 
 @end

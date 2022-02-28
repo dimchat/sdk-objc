@@ -62,7 +62,8 @@ NS_DESIGNATED_INITIALIZER;
 /**
  *  Get command processor
  */
-- (nullable __kindof DIMCommandProcessor *)processorForType:(DKDContentType)type command:(NSString *)name;
+- (nullable __kindof DIMCommandProcessor *)processorForName:(NSString *)command
+                                                       type:(DKDContentType)type;
 
 #pragma mark -
 
@@ -74,7 +75,8 @@ NS_DESIGNATED_INITIALIZER;
 /**
  *  Create command processor with type & name
  */
-- (DIMCommandProcessor *)createProcessorWithType:(DKDContentType)type command:(NSString *)name;
+- (DIMCommandProcessor *)createProcessorWithName:(NSString *)command
+                                            type:(DKDContentType)type;
 
 @end
 

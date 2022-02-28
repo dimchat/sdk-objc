@@ -86,18 +86,18 @@
     return self;
 }
 
-- (nullable DIMContentProcessor *)processorForContent:(id<DKDContent>)content {
+- (DIMContentProcessor *)processorForContent:(id<DKDContent>)content {
     DKDContentType type = content.type;
     if ([content conformsToProtocol:@protocol(DIMCommand)]) {
         id<DIMCommand> cmd = (id<DIMCommand>)content;
         NSString *name = cmd.command;
-        return [self processorForType:type command:name];
+        return [self processorForName:name type:type];
     } else {
         return [self processorForType:type];
     }
 }
 
-- (nullable DIMContentProcessor *)processorForType:(DKDContentType)type {
+- (DIMContentProcessor *)processorForType:(DKDContentType)type {
     DIMContentProcessor *cpu = [_contentProcessors objectForKey:@(type)];
     if (!cpu) {
         cpu = [self createProcessorWithType:type];
@@ -108,12 +108,12 @@
     return cpu;
 }
 
-- (nullable DIMCommandProcessor *)processorForType:(DKDContentType)type command:(NSString *)name {
-    DIMCommandProcessor *cpu = [_commandProcessors objectForKey:name];
+- (DIMCommandProcessor *)processorForName:(NSString *)command type:(DKDContentType)type {
+    DIMCommandProcessor *cpu = [_commandProcessors objectForKey:command];
     if (!cpu) {
-        cpu = [self createProcessorWithType:type command:name];
+        cpu = [self createProcessorWithName:command type:type];
         if (cpu) {
-            [_commandProcessors setObject:cpu forKey:name];
+            [_commandProcessors setObject:cpu forKey:command];
         }
     }
     return cpu;
@@ -128,7 +128,7 @@
     return nil;
 }
 
-- (DIMCommandProcessor *)createProcessorWithType:(DKDContentType)type command:(NSString *)name {
+- (DIMCommandProcessor *)createProcessorWithName:(NSString *)name type:(DKDContentType)type {
     // meta
     if ([name isEqualToString:DIMCommand_Meta]) {
         return CREATE_CPU(DIMMetaCommandProcessor);

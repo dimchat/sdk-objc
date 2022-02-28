@@ -68,7 +68,6 @@ NS_DESIGNATED_INITIALIZER;
  */
 - (nullable __kindof DIMContentProcessor *)processorForType:(DKDContentType)type;
 
-- (nullable __kindof DIMCommandProcessor *)processorForName:(NSString *)command;
 - (nullable __kindof DIMCommandProcessor *)processorForName:(NSString *)command
                                                        type:(DKDContentType)type;
 

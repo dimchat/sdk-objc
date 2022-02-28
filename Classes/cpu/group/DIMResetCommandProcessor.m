@@ -44,7 +44,7 @@
 
 - (void)queryOwner:(id<MKMID>)owner forGroup:(id<MKMID>)group {
     DIMCommand *query = [[DIMQueryGroupCommand alloc] initWithGroup:group];
-    [self.messenger sendContent:query sender:nil receiver:owner callback:NULL priority:1];
+    [self.messenger sendContent:query sender:nil receiver:owner priority:1];
 }
 
 - (NSArray<id<DKDContent>> *)temporarySave:(DIMGroupCommand *)cmd sender:(id<MKMID>)sender {

@@ -181,8 +181,7 @@
     // 2. select a local user to build message
     id<MKMID> sender = iMsg.sender;
     id<MKMID> receiver = iMsg.receiver;
-    DIMFacebook *barrack = self.facebook;
-    DIMUser *user = [barrack selectLocalUserWithID:receiver];
+    DIMUser *user = [self.facebook selectLocalUserWithID:receiver];
     NSAssert(user, @"receiver error: %@", receiver);
     
     // 3. pack messages
@@ -215,22 +214,16 @@
 
 @implementation DIMMessageProcessor (CPU)
 
-- (nullable DIMContentProcessor *)processorForContent:(id<DKDContent>)content {
+- (DIMContentProcessor *)processorForContent:(id<DKDContent>)content {
     return [_cpm processorForContent:content];
 }
 
-- (nullable DIMContentProcessor *)processorForType:(DKDContentType)type {
+- (DIMContentProcessor *)processorForType:(DKDContentType)type {
     return [_cpm processorForType:type];
 }
 
-- (nullable DIMCommandProcessor *)processorForName:(NSString *)command {
-    return [_cpm processorForType:0 command:command];
-    //return [_cpm processorForType:DKDContentType_Command command:command];
-}
-
-- (nullable DIMCommandProcessor *)processorForName:(NSString *)command
-                                              type:(DKDContentType)type {
-    return [_cpm processorForType:type command:command];
+- (DIMCommandProcessor *)processorForName:(NSString *)command type:(DKDContentType)type {
+    return [_cpm processorForName:command type:type];
 }
 
 @end

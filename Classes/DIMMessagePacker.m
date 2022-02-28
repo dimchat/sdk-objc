@@ -108,7 +108,7 @@
     //         share the symmetric key (group msg key) with other members.
 
     // 1. get symmetric key
-    id<MKMID> group = [self overtGroupForContent:iMsg.content];
+    id<MKMID> group = [transceiver overtGroupForContent:iMsg.content];
     id<MKMSymmetricKey> password;
     if (group) {
         // group message (excludes group command)
@@ -126,8 +126,7 @@
     id<DKDSecureMessage> sMsg = nil;
     if (MKMIDIsGroup(receiver)) {
         // group message
-        DIMFacebook *barrack = self.facebook;
-        DIMGroup *grp = [barrack groupWithID:receiver];
+        DIMGroup *grp = [self.facebook groupWithID:receiver];
         NSArray<id<MKMID>> *members = [grp members];
         if (members.count == 0) {
             // group not ready
@@ -190,7 +189,7 @@
 
 // TODO: make sure meta exists before verifying message
 - (id<DKDSecureMessage>)verifyMessage:(id<DKDReliableMessage>)rMsg {
-    DIMFacebook *facebook = [self facebook];
+    DIMFacebook *facebook = self.facebook;
     id<MKMID> sender = rMsg.sender;
     // [Meta Protocol]
     id<MKMMeta> meta = rMsg.meta;

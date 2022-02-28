@@ -39,12 +39,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/**
- *  Callback for sending message
- *  set by application and executed by DIM Core
- */
-typedef void (^DIMMessengerCallback)(id<DKDReliableMessage> rMsg, NSError * _Nullable error);
-
 /*
  *  Message Transmitter
  *  ~~~~~~~~~~~~~~~~~~~
@@ -57,29 +51,25 @@ typedef void (^DIMMessengerCallback)(id<DKDReliableMessage> rMsg, NSError * _Nul
  * @param content - message content
  * @param from - sender ID
  * @param to - receiver ID
- * @param fn - callback function
  * @param prior - task priority
  * @return true on success
  */
 - (BOOL)sendContent:(id<DKDContent>)content
              sender:(nullable id<MKMID>)from
            receiver:(id<MKMID>)to
-           callback:(nullable DIMMessengerCallback)fn
            priority:(NSInteger)prior;
 
 /**
  *  Send instant message (encrypt and sign) onto DIM network
  *
  * @param iMsg - instant message
- * @param callback - callback function
+ * @param prior - task priority
  * @return NO on data/delegate error
  */
 - (BOOL)sendInstantMessage:(id<DKDInstantMessage>)iMsg
-                  callback:(nullable DIMMessengerCallback)callback
                   priority:(NSInteger)prior;
 
 - (BOOL)sendReliableMessage:(id<DKDReliableMessage>)rMsg
-                   callback:(nullable DIMMessengerCallback)callback
                    priority:(NSInteger)prior;
 
 @end

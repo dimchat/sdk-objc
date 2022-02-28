@@ -59,12 +59,32 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly, strong, nonatomic, nullable) DIMUser *currentUser;
 
 /**
+ *  Get all local users (for decrypting received message)
+ *
+ * @return users with private key
+ */
+@property (readonly, strong, nonatomic, nullable) NSArray<DIMUser *> *localUsers;
+
+/**
+ * Call it when received 'UIApplicationDidReceiveMemoryWarningNotification',
+ * this will remove 50% of cached objects
+ *
+ * @return number of survivors
+ */
+- (NSInteger)reduceMemory;
+
+// override to create user
+- (nullable __kindof DIMUser *)createUser:(id<MKMID>)ID;
+// override to create group
+- (nullable __kindof DIMGroup *)createGroup:(id<MKMID>)ID;
+
+/**
  *  Select local user for receiver
  *
  * @param receiver - user/group ID
  * @return local user
  */
-- (nullable DIMUser *)selectLocalUserWithID:(id<MKMID>)receiver;
+- (nullable __kindof DIMUser *)selectLocalUserWithID:(id<MKMID>)receiver;
 
 /**
  *  Save meta for entity ID (must verify first)
