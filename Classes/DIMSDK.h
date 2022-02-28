@@ -100,7 +100,6 @@ FOUNDATION_EXPORT const unsigned char DIMSDKVersionString[];
 #import <DIMSDK/DIMFacebook.h>
 #import <DIMSDK/DIMMessagePacker.h>
 #import <DIMSDK/DIMMessageProcessor.h>
-#import <DIMSDK/DIMMessageTransmitter.h>
 #import <DIMSDK/DIMMessenger.h>
 
 #endif /* ! __DIM_SDK__== */

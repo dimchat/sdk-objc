@@ -40,7 +40,6 @@
 #import "DIMFacebook.h"
 #import "DIMMessagePacker.h"
 #import "DIMMessageProcessor.h"
-#import "DIMMessageTransmitter.h"
 
 #import "DIMMessenger.h"
 
