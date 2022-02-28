@@ -49,12 +49,18 @@
 
 #import "DIMProcessorFactory.h"
 
+#define CREATE_CPU(clazz)                                                      \
+            [[clazz alloc] initWithFacebook:self.facebook                      \
+                                  messenger:self.messenger]                    \
+                                                   /* EOF 'CREATE_CPU(clazz)' */
+
 @interface DIMProcessorFactory () {
     
     NSMutableDictionary<NSNumber *, DIMContentProcessor *> *_contentProcessors;
     NSMutableDictionary<NSString *, DIMCommandProcessor *> *_commandProcessors;
 }
 
+@property (weak, nonatomic) DIMFacebook *facebook;
 @property (weak, nonatomic) DIMMessenger *messenger;
 
 @end
@@ -63,14 +69,17 @@
 
 - (instancetype)init {
     NSAssert(false, @"don't call me!");
-    DIMMessenger *messenger = nil;
-    return [self initWithMessenger:messenger];
+    DIMFacebook *barrack = nil;
+    DIMMessenger *transceiver = nil;
+    return [self initWithFacebook:barrack messenger:transceiver];
 }
 
 /* designated initializer */
-- (instancetype)initWithMessenger:(DIMMessenger *)messenger {
+- (instancetype)initWithFacebook:(DIMFacebook *)barrack
+                       messenger:(DIMMessenger *)transceiver {
     if (self = [super init]) {
-        _messenger = messenger;
+        _facebook = barrack;
+        _messenger = transceiver;
         _contentProcessors = [[NSMutableDictionary alloc] init];
         _commandProcessors = [[NSMutableDictionary alloc] init];
     }
@@ -113,7 +122,7 @@
 - (DIMContentProcessor *)createProcessorWithType:(DKDContentType)type {
     // core contents
     if (type == DKDContentType_Forward) {
-        return [[DIMForwardContentProcessor alloc] initWithMessenger:self.messenger];
+        return CREATE_CPU(DIMForwardContentProcessor);
     }
     // unknown
     return nil;
@@ -122,39 +131,39 @@
 - (DIMCommandProcessor *)createProcessorWithType:(DKDContentType)type command:(NSString *)name {
     // meta
     if ([name isEqualToString:DIMCommand_Meta]) {
-        return [[DIMMetaCommandProcessor alloc] initWithMessenger:self.messenger];
+        return CREATE_CPU(DIMMetaCommandProcessor);
     }
     // document
     if ([name isEqualToString:DIMCommand_Document]) {
-        return [[DIMDocumentCommandProcessor alloc] initWithMessenger:self.messenger];
+        return CREATE_CPU(DIMDocumentCommandProcessor);
     } else if ([name isEqualToString:@"profile"] || [name isEqualToString:@"visa"] || [name isEqualToString:@"bulletin"]) {
         DIMCommandProcessor *cpu = [_commandProcessors objectForKey:DIMCommand_Document];
         if (!cpu) {
-            cpu = [[DIMDocumentCommandProcessor alloc] initWithMessenger:self.messenger];
+            cpu = CREATE_CPU(DIMDocumentCommandProcessor);
             [_commandProcessors setObject:cpu forKey:DIMCommand_Document];
         }
         return cpu;
     }
     // group
     if ([name isEqualToString:@"group"]) {
-        return [[DIMGroupCommandProcessor alloc] initWithMessenger:self.messenger];
+        return CREATE_CPU(DIMGroupCommandProcessor);
     } else if ([name isEqualToString:DIMGroupCommand_Invite]) {
-        return [[DIMInviteCommandProcessor alloc] initWithMessenger:self.messenger];
+        return CREATE_CPU(DIMInviteCommandProcessor);
     } else if ([name isEqualToString:DIMGroupCommand_Expel]) {
-        return [[DIMExpelCommandProcessor alloc] initWithMessenger:self.messenger];
+        return CREATE_CPU(DIMExpelCommandProcessor);
     } else if ([name isEqualToString:DIMGroupCommand_Quit]) {
-        return [[DIMQuitCommandProcessor alloc] initWithMessenger:self.messenger];
+        return CREATE_CPU(DIMQuitCommandProcessor);
     } else if ([name isEqualToString:DIMGroupCommand_Query]) {
-        return [[DIMQueryGroupCommandProcessor alloc] initWithMessenger:self.messenger];
+        return CREATE_CPU(DIMQueryGroupCommandProcessor);
     } else if ([name isEqualToString:DIMGroupCommand_Reset]) {
-        return [[DIMResetGroupCommandProcessor alloc] initWithMessenger:self.messenger];
+        return CREATE_CPU(DIMResetGroupCommandProcessor);
     }
     // others
     if (type == DKDContentType_Command) {
-        return [[DIMCommandProcessor alloc] initWithMessenger:self.messenger];
+        return CREATE_CPU(DIMCommandProcessor);
     }
     if (type == DKDContentType_History) {
-        return [[DIMHistoryCommandProcessor alloc] initWithMessenger:self.messenger];
+        return CREATE_CPU(DIMHistoryCommandProcessor);
     }
     // unknown
     return nil;

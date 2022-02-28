@@ -42,8 +42,8 @@
 
 @interface DIMMessagePacker ()
 
-@property (weak, nonatomic) DIMMessenger *messenger;
 @property (weak, nonatomic) DIMFacebook *facebook;
+@property (weak, nonatomic) DIMMessenger *messenger;
 
 @end
 
@@ -60,8 +60,8 @@
 - (instancetype)initWithFacebook:(DIMFacebook *)barrack
                        messenger:(DIMMessenger *)transceiver {
     if (self = [super init]) {
-        self.facebook = barrack;
-        self.messenger = transceiver;
+        _facebook = barrack;
+        _messenger = transceiver;
     }
     return self;
 }

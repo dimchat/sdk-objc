@@ -44,6 +44,7 @@
 
 @interface DIMContentProcessor ()
 
+@property (weak, nonatomic) DIMFacebook *facebook;
 @property (weak, nonatomic) DIMMessenger *messenger;
 
 @end
@@ -52,20 +53,19 @@
 
 - (instancetype)init {
     NSAssert(false, @"don't call me!");
-    DIMMessenger *messenger = nil;
-    return [self initWithMessenger:messenger];
+    DIMFacebook *barrack = nil;
+    DIMMessenger *transceiver = nil;
+    return [self initWithFacebook:barrack messenger:transceiver];
 }
 
 /* designated initializer */
-- (instancetype)initWithMessenger:(DIMMessenger *)messenger {
+- (instancetype)initWithFacebook:(DIMFacebook *)barrack
+                       messenger:(DIMMessenger *)transceiver {
     if (self = [super init]) {
-        _messenger = messenger;
+        _facebook = barrack;
+        _messenger = transceiver;
     }
     return self;
-}
-
-- (DIMFacebook *)facebook {
-    return self.messenger.barrack;
 }
 
 //

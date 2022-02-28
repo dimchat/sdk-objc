@@ -56,8 +56,8 @@
     DIMProcessorFactory *_cpm;
 }
 
-@property (weak, nonatomic) DIMMessenger *messenger;
 @property (weak, nonatomic) DIMFacebook *facebook;
+@property (weak, nonatomic) DIMMessenger *messenger;
 
 @end
 
@@ -74,15 +74,15 @@
 - (instancetype)initWithFacebook:(DIMFacebook *)barrack
                        messenger:(DIMMessenger *)transceiver {
     if (self = [super init]) {
-        self.facebook = barrack;
-        self.messenger = transceiver;
+        _facebook = barrack;
+        _messenger = transceiver;
         _cpm = [self createProcessorFactory];
     }
     return self;
 }
 
 - (DIMProcessorFactory *)createProcessorFactory {
-    return [[DIMProcessorFactory alloc] initWithMessenger:self.messenger];
+    return [[DIMProcessorFactory alloc] initWithFacebook:self.facebook messenger:self.messenger];
 }
 
 - (NSArray<NSData *> *)processData:(NSData *)data {
