@@ -104,13 +104,11 @@
 
 @end
 
-@implementation DIMMessageProcessor (Register)
-
-+ (void)registerAllFactories {
+void DIMRegisterAllFactories(void) {
     //
     //  Register core parsers
     //
-    [self registerCoreFactories];
+    DIMRegisterCoreFactories();
     
     //
     //  Register command parsers
@@ -127,5 +125,3 @@
     DIMCommandFactoryRegisterClass(DIMCommand_Contacts, DIMStorageCommand);
     DIMCommandFactoryRegisterClass(DIMCommand_PrivateKey, DIMStorageCommand);
 }
-
-@end

@@ -68,10 +68,17 @@ NS_DESIGNATED_INITIALIZER;
 
 @end
 
-@interface DIMMessageProcessor (Register)
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-+ (void)registerAllFactories;
+/**
+ *  Register All Content/Command Factories
+ */
+void DIMRegisterAllFactories(void);
 
-@end
+#ifdef __cplusplus
+} /* end of extern "C" */
+#endif
 
 NS_ASSUME_NONNULL_END
