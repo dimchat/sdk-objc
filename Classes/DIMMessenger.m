@@ -68,9 +68,12 @@ static inline BOOL isBroadcast(id<DKDMessage> msg) {
     return _processor;
 }
 
-- (id<DIMTransmitter>)transmitter {
-    NSAssert(_transmitter, @"message transmitter not set yet!");
-    return _transmitter;
+- (BOOL)sendContent:(id<DKDContent>)content
+             sender:(nullable id<MKMID>)from
+           receiver:(id<MKMID>)to
+           priority:(NSInteger)prior {
+    NSAssert(false, @"implement me!");
+    return NO;
 }
 
 #pragma mark DIMCipherKeyDelegate
@@ -140,23 +143,6 @@ static inline BOOL isBroadcast(id<DKDMessage> msg) {
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     return [self.processor processContent:content withMessage:rMsg];
-}
-
-#pragma mark DIMTransmitter
-
-- (BOOL)sendContent:(id<DKDContent>)content
-             sender:(nullable id<MKMID>)from
-           receiver:(id<MKMID>)to
-           priority:(NSInteger)prior {
-    return [self.transmitter sendContent:content sender:from receiver:to priority:prior];
-}
-
-- (BOOL)sendInstantMessage:(id<DKDInstantMessage>)iMsg priority:(NSInteger)prior {
-    return [self.transmitter sendInstantMessage:iMsg priority:prior];
-}
-
-- (BOOL)sendReliableMessage:(id<DKDReliableMessage>)rMsg priority:(NSInteger)prior {
-    return [self.transmitter sendReliableMessage:rMsg priority:prior];
 }
 
 #pragma mark DKDInstantMessageDelegate

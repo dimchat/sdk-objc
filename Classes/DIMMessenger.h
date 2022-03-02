@@ -39,41 +39,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/*
- *  Message Transmitter
- *  ~~~~~~~~~~~~~~~~~~~
- */
-@protocol DIMTransmitter <NSObject>
-
-/**
- *  Send message content to receiver
- *
- * @param content - message content
- * @param from - sender ID
- * @param to - receiver ID
- * @param prior - task priority
- * @return true on success
- */
-- (BOOL)sendContent:(id<DKDContent>)content
-             sender:(nullable id<MKMID>)from
-           receiver:(id<MKMID>)to
-           priority:(NSInteger)prior;
-
-/**
- *  Send instant message (encrypt and sign) onto DIM network
- *
- * @param iMsg - instant message
- * @param prior - task priority
- * @return NO on data/delegate error
- */
-- (BOOL)sendInstantMessage:(id<DKDInstantMessage>)iMsg
-                  priority:(NSInteger)prior;
-
-- (BOOL)sendReliableMessage:(id<DKDReliableMessage>)rMsg
-                   priority:(NSInteger)prior;
-
-@end
-
 @protocol DIMCipherKeyDelegate <NSObject>
 
 /**
@@ -103,7 +68,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark -
 
-@interface DIMMessenger : DIMTransceiver <DIMCipherKeyDelegate, DIMPacker, DIMProcessor, DIMTransmitter>
+@interface DIMMessenger : DIMTransceiver <DIMCipherKeyDelegate, DIMPacker, DIMProcessor>
 
 /**
  *  Delegate for getting message key
@@ -121,9 +86,18 @@ NS_ASSUME_NONNULL_BEGIN
 @property (weak, nonatomic) __kindof id<DIMProcessor> processor;
 
 /**
- *  Delegate for transmitting message
+ *  Send message content to receiver
+ *
+ * @param content - message content
+ * @param from - sender ID
+ * @param to - receiver ID
+ * @param prior - task priority
+ * @return true on success
  */
-@property (weak, nonatomic) __kindof id<DIMTransmitter> transmitter;
+- (BOOL)sendContent:(id<DKDContent>)content
+             sender:(nullable id<MKMID>)from
+           receiver:(id<MKMID>)to
+           priority:(NSInteger)prior;
 
 @end
 
