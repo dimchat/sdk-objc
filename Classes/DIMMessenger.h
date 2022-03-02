@@ -85,20 +85,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (weak, nonatomic) __kindof id<DIMProcessor> processor;
 
-/**
- *  Send message content to receiver
- *
- * @param content - message content
- * @param from - sender ID
- * @param to - receiver ID
- * @param prior - task priority
- * @return true on success
- */
-- (BOOL)sendContent:(id<DKDContent>)content
-             sender:(nullable id<MKMID>)from
-           receiver:(id<MKMID>)to
-           priority:(NSInteger)prior;
-
 @end
 
 NS_ASSUME_NONNULL_END

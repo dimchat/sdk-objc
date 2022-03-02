@@ -43,8 +43,7 @@
 @implementation DIMResetGroupCommandProcessor
 
 - (void)queryOwner:(id<MKMID>)owner forGroup:(id<MKMID>)group {
-    DIMCommand *query = [[DIMQueryGroupCommand alloc] initWithGroup:group];
-    [self.messenger sendContent:query sender:nil receiver:owner priority:1];
+    // TODO: send 'query' group command to owner
 }
 
 - (NSArray<id<DKDContent>> *)temporarySave:(DIMGroupCommand *)cmd sender:(id<MKMID>)sender {
