@@ -52,31 +52,29 @@ NS_DESIGNATED_INITIALIZER;
 /**
  *  Get content/command processor
  */
-- (nullable __kindof DIMContentProcessor *)processorForContent:(id<DKDContent>)content;
+- (nullable id<DIMContentProcessor>)processorForContent:(id<DKDContent>)content;
 
 /**
  *  Get content processor
  */
-- (nullable __kindof DIMContentProcessor *)processorForType:(DKDContentType)type;
+- (nullable id<DIMContentProcessor>)processorForType:(DKDContentType)type;
 
 /**
  *  Get command processor
  */
-- (nullable __kindof DIMCommandProcessor *)processorForName:(NSString *)command
-                                                       type:(DKDContentType)type;
+- (nullable id<DIMContentProcessor>)processorForName:(NSString *)command type:(DKDContentType)type;
 
 #pragma mark -
 
 /**
  *  Create content processor with type
  */
-- (DIMContentProcessor *)createProcessorWithType:(DKDContentType)type;
+- (id<DIMContentProcessor>)createProcessorWithType:(DKDContentType)type;
 
 /**
  *  Create command processor with type & name
  */
-- (DIMCommandProcessor *)createProcessorWithName:(NSString *)command
-                                            type:(DKDContentType)type;
+- (id<DIMContentProcessor>)createProcessorWithName:(NSString *)command type:(DKDContentType)type;
 
 @end
 

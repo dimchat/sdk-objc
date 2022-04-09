@@ -56,8 +56,8 @@
 
 @interface DIMProcessorFactory () {
     
-    NSMutableDictionary<NSNumber *, DIMContentProcessor *> *_contentProcessors;
-    NSMutableDictionary<NSString *, DIMCommandProcessor *> *_commandProcessors;
+    NSMutableDictionary<NSNumber *, id<DIMContentProcessor>> *_contentProcessors;
+    NSMutableDictionary<NSString *, id<DIMContentProcessor>> *_commandProcessors;
 }
 
 @property (weak, nonatomic) DIMFacebook *facebook;
@@ -86,7 +86,7 @@
     return self;
 }
 
-- (DIMContentProcessor *)processorForContent:(id<DKDContent>)content {
+- (id<DIMContentProcessor>)processorForContent:(id<DKDContent>)content {
     DKDContentType type = content.type;
     if ([content conformsToProtocol:@protocol(DIMCommand)]) {
         id<DIMCommand> cmd = (id<DIMCommand>)content;
@@ -97,8 +97,8 @@
     }
 }
 
-- (DIMContentProcessor *)processorForType:(DKDContentType)type {
-    DIMContentProcessor *cpu = [_contentProcessors objectForKey:@(type)];
+- (id<DIMContentProcessor>)processorForType:(DKDContentType)type {
+    id<DIMContentProcessor> cpu = [_contentProcessors objectForKey:@(type)];
     if (!cpu) {
         cpu = [self createProcessorWithType:type];
         if (cpu) {
@@ -108,8 +108,8 @@
     return cpu;
 }
 
-- (DIMCommandProcessor *)processorForName:(NSString *)command type:(DKDContentType)type {
-    DIMCommandProcessor *cpu = [_commandProcessors objectForKey:command];
+- (id<DIMContentProcessor>)processorForName:(NSString *)command type:(DKDContentType)type {
+    id<DIMContentProcessor> cpu = [_commandProcessors objectForKey:command];
     if (!cpu) {
         cpu = [self createProcessorWithName:command type:type];
         if (cpu) {
@@ -119,7 +119,7 @@
     return cpu;
 }
 
-- (DIMContentProcessor *)createProcessorWithType:(DKDContentType)type {
+- (id<DIMContentProcessor>)createProcessorWithType:(DKDContentType)type {
     // forward content
     if (type == DKDContentType_Forward) {
         return CREATE_CPU(DIMForwardContentProcessor);
@@ -134,7 +134,7 @@
     return nil;
 }
 
-- (DIMCommandProcessor *)createProcessorWithName:(NSString *)name type:(DKDContentType)type {
+- (id<DIMContentProcessor>)createProcessorWithName:(NSString *)name type:(DKDContentType)type {
     // meta command
     if ([name isEqualToString:DIMCommand_Meta]) {
         return CREATE_CPU(DIMMetaCommandProcessor);

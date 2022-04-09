@@ -39,7 +39,19 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#define DIM_CONTENT_NOT_SUPPORT_FMT @"Content (type: %d) not support yet!"
+@protocol DIMContentProcessor <NSObject>
+
+/**
+ *  Process message content
+ *
+ * @param content - message content
+ * @param rMsg - message with envelope
+ * @return content to respond
+ */
+- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
+                                withMessage:(id<DKDReliableMessage>)rMsg;
+
+@end
 
 @class DIMMessenger;
 @class DIMFacebook;
@@ -55,17 +67,11 @@ NS_DESIGNATED_INITIALIZER;
 
 @end
 
-@interface DIMContentProcessor : DIMTwinsHelper
+#pragma mark - Base CPU
 
-/**
- *  Process message content
- *
- * @param content - message content
- * @param rMsg - message with envelope
- * @return content to respond
- */
-- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
-                                withMessage:(id<DKDReliableMessage>)rMsg;
+#define DIM_CONTENT_NOT_SUPPORT_FMT @"Content (type: %d) not support yet!"
+
+@interface DIMContentProcessor : DIMTwinsHelper <DIMContentProcessor>
 
 - (NSArray<id<DKDContent>> *)respondText:(NSString *)text withGroup:(nullable id<MKMID>)group;
 - (NSArray<id<DKDContent>> *)respondReceipt:(NSString *)text;

@@ -39,8 +39,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class DIMContentProcessor;
-@class DIMCommandProcessor;
+@protocol DIMContentProcessor;
 @class DIMProcessorFactory;
 
 @interface DIMMessageProcessor : DIMTwinsHelper <DIMProcessor>
@@ -54,15 +53,14 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  Get content/command processor
  */
-- (nullable __kindof DIMContentProcessor *)processorForContent:(id<DKDContent>)content;
+- (nullable id<DIMContentProcessor>)processorForContent:(id<DKDContent>)content;
 
 /**
  *  Get content processor
  */
-- (nullable __kindof DIMContentProcessor *)processorForType:(DKDContentType)type;
+- (nullable id<DIMContentProcessor>)processorForType:(DKDContentType)type;
 
-- (nullable __kindof DIMCommandProcessor *)processorForName:(NSString *)command
-                                                       type:(DKDContentType)type;
+- (nullable id<DIMContentProcessor>)processorForName:(NSString *)command type:(DKDContentType)type;
 
 @end
 

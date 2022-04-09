@@ -194,7 +194,7 @@
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                               withMessage:(id<DKDReliableMessage>)rMsg {
     // TODO: override to check group before calling this
-    DIMContentProcessor *cpu = [self processorForContent:content];
+    id<DIMContentProcessor> cpu = [self processorForContent:content];
     return [cpu processContent:content withMessage:rMsg];
     // TODO: override to filter the response after called this
 }
@@ -203,15 +203,15 @@
 
 @implementation DIMMessageProcessor (CPU)
 
-- (DIMContentProcessor *)processorForContent:(id<DKDContent>)content {
+- (id<DIMContentProcessor> )processorForContent:(id<DKDContent>)content {
     return [_cpm processorForContent:content];
 }
 
-- (DIMContentProcessor *)processorForType:(DKDContentType)type {
+- (id<DIMContentProcessor> )processorForType:(DKDContentType)type {
     return [_cpm processorForType:type];
 }
 
-- (DIMCommandProcessor *)processorForName:(NSString *)command type:(DKDContentType)type {
+- (id<DIMContentProcessor> )processorForName:(NSString *)command type:(DKDContentType)type {
     return [_cpm processorForName:command type:type];
 }
 
