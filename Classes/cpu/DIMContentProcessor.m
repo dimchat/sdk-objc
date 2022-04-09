@@ -42,14 +42,14 @@
 
 #import "DIMContentProcessor.h"
 
-@interface DIMContentProcessor ()
+@interface DIMTwinsHelper ()
 
 @property (weak, nonatomic) DIMFacebook *facebook;
 @property (weak, nonatomic) DIMMessenger *messenger;
 
 @end
 
-@implementation DIMContentProcessor
+@implementation DIMTwinsHelper
 
 - (instancetype)init {
     NSAssert(false, @"don't call me!");
@@ -62,11 +62,15 @@
 - (instancetype)initWithFacebook:(DIMFacebook *)barrack
                        messenger:(DIMMessenger *)transceiver {
     if (self = [super init]) {
-        _facebook = barrack;
-        _messenger = transceiver;
+        self.facebook = barrack;
+        self.messenger = transceiver;
     }
     return self;
 }
+
+@end
+
+@implementation DIMContentProcessor
 
 //
 //  Main

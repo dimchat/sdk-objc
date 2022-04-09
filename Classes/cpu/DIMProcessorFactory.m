@@ -120,31 +120,30 @@
 }
 
 - (DIMContentProcessor *)createProcessorWithType:(DKDContentType)type {
-    // core contents
+    // forward content
     if (type == DKDContentType_Forward) {
         return CREATE_CPU(DIMForwardContentProcessor);
+    }
+    // default commands
+    if (type == DKDContentType_Command) {
+        return CREATE_CPU(DIMCommandProcessor);
+    } else if (type == DKDContentType_History) {
+        return CREATE_CPU(DIMHistoryCommandProcessor);
     }
     // unknown
     return nil;
 }
 
 - (DIMCommandProcessor *)createProcessorWithName:(NSString *)name type:(DKDContentType)type {
-    // meta
+    // meta command
     if ([name isEqualToString:DIMCommand_Meta]) {
         return CREATE_CPU(DIMMetaCommandProcessor);
     }
-    // document
+    // document command
     if ([name isEqualToString:DIMCommand_Document]) {
         return CREATE_CPU(DIMDocumentCommandProcessor);
-    } else if ([name isEqualToString:@"profile"] || [name isEqualToString:@"visa"] || [name isEqualToString:@"bulletin"]) {
-        DIMCommandProcessor *cpu = [_commandProcessors objectForKey:DIMCommand_Document];
-        if (!cpu) {
-            cpu = CREATE_CPU(DIMDocumentCommandProcessor);
-            [_commandProcessors setObject:cpu forKey:DIMCommand_Document];
-        }
-        return cpu;
     }
-    // group
+    // group commands
     if ([name isEqualToString:@"group"]) {
         return CREATE_CPU(DIMGroupCommandProcessor);
     } else if ([name isEqualToString:DIMGroupCommand_Invite]) {
@@ -157,13 +156,6 @@
         return CREATE_CPU(DIMQueryGroupCommandProcessor);
     } else if ([name isEqualToString:DIMGroupCommand_Reset]) {
         return CREATE_CPU(DIMResetGroupCommandProcessor);
-    }
-    // others
-    if (type == DKDContentType_Command) {
-        return CREATE_CPU(DIMCommandProcessor);
-    }
-    if (type == DKDContentType_History) {
-        return CREATE_CPU(DIMHistoryCommandProcessor);
     }
     // unknown
     return nil;

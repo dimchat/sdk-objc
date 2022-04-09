@@ -46,6 +46,7 @@
 #import "DIMCommandProcessor.h"
 #import "DIMProcessorFactory.h"
 
+#import "DIMFacebook.h"
 #import "DIMMessenger.h"
 #import "DIMMessagePacker.h"
 
@@ -56,26 +57,14 @@
     DIMProcessorFactory *_cpm;
 }
 
-@property (weak, nonatomic) DIMFacebook *facebook;
-@property (weak, nonatomic) DIMMessenger *messenger;
-
 @end
 
 @implementation DIMMessageProcessor
 
-- (instancetype)init {
-    NSAssert(false, @"don't call me!");
-    DIMFacebook *barrack = nil;
-    DIMMessenger *transceiver = nil;
-    return [self initWithFacebook:barrack messenger:transceiver];
-}
-
 /* designated initializer */
 - (instancetype)initWithFacebook:(DIMFacebook *)barrack
                        messenger:(DIMMessenger *)transceiver {
-    if (self = [super init]) {
-        _facebook = barrack;
-        _messenger = transceiver;
+    if (self = [super initWithFacebook:barrack messenger:transceiver]) {
         _cpm = [self createProcessorFactory];
     }
     return self;

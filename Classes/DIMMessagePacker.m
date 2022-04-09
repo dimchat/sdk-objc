@@ -40,31 +40,7 @@
 
 #import "DIMMessagePacker.h"
 
-@interface DIMMessagePacker ()
-
-@property (weak, nonatomic) DIMFacebook *facebook;
-@property (weak, nonatomic) DIMMessenger *messenger;
-
-@end
-
 @implementation DIMMessagePacker
-
-- (instancetype)init {
-    NSAssert(false, @"don't call me!");
-    DIMFacebook *barrack = nil;
-    DIMMessenger *transceiver = nil;
-    return [self initWithFacebook:barrack messenger:transceiver];
-}
-
-/* designated initializer */
-- (instancetype)initWithFacebook:(DIMFacebook *)barrack
-                       messenger:(DIMMessenger *)transceiver {
-    if (self = [super init]) {
-        _facebook = barrack;
-        _messenger = transceiver;
-    }
-    return self;
-}
 
 - (nullable id<MKMID>)overtGroupForContent:(id<DKDContent>)content {
     id<MKMID> group = content.group;
@@ -171,7 +147,7 @@
 }
 
 - (nullable id<DKDReliableMessage>)deserializeMessage:(NSData *)data {
-    NSDictionary *dict = MKMJSONDecode(data);
+    id dict = MKMJSONDecode(data);
     // TODO: translate short keys
     //       'S' -> 'sender'
     //       'R' -> 'receiver'

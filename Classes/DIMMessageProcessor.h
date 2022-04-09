@@ -35,7 +35,7 @@
 //  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
-#import <DIMSDK/DIMMessenger.h>
+#import <DIMSDK/DIMContentProcessor.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -43,14 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class DIMCommandProcessor;
 @class DIMProcessorFactory;
 
-@interface DIMMessageProcessor : NSObject <DIMProcessor>
-
-@property (readonly, weak, nonatomic) __kindof DIMFacebook *facebook;
-@property (readonly, weak, nonatomic) __kindof DIMMessenger *messenger;
-
-- (instancetype)initWithFacebook:(DIMFacebook *)barrack
-                       messenger:(DIMMessenger *)transceiver
-NS_DESIGNATED_INITIALIZER;
+@interface DIMMessageProcessor : DIMTwinsHelper <DIMProcessor>
 
 - (__kindof DIMProcessorFactory *)createProcessorFactory;
 

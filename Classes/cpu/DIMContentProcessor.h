@@ -44,7 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class DIMMessenger;
 @class DIMFacebook;
 
-@interface DIMContentProcessor : NSObject
+@interface DIMTwinsHelper : NSObject
 
 @property (readonly, weak, nonatomic) __kindof DIMFacebook *facebook;
 @property (readonly, weak, nonatomic) __kindof DIMMessenger *messenger;
@@ -52,6 +52,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithFacebook:(DIMFacebook *)barrack
                        messenger:(DIMMessenger *)transceiver
 NS_DESIGNATED_INITIALIZER;
+
+@end
+
+@interface DIMContentProcessor : DIMTwinsHelper
 
 /**
  *  Process message content
