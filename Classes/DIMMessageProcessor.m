@@ -44,7 +44,6 @@
 
 #import "DIMContentProcessor.h"
 #import "DIMCommandProcessor.h"
-#import "DIMProcessorFactory.h"
 
 #import "DIMFacebook.h"
 #import "DIMMessenger.h"
@@ -54,7 +53,7 @@
 
 @interface DIMMessageProcessor () {
     
-    DIMProcessorFactory *_cpm;
+    id<DIMContentProcessorFactory> _factory;
 }
 
 @end
@@ -65,13 +64,24 @@
 - (instancetype)initWithFacebook:(DIMFacebook *)barrack
                        messenger:(DIMMessenger *)transceiver {
     if (self = [super initWithFacebook:barrack messenger:transceiver]) {
-        _cpm = [self createProcessorFactory];
+        _factory = [self createContentProcessorFactory];
     }
     return self;
 }
 
-- (DIMProcessorFactory *)createProcessorFactory {
-    return [[DIMProcessorFactory alloc] initWithFacebook:self.facebook messenger:self.messenger];
+- (id<DIMContentProcessorCreator>)createContentProcessorCreator {
+    DIMContentProcessorCreator *creator;
+    creator = [[DIMContentProcessorCreator alloc] initWithFacebook:self.facebook
+                                                         messenger:self.messenger];
+    return creator;
+}
+
+- (id<DIMContentProcessorFactory>)createContentProcessorFactory {
+    DIMContentProcessorFactory *factory;
+    factory = [[DIMContentProcessorFactory alloc] initWithFacebook:self.facebook
+                                                         messenger:self.messenger];
+    factory.creator = [self createContentProcessorCreator];
+    return factory;
 }
 
 - (NSArray<NSData *> *)processData:(NSData *)data {
@@ -204,15 +214,15 @@
 @implementation DIMMessageProcessor (CPU)
 
 - (id<DIMContentProcessor> )processorForContent:(id<DKDContent>)content {
-    return [_cpm processorForContent:content];
+    return [_factory getProcessor:content];
 }
 
 - (id<DIMContentProcessor> )processorForType:(DKDContentType)type {
-    return [_cpm processorForType:type];
+    return [_factory getContentProcessor:type];
 }
 
 - (id<DIMContentProcessor> )processorForName:(NSString *)command type:(DKDContentType)type {
-    return [_cpm processorForName:command type:type];
+    return [_factory getCommandProcessor:command type:type];
 }
 
 @end

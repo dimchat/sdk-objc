@@ -39,6 +39,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/*
+ *  CPU: Content Processing Unit
+ *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ */
 @protocol DIMContentProcessor <NSObject>
 
 /**
@@ -52,6 +56,8 @@ NS_ASSUME_NONNULL_BEGIN
                                 withMessage:(id<DKDReliableMessage>)rMsg;
 
 @end
+
+#pragma mark -
 
 @class DIMMessenger;
 @class DIMFacebook;

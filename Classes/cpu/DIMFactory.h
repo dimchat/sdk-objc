@@ -2,12 +2,12 @@
 //
 //  DIM-SDK : Decentralized Instant Messaging Software Development Kit
 //
-//                               Written in 2021 by Moky <albert.moky@gmail.com>
+//                               Written in 2022 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2021 Albert Moky
+// Copyright (c) 2022 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,53 +28,71 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMProcessorFactory.h
+//  DIMContentProcessor.h
 //  DIMSDK
 //
-//  Created by Albert Moky on 2021/11/22.
-//  Copyright © 2021 Albert Moky. All rights reserved.
+//  Created by Albert Moky on 2022/04/10.
+//  Copyright © 2022 Albert Moky. All rights reserved.
 //
 
 #import <DIMSDK/DIMContentProcessor.h>
-#import <DIMSDK/DIMCommandProcessor.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMProcessorFactory : NSObject
-
-@property (readonly, weak, nonatomic) __kindof DIMFacebook *facebook;
-@property (readonly, weak, nonatomic) __kindof DIMMessenger *messenger;
-
-- (instancetype)initWithFacebook:(DIMFacebook *)barrack
-                       messenger:(DIMMessenger *)transceiver
-NS_DESIGNATED_INITIALIZER;
-
-/**
- *  Get content/command processor
+/*
+ *  CPU Creator
+ *  ~~~~~~~~~~~
  */
-- (nullable id<DIMContentProcessor>)processorForContent:(id<DKDContent>)content;
-
-/**
- *  Get content processor
- */
-- (nullable id<DIMContentProcessor>)processorForType:(DKDContentType)type;
-
-/**
- *  Get command processor
- */
-- (nullable id<DIMContentProcessor>)processorForName:(NSString *)command type:(DKDContentType)type;
-
-#pragma mark -
+@protocol DIMContentProcessorCreator <NSObject>
 
 /**
  *  Create content processor with type
+ *
+ *  @param type - content type
+ *  @return ContentProcessor
  */
-- (id<DIMContentProcessor>)createProcessorWithType:(DKDContentType)type;
+- (id<DIMContentProcessor>)createContentProcessor:(DKDContentType)type;
 
 /**
- *  Create command processor with type & name
+ *  Create command processor with name
+ *
+ *  @param name - command name
+ *  @param msgType - content type
+ *  @return CommandProcessor
  */
-- (id<DIMContentProcessor>)createProcessorWithName:(NSString *)command type:(DKDContentType)type;
+- (id<DIMContentProcessor>)createCommandProcessor:(NSString *)name type:(DKDContentType)msgType;
+
+@end
+
+/*
+ *  CPU Factory
+ *  ~~~~~~~~~~~
+ */
+@protocol DIMContentProcessorFactory <NSObject>
+
+/**
+ *  Get content/command processor
+ *
+ *  @param content - content/command
+ *  @return ContentProcessor
+ */
+- (id<DIMContentProcessor>)getProcessor:(id<DKDContent>)content;
+
+- (id<DIMContentProcessor>)getContentProcessor:(DKDContentType)msgType;
+
+- (id<DIMContentProcessor>)getCommandProcessor:(NSString *)name type:(DKDContentType)msgType;
+
+@end
+
+#pragma mark -
+
+@interface DIMContentProcessorCreator : DIMTwinsHelper <DIMContentProcessorCreator>
+
+@end
+
+@interface DIMContentProcessorFactory : DIMTwinsHelper <DIMContentProcessorFactory>
+
+@property(nonatomic, retain) id<DIMContentProcessorCreator> creator;
 
 @end
 

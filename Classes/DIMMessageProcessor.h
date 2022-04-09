@@ -36,15 +36,18 @@
 //
 
 #import <DIMSDK/DIMContentProcessor.h>
+#import <DIMSDK/DIMFactory.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol DIMContentProcessor;
-@class DIMProcessorFactory;
+@protocol DIMContentProcessorCreator;
+@protocol DIMContentProcessorFactory;
 
 @interface DIMMessageProcessor : DIMTwinsHelper <DIMProcessor>
 
-- (__kindof DIMProcessorFactory *)createProcessorFactory;
+- (id<DIMContentProcessorCreator>)createContentProcessorCreator;
+- (id<DIMContentProcessorFactory>)createContentProcessorFactory;
 
 @end
 
