@@ -71,6 +71,10 @@ NS_DESIGNATED_INITIALIZER;
 
 #define DIM_CONTENT_NOT_SUPPORT_FMT @"Content (type: %d) not support yet!"
 
+/*
+ *  Base Content Processor
+ *  ~~~~~~~~~~~~~~~~~~~~~~
+ */
 @interface DIMContentProcessor : DIMTwinsHelper <DIMContentProcessor>
 
 - (NSArray<id<DKDContent>> *)respondText:(NSString *)text withGroup:(nullable id<MKMID>)group;

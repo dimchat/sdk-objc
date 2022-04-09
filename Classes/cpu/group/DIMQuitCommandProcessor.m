@@ -41,9 +41,10 @@
 
 @implementation DIMQuitCommandProcessor
 
-- (NSArray<id<DKDContent>> *)executeCommand:(DIMCommand *)cmd
+- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
-    NSAssert([cmd isKindOfClass:[DIMQuitCommand class]], @"quit command error: %@", cmd);
+    NSAssert([content isKindOfClass:[DIMQuitCommand class]], @"quit command error: %@", content);
+    DIMQuitCommand *cmd = (DIMQuitCommand *)content;
     DIMFacebook *facebook = self.facebook;
     
     // 0. check group

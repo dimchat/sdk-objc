@@ -42,11 +42,11 @@
 
 @implementation DIMInviteCommandProcessor
 
-- (NSArray<id<DKDContent>> *)executeCommand:(DIMCommand *)cmd
+- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
-    NSAssert([cmd isKindOfClass:[DIMInviteCommand class]], @"invite command error: %@", cmd);
+    NSAssert([content isKindOfClass:[DIMInviteCommand class]], @"invite command error: %@", content);
     DIMFacebook *facebook = self.facebook;
-    DIMGroupCommand *gmd = (DIMGroupCommand *)cmd;
+    DIMGroupCommand *cmd = (DIMGroupCommand *)content;
     
     // 0. check group
     id<MKMID> group = cmd.group;
@@ -56,7 +56,7 @@
         // NOTICE:
         //     group membership lost?
         //     reset group members
-        return [self temporarySave:gmd sender:rMsg.sender];
+        return [self temporarySave:cmd sender:rMsg.sender];
     }
     
     // 1. check permission
@@ -71,7 +71,7 @@
     }
     
     // 2. get inviting members
-    NSArray<id<MKMID>> *inviteList = [self membersFromCommand:gmd];
+    NSArray<id<MKMID>> *inviteList = [self membersFromCommand:cmd];
     if ([inviteList count] == 0) {
         return [self respondText:@"Invite command error." withGroup:group];
     }
@@ -79,7 +79,7 @@
     if ([sender isEqual:owner] && [inviteList containsObject:owner]) {
         // NOTICE: owner invite owner?
         //         it means this should be a 'reset' command
-        return [self temporarySave:gmd sender:rMsg.sender];
+        return [self temporarySave:cmd sender:rMsg.sender];
     }
     // 2.2. build invited-list
     NSMutableArray<id<MKMID>> *mArray = [members mutableCopy];

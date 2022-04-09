@@ -41,10 +41,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 #define DIM_CMD_NOT_SUPPORT @"Command (name: %@) not support yet!"
 
+/*
+ *  Base Command Processor
+ *  ~~~~~~~~~~~~~~~~~~~~~~
+ */
 @interface DIMCommandProcessor : DIMContentProcessor
-
-- (NSArray<id<DKDContent>> *)executeCommand:(DIMCommand *)cmd
-                                withMessage:(id<DKDReliableMessage>)rMsg;
 
 @end
 

@@ -54,8 +54,10 @@
     return nil;
 }
 
-- (NSArray<id<DKDContent>> *)executeCommand:(DIMCommand *)cmd
+- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
+    NSAssert([content isKindOfClass:[DIMGroupCommand class]], @"group command error: %@", content);
+    DIMGroupCommand *cmd = (DIMGroupCommand *)content;
     NSString *text = [NSString stringWithFormat:@"Group command (name: %@) not support yet!", cmd.command];
     return [self respondText:text withGroup:cmd.group];
 }

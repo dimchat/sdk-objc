@@ -39,20 +39,12 @@
 
 @implementation DIMCommandProcessor
 
-- (NSArray<id<DKDContent>> *)executeCommand:(DIMCommand *)cmd
-                                withMessage:(id<DKDReliableMessage>)rMsg {
-    NSString *text = [NSString stringWithFormat:DIM_CMD_NOT_SUPPORT, cmd.command];
-    return [self respondText:text withGroup:cmd.group];
-}
-
-//
-//  Main
-//
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMCommand class]], @"command error: %@", content);
     DIMCommand *cmd = (DIMCommand *)content;
-    return [self executeCommand:cmd withMessage:rMsg];
+    NSString *text = [NSString stringWithFormat:DIM_CMD_NOT_SUPPORT, cmd.command];
+    return [self respondText:text withGroup:cmd.group];
 }
 
 @end

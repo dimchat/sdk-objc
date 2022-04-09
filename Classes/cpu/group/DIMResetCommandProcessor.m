@@ -79,12 +79,12 @@
     return [self respondContent:query];
 }
 
-- (NSArray<id<DKDContent>> *)executeCommand:(DIMCommand *)cmd
+- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
-    NSAssert([cmd isKindOfClass:[DIMResetGroupCommand class]] ||
-             [cmd isKindOfClass:[DIMInviteCommand class]], @"invite command error: %@", cmd);
+    NSAssert([content isKindOfClass:[DIMResetGroupCommand class]] ||
+             [content isKindOfClass:[DIMInviteCommand class]], @"invite command error: %@", content);
+    DIMGroupCommand *cmd = (DIMGroupCommand *)content;
     DIMFacebook *facebook = self.facebook;
-    DIMGroupCommand *gmd = (DIMGroupCommand *)cmd;
 
     // 0. check group
     id<MKMID> group = cmd.group;
@@ -93,7 +93,7 @@
     if (!owner || members.count == 0) {
         // FIXME: group info lost?
         // FIXME: how to avoid strangers impersonating group member?
-        return [self temporarySave:gmd sender:rMsg.sender];
+        return [self temporarySave:cmd sender:rMsg.sender];
     }
     
     // 1. check permission
@@ -108,7 +108,7 @@
     }
     
     // 2. resetting members
-    NSArray<id<MKMID>> *newMembers = [self membersFromCommand:gmd];
+    NSArray<id<MKMID>> *newMembers = [self membersFromCommand:cmd];
     if ([newMembers count] == 0) {
         return [self respondText:@"Reset command error." withGroup:group];
     }

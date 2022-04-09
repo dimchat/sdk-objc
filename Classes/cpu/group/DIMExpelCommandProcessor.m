@@ -41,9 +41,10 @@
 
 @implementation DIMExpelCommandProcessor
 
-- (NSArray<id<DKDContent>> *)executeCommand:(DIMCommand *)cmd
+- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
-    NSAssert([cmd isKindOfClass:[DIMExpelCommand class]], @"expel command error: %@", cmd);
+    NSAssert([content isKindOfClass:[DIMExpelCommand class]], @"expel command error: %@", content);
+    DIMExpelCommand *cmd = (DIMExpelCommand *)content;
     DIMFacebook *facebook = self.facebook;
     
     // 0. check group
@@ -66,8 +67,7 @@
     }
     
     // 2. expelling members
-    DIMExpelCommand *gmd = (DIMExpelCommand *)cmd;
-    NSArray<id<MKMID>> *expelList = [self membersFromCommand:gmd];
+    NSArray<id<MKMID>> *expelList = [self membersFromCommand:cmd];
     if ([expelList count] == 0) {
         return [self respondText:@"Expel command error." withGroup:group];
     }

@@ -42,9 +42,10 @@
 
 @implementation DIMQueryGroupCommandProcessor
 
-- (NSArray<id<DKDContent>> *)executeCommand:(DIMCommand *)cmd
+- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
-    NSAssert([cmd isKindOfClass:[DIMQueryGroupCommand class]], @"query group command error: %@", cmd);
+    NSAssert([content isKindOfClass:[DIMQueryGroupCommand class]], @"query group command error: %@", content);
+    DIMQuitCommand *cmd = (DIMQuitCommand *)content;
     DIMFacebook *facebook = self.facebook;
     
     // 0. check group
