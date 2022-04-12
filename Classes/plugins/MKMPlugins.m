@@ -173,15 +173,15 @@
     return _type;
 }
 
-- (id<MKMDocument>)createDocument:(id<MKMID>)ID data:(NSString *)json signature:(NSString *)base64 {
+- (id<MKMDocument>)createDocument:(id<MKMID>)ID data:(NSString *)json signature:(NSData *)sig {
     NSString *type = [self typeForID:ID];
     if ([type isEqualToString:MKMDocument_Visa]) {
-        return [[MKMVisa alloc] initWithID:ID data:json signature:base64];
+        return [[MKMVisa alloc] initWithID:ID data:json signature:sig];
     }
     if ([type isEqualToString:MKMDocument_Bulletin]) {
-        return [[MKMBulletin alloc] initWithID:ID data:json signature:base64];
+        return [[MKMBulletin alloc] initWithID:ID data:json signature:sig];
     }
-    return [[MKMDocument alloc] initWithID:ID data:json signature:base64];
+    return [[MKMDocument alloc] initWithID:ID data:json signature:sig];
 }
 
 // create a new empty document with entity ID

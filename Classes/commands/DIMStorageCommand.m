@@ -172,7 +172,7 @@
         NSAssert([key length] > 0, @"key empty: %@", self);
         key = [SK decrypt:key];
         NSAssert([key length] > 0, @"failed to decrypt key data: %@ with private key: %@", self, SK);
-        id dict = MKMJSONDecode(key);
+        id dict = MKMJSONDecode(MKMUTF8Decode(key));
         _password = MKMSymmetricKeyFromDictionary(dict);
     }
     return [self decryptWithSymmetricKey:_password];

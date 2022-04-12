@@ -74,7 +74,7 @@
 
 - (NSString *)debugDescription {
     NSString *desc = [super debugDescription];
-    NSDictionary *dict = MKMJSONDecode(MKMUTF8Encode(desc));
+    NSDictionary *dict = MKMJSONDecode(desc);
     NSMutableDictionary *info;
     if ([dict isKindOfClass:[NSMutableDictionary class]]) {
         info = (NSMutableDictionary *)dict;
@@ -83,7 +83,7 @@
     }
     [info setObject:self.host forKey:@"host"];
     [info setObject:@(self.port) forKey:@"port"];
-    return MKMUTF8Decode(MKMJSONEncode(info));
+    return MKMJSONEncode(info);
 }
 
 - (BOOL)isEqual:(id)object {

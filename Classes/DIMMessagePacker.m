@@ -143,11 +143,11 @@
 }
 
 - (nullable NSData *)serializeMessage:(id<DKDReliableMessage>)rMsg {
-    return MKMJSONEncode(rMsg);
+    return MKMUTF8Encode(MKMJSONEncode(rMsg));
 }
 
 - (nullable id<DKDReliableMessage>)deserializeMessage:(NSData *)data {
-    id dict = MKMJSONDecode(data);
+    id dict = MKMJSONDecode(MKMUTF8Decode(data));
     // TODO: translate short keys
     //       'S' -> 'sender'
     //       'R' -> 'receiver'
