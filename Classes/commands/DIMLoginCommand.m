@@ -60,7 +60,7 @@
     if (self = [self initWithCommand:DIMCommand_Login]) {
         // ID
         if (ID) {
-            [self setObject:ID forKey:@"ID"];
+            [self setObject:[ID string] forKey:@"ID"];
         }
     }
     return self;
@@ -127,7 +127,7 @@
         port = 9394;
     }
     [self setStationInfo:@{
-        @"ID"  : ID,
+        @"ID"  : [ID string],
         @"host": host,
         @"port": @(port),
     }];
@@ -150,7 +150,7 @@
         return;
     }
     [self setProviderInfo:@{
-        @"ID"  : ID,
+        @"ID"  : [ID string],
     }];
 }
 

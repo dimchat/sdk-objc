@@ -110,7 +110,7 @@
 }
 
 - (void)setID:(id<MKMID>)ID {
-    [self setObject:ID forKey:@"ID"];
+    [self setObject:[ID string] forKey:@"ID"];
 }
 
 - (nullable NSData *)data {
