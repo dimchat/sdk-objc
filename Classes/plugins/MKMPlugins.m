@@ -117,27 +117,28 @@
 }
 
 - (nullable id<MKMMeta>)parseMeta:(NSDictionary *)info {
+    id<MKMMeta> meta = nil;
     UInt8 version = MKMMetaGetType(info);
     switch (version) {
         case MKMMetaVersion_MKM:
-            return [[MKMMetaDefault alloc] initWithDictionary:info];
+            meta = [[MKMMetaDefault alloc] initWithDictionary:info];
             break;
             
         case MKMMetaVersion_BTC:
         case MKMMetaVersion_ExBTC:
-            return [[MKMMetaBTC alloc] initWithDictionary:info];
+            meta = [[MKMMetaBTC alloc] initWithDictionary:info];
             break;
             
         case MKMMetaVersion_ETH:
         case MKMMetaVersion_ExETH:
-            return [[MKMMetaETH alloc] initWithDictionary:info];
+            meta = [[MKMMetaETH alloc] initWithDictionary:info];
             break;
             
         default:
             NSAssert(false, @"meta type not supported: %d", version);
             break;
     }
-    return nil;
+    return MKMMetaCheck(meta) ? meta : nil;
 }
 
 @end
