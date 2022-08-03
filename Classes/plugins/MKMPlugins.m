@@ -173,7 +173,7 @@
     return _type;
 }
 
-- (id<MKMDocument>)createDocument:(id<MKMID>)ID data:(NSString *)json signature:(NSData *)sig {
+- (id<MKMDocument>)createDocument:(id<MKMID>)ID data:(NSString *)json signature:(NSString *)sig {
     NSString *type = [self typeForID:ID];
     if ([type isEqualToString:MKMDocument_Visa]) {
         return [[MKMVisa alloc] initWithID:ID data:json signature:sig];
