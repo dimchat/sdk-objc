@@ -47,7 +47,7 @@
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMForwardContent class]], @"forward content error: %@", content);
     DIMForwardContent *forward = (DIMForwardContent *)content;
-    id<DKDReliableMessage> secret = forward.forwardMessage;
+    id<DKDReliableMessage> secret = forward.forward;
     // call messenger to process it
     DIMMessenger *messenger = self.messenger;
     // 1. verify message

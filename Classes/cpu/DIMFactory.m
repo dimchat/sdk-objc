@@ -125,10 +125,10 @@
     id<DIMContentProcessor> cpu;
     DKDContentType msgType = content.type;
     if ([content conformsToProtocol:@protocol(DIMCommand)]) {
-        id<DIMCommand> cmd = (id<DIMCommand>)content;
-        NSString *name = cmd.command;
+        id<DIMCommand> command = (id<DIMCommand>)content;
+        NSString *cmd = command.cmd;
         // command processor
-        cpu = [self getCommandProcessor:name type:msgType];
+        cpu = [self getCommandProcessor:cmd type:msgType];
         if (cpu) {
             return cpu;
         } else if ([content isKindOfClass:[DIMGroupCommand class]]) {

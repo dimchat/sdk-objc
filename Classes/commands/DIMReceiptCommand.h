@@ -39,12 +39,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#define DIMCommand_Receipt   @"receipt"
+
 /*
  *  Command message: {
  *      type : 0x88,
  *      sn   : 123,  // the same serial number with the original message
  *
- *      command : "receipt",
+ *      cmd     : "receipt",
  *      message : "...",
  *      // -- extra info
  *      sender    : "...",

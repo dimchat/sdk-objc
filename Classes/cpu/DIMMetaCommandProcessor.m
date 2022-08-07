@@ -47,8 +47,8 @@
 - (NSArray<id<DKDContent>> *)getMetaForID:(id<MKMID>)ID {
     id<MKMMeta> meta = [self.facebook metaForID:ID];
     if (meta) {
-        DIMCommand *cmd = [[DIMMetaCommand alloc] initWithID:ID meta:meta];
-        return [self respondContent:cmd];
+        DIMCommand *command = [[DIMMetaCommand alloc] initWithID:ID meta:meta];
+        return [self respondContent:command];
     } else {
         NSString *text = [NSString stringWithFormat:@"Sorry, meta not found for ID: %@", ID];
         return [self respondText:text withGroup:nil];
@@ -69,9 +69,9 @@
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMMetaCommand class]], @"meta command error: %@", content);
-    DIMMetaCommand *cmd = (DIMMetaCommand *)content;
-    id<MKMID> ID = cmd.ID;
-    id<MKMMeta> meta = cmd.meta;
+    DIMMetaCommand *command = (DIMMetaCommand *)content;
+    id<MKMID> ID = command.ID;
+    id<MKMMeta> meta = command.meta;
     if (!ID) {
         // error
         return [self respondText:@"Meta command error." withGroup:nil];

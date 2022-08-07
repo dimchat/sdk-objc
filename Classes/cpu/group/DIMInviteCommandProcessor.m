@@ -46,17 +46,17 @@
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMInviteCommand class]], @"invite command error: %@", content);
     DIMFacebook *facebook = self.facebook;
-    DIMGroupCommand *cmd = (DIMGroupCommand *)content;
+    DIMGroupCommand *command = (DIMGroupCommand *)content;
     
     // 0. check group
-    id<MKMID> group = cmd.group;
+    id<MKMID> group = command.group;
     id<MKMID> owner = [facebook ownerOfGroup:group];
     NSArray<id<MKMID>> *members = [facebook membersOfGroup:group];
     if (!owner || members.count == 0) {
         // NOTICE:
         //     group membership lost?
         //     reset group members
-        return [self temporarySave:cmd sender:rMsg.sender];
+        return [self temporarySave:command sender:rMsg.sender];
     }
     
     // 1. check permission
@@ -71,7 +71,7 @@
     }
     
     // 2. get inviting members
-    NSArray<id<MKMID>> *inviteList = [self membersFromCommand:cmd];
+    NSArray<id<MKMID>> *inviteList = [self membersFromCommand:command];
     if ([inviteList count] == 0) {
         return [self respondText:@"Invite command error." withGroup:group];
     }
@@ -79,7 +79,7 @@
     if ([sender isEqual:owner] && [inviteList containsObject:owner]) {
         // NOTICE: owner invite owner?
         //         it means this should be a 'reset' command
-        return [self temporarySave:cmd sender:rMsg.sender];
+        return [self temporarySave:command sender:rMsg.sender];
     }
     // 2.2. build invited-list
     NSMutableArray<id<MKMID>> *mArray = [members mutableCopy];
@@ -95,7 +95,7 @@
     // 2.3. do invite
     if ([addedList count] > 0) {
         if ([self.facebook saveMembers:mArray group:group]) {
-            [cmd setObject:MKMIDRevert(addedList) forKey:@"added"];
+            [command setObject:MKMIDRevert(addedList) forKey:@"added"];
         }
     }
     

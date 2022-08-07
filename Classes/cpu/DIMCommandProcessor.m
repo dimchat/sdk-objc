@@ -42,9 +42,9 @@
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMCommand class]], @"command error: %@", content);
-    DIMCommand *cmd = (DIMCommand *)content;
-    NSString *text = [NSString stringWithFormat:DIM_CMD_NOT_SUPPORT, cmd.command];
-    return [self respondText:text withGroup:cmd.group];
+    DIMCommand *command = (DIMCommand *)content;
+    NSString *text = [NSString stringWithFormat:DIM_CMD_NOT_SUPPORT, command.cmd];
+    return [self respondText:text withGroup:command.group];
 }
 
 @end

@@ -57,7 +57,7 @@
 }
 
 - (instancetype)initWithID:(id<MKMID>)ID {
-    if (self = [self initWithCommand:DIMCommand_Login]) {
+    if (self = [self initWithCommandName:DIMCommand_Login]) {
         // ID
         if (ID) {
             [self setObject:[ID string] forKey:@"ID"];
@@ -67,11 +67,11 @@
 }
 
 - (id)copyWithZone:(nullable NSZone *)zone {
-    DIMLoginCommand *cmd = [super copyWithZone:zone];
-    if (cmd) {
+    DIMLoginCommand *command = [super copyWithZone:zone];
+    if (command) {
         //
     }
-    return cmd;
+    return command;
 }
 
 #pragma mark Client Info

@@ -44,11 +44,11 @@
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMQuitCommand class]], @"quit command error: %@", content);
-    DIMQuitCommand *cmd = (DIMQuitCommand *)content;
+    DIMQuitCommand *command = (DIMQuitCommand *)content;
     DIMFacebook *facebook = self.facebook;
     
     // 0. check group
-    id<MKMID> group = cmd.group;
+    id<MKMID> group = command.group;
     id<MKMID> owner = [facebook ownerOfGroup:group];
     NSArray<id<MKMID>> *members = [facebook membersOfGroup:group];
     if (!owner || members.count == 0) {

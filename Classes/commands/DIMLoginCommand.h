@@ -42,12 +42,14 @@ NS_ASSUME_NONNULL_BEGIN
 @class DIMStation;
 @class DIMServiceProvider;
 
+#define DIMCommand_Login     @"login"
+
 /*
  *  Command message: {
  *      type : 0x88,
  *      sn   : 123,
  *
- *      command  : "login",
+ *      cmd      : "login",
  *      time     : 0,
  *      //---- client info ----
  *      ID       : "{UserID}",

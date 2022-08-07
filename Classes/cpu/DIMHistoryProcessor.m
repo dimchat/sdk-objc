@@ -42,9 +42,9 @@
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMHistoryCommand class]], @"history error: %@", content);
-    DIMHistoryCommand *cmd = (DIMHistoryCommand *)content;
-    NSString *text = [NSString stringWithFormat:@"History command (name: %@) not support yet!", cmd.command];
-    return [self respondText:text withGroup:cmd.group];
+    DIMHistoryCommand *command = (DIMHistoryCommand *)content;
+    NSString *text = [NSString stringWithFormat:@"History command (name: %@) not support yet!", command.cmd];
+    return [self respondText:text withGroup:command.group];
 }
 
 @end

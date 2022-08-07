@@ -44,11 +44,11 @@
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMExpelCommand class]], @"expel command error: %@", content);
-    DIMExpelCommand *cmd = (DIMExpelCommand *)content;
+    DIMExpelCommand *command = (DIMExpelCommand *)content;
     DIMFacebook *facebook = self.facebook;
     
     // 0. check group
-    id<MKMID> group = cmd.group;
+    id<MKMID> group = command.group;
     id<MKMID> owner = [facebook ownerOfGroup:group];
     NSArray<id<MKMID>> *members = [facebook membersOfGroup:group];
     if (!owner || members.count == 0) {
@@ -67,7 +67,7 @@
     }
     
     // 2. expelling members
-    NSArray<id<MKMID>> *expelList = [self membersFromCommand:cmd];
+    NSArray<id<MKMID>> *expelList = [self membersFromCommand:command];
     if ([expelList count] == 0) {
         return [self respondText:@"Expel command error." withGroup:group];
     }
@@ -89,7 +89,7 @@
     // 2.3. do expel
     if ([removedList count] > 0) {
         if ([facebook saveMembers:mArray group:group]) {
-            [cmd setObject:MKMIDRevert(removedList) forKey:@"removed"];
+            [command setObject:MKMIDRevert(removedList) forKey:@"removed"];
         }
     }
     

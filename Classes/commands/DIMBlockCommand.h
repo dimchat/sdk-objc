@@ -45,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  BlockCommand message: {
  *      type : 0x88,
  *
- *      command : "block",
+ *      cmd     : "block",
  *      list    : [] // block-list; if it's None, means querying block-list from station
  *  }
  */

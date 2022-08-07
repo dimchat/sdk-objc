@@ -39,6 +39,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#define DIMCommand_Handshake @"handshake"
+
 typedef NS_ENUM(UInt8, DIMHandshakeState) {
     DIMHandshake_Init,
     DIMHandshake_Start,   // C -> S, without session key(or session expired)
@@ -52,7 +54,7 @@ typedef NS_ENUM(UInt8, DIMHandshakeState) {
  *      type : 0x88,
  *      sn   : 123,
  *
- *      command : "handshake",    // command name
+ *      cmd     : "handshake",    // command name
  *      message : "Hello world!",
  *      session : "{SESSION_KEY}" // session key
  *  }

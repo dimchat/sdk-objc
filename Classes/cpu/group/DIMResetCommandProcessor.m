@@ -46,11 +46,11 @@
     // TODO: send 'query' group command to owner
 }
 
-- (NSArray<id<DKDContent>> *)temporarySave:(DIMGroupCommand *)cmd sender:(id<MKMID>)sender {
+- (NSArray<id<DKDContent>> *)temporarySave:(DIMGroupCommand *)command sender:(id<MKMID>)sender {
     DIMFacebook *facebook = self.facebook;
-    id<MKMID> group = cmd.group;
+    id<MKMID> group = command.group;
     // check whether the owner contained in the new members
-    NSArray<id<MKMID>> *newMembers = [self membersFromCommand:cmd];
+    NSArray<id<MKMID>> *newMembers = [self membersFromCommand:command];
     if ([newMembers count] == 0) {
         return [self respondText:@"Reset command error." withGroup:group];
     }
@@ -83,17 +83,17 @@
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMResetGroupCommand class]] ||
              [content isKindOfClass:[DIMInviteCommand class]], @"invite command error: %@", content);
-    DIMGroupCommand *cmd = (DIMGroupCommand *)content;
+    DIMGroupCommand *command = (DIMGroupCommand *)content;
     DIMFacebook *facebook = self.facebook;
 
     // 0. check group
-    id<MKMID> group = cmd.group;
+    id<MKMID> group = command.group;
     id<MKMID> owner = [facebook ownerOfGroup:group];
     NSArray<id<MKMID>> *members = [facebook membersOfGroup:group];
     if (!owner || members.count == 0) {
         // FIXME: group info lost?
         // FIXME: how to avoid strangers impersonating group member?
-        return [self temporarySave:cmd sender:rMsg.sender];
+        return [self temporarySave:command sender:rMsg.sender];
     }
     
     // 1. check permission
@@ -108,7 +108,7 @@
     }
     
     // 2. resetting members
-    NSArray<id<MKMID>> *newMembers = [self membersFromCommand:cmd];
+    NSArray<id<MKMID>> *newMembers = [self membersFromCommand:command];
     if ([newMembers count] == 0) {
         return [self respondText:@"Reset command error." withGroup:group];
     }
@@ -138,10 +138,10 @@
     if ([addedList count] > 0 || [removedList count] > 0) {
         if ([self.facebook saveMembers:newMembers group:group]) {
             if ([addedList count] > 0) {
-                [cmd setObject:MKMIDRevert(addedList) forKey:@"added"];
+                [command setObject:MKMIDRevert(addedList) forKey:@"added"];
             }
             if ([removedList count] > 0) {
-                [cmd setObject:MKMIDRevert(removedList) forKey:@"removed"];
+                [command setObject:MKMIDRevert(removedList) forKey:@"removed"];
             }
         }
     }

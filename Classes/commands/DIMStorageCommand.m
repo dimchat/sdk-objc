@@ -79,7 +79,7 @@
 }
 
 - (instancetype)initWithTitle:(NSString *)title {
-    if (self = [self initWithCommand:DIMCommand_Storage]) {
+    if (self = [self initWithCommandName:DIMCommand_Storage]) {
         NSAssert([title length] > 0, @"storage title should not be empty");
         NSAssert(![title isEqualToString:DIMCommand_Storage], @"title error: %@", title);
         [self setObject:title forKey:@"title"];
@@ -94,11 +94,11 @@
         if (!_title) {
             // (compatible with v1.0)
             //  contacts command: {
-            //      command : "contacts",
+            //      cmd     : "contacts",
             //      data    : "...",
             //      key     : "...",
             //  }
-            _title = self.command;
+            _title = self.cmd;
             NSAssert(![_title isEqualToString:DIMCommand_Storage], @"title error: %@", _title);
         }
     }

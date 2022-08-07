@@ -47,8 +47,8 @@
     // query document for ID
     id<MKMDocument> doc = [facebook documentForID:ID type:type];
     if (doc) {
-        DIMCommand *cmd = [[DIMDocumentCommand alloc] initWithID:ID document:doc];
-        return [self respondContent:cmd];
+        DIMCommand *command = [[DIMDocumentCommand alloc] initWithID:ID document:doc];
+        return [self respondContent:command];
     } else {
         NSString *text = [NSString stringWithFormat:@"Sorry, document not found for ID: %@", ID];
         return [self respondText:text withGroup:nil];
@@ -78,20 +78,20 @@
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMDocumentCommand class]], @"document command error: %@", content);
-    DIMDocumentCommand *cmd = (DIMDocumentCommand *)content;
-    id<MKMID> ID = cmd.ID;
+    DIMDocumentCommand *command = (DIMDocumentCommand *)content;
+    id<MKMID> ID = command.ID;
     if (ID) {
-        id<MKMDocument> doc = cmd.document;
+        id<MKMDocument> doc = command.document;
         if (!doc) {
             // query entity document for ID
-            NSString *type = [cmd objectForKey:@"doc_type"];
+            NSString *type = [command objectForKey:@"doc_type"];
             if ([type length] == 0) {
                 type = @"*";  // ANY
             }
             return [self getDocumentForID:ID withType:type];
         } else if ([ID isEqual:doc.ID]) {
             // received a new document for ID
-            return [self putDocument:doc meta:cmd.meta forID:ID];
+            return [self putDocument:doc meta:command.meta forID:ID];
         }
     }
     // error

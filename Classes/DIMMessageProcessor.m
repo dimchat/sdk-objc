@@ -221,8 +221,8 @@
     return [_factory getContentProcessor:type];
 }
 
-- (id<DIMContentProcessor> )processorForName:(NSString *)command type:(DKDContentType)type {
-    return [_factory getCommandProcessor:command type:type];
+- (id<DIMContentProcessor> )processorForName:(NSString *)cmd type:(DKDContentType)type {
+    return [_factory getCommandProcessor:cmd type:type];
 }
 
 @end

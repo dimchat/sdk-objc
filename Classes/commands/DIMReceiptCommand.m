@@ -40,7 +40,7 @@
 @implementation DIMReceiptCommand
 
 - (instancetype)initWithMessage:(NSString *)message envelope:(id<DKDEnvelope>)env sn:(NSUInteger)num {
-    if (self = [self initWithCommand:DIMCommand_Receipt]) {
+    if (self = [self initWithCommandName:DIMCommand_Receipt]) {
         // message
         if (message) {
             [self setObject:message forKey:@"message"];

@@ -42,7 +42,7 @@
 @implementation DIMBlockCommand
 
 - (instancetype)initWithList:(nullable NSArray<id<MKMID>> *)blockList {
-    if (self = [self initWithCommand:DIMCommand_Block]) {
+    if (self = [self initWithCommandName:DIMCommand_Block]) {
         // block-list
         if (blockList) {
             [self setList:blockList];

@@ -71,7 +71,7 @@
 
 - (instancetype)initWithMessage:(NSString *)message
                      sessionKey:(nullable NSString *)session {
-    if (self = [self initWithCommand:DIMCommand_Handshake]) {
+    if (self = [self initWithCommandName:DIMCommand_Handshake]) {
         // message
         if (message) {
             [self setObject:message forKey:@"message"];
@@ -94,13 +94,13 @@
 }
 
 - (id)copyWithZone:(nullable NSZone *)zone {
-    DIMHandshakeCommand *cmd = [super copyWithZone:zone];
-    if (cmd) {
-        cmd.message = _message;
-        cmd.sessionKey = _sessionKey;
-        cmd.state = _state;
+    DIMHandshakeCommand *command = [super copyWithZone:zone];
+    if (command) {
+        command.message = _message;
+        command.sessionKey = _sessionKey;
+        command.state = _state;
     }
-    return cmd;
+    return command;
 }
 
 - (NSString *)message {
