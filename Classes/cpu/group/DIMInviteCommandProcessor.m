@@ -44,9 +44,10 @@
 
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
-    NSAssert([content isKindOfClass:[DIMInviteCommand class]], @"invite command error: %@", content);
+    NSAssert([content conformsToProtocol:@protocol(DIMInviteCommand)],
+             @"invite command error: %@", content);
     DIMFacebook *facebook = self.facebook;
-    DIMGroupCommand *command = (DIMGroupCommand *)content;
+    id<DIMInviteCommand> command = (id<DIMInviteCommand>)content;
     
     // 0. check group
     id<MKMID> group = command.group;

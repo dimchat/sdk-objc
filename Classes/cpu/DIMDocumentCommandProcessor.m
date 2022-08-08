@@ -76,8 +76,9 @@
 
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
-    NSAssert([content isKindOfClass:[DIMDocumentCommand class]], @"document command error: %@", content);
-    DIMDocumentCommand *command = (DIMDocumentCommand *)content;
+    NSAssert([content conformsToProtocol:@protocol(DIMDocumentCommand)],
+             @"document command error: %@", content);
+    id<DIMDocumentCommand> command = (id<DIMDocumentCommand>)content;
     id<MKMID> ID = command.ID;
     if (ID) {
         id<MKMDocument> doc = command.document;

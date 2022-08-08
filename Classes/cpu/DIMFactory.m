@@ -36,6 +36,8 @@
 //
 
 #import "DIMForwardContentProcessor.h"
+#import "DIMArrayContentProcessor.h"
+//#import "DIMCustomizedContentProcessor.h"
 
 #import "DIMMetaCommandProcessor.h"
 #import "DIMDocumentCommandProcessor.h"
@@ -61,12 +63,31 @@
     if (type == DKDContentType_Forward) {
         return CREATE_CPU(DIMForwardContentProcessor);
     }
+    // array content
+    if (type == DKDContentType_Array) {
+        return CREATE_CPU(DIMArrayContentProcessor);
+    }
+    /*
+    // application customized
+    if (type == DKDContentType_Application) {
+        return CREATE_CPU(DIMCustomizedContentProcessor);
+    } else if (type == DKDContentType_Customized) {
+        return CREATE_CPU(DIMCustomizedContentProcessor);
+    }
+     */
     // default commands
     if (type == DKDContentType_Command) {
         return CREATE_CPU(DIMCommandProcessor);
     } else if (type == DKDContentType_History) {
         return CREATE_CPU(DIMHistoryCommandProcessor);
     }
+    /*
+    // default contents
+    if (type == 0) {
+        // must return a default processor for type==0
+        return CREATE_CPU(DIMContentProcessor);
+    }
+     */
     // unknown
     return nil;
 }

@@ -42,7 +42,7 @@
 
 @implementation DIMGroupCommandProcessor
 
-- (nullable NSArray<id<MKMID>> *)membersFromCommand:(DIMGroupCommand *)command {
+- (nullable NSArray<id<MKMID>> *)membersFromCommand:(id<DIMGroupCommand>)command {
     NSArray<id<MKMID>> *members = [command members];
     if (members.count > 0) {
         return members;
@@ -56,8 +56,9 @@
 
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
-    NSAssert([content isKindOfClass:[DIMGroupCommand class]], @"group command error: %@", content);
-    DIMGroupCommand *command = (DIMGroupCommand *)content;
+    NSAssert([content conformsToProtocol:@protocol(DIMGroupCommand)],
+             @"group command error: %@", content);
+    id<DIMGroupCommand> command = (id<DIMGroupCommand>)content;
     NSString *text = [NSString stringWithFormat:@"Group command (name: %@) not support yet!", command.cmd];
     return [self respondText:text withGroup:command.group];
 }

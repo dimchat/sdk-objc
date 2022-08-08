@@ -2,12 +2,12 @@
 //
 //  DIM-SDK : Decentralized Instant Messaging Software Development Kit
 //
-//                               Written in 2019 by Moky <albert.moky@gmail.com>
+//                               Written in 2022 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Albert Moky
+// Copyright (c) 2022 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,24 +28,19 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  HistoryProcessor.m
+//  DIMArrayContentProcessor.h
 //  DIMSDK
 //
-//  Created by Albert Moky on 2019/11/29.
-//  Copyright © 2019 Albert Moky. All rights reserved.
+//  Created by Albert Moky on 2022/8/9.
+//  Copyright © 2022 Albert Moky. All rights reserved.
 //
 
-#import "DIMHistoryProcessor.h"
+#import <DIMSDK/DIMContentProcessor.h>
 
-@implementation DIMHistoryCommandProcessor
+NS_ASSUME_NONNULL_BEGIN
 
-- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
-                                withMessage:(id<DKDReliableMessage>)rMsg {
-    NSAssert([content conformsToProtocol:@protocol(DIMHistoryCommand)],
-             @"history error: %@", content);
-    id<DIMHistoryCommand> command = (id<DIMHistoryCommand>)content;
-    NSString *text = [NSString stringWithFormat:@"History command (name: %@) not support yet!", command.cmd];
-    return [self respondText:text withGroup:command.group];
-}
+@interface DIMArrayContentProcessor : DIMContentProcessor
 
 @end
+
+NS_ASSUME_NONNULL_END

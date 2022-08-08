@@ -43,8 +43,9 @@
 
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
-    NSAssert([content isKindOfClass:[DIMExpelCommand class]], @"expel command error: %@", content);
-    DIMExpelCommand *command = (DIMExpelCommand *)content;
+    NSAssert([content conformsToProtocol:@protocol(DIMExpelCommand)],
+             @"expel command error: %@", content);
+    id<DIMExpelCommand> command = (id<DIMExpelCommand>)content;
     DIMFacebook *facebook = self.facebook;
     
     // 0. check group

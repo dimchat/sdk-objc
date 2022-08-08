@@ -41,7 +41,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMGroupCommandProcessor : DIMHistoryCommandProcessor
 
-- (nullable NSArray<id<MKMID>> *)membersFromCommand:(DIMGroupCommand *)command;
+- (nullable NSArray<id<MKMID>> *)membersFromCommand:(id<DIMGroupCommand>)command;
 
 @end
 

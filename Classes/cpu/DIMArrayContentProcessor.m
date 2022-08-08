@@ -2,12 +2,12 @@
 //
 //  DIM-SDK : Decentralized Instant Messaging Software Development Kit
 //
-//                               Written in 2020 by Moky <albert.moky@gmail.com>
+//                               Written in 2022 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2020 Albert Moky
+// Copyright (c) 2022 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,41 +28,41 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMForwardContentProcessor.m
+//  DIMArrayContentProcessor.m
 //  DIMSDK
 //
-//  Created by Albert Moky on 2020/2/13.
-//  Copyright © 2020 Albert Moky. All rights reserved.
+//  Created by Albert Moky on 2022/8/9.
+//  Copyright © 2022 Albert Moky. All rights reserved.
 //
 
 #import "DIMMessenger.h"
 
-#import "DIMForwardContentProcessor.h"
+#import "DIMArrayContentProcessor.h"
 
-@implementation DIMForwardContentProcessor
+@implementation DIMArrayContentProcessor
 
 //
 //  Main
 //
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
-    NSAssert([content conformsToProtocol:@protocol(DIMForwardContent)],
-             @"forward content error: %@", content);
-    // get secret messages
-    NSArray<id<DKDReliableMessage>> *secrets = [(id<DIMForwardContent>)content secrets];
+    NSAssert([content conformsToProtocol:@protocol(DIMArrayContent)],
+             @"array content error: %@", content);
+    // get content array
+    NSArray<id<DKDContent>> *array = [(id<DIMArrayContent>)content contents];
     // call messenger to process it
     DIMMessenger *messenger = self.messenger;
-    NSMutableArray *responses = [[NSMutableArray alloc] initWithCapacity:[secrets count]];
+    NSMutableArray *responses = [[NSMutableArray alloc] initWithCapacity:[array count]];
     id<DKDContent> res;
     NSArray *results;
-    for (id<DKDReliableMessage> item in secrets) {
-        results = [messenger processMessage:item];
+    for (id<DKDContent> item in array) {
+        results = [messenger processContent:item withMessage:rMsg];
         if (!results) {
-            res = [[DIMForwardContent alloc] initWithMessages:@[]];
+            res = [[DIMArrayContent alloc] initWithContents:@[]];
         } else if ([results count] == 1) {
-            res = [[DIMForwardContent alloc] initWithMessage:[results firstObject]];
+            res = [results firstObject];
         } else {
-            res = [[DIMForwardContent alloc] initWithMessages:results];
+            res = [[DIMArrayContent alloc] initWithContents:results];
         }
         [responses addObject:res];
     }

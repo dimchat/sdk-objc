@@ -66,8 +66,9 @@
 
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
-    NSAssert([content isKindOfClass:[DIMMetaCommand class]], @"meta command error: %@", content);
-    DIMMetaCommand *command = (DIMMetaCommand *)content;
+    NSAssert([content conformsToProtocol:@protocol(DIMMetaCommand)],
+             @"meta command error: %@", content);
+    id<DIMMetaCommand> command = (id<DIMMetaCommand>)content;
     id<MKMID> ID = command.ID;
     id<MKMMeta> meta = command.meta;
     if (!ID) {
