@@ -146,8 +146,7 @@
     id<DIMContentProcessor> cpu;
     DKDContentType msgType = content.type;
     if ([content conformsToProtocol:@protocol(DIMCommand)]) {
-        id<DIMCommand> command = (id<DIMCommand>)content;
-        NSString *cmd = command.cmd;
+        NSString *cmd = [(id<DIMCommand>)content cmd];
         // command processor
         cpu = [self getCommandProcessor:cmd type:msgType];
         if (cpu) {
@@ -161,12 +160,7 @@
         }
     }
     // content processor
-    cpu = [self getContentProcessor:msgType];
-    if (!cpu) {
-        // default content processor
-        cpu = [self getContentProcessor:0];
-    }
-    return cpu;
+    return [self getContentProcessor:msgType];
 }
 
 - (id<DIMContentProcessor>)getContentProcessor:(DKDContentType)msgType {

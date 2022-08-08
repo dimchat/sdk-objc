@@ -96,9 +96,11 @@
     NSData * pack;
     for (id<DKDReliableMessage> res in responses) {
         pack = [transceiver serializeMessage:res];
-        if ([pack length] > 0) {
-            [packages addObject:pack];
+        if ([pack length] == 0) {
+            // should not happen
+            continue;
         }
+        [packages addObject:pack];
     }
     return packages;
 }
@@ -123,9 +125,11 @@
     id<DKDReliableMessage> msg;
     for (id<DKDSecureMessage> res in responses) {
         msg = [transceiver signMessage:res];
-        if (msg) {
-            [messages addObject:msg];
+        if (!msg) {
+            // should not happen
+            continue;
         }
+        [messages addObject:msg];
     }
     return messages;
     // TODO: override to deliver to the receiver when catch exception "receiver error ..."
@@ -152,9 +156,11 @@
     id<DKDSecureMessage> msg;
     for (id<DKDInstantMessage> res in responses) {
         msg = [transceiver encryptMessage:res];
-        if (msg) {
-            [messages addObject:msg];
+        if (!msg) {
+            // should not happen
+            continue;
         }
+        [messages addObject:msg];
     }
     return messages;
 }
@@ -187,9 +193,11 @@
         }
         env = DKDEnvelopeCreate(user.ID, sender, nil);
         msg = DKDInstantMessageCreate(env, res);
-        if (msg) {
-            [messages addObject:msg];
+        if (!msg) {
+            // should not happen
+            continue;
         }
+        [messages addObject:msg];
     }
     return messages;
 }
@@ -198,6 +206,11 @@
                               withMessage:(id<DKDReliableMessage>)rMsg {
     // TODO: override to check group before calling this
     id<DIMContentProcessor> cpu = [self processorForContent:content];
+    if (!cpu) {
+        // default content processor
+        cpu = [self processorForType:0];
+        NSAssert(cpu, @"failed to get default CPU");
+    }
     return [cpu processContent:content withMessage:rMsg];
     // TODO: override to filter the response after called this
 }
