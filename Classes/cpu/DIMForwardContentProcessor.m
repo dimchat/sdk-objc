@@ -47,24 +47,24 @@
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMForwardContent class]], @"forward content error: %@", content);
     DIMForwardContent *forward = (DIMForwardContent *)content;
-    id<DKDReliableMessage> secret = forward.forward;
+    NSArray<id<DKDReliableMessage>> *secrets = forward.secrets;
     // call messenger to process it
     DIMMessenger *messenger = self.messenger;
-    // 1. verify message
-    id<DKDSecureMessage> sMsg = [messenger verifyMessage:secret];
-    if (!sMsg) {
-        // waiting for sender's meta if not exists
-        return nil;
+    NSMutableArray *responses = [[NSMutableArray alloc] initWithCapacity:[secrets count]];
+    id<DKDContent> res;
+    NSArray *results;
+    for (id<DKDReliableMessage> item in secrets) {
+        results = [messenger processMessage:item];
+        if (!results) {
+            res = [[DIMForwardContent alloc] initWithMessages:@[]];
+        } else if ([results count] == 1) {
+            res = [[DIMForwardContent alloc] initWithMessage:[results firstObject]];
+        } else {
+            res = [[DIMForwardContent alloc] initWithMessages:results];
+        }
+        [responses addObject:res];
     }
-    // 2. decrypt message
-    id<DKDInstantMessage> iMsg = [messenger decryptMessage:sMsg];
-    if (!iMsg) {
-        // NOTICE: decrypt failed, not for you?
-        //         it means you are asked to re-pack and forward this message
-        return nil;
-    }
-    // 3. process message content
-    return [messenger processContent:iMsg.content withMessage:secret];
+    return responses;
 }
 
 @end
