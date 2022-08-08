@@ -38,8 +38,6 @@
 #import "DIMFacebook.h"
 #import "DIMMessenger.h"
 
-#import "DIMReceiptCommand.h"
-
 #import "DIMMetaCommandProcessor.h"
 
 @implementation DIMMetaCommandProcessor
@@ -59,7 +57,7 @@
     NSString *text;
     if ([self.facebook saveMeta:meta forID:ID]) {
         text = [NSString stringWithFormat:@"Meta received %@", ID];
-        return [self respondReceipt:text];
+        return [self respondText:text withGroup:nil];
     } else {
         text = [NSString stringWithFormat:@"Meta not accepted: %@", ID];
         return [self respondText:text withGroup:nil];

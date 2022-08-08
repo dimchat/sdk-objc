@@ -36,7 +36,6 @@
 //
 
 #import "DIMFacebook.h"
-#import "DIMReceiptCommand.h"
 
 #import "DIMDocumentCommandProcessor.h"
 
@@ -68,7 +67,7 @@
     // received a document for ID
     if ([facebook saveDocument:doc]) {
         text = [NSString stringWithFormat:@"Document received %@", ID];
-        return [self respondReceipt:text];
+        return [self respondText:text withGroup:nil];
     } else {
         text = [NSString stringWithFormat:@"Document not accepted: %@", ID];
         return [self respondText:text withGroup:nil];

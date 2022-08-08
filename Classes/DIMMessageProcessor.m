@@ -35,13 +35,6 @@
 //  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
-#import "DIMReceiptCommand.h"
-#import "DIMHandshakeCommand.h"
-#import "DIMLoginCommand.h"
-#import "DIMMuteCommand.h"
-#import "DIMBlockCommand.h"
-#import "DIMStorageCommand.h"
-
 #import "DIMContentProcessor.h"
 #import "DIMCommandProcessor.h"
 
@@ -236,21 +229,12 @@
     //
     DIMRegisterContentFactories();
     DIMRegisterCommandFactories();
-
-    //
-    //  Register command factories
-    //
-    DIMCommandFactoryRegisterClass(DIMCommand_Receipt, DIMReceiptCommand);
-    DIMCommandFactoryRegisterClass(DIMCommand_Handshake, DIMHandshakeCommand);
-    DIMCommandFactoryRegisterClass(DIMCommand_Login, DIMLoginCommand);
     
-    DIMCommandFactoryRegisterClass(DIMCommand_Mute, DIMMuteCommand);
-    DIMCommandFactoryRegisterClass(DIMCommand_Block, DIMBlockCommand);
-    
-    // storage (contacts, private_key)
-    DIMCommandFactoryRegisterClass(DIMCommand_Storage, DIMStorageCommand);
-    DIMCommandFactoryRegisterClass(DIMCommand_Contacts, DIMStorageCommand);
-    DIMCommandFactoryRegisterClass(DIMCommand_PrivateKey, DIMStorageCommand);
+    //
+    //  Register customized factories
+    //
+    DIMContentRegisterClass(DKDContentType_Customized, DIMCustomizedContent);
+    DIMContentRegisterClass(DKDContentType_Application, DIMCustomizedContent);
 }
 
 @end

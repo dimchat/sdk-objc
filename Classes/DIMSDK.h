@@ -61,7 +61,6 @@ FOUNDATION_EXPORT const unsigned char DIMSDKVersionString[];
 #import <DIMSDK/MKMPrivateKey+Store.h>
 #import <DIMSDK/MKMAddressBTC.h>
 #import <DIMSDK/MKMAddressETH.h>
-#import <DIMSDK/DKDInstantMessage+Extension.h>
 
 // Network
 #import <DIMSDK/DIMServiceProvider.h>
@@ -71,14 +70,6 @@ FOUNDATION_EXPORT const unsigned char DIMSDKVersionString[];
 // Group
 #import <DIMSDK/DIMPolylogue.h>
 #import <DIMSDK/DIMChatroom.h>
-
-// Commands
-#import <DIMSDK/DIMReceiptCommand.h>
-#import <DIMSDK/DIMHandshakeCommand.h>
-#import <DIMSDK/DIMLoginCommand.h>
-#import <DIMSDK/DIMBlockCommand.h>
-#import <DIMSDK/DIMMuteCommand.h>
-#import <DIMSDK/DIMStorageCommand.h>
 
 // CPUs
 #import <DIMSDK/DIMFactory.h>

@@ -84,7 +84,6 @@ NS_DESIGNATED_INITIALIZER;
 @interface DIMContentProcessor : DIMTwinsHelper <DIMContentProcessor>
 
 - (NSArray<id<DKDContent>> *)respondText:(NSString *)text withGroup:(nullable id<MKMID>)group;
-- (NSArray<id<DKDContent>> *)respondReceipt:(NSString *)text;
 - (NSArray<id<DKDContent>> *)respondContent:(nullable id<DKDContent>)res;
 
 @end

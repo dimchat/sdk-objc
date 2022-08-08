@@ -38,8 +38,6 @@
 #import "DIMFacebook.h"
 #import "DIMMessenger.h"
 
-#import "DIMReceiptCommand.h"
-
 #import "DIMContentProcessor.h"
 
 @interface DIMTwinsHelper ()
@@ -86,11 +84,6 @@
     if (group) {
         res.group = group;
     }
-    return @[res];
-}
-
-- (NSArray<id<DKDContent>> *)respondReceipt:(NSString *)text {
-    DIMReceiptCommand *res = [[DIMReceiptCommand alloc] initWithMessage:text];
     return @[res];
 }
 
