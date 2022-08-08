@@ -68,13 +68,13 @@
     }
     
     // 2. respond
-    DIMUser *user = [self.facebook currentUser];
+    id<DIMUser> user = [self.facebook currentUser];
     NSAssert(user, @"current user not set");
-    DIMCommand *res;
+    id<DIMCommand> res;
     if ([user.ID isEqual:owner]) {
         res = [[DIMResetGroupCommand alloc] initWithGroup:group members:members];
     } else {
-        res = [[DIMInviteCommand alloc] initWithGroup:group members:members];
+        res = [[DIMInviteGroupCommand alloc] initWithGroup:group members:members];
     }
     return [self respondContent:res];
 }

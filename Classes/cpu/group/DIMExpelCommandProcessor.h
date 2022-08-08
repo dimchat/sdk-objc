@@ -39,7 +39,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMExpelCommandProcessor : DIMGroupCommandProcessor
+@interface DIMExpelGroupCommandProcessor : DIMGroupCommandProcessor
 
 @end
 

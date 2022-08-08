@@ -116,7 +116,7 @@ typedef UInt8 DIMMemberRole;
 
 @interface DIMChatroom : DIMGroup
 
-@property (readonly, copy, nonatomic) NSArray<id<MKMID>> *admins;
+@property (readonly, copy, nonatomic) NSArray<__kindof id<MKMID>> *admins;
 
 // -hire(admin, owner)
 // -fire(admin, owner)
@@ -134,7 +134,7 @@ typedef UInt8 DIMMemberRole;
  * @param chatroom - group ID
  * @return admins list (ID)
  */
-- (nullable NSArray<id<MKMID>> *)adminsOfChatroom:(id<MKMID>)chatroom;
+- (nullable NSArray<__kindof id<MKMID>> *)adminsOfChatroom:(id<MKMID>)chatroom;
 
 @end
 

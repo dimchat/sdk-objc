@@ -48,24 +48,24 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  Do your job
  */
-- (NSArray<id<DKDContent>> *)handleAction:(NSString *)act
-                                   sender:(id<MKMID>)uid
-                                  content:(id<DIMCustomizedContent>)customized
-                                  message:(id<DKDReliableMessage>)rMsg;
+- (NSArray<__kindof id<DKDContent>> *)handleAction:(NSString *)act
+                                            sender:(id<MKMID>)uid
+                                           content:(id<DIMCustomizedContent>)customized
+                                           message:(id<DKDReliableMessage>)rMsg;
 
 @end
 
 @interface DIMCustomizedContentProcessor : DIMContentProcessor <DIMCustomizedContentHandler>
 
 // override for your application
-- (NSArray<id<DKDContent>> *)filterApplication:(NSString *)app
-                                       content:(id<DIMCustomizedContent>)customized
-                                      messasge:(id<DKDReliableMessage>)rMsg;
+- (NSArray<__kindof id<DKDContent>> *)filterApplication:(NSString *)app
+                                                content:(id<DIMCustomizedContent>)customized
+                                               messasge:(id<DKDReliableMessage>)rMsg;
 
 // override for your module
-- (id<DIMCustomizedContentHandler>)fetchModule:(NSString *)mod
-                                       content:(id<DIMCustomizedContent>)customized
-                                      messasge:(id<DKDReliableMessage>)rMsg;
+- (__kindof id<DIMCustomizedContentHandler>)fetchModule:(NSString *)mod
+                                                content:(id<DIMCustomizedContent>)customized
+                                               messasge:(id<DKDReliableMessage>)rMsg;
 
 @end
 

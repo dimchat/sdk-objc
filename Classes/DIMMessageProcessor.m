@@ -173,7 +173,7 @@
     // 2. select a local user to build message
     id<MKMID> sender = iMsg.sender;
     id<MKMID> receiver = iMsg.receiver;
-    DIMUser *user = [self.facebook selectLocalUserWithID:receiver];
+    id<DIMUser> user = [self.facebook selectLocalUserWithID:receiver];
     NSAssert(user, @"receiver error: %@", receiver);
     
     // 3. pack messages

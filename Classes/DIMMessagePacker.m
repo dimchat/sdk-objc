@@ -51,7 +51,7 @@
         // broadcast message is always overt
         return group;
     }
-    if ([content isKindOfClass:[DIMCommand class]]) {
+    if ([content conformsToProtocol:@protocol(DIMCommand)]) {
         // group command should be sent to each member directly, so
         // don't expose group ID
         return nil;
@@ -102,7 +102,7 @@
     id<DKDSecureMessage> sMsg = nil;
     if (MKMIDIsGroup(receiver)) {
         // group message
-        DIMGroup *grp = [self.facebook groupWithID:receiver];
+        id<DIMGroup> grp = [self.facebook groupWithID:receiver];
         NSArray<id<MKMID>> *members = [grp members];
         if (members.count == 0) {
             // group not ready
@@ -147,6 +147,7 @@
 }
 
 - (nullable id<DKDReliableMessage>)deserializeMessage:(NSData *)data {
+    NSAssert([data length] > 0, @"message data should not be empty");
     id dict = MKMJSONDecode(MKMUTF8Decode(data));
     // TODO: translate short keys
     //       'S' -> 'sender'
@@ -196,7 +197,7 @@
 // TODO: make sure private key (decrypt key) exists before decrypting message
 - (id<DKDInstantMessage>)decryptMessage:(id<DKDSecureMessage>)sMsg {
     id<MKMID> receiver = sMsg.receiver;
-    DIMUser *user = [self.facebook selectLocalUserWithID:receiver];
+    id<DIMUser> user = [self.facebook selectLocalUserWithID:receiver];
     id<DKDSecureMessage> trimmed;
     if (!user) {
         // local users not matched

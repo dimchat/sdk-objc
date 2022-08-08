@@ -52,8 +52,8 @@ NS_ASSUME_NONNULL_BEGIN
  * @param rMsg - message with envelope
  * @return content to respond
  */
-- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
-                                withMessage:(id<DKDReliableMessage>)rMsg;
+- (NSArray<__kindof id<DKDContent>> *)processContent:(id<DKDContent>)content
+                                         withMessage:(id<DKDReliableMessage>)rMsg;
 
 @end
 
@@ -83,8 +83,8 @@ NS_DESIGNATED_INITIALIZER;
  */
 @interface DIMContentProcessor : DIMTwinsHelper <DIMContentProcessor>
 
-- (NSArray<id<DKDContent>> *)respondText:(NSString *)text withGroup:(nullable id<MKMID>)group;
-- (NSArray<id<DKDContent>> *)respondContent:(nullable id<DKDContent>)res;
+- (NSArray<__kindof id<DKDContent>> *)respondText:(NSString *)text withGroup:(nullable id<MKMID>)group;
+- (NSArray<__kindof id<DKDContent>> *)respondContent:(nullable id<DKDContent>)res;
 
 @end
 

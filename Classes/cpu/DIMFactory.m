@@ -105,11 +105,11 @@
     if ([name isEqualToString:@"group"]) {
         return CREATE_CPU(DIMGroupCommandProcessor);
     } else if ([name isEqualToString:DIMGroupCommand_Invite]) {
-        return CREATE_CPU(DIMInviteCommandProcessor);
+        return CREATE_CPU(DIMInviteGroupCommandProcessor);
     } else if ([name isEqualToString:DIMGroupCommand_Expel]) {
-        return CREATE_CPU(DIMExpelCommandProcessor);
+        return CREATE_CPU(DIMExpelGroupCommandProcessor);
     } else if ([name isEqualToString:DIMGroupCommand_Quit]) {
-        return CREATE_CPU(DIMQuitCommandProcessor);
+        return CREATE_CPU(DIMQuitGroupCommandProcessor);
     } else if ([name isEqualToString:DIMGroupCommand_Query]) {
         return CREATE_CPU(DIMQueryGroupCommandProcessor);
     } else if ([name isEqualToString:DIMGroupCommand_Reset]) {
@@ -152,7 +152,7 @@
         cpu = [self getCommandProcessor:cmd type:msgType];
         if (cpu) {
             return cpu;
-        } else if ([content isKindOfClass:[DIMGroupCommand class]]) {
+        } else if ([content conformsToProtocol:@protocol(DIMGroupCommand)]) {
             // group command processor
             cpu = [self getCommandProcessor:@"group" type:msgType];
             if (cpu) {

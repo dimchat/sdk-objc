@@ -46,7 +46,7 @@
     // query document for ID
     id<MKMDocument> doc = [facebook documentForID:ID type:type];
     if (doc) {
-        DIMCommand *command = [[DIMDocumentCommand alloc] initWithID:ID document:doc];
+        id<DIMCommand> command = [[DIMDocumentCommand alloc] initWithID:ID document:doc];
         return [self respondContent:command];
     } else {
         NSString *text = [NSString stringWithFormat:@"Sorry, document not found for ID: %@", ID];

@@ -39,13 +39,13 @@
 
 #import "DIMQuitCommandProcessor.h"
 
-@implementation DIMQuitCommandProcessor
+@implementation DIMQuitGroupCommandProcessor
 
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
-    NSAssert([content conformsToProtocol:@protocol(DIMQuitCommand)],
+    NSAssert([content conformsToProtocol:@protocol(DIMQuitGroupCommand)],
              @"quit command error: %@", content);
-    id<DIMQuitCommand> command = (id<DIMQuitCommand>)content;
+    id<DIMQuitGroupCommand> command = (id<DIMQuitGroupCommand>)content;
     DIMFacebook *facebook = self.facebook;
     
     // 0. check group

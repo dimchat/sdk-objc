@@ -56,14 +56,14 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @return first local user
  */
-@property (readonly, strong, nonatomic, nullable) DIMUser *currentUser;
+@property (readonly, strong, nonatomic, nullable) __kindof id<DIMUser> currentUser;
 
 /**
  *  Get all local users (for decrypting received message)
  *
  * @return users with private key
  */
-@property (readonly, strong, nonatomic, nullable) NSArray<DIMUser *> *localUsers;
+@property (readonly, strong, nonatomic, nullable) NSArray<__kindof id<DIMUser>> *localUsers;
 
 /**
  * Call it when received 'UIApplicationDidReceiveMemoryWarningNotification',
@@ -74,9 +74,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSInteger)reduceMemory;
 
 // override to create user
-- (nullable __kindof DIMUser *)createUser:(id<MKMID>)ID;
+- (nullable __kindof id<DIMUser>)createUser:(id<MKMID>)ID;
 // override to create group
-- (nullable __kindof DIMGroup *)createGroup:(id<MKMID>)ID;
+- (nullable __kindof id<DIMGroup>)createGroup:(id<MKMID>)ID;
 
 /**
  *  Select local user for receiver
@@ -84,7 +84,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param receiver - user/group ID
  * @return local user
  */
-- (nullable __kindof DIMUser *)selectLocalUserWithID:(id<MKMID>)receiver;
+- (nullable __kindof id<DIMUser>)selectLocalUserWithID:(id<MKMID>)receiver;
 
 /**
  *  Save meta for entity ID (must verify first)

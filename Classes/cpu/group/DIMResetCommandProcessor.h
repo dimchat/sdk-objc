@@ -41,7 +41,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMResetGroupCommandProcessor : DIMGroupCommandProcessor
 
-- (NSArray<id<DKDContent>> *)temporarySave:(id<DIMGroupCommand>)command sender:(id<MKMID>)sender;
+- (NSArray<__kindof id<DKDContent>> *)temporarySave:(id<DIMGroupCommand>)command sender:(id<MKMID>)sender;
 
 @end
 

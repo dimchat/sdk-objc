@@ -39,13 +39,13 @@
 
 #import "DIMExpelCommandProcessor.h"
 
-@implementation DIMExpelCommandProcessor
+@implementation DIMExpelGroupCommandProcessor
 
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
-    NSAssert([content conformsToProtocol:@protocol(DIMExpelCommand)],
+    NSAssert([content conformsToProtocol:@protocol(DIMExpelGroupCommand)],
              @"expel command error: %@", content);
-    id<DIMExpelCommand> command = (id<DIMExpelCommand>)content;
+    id<DIMExpelGroupCommand> command = (id<DIMExpelGroupCommand>)content;
     DIMFacebook *facebook = self.facebook;
     
     // 0. check group

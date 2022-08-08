@@ -40,14 +40,14 @@
 
 #import "DIMInviteCommandProcessor.h"
 
-@implementation DIMInviteCommandProcessor
+@implementation DIMInviteGroupCommandProcessor
 
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
-    NSAssert([content conformsToProtocol:@protocol(DIMInviteCommand)],
+    NSAssert([content conformsToProtocol:@protocol(DIMInviteGroupCommand)],
              @"invite command error: %@", content);
     DIMFacebook *facebook = self.facebook;
-    id<DIMInviteCommand> command = (id<DIMInviteCommand>)content;
+    id<DIMInviteGroupCommand> command = (id<DIMInviteGroupCommand>)content;
     
     // 0. check group
     id<MKMID> group = command.group;

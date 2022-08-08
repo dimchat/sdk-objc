@@ -45,7 +45,7 @@
 - (NSArray<id<DKDContent>> *)getMetaForID:(id<MKMID>)ID {
     id<MKMMeta> meta = [self.facebook metaForID:ID];
     if (meta) {
-        DIMCommand *command = [[DIMMetaCommand alloc] initWithID:ID meta:meta];
+        id<DIMCommand> command = [[DIMMetaCommand alloc] initWithID:ID meta:meta];
         return [self respondContent:command];
     } else {
         NSString *text = [NSString stringWithFormat:@"Sorry, meta not found for ID: %@", ID];

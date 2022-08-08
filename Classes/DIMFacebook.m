@@ -65,8 +65,8 @@ static inline NSInteger thanos(NSMutableDictionary *mDict, NSInteger finger) {
 
 @interface DIMFacebook () {
     
-    NSMutableDictionary<id<MKMID>, DIMUser *> *_userTable;
-    NSMutableDictionary<id<MKMID>, DIMGroup *> *_groupTable;
+    NSMutableDictionary<id<MKMID>, id<DIMUser>> *_userTable;
+    NSMutableDictionary<id<MKMID>, id<DIMGroup>> *_groupTable;
 }
 
 @end
@@ -88,14 +88,14 @@ static inline NSInteger thanos(NSMutableDictionary *mDict, NSInteger finger) {
     return finger >> 1;
 }
 
-- (void)cacheUser:(DIMUser *)user {
+- (void)cacheUser:(id<DIMUser>)user {
     if (user.dataSource == nil) {
         user.dataSource = self;
     }
     [_userTable setObject:user forKey:user.ID];
 }
 
-- (void)cacheGroup:(DIMGroup *)group {
+- (void)cacheGroup:(id<DIMGroup>)group {
     if (group.dataSource == nil) {
         group.dataSource = self;
     }
@@ -168,7 +168,7 @@ static inline NSInteger thanos(NSMutableDictionary *mDict, NSInteger finger) {
     return [doc verify:meta.key];
 }
 
-- (nullable DIMUser *)createUser:(id<MKMID>)ID {
+- (nullable id<DIMUser>)createUser:(id<MKMID>)ID {
     if (MKMIDIsBroadcast(ID)) {
         // create user 'anyone@anywhere'
         return [[DIMUser alloc] initWithID:ID];
@@ -189,7 +189,7 @@ static inline NSInteger thanos(NSMutableDictionary *mDict, NSInteger finger) {
     return nil;
 }
 
-- (nullable DIMGroup *)createGroup:(id<MKMID>)ID {
+- (nullable id<DIMGroup>)createGroup:(id<MKMID>)ID {
     if (MKMIDIsBroadcast(ID)) {
         // create group 'everyone@everywhere'
         return [[DIMGroup alloc] initWithID:ID];
@@ -209,21 +209,21 @@ static inline NSInteger thanos(NSMutableDictionary *mDict, NSInteger finger) {
     return nil;
 }
 
-- (nullable NSArray<DIMUser *> *)localUsers {
+- (nullable NSArray<id<DIMUser>> *)localUsers {
     NSAssert(false, @"implement me!");
     return nil;
 }
 
-- (nullable DIMUser *)currentUser {
-    NSArray<DIMUser *> *users = self.localUsers;
+- (nullable id<DIMUser>)currentUser {
+    NSArray<id<DIMUser>> *users = self.localUsers;
     if ([users count] == 0) {
         return nil;
     }
     return [users firstObject];
 }
 
-- (nullable DIMUser *)selectLocalUserWithID:(id<MKMID>)receiver {
-    NSArray<DIMUser *> *users = self.localUsers;
+- (nullable id<DIMUser>)selectLocalUserWithID:(id<MKMID>)receiver {
+    NSArray<id<DIMUser>> *users = self.localUsers;
     if ([users count] == 0) {
         NSAssert(false, @"local users should not be empty");
         return nil;
@@ -238,7 +238,7 @@ static inline NSInteger thanos(NSMutableDictionary *mDict, NSInteger finger) {
             // TODO: group not ready, waiting for group info
             return nil;
         }
-        for (DIMUser *item in users) {
+        for (id<DIMUser> item in users) {
             if ([members containsObject:item.ID]) {
                 // DISCUSS: set this item to be current user?
                 return item;
@@ -247,7 +247,7 @@ static inline NSInteger thanos(NSMutableDictionary *mDict, NSInteger finger) {
     } else {
         // 1. personal message
         // 2. split group message
-        for (DIMUser *item in users) {
+        for (id<DIMUser> item in users) {
             if ([receiver isEqual:item.ID]) {
                 // DISCUSS: set this item to be current user?
                 return item;
@@ -260,9 +260,9 @@ static inline NSInteger thanos(NSMutableDictionary *mDict, NSInteger finger) {
 
 #pragma mark - DIMEntityDelegate
 
-- (nullable DIMUser *)userWithID:(id<MKMID>)ID {
+- (nullable id<DIMUser>)userWithID:(id<MKMID>)ID {
     // 1. get from user cache
-    DIMUser *user = [_userTable objectForKey:ID];
+    id<DIMUser> user = [_userTable objectForKey:ID];
     if (!user) {
         // 2. create user and cache it
         user = [self createUser:ID];
@@ -273,9 +273,9 @@ static inline NSInteger thanos(NSMutableDictionary *mDict, NSInteger finger) {
     return user;
 }
 
-- (nullable DIMGroup *)groupWithID:(id<MKMID>)ID {
+- (nullable id<DIMGroup>)groupWithID:(id<MKMID>)ID {
     // 1. get from group cache
-    DIMGroup *group = [_groupTable objectForKey:ID];
+    id<DIMGroup> group = [_groupTable objectForKey:ID];
     if (!group) {
         // 2. create group and cache it
         group = [self createGroup:ID];

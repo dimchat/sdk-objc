@@ -43,7 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMServiceProvider : DIMGroup
 
-@property (readonly, copy, nonatomic) NSArray<id<MKMID>> *stations;
+@property (readonly, copy, nonatomic) NSArray<__kindof id<MKMID>> *stations;
 
 @end
 

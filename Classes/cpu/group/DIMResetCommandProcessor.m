@@ -75,14 +75,14 @@
     }
     // NOTICE: this is a partial member-list
     //         query the sender for full-list
-    DIMCommand *query = [[DIMQueryGroupCommand alloc] initWithGroup:group];
+    id<DIMCommand> query = [[DIMQueryGroupCommand alloc] initWithGroup:group];
     return [self respondContent:query];
 }
 
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content conformsToProtocol:@protocol(DIMResetGroupCommand)] ||
-             [content conformsToProtocol:@protocol(DIMInviteCommand)],
+             [content conformsToProtocol:@protocol(DIMInviteGroupCommand)],
              @"invite command error: %@", content);
     id<DIMGroupCommand> command = (id<DIMGroupCommand>)content;
     DIMFacebook *facebook = self.facebook;
