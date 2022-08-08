@@ -41,7 +41,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class DIMServiceProvider;
 
-@interface DIMStation : DIMUser
+@interface DIMStation : NSObject <DIMUser, NSCopying>
 
 @property (readonly, strong, nonatomic) NSString *host; // Domain/IP
 @property (readonly, nonatomic)         UInt32    port; // default: 9394

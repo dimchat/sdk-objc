@@ -39,7 +39,12 @@
 
 #import "DIMStation.h"
 
-@interface DIMStation ()
+@interface DIMStation () {
+    
+    id<DIMUser> _user;
+}
+
+@property (strong, nonatomic) id<DIMUser> user;
 
 @property (strong, nonatomic) NSString *host;
 @property (nonatomic) UInt32 port;
@@ -48,11 +53,18 @@
 
 @implementation DIMStation
 
+- (instancetype)init {
+    NSAssert(false, @"DON'T call me");
+    id<MKMID> ID = nil;
+    return [self initWithID:ID];
+}
+
 /* designated initializer */
 - (instancetype)initWithID:(id<MKMID>)ID
                       host:(NSString *)IP
                       port:(UInt32)port {
-    if (self = [super initWithID:ID]) {
+    if (self = [super init]) {
+        _user = [[DIMUser alloc] initWithID:ID];
         _host = IP;
         _port = port;
     }
@@ -60,12 +72,14 @@
 }
 
 - (instancetype)initWithID:(id<MKMID>)ID {
-    return [self initWithID:ID host:@"127.0.0.1" port:9394];
+    NSString *ip = nil;
+    return [self initWithID:ID host:ip port:0];
 }
 
 - (id)copyWithZone:(nullable NSZone *)zone {
-    DIMStation *server = [super copyWithZone:zone];
+    DIMStation *server = [[self class] allocWithZone:zone];
     if (server) {
+        server.user = _user;
         server.host = _host;
         server.port = _port;
     }
@@ -100,6 +114,68 @@
     }
     // others?
     return YES;
+}
+
+#pragma mark Entity
+
+- (id<MKMID>)ID {
+    return _user.ID;
+}
+
+- (UInt8)type {
+    return _user.type;
+}
+
+- (id<DIMEntityDataSource>)dataSource {
+    return _user.dataSource;
+}
+
+- (void)setDataSource:(id<DIMEntityDataSource>)dataSource {
+    _user.dataSource = dataSource;
+}
+
+- (id<MKMMeta>)meta {
+    return _user.meta;
+}
+
+- (nullable id<MKMDocument>)documentWithType:(nullable NSString *)type {
+    return [_user documentWithType:type];
+}
+
+#pragma mark User
+
+- (nullable id<MKMVisa>)visa {
+    return _user.visa;
+}
+
+- (BOOL)verifyVisa:(id<MKMVisa>)visa {
+    return [_user verifyVisa:visa];
+}
+
+- (BOOL)verify:(NSData *)data withSignature:(NSData *)signature {
+    return [_user verify:data withSignature:signature];
+}
+
+- (NSData *)encrypt:(NSData *)plaintext {
+    return [_user encrypt:plaintext];
+}
+
+#pragma mark Local User
+
+- (NSArray<id<MKMID>> *)contacts {
+    return _user.contacts;
+}
+
+- (nullable id<MKMVisa>)signVisa:(id<MKMVisa>)visa {
+    return [_user signVisa:visa];
+}
+
+- (NSData *)sign:(NSData *)data {
+    return [_user sign:data];
+}
+
+- (nullable NSData *)decrypt:(NSData *)ciphertext {
+    return [_user decrypt:ciphertext];
 }
 
 @end
