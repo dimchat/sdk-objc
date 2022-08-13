@@ -51,7 +51,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  @param type - content type
  *  @return ContentProcessor
  */
-- (__kindof id<DIMContentProcessor>)createContentProcessor:(DKDContentType)type;
+- (id<DIMContentProcessor>)createContentProcessor:(DKDContentType)type;
 
 /**
  *  Create command processor with name
@@ -60,7 +60,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  @param msgType - content type
  *  @return CommandProcessor
  */
-- (__kindof id<DIMContentProcessor>)createCommandProcessor:(NSString *)name type:(DKDContentType)msgType;
+- (id<DIMContentProcessor>)createCommandProcessor:(NSString *)name type:(DKDContentType)msgType;
 
 @end
 
@@ -76,11 +76,11 @@ NS_ASSUME_NONNULL_BEGIN
  *  @param content - content/command
  *  @return ContentProcessor
  */
-- (__kindof id<DIMContentProcessor>)getProcessor:(id<DKDContent>)content;
+- (id<DIMContentProcessor>)getProcessor:(id<DKDContent>)content;
 
-- (__kindof id<DIMContentProcessor>)getContentProcessor:(DKDContentType)msgType;
+- (id<DIMContentProcessor>)getContentProcessor:(DKDContentType)msgType;
 
-- (__kindof id<DIMContentProcessor>)getCommandProcessor:(NSString *)name type:(DKDContentType)msgType;
+- (id<DIMContentProcessor>)getCommandProcessor:(NSString *)name type:(DKDContentType)msgType;
 
 @end
 
@@ -92,7 +92,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMContentProcessorFactory : DIMTwinsHelper <DIMContentProcessorFactory>
 
-@property(nonatomic, retain) __kindof id<DIMContentProcessorCreator> creator;
+@property(nonatomic, retain) id<DIMContentProcessorCreator> creator;
 
 @end
 

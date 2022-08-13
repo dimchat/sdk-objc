@@ -44,7 +44,7 @@ extern "C"
 {
 #endif
 
-__kindof id<MKMPrivateKey> MKMPrivateKeyLoad(NSString * identifier);
+id<MKMPrivateKey> MKMPrivateKeyLoad(NSString * identifier);
 
 BOOL MKMPrivateKeySave(NSString * identifier, id<MKMPrivateKey> sKey);
 

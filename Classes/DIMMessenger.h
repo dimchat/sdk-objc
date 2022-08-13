@@ -49,9 +49,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param create - generate when key not exists
  * @return cipher key
  */
-- (nullable __kindof id<MKMSymmetricKey>)cipherKeyFrom:(id<MKMID>)sender
-                                                    to:(id<MKMID>)receiver
-                                              generate:(BOOL)create;
+- (nullable id<MKMSymmetricKey>)cipherKeyFrom:(id<MKMID>)sender to:(id<MKMID>)receiver generate:(BOOL)create;
 
 /**
  *  Cache cipher key for reusing, with the direction (from 'sender' to 'receiver')
@@ -60,9 +58,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param sender - user or contact ID
  * @param receiver - contact or user/group ID
  */
-- (void)cacheCipherKey:(id<MKMSymmetricKey>)key
-                  from:(id<MKMID>)sender
-                    to:(id<MKMID>)receiver;
+- (void)cacheCipherKey:(id<MKMSymmetricKey>)key from:(id<MKMID>)sender to:(id<MKMID>)receiver;
 
 @end
 
@@ -73,17 +69,17 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  Delegate for getting message key
  */
-@property (weak, nonatomic) __kindof id<DIMCipherKeyDelegate> keyCache;
+@property (weak, nonatomic) id<DIMCipherKeyDelegate> keyCache;
 
 /**
  *  Delegate for parsing message
  */
-@property (weak, nonatomic) __kindof id<DIMPacker> packer;
+@property (weak, nonatomic) id<DIMPacker> packer;
 
 /**
  *  Delegate for processing message
  */
-@property (weak, nonatomic) __kindof id<DIMProcessor> processor;
+@property (weak, nonatomic) id<DIMProcessor> processor;
 
 @end
 

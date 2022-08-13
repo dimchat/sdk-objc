@@ -41,7 +41,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol DIMAddressNameService <NSObject>
 
-- (nullable __kindof id<MKMID>)IDWithName:(NSString *)username;
+- (nullable id<MKMID>)IDWithName:(NSString *)username;
 
 - (nullable NSArray<NSString *> *)namesWithID:(id<MKMID>)ID;
 
