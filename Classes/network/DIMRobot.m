@@ -35,13 +35,15 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
+#import "DIMFacebook.h"
+
 #import "DIMRobot.h"
 
-@implementation DIMRobot
+@implementation DIMBot
 
 /* designated initializer */
 - (instancetype)initWithID:(id<MKMID>)ID {
-    NSAssert(ID.type == MKMNetwork_Robot, @"robot ID error: %@", ID);
+    NSAssert(MKMNetwork_IsBot(ID.type), @"bot ID error: %@", ID);
     if (self = [super initWithID:ID]) {
         //
     }

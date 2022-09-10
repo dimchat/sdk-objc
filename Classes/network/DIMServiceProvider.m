@@ -35,6 +35,7 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
+#import "DIMFacebook.h"
 #import "DIMStation.h"
 
 #import "DIMServiceProvider.h"
@@ -43,7 +44,7 @@
 
 /* designated initializer */
 - (instancetype)initWithID:(id<MKMID>)ID {
-    NSAssert(ID.type == MKMNetwork_Provider, @"SP ID error: %@", ID);
+    NSAssert(MKMNetwork_IsProvider(ID.type), @"SP ID error: %@", ID);
     if (self = [super initWithID:ID]) {
         //
     }

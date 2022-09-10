@@ -47,7 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
 #define MKMNetwork_IsProvider(network) ((network) == MKMNetwork_Provider)
 
 #define MKMNetwork_IsThing(network)    ((network) & MKMNetwork_Thing)
-#define MKMNetwork_IsRobot(network)    ((network) == MKMNetwork_Robot)
+#define MKMNetwork_IsBot(network)      ((network) == MKMNetwork_Bot)
 
 @interface DIMFacebook : DIMBarrack
 

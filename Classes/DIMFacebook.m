@@ -176,13 +176,13 @@ static inline NSInteger thanos(NSMutableDictionary *mDict, NSInteger finger) {
     NSAssert([self metaForID:ID], @"meta not found for user: %@", ID);
     // NOTICE: make sure visa key exists before calling this
     UInt8 type = ID.type;
-    if (type == MKMNetwork_Main || type == MKMNetwork_BTCMain) {
+    if (MKMNetwork_IsPerson(type)) {
         return [[DIMUser alloc] initWithID:ID];
     }
-    if (type == MKMNetwork_Robot) {
-        return [[DIMRobot alloc] initWithID:ID];
+    if (MKMNetwork_IsBot(type)) {
+        return [[DIMBot alloc] initWithID:ID];
     }
-    if (type == MKMNetwork_Station) {
+    if (MKMNetwork_IsStation(type)) {
         return [[DIMStation alloc] initWithID:ID];
     }
     NSAssert(false, @"Unsupported user type: %d", type);
@@ -202,7 +202,7 @@ static inline NSInteger thanos(NSMutableDictionary *mDict, NSInteger finger) {
     if (type == MKMNetwork_Chatroom) {
         return [[DIMChatroom alloc] initWithID:ID];
     }
-    if (type == MKMNetwork_Provider) {
+    if (MKMNetwork_IsProvider(type)) {
         return [[DIMServiceProvider alloc] initWithID:ID];
     }
     NSAssert(false, @"Unsupported group type: %d", type);
