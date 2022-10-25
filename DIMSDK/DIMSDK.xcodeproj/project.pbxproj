@@ -25,10 +25,8 @@
 		E94DEB8A23A1053400FBFD3C /* DIMRobot.h in Headers */ = {isa = PBXBuildFile; fileRef = E94DEB7623A1053400FBFD3C /* DIMRobot.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E94DEB8B23A1053400FBFD3C /* DIMServiceProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = E94DEB7723A1053400FBFD3C /* DIMServiceProvider.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E94DEB8C23A1053400FBFD3C /* DIMStation.m in Sources */ = {isa = PBXBuildFile; fileRef = E94DEB7823A1053400FBFD3C /* DIMStation.m */; };
-		E94DEB8D23A1053400FBFD3C /* DIMPolylogue.m in Sources */ = {isa = PBXBuildFile; fileRef = E94DEB7B23A1053400FBFD3C /* DIMPolylogue.m */; };
 		E94DEB8E23A1053400FBFD3C /* DIMChatroom.m in Sources */ = {isa = PBXBuildFile; fileRef = E94DEB7C23A1053400FBFD3C /* DIMChatroom.m */; };
 		E94DEB8F23A1053400FBFD3C /* DIMChatroom.h in Headers */ = {isa = PBXBuildFile; fileRef = E94DEB7D23A1053400FBFD3C /* DIMChatroom.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		E94DEB9023A1053400FBFD3C /* DIMPolylogue.h in Headers */ = {isa = PBXBuildFile; fileRef = E94DEB7E23A1053400FBFD3C /* DIMPolylogue.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E95965262391096600DAA870 /* DIMContentProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = E95965242391096600DAA870 /* DIMContentProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E95965272391096600DAA870 /* DIMContentProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = E95965252391096600DAA870 /* DIMContentProcessor.m */; };
 		E95965322391273200DAA870 /* DIMCommandProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = E95965302391273200DAA870 /* DIMCommandProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -179,10 +177,8 @@
 		E94DEB7623A1053400FBFD3C /* DIMRobot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMRobot.h; sourceTree = "<group>"; };
 		E94DEB7723A1053400FBFD3C /* DIMServiceProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMServiceProvider.h; sourceTree = "<group>"; };
 		E94DEB7823A1053400FBFD3C /* DIMStation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMStation.m; sourceTree = "<group>"; };
-		E94DEB7B23A1053400FBFD3C /* DIMPolylogue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMPolylogue.m; sourceTree = "<group>"; };
 		E94DEB7C23A1053400FBFD3C /* DIMChatroom.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMChatroom.m; sourceTree = "<group>"; };
 		E94DEB7D23A1053400FBFD3C /* DIMChatroom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMChatroom.h; sourceTree = "<group>"; };
-		E94DEB7E23A1053400FBFD3C /* DIMPolylogue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMPolylogue.h; sourceTree = "<group>"; };
 		E95965242391096600DAA870 /* DIMContentProcessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMContentProcessor.h; sourceTree = "<group>"; };
 		E95965252391096600DAA870 /* DIMContentProcessor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMContentProcessor.m; sourceTree = "<group>"; };
 		E95965302391273200DAA870 /* DIMCommandProcessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMCommandProcessor.h; sourceTree = "<group>"; };
@@ -392,8 +388,6 @@
 		E94DEB7A23A1053400FBFD3C /* group */ = {
 			isa = PBXGroup;
 			children = (
-				E94DEB7E23A1053400FBFD3C /* DIMPolylogue.h */,
-				E94DEB7B23A1053400FBFD3C /* DIMPolylogue.m */,
 				E94DEB7D23A1053400FBFD3C /* DIMChatroom.h */,
 				E94DEB7C23A1053400FBFD3C /* DIMChatroom.m */,
 			);
@@ -582,7 +576,6 @@
 				E94DEB8B23A1053400FBFD3C /* DIMServiceProvider.h in Headers */,
 				E94DEB8A23A1053400FBFD3C /* DIMRobot.h in Headers */,
 				E9E8958F25B70D7100F5E893 /* uECC_vli.h in Headers */,
-				E94DEB9023A1053400FBFD3C /* DIMPolylogue.h in Headers */,
 				E94DEB8F23A1053400FBFD3C /* DIMChatroom.h in Headers */,
 				E94DEB8123A1053400FBFD3C /* DIMStation.h in Headers */,
 				E95CB3342587972B00685B1B /* compiler.h in Headers */,
@@ -791,7 +784,6 @@
 				E94DEB8023A1053400FBFD3C /* DIMRobot.m in Sources */,
 				E919B0182390FAA1004F7FF9 /* DIMAddressNameService.m in Sources */,
 				E95965332391273300DAA870 /* DIMCommandProcessor.m in Sources */,
-				E94DEB8D23A1053400FBFD3C /* DIMPolylogue.m in Sources */,
 				E9D79E422583D5DC00C8E700 /* NSData+Crypto.m in Sources */,
 				E99B200C2586834F001A05F1 /* MKMMetaDefault.m in Sources */,
 				E9D79E4F2583DCBB00C8E700 /* MKMMetaBTC.m in Sources */,

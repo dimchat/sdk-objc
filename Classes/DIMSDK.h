@@ -68,7 +68,6 @@ FOUNDATION_EXPORT const unsigned char DIMSDKVersionString[];
 #import <DIMSDK/DIMRobot.h>
 
 // Group
-#import <DIMSDK/DIMPolylogue.h>
 #import <DIMSDK/DIMChatroom.h>
 
 // CPUs

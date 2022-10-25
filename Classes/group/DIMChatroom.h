@@ -112,30 +112,4 @@ typedef NS_ENUM(UInt8, DIMMemberType) {
 };
 typedef UInt8 DIMMemberRole;
 
-#pragma mark - Chatroom
-
-@interface DIMChatroom : DIMGroup
-
-@property (readonly, copy, nonatomic) NSArray<id<MKMID>> *admins;
-
-// -hire(admin, owner)
-// -fire(admin, owner)
-// -resign(admin)
-
-@end
-
-#pragma mark - Chatroom Delegate
-
-@protocol DIMChatroomDataSource <DIMGroupDataSource>
-
-/**
- *  Get chatroom admin list
- *
- * @param chatroom - group ID
- * @return admins list (ID)
- */
-- (nullable NSArray<id<MKMID>> *)adminsOfChatroom:(id<MKMID>)chatroom;
-
-@end
-
 NS_ASSUME_NONNULL_END

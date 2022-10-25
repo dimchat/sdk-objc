@@ -41,9 +41,6 @@
 #import "DIMStation.h"
 #import "DIMRobot.h"
 
-#import "DIMPolylogue.h"
-#import "DIMChatroom.h"
-
 #import "DIMFacebook.h"
 
 /**

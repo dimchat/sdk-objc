@@ -36,25 +36,3 @@
 //
 
 #import "DIMChatroom.h"
-
-@implementation DIMChatroom
-
-/* designated initializer */
-- (instancetype)initWithID:(id<MKMID>)ID {
-    NSAssert(ID.type == MKMNetwork_Chatroom, @"chatroom ID error: %@", ID);
-    if (self = [super initWithID:ID]) {
-        //
-    }
-    return self;
-}
-
-#pragma mark Admins of Chatroom
-
-- (NSArray<id<MKMID>> *)admins {
-    id<DIMChatroomDataSource> delegate = (id<DIMChatroomDataSource>)[self dataSource];
-    NSAssert(delegate, @"chatroom data source not set yet");
-    NSArray *list = [delegate adminsOfChatroom:self.ID];
-    return [list mutableCopy];
-}
-
-@end
