@@ -71,20 +71,16 @@
     return self;
 }
 
-- (nullable id<MKMAddress>)generateAddress {
+- (nullable id<MKMAddress>)generateAddress:(MKMEntityType)network {
+    NSAssert(self.type == MKMMetaVersion_ETH || self.type == MKMMetaVersion_ExETH,
+             @"meta version error: %d", self.type);
+    NSAssert(network == MKMEntityType_User, @"ETH address type error: %d", network);
     if (!_cachedAddress) {
         // generate and cache it
         NSData *data = [self.key data];
         _cachedAddress = [MKMAddressETH generate:data];
     }
     return _cachedAddress;
-}
-
-- (nullable id<MKMAddress>)generateAddress:(MKMEntityType)network {
-    NSAssert(network == MKMEntityType_User, @"ETH address type error: %d", network);
-    NSAssert(self.type == MKMMetaVersion_ETH || self.type == MKMMetaVersion_ExETH,
-             @"meta version error: %d", self.type);
-    return [self generateAddress];
 }
 
 @end

@@ -71,20 +71,16 @@
     return self;
 }
 
-- (nullable id<MKMAddress>)generateAddress {
+- (nullable id<MKMAddress>)generateAddress:(MKMEntityType)network {
+    NSAssert(self.type == MKMMetaVersion_BTC || self.type == MKMMetaVersion_ExBTC,
+             @"meta version error: %d", self.type);
+    NSAssert(network == MKMNetwork_BTCMain, @"BTC address type error: %d", network);
     if (!_cachedAddress) {
         // generate and cache it
         NSData *data = [self.key data];
         _cachedAddress = [MKMAddressBTC generate:data type:MKMNetwork_BTCMain];
     }
     return _cachedAddress;
-}
-
-- (nullable id<MKMAddress>)generateAddress:(MKMEntityType)network {
-    NSAssert(network == MKMNetwork_BTCMain, @"BTC address type error: %d", network);
-    NSAssert(self.type == MKMMetaVersion_BTC || self.type == MKMMetaVersion_ExBTC,
-             @"meta version error: %d", self.type);
-    return [self generateAddress];
 }
 
 @end

@@ -65,7 +65,7 @@ MKMEntityType MKMEntityTypeFromNetworkID(MKMNetworkType network) {
 
 @interface MKMAddressBTC () {
     
-    MKMEntityType _type;
+    MKMEntityType _network;
 }
 
 @end
@@ -98,7 +98,7 @@ MKMEntityType MKMEntityTypeFromNetworkID(MKMNetworkType network) {
 /* designated initializer */
 - (instancetype)initWithString:(NSString *)address type:(MKMEntityType)network {
     if (self = [super initWithString:address]) {
-        _type = network;
+        _network = network;
     }
     return self;
 }
@@ -106,17 +106,17 @@ MKMEntityType MKMEntityTypeFromNetworkID(MKMNetworkType network) {
 - (id)copyWithZone:(nullable NSZone *)zone {
     MKMAddressBTC *address = [super copyWithZone:zone];
     if (address) {
-        address.type = _type;
+        address.type = _network;
     }
     return address;
 }
 
 - (MKMEntityType)type {
-    return _type;
+    return _network;
 }
 
 - (void)setType:(MKMEntityType)network {
-    _type = network;
+    _network = network;
 }
 
 - (BOOL)isBroadcast {
@@ -124,12 +124,12 @@ MKMEntityType MKMEntityTypeFromNetworkID(MKMNetworkType network) {
 }
 
 - (BOOL)isUser {
-    MKMEntityType type = MKMEntityTypeFromNetworkID(_type);
+    MKMEntityType type = MKMEntityTypeFromNetworkID(_network);
     return MKMEntity_IsUser(type);
 }
 
 - (BOOL)isGroup {
-    MKMEntityType type = MKMEntityTypeFromNetworkID(_type);
+    MKMEntityType type = MKMEntityTypeFromNetworkID(_network);
     return MKMEntity_IsGroup(type);
 }
 

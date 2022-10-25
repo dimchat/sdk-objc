@@ -77,7 +77,8 @@
     MKMAddressBTC *address = [_cachedAddresses objectForKey:@(network)];
     if (!address) {
         // generate and cache it
-        address = [MKMAddressBTC generate:self.fingerprint type:network];
+        NSData *data = [self fingerprint];
+        address = [MKMAddressBTC generate:data type:network];
         [_cachedAddresses setObject:address forKey:@(network)];
     }
     return address;
