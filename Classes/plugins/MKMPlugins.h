@@ -47,6 +47,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@interface MKMPlugins (EntityID)
+
++ (void)registerIDFactory;
+
+@end
+
 @interface MKMPlugins (Crypto)
 
 + (void)registerKeyFactories;

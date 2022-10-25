@@ -49,7 +49,7 @@ NS_ASSUME_NONNULL_BEGIN
  *          digest      = keccak256(fingerprint);
  *          address     = hex_encode(digest.suffix(20));
  */
-@interface MKMAddressETH : MKMAddress
+@interface MKMAddressETH : MKMString <MKMAddress>
 
 + (NSString *)validateAddress:(NSString *)address;
 + (BOOL)isValidate:(NSString *)address;

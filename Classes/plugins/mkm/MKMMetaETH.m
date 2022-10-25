@@ -58,7 +58,7 @@
 }
 
 /* designated initializer */
-- (instancetype)initWithType:(UInt8)version
+- (instancetype)initWithType:(MKMMetaType)version
                          key:(id<MKMVerifyKey>)publicKey
                         seed:(NSString *)seed
                  fingerprint:(NSData *)fingerprint {
@@ -80,8 +80,8 @@
     return _cachedAddress;
 }
 
-- (nullable id<MKMAddress>)generateAddress:(UInt8)type {
-    NSAssert(type == MKMNetwork_Main, @"ETH address type error: %d", type);
+- (nullable id<MKMAddress>)generateAddress:(MKMEntityType)network {
+    NSAssert(network == MKMEntityType_User, @"ETH address type error: %d", network);
     NSAssert(self.type == MKMMetaVersion_ETH || self.type == MKMMetaVersion_ExETH,
              @"meta version error: %d", self.type);
     return [self generateAddress];

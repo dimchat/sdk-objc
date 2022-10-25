@@ -43,7 +43,7 @@
 
 /* designated initializer */
 - (instancetype)initWithID:(id<MKMID>)ID {
-    NSAssert(MKMNetwork_IsBot(ID.type), @"bot ID error: %@", ID);
+    NSAssert(ID.type == MKMEntityType_Bot, @"bot ID error: %@", ID);
     if (self = [super initWithID:ID]) {
         //
     }

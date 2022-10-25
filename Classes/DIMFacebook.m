@@ -146,7 +146,7 @@ static inline NSInteger thanos(NSMutableDictionary *mDict, NSInteger finger) {
         // check by owner
         id<MKMID> owner = [self ownerOfGroup:ID];
         if (!owner) {
-            if (ID.type == MKMNetwork_Polylogue) {
+            if (ID.type == MKMEntityType_Group) {
                 // NOTICE: if this is a polylogue profile
                 //             verify it with the founder's meta.key
                 //             (which equals to the group's meta.key)
@@ -173,20 +173,18 @@ static inline NSInteger thanos(NSMutableDictionary *mDict, NSInteger finger) {
         // create user 'anyone@anywhere'
         return [[DIMUser alloc] initWithID:ID];
     }
+    // make sure meta exists
     NSAssert([self metaForID:ID], @"meta not found for user: %@", ID);
     // NOTICE: make sure visa key exists before calling this
-    UInt8 type = ID.type;
-    if (MKMNetwork_IsPerson(type)) {
-        return [[DIMUser alloc] initWithID:ID];
-    }
-    if (MKMNetwork_IsBot(type)) {
+    MKMEntityType type = ID.type;
+    // check user type
+    if (type == MKMEntityType_Station) {
+        return [[DIMStation alloc] initWithID:ID];
+    } else if (type == MKMEntityType_Bot) {
         return [[DIMBot alloc] initWithID:ID];
     }
-    if (MKMNetwork_IsStation(type)) {
-        return [[DIMStation alloc] initWithID:ID];
-    }
-    NSAssert(false, @"Unsupported user type: %d", type);
-    return nil;
+    //NSAssert(type == MKMEntityType_User, @"Unsupported user type: %d", type);
+    return [[DIMUser alloc] initWithID:ID];
 }
 
 - (nullable id<DIMGroup>)createGroup:(id<MKMID>)ID {
@@ -194,19 +192,15 @@ static inline NSInteger thanos(NSMutableDictionary *mDict, NSInteger finger) {
         // create group 'everyone@everywhere'
         return [[DIMGroup alloc] initWithID:ID];
     }
+    // make user meta exists
     NSAssert([self metaForID:ID], @"failed to get meta for group: %@", ID);
-    UInt8 type = ID.type;
-    if (type == MKMNetwork_Polylogue) {
-        return [[DIMPolylogue alloc] initWithID:ID];
-    }
-    if (type == MKMNetwork_Chatroom) {
-        return [[DIMChatroom alloc] initWithID:ID];
-    }
-    if (MKMNetwork_IsProvider(type)) {
+    MKMEntityType type = ID.type;
+    // check group type
+    if (type == MKMEntityType_ISP) {
         return [[DIMServiceProvider alloc] initWithID:ID];
     }
-    NSAssert(false, @"Unsupported group type: %d", type);
-    return nil;
+    //NSAssert(type == MKMEntityType_Group, @"Unsupported group type: %d", type);
+    return [[DIMGroup alloc] initWithID:ID];
 }
 
 - (nullable NSArray<id<DIMUser>> *)localUsers {
@@ -300,7 +294,7 @@ static inline NSInteger thanos(NSMutableDictionary *mDict, NSInteger finger) {
 }
 
 - (BOOL)group:(id<MKMID>)group isOwner:(id<MKMID>)member {
-    if (group.type == MKMNetwork_Polylogue) {
+    if (group.type == MKMEntityType_Group) {
         return [self group:group isFounder:member];
     }
     NSAssert(false, @"only Polylogue so far: %@", group);
@@ -315,6 +309,7 @@ static inline NSInteger thanos(NSMutableDictionary *mDict, NSInteger finger) {
     // load plugins
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
+        [MKMPlugins registerIDFactory];
         [MKMPlugins registerAddressFactory];
         [MKMPlugins registerMetaFactory];
         [MKMPlugins registerDocumentFactory];

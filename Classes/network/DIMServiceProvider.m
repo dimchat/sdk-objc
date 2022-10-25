@@ -44,7 +44,7 @@
 
 /* designated initializer */
 - (instancetype)initWithID:(id<MKMID>)ID {
-    NSAssert(MKMNetwork_IsProvider(ID.type), @"SP ID error: %@", ID);
+    NSAssert(ID.type == MKMEntityType_ISP, @"SP ID error: %@", ID);
     if (self = [super initWithID:ID]) {
         //
     }

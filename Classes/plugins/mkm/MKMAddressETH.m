@@ -87,6 +87,24 @@ static inline BOOL is_eth(NSString *address) {
 
 @implementation MKMAddressETH
 
+- (MKMEntityType)type {
+    return MKMEntityType_User;
+}
+
+- (BOOL)isBroadcast {
+    return NO;
+}
+
+- (BOOL)isUser {
+    return YES;
+}
+
+- (BOOL)isGroup {
+    return NO;
+}
+
+#pragma mark Coding
+
 + (NSString *)validateAddress:(NSString *)address {
     if (is_eth(address)) {
         address = [address substringFromIndex:2];
@@ -120,18 +138,6 @@ static inline BOOL is_eth(NSString *address) {
         return [[self alloc] initWithString:string];
     }
     return nil;
-}
-
-- (UInt8)network {
-    return MKMNetwork_Main;
-}
-
-- (BOOL)isUser {
-    return YES;
-}
-
-- (BOOL)isGroup {
-    return NO;
 }
 
 @end

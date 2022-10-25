@@ -63,6 +63,7 @@
 - (instancetype)initWithID:(id<MKMID>)ID
                       host:(NSString *)IP
                       port:(UInt32)port {
+    NSAssert(ID.type == MKMEntityType_Station, @"station ID error: %@", ID);
     if (self = [super init]) {
         _user = [[DIMUser alloc] initWithID:ID];
         _host = IP;
@@ -122,7 +123,7 @@
     return _user.ID;
 }
 
-- (UInt8)type {
+- (MKMEntityType)type {
     return _user.type;
 }
 
