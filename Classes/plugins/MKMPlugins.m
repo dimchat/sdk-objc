@@ -40,50 +40,14 @@
 #import "MKMMetaDefault.h"
 #import "MKMMetaBTC.h"
 #import "MKMMetaETH.h"
-#import "MKMDocs.h"
 
 #import "MKMPlugins.h"
 
-@interface AddressFactory : NSObject <MKMAddressFactory> {
-    
-    NSMutableDictionary<NSString *, id<MKMAddress>> *_addresses;
-}
+@interface AddressFactory : DIMAddressFactory
 
 @end
 
 @implementation AddressFactory
-
-- (instancetype)init {
-    if (self = [super init]) {
-        _addresses = [[NSMutableDictionary alloc] init];
-        // cache broadcast addresses
-        id<MKMAddress> anywhere = MKMAnywhere();
-        [_addresses setObject:anywhere forKey:[anywhere string]];
-        id<MKMAddress> everywhere = MKMEverywhere();
-        [_addresses setObject:everywhere forKey:[everywhere string]];
-    }
-    return self;
-}
-
-- (nullable id<MKMAddress>)generateAddressWithMeta:(id<MKMMeta>)meta
-                                              type:(MKMEntityType)network {
-    id<MKMAddress> address = [meta generateAddress:network];
-    if (address) {
-        [_addresses setObject:address forKey:address.string];
-    }
-    return address;
-}
-
-- (nullable id<MKMAddress>)parseAddress:(NSString *)address {
-    id<MKMAddress> addr = [_addresses objectForKey:address];
-    if (!addr) {
-        addr = [self createAddress:address];
-        if (addr) {
-            [_addresses setObject:addr forKey:address];
-        }
-    }
-    return addr;
-}
 
 - (nullable id<MKMAddress>)createAddress:(NSString *)address {
     NSUInteger len = [address length];
@@ -196,82 +160,6 @@
 
 #pragma mark -
 
-@interface DocumentFactory : NSObject <MKMDocumentFactory>
-
-@property (readonly, strong, nonatomic) NSString *type;
-
-- (instancetype)initWithType:(NSString *)type;
-
-@end
-
-@implementation DocumentFactory
-
-- (instancetype)initWithType:(NSString *)type {
-    if (self = [super init]) {
-        _type = type;
-    }
-    return self;
-}
-
-- (NSString *)typeForID:(id<MKMID>)ID {
-    if ([_type isEqualToString:@"*"]) {
-        if (MKMIDIsGroup(ID)) {
-            return MKMDocument_Bulletin;
-        } else if (MKMIDIsUser(ID)) {
-            return MKMDocument_Visa;
-        }
-        return MKMDocument_Profile;
-    }
-    return _type;
-}
-
-- (id<MKMDocument>)createDocument:(id<MKMID>)ID data:(NSString *)json signature:(NSString *)sig {
-    NSString *type = [self typeForID:ID];
-    if ([type isEqualToString:MKMDocument_Visa]) {
-        return [[MKMVisa alloc] initWithID:ID data:json signature:sig];
-    }
-    if ([type isEqualToString:MKMDocument_Bulletin]) {
-        return [[MKMBulletin alloc] initWithID:ID data:json signature:sig];
-    }
-    return [[MKMDocument alloc] initWithID:ID data:json signature:sig];
-}
-
-// create a new empty document with entity ID
-- (id<MKMDocument>)createDocument:(id<MKMID>)ID {
-    NSString *type = [self typeForID:ID];
-    if ([type isEqualToString:MKMDocument_Visa]) {
-        return [[MKMVisa alloc] initWithID:ID];
-    }
-    if ([type isEqualToString:MKMDocument_Bulletin]) {
-        return [[MKMBulletin alloc] initWithID:ID];
-    }
-    return [[MKMDocument alloc] initWithID:ID type:type];
-}
-
-- (nullable id<MKMDocument>)parseDocument:(NSDictionary *)doc {
-    id<MKMID> ID = MKMIDParse([doc objectForKey:@"ID"]);
-    if (!ID) {
-        return nil;
-    }
-    NSString *type = [doc objectForKey:@"type"];
-    if (type.length == 0) {
-        if (MKMIDIsGroup(ID)) {
-            type = MKMDocument_Bulletin;
-        } else {
-            type = MKMDocument_Visa;
-        }
-    }
-    if ([type isEqualToString:MKMDocument_Visa]) {
-        return [[MKMVisa alloc] initWithDictionary:doc];
-    }
-    if ([type isEqualToString:MKMDocument_Bulletin]) {
-        return [[MKMBulletin alloc] initWithDictionary:doc];
-    }
-    return [[MKMDocument alloc] initWithDictionary:doc];
-}
-
-@end
-
 @implementation MKMPlugins
 
 + (void)registerAddressFactory {
@@ -294,13 +182,13 @@
 
 + (void)registerDocumentFactory {
     MKMDocumentSetFactory(@"*",
-                          [[DocumentFactory alloc] initWithType:@"*"]);
+                          [[DIMDocumentFactory alloc] initWithType:@"*"]);
     MKMDocumentSetFactory(MKMDocument_Visa,
-                          [[DocumentFactory alloc] initWithType:MKMDocument_Visa]);
+                          [[DIMDocumentFactory alloc] initWithType:MKMDocument_Visa]);
     MKMDocumentSetFactory(MKMDocument_Profile,
-                          [[DocumentFactory alloc] initWithType:MKMDocument_Profile]);
+                          [[DIMDocumentFactory alloc] initWithType:MKMDocument_Profile]);
     MKMDocumentSetFactory(MKMDocument_Bulletin,
-                          [[DocumentFactory alloc] initWithType:MKMDocument_Bulletin]);
+                          [[DIMDocumentFactory alloc] initWithType:MKMDocument_Bulletin]);
 }
 
 @end

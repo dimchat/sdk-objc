@@ -35,104 +35,17 @@
 //  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
+#import <DIMCore/DIMCore.h>
+
 #import "MKMAddressBTC.h"
 
 #import "MKMPlugins.h"
 
 @interface MKMEntityID : MKMID
 
-//- (instancetype)initWithName:(NSString *)seed
-//                     address:(id<MKMAddress>)address
-//                    terminal:(NSString *)location;
-//
-///**
-// *  Default ID form (name@address)
-// */
-//- (instancetype)initWithName:(NSString *)seed
-//                     address:(id<MKMAddress>)address;
-//
-///**
-// *  For ID without name(only contains address), likes BTC/ETH/...
-// */
-//- (instancetype)initWithAddress:(id<MKMAddress>)addr;
-
 @end
 
-static inline NSString *concat(NSString *name, id<MKMAddress> address, NSString *terminal) {
-    NSUInteger len1 = [name length];
-    NSUInteger len2 = [terminal length];
-    if (len1 > 0) {
-        if (len2 > 0) {
-            return [NSString stringWithFormat:@"%@@%@/%@", name, [address string], terminal];
-        } else {
-            return [NSString stringWithFormat:@"%@@%@", name, [address string]];
-        }
-    } else if (len2 > 0) {
-        return [NSString stringWithFormat:@"%@/%@", [address string], terminal];
-    } else {
-        return [address string];
-    }
-}
-
-static inline id<MKMID> parse(NSString *string) {
-    NSString *name;
-    id<MKMAddress> address;
-    NSString *terminal;
-    // split ID string
-    NSArray<NSString *> *pair = [string componentsSeparatedByString:@"/"];
-    // terminal
-    if (pair.count == 1) {
-        terminal = nil;
-    } else {
-        assert(pair.count == 2);
-        assert(pair.lastObject.length > 0);
-        terminal = pair.lastObject;
-    }
-    // name @ address
-    pair = [pair.firstObject componentsSeparatedByString:@"@"];
-    assert(pair.firstObject.length > 0);
-    if (pair.count == 1) {
-        // got address without name
-        name = nil;
-        address = MKMAddressParse(pair.firstObject);
-    } else {
-        // got name & address
-        assert(pair.count == 2);
-        assert(pair.lastObject.length > 0);
-        name = pair.firstObject;
-        address = MKMAddressParse(pair.lastObject);
-    }
-    if (address == nil) {
-        return nil;
-    }
-    return [[MKMEntityID alloc] initWithString:string name:name address:address terminal:terminal];
-}
-
 @implementation MKMEntityID
-
-//- (instancetype)initWithName:(NSString *)seed
-//                     address:(id<MKMAddress>)address
-//                    terminal:(NSString *)location {
-//    return [self initWithString:concat(seed, address, location)
-//                           name:seed
-//                        address:address
-//                       terminal:location];
-//}
-//
-//- (instancetype)initWithName:(NSString *)seed
-//                     address:(id<MKMAddress>)address {
-//    return [self initWithString:concat(seed, address, nil)
-//                           name:seed
-//                        address:address
-//                       terminal:nil];
-//}
-//
-//- (instancetype)initWithAddress:(id<MKMAddress>)address {
-//    return [self initWithString:concat(nil, address, nil)
-//                           name:nil
-//                        address:address
-//                       terminal:nil];
-//}
 
 - (MKMEntityType)type {
     MKMNetworkID network = [self.address type];
@@ -142,53 +55,38 @@ static inline id<MKMID> parse(NSString *string) {
 
 @end
 
-#pragma mark - ID factory
-
-@interface MKMEntityIDFactory : NSObject <MKMIDFactory> {
-    
-    NSMutableDictionary<NSString *, id<MKMID>> *_identifiers;
-}
+@interface MKMEntityIDFactory : DIMIDFactory
 
 @end
 
 @implementation MKMEntityIDFactory
 
-- (instancetype)init {
-    if (self = [super init]) {
-        _identifiers = [[NSMutableDictionary alloc] init];
-    }
-    return self;
+// Override
+- (id<MKMID>)newID:(NSString *)identifier name:(nullable NSString *)seed address:(id<MKMAddress>)main terminal:(nullable NSString *)loc {
+    // override for customized ID
+    return [[MKMEntityID alloc] initWithString:identifier name:seed address:main terminal:loc];
 }
 
-- (id<MKMID>)generateIDWithMeta:(id<MKMMeta>)meta
-                           type:(MKMEntityType)network
-                       terminal:(nullable NSString *)location {
-    id<MKMAddress> address = MKMAddressGenerate(network, meta);
-    NSAssert(address, @"failed to generate ID with meta: %@", meta);
-    return MKMIDCreate(meta.seed, address, location);
-}
-
-- (id<MKMID>)createID:(nullable NSString *)name
-              address:(id<MKMAddress>)address
-             terminal:(nullable NSString *)location {
-    NSString *string = concat(name, address, location);
-    id<MKMID> ID = [_identifiers objectForKey:string];
-    if (!ID) {
-        ID = [[MKMEntityID alloc] initWithString:string name:name address:address terminal:location];
-        [_identifiers setObject:ID forKey:string];
-    }
-    return ID;
-}
-
-- (nullable id<MKMID>)parseID:(NSString *)identifier {
-    id<MKMID> ID = [_identifiers objectForKey:identifier];
-    if (!ID) {
-        ID = parse(identifier);
-        if (ID) {
-            [_identifiers setObject:ID forKey:identifier];
+// Override
+- (nullable id<MKMID>)parse:(NSString *)identifier {
+    NSUInteger len = [identifier length];
+    if (len == 15) {
+        NSString *lower = [identifier lowercaseString];
+        if ([MKMAnyone() isEqual:lower]) {
+            return MKMAnyone();
+        }
+    } else if (len == 19) {
+        NSString *lower = [identifier lowercaseString];
+        if ([MKMEveryone() isEqual:lower]) {
+            return MKMEveryone();
+        }
+    } else if (len == 13) {
+        NSString *lower = [identifier lowercaseString];
+        if ([MKMFounder() isEqual:lower]) {
+            return MKMFounder();
         }
     }
-    return ID;
+    return [super parse:identifier];
 }
 
 @end

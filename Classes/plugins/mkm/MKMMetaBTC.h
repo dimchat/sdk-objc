@@ -35,7 +35,7 @@
 //  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
-#import <DIMSDK/MKMMeta.h>
+#import <DIMCore/DIMCore.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -53,7 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
  *      address = base58_encode(network + hash + code);
  *      number  = uint(code);
  */
-@interface MKMMetaBTC : MKMMeta
+@interface MKMMetaBTC : DIMMeta
 
 @end
 

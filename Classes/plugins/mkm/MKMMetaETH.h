@@ -35,7 +35,7 @@
 //  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
-#import <DIMSDK/MKMMeta.h>
+#import <DIMCore/DIMCore.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -51,7 +51,7 @@ NS_ASSUME_NONNULL_BEGIN
  *      digest  = keccak256(CT);
  *      address = hex_encode(digest.suffix(20));
  */
-@interface MKMMetaETH : MKMMeta
+@interface MKMMetaETH : DIMMeta
 
 @end
 

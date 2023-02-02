@@ -77,12 +77,6 @@
 		E9B494942988F834002C7F34 /* DIMDataCoders.mm in Sources */ = {isa = PBXBuildFile; fileRef = E9B494922988F834002C7F34 /* DIMDataCoders.mm */; };
 		E9B4949729894F9A002C7F34 /* DIMDataParsers.h in Headers */ = {isa = PBXBuildFile; fileRef = E9B4949529894F9A002C7F34 /* DIMDataParsers.h */; };
 		E9B4949829894F9A002C7F34 /* DIMDataParsers.mm in Sources */ = {isa = PBXBuildFile; fileRef = E9B4949629894F9A002C7F34 /* DIMDataParsers.mm */; };
-		E9B494A529898256002C7F34 /* MKMDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = E9B494A329898256002C7F34 /* MKMDocument.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		E9B494A629898256002C7F34 /* MKMDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = E9B494A429898256002C7F34 /* MKMDocument.m */; };
-		E9B494A9298988F0002C7F34 /* MKMDocs.h in Headers */ = {isa = PBXBuildFile; fileRef = E9B494A7298988F0002C7F34 /* MKMDocs.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		E9B494AA298988F0002C7F34 /* MKMDocs.m in Sources */ = {isa = PBXBuildFile; fileRef = E9B494A8298988F0002C7F34 /* MKMDocs.m */; };
-		E9B494AD29898A6B002C7F34 /* MKMMeta.h in Headers */ = {isa = PBXBuildFile; fileRef = E9B494AB29898A6B002C7F34 /* MKMMeta.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		E9B494AE29898A6B002C7F34 /* MKMMeta.m in Sources */ = {isa = PBXBuildFile; fileRef = E9B494AC29898A6B002C7F34 /* MKMMeta.m */; };
 		E9D71E0B25BAE5C600773ED1 /* DIMCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9798B5523BC992E00A14FD8 /* DIMCore.framework */; };
 		E9D71E0C25BAE5C600773ED1 /* DIMCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E9798B5523BC992E00A14FD8 /* DIMCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E9D71F1725BB2B7900773ED1 /* DaoKeDao.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9D71F1625BB2B7900773ED1 /* DaoKeDao.framework */; };
@@ -236,12 +230,6 @@
 		E9B494922988F834002C7F34 /* DIMDataCoders.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DIMDataCoders.mm; sourceTree = "<group>"; };
 		E9B4949529894F9A002C7F34 /* DIMDataParsers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMDataParsers.h; sourceTree = "<group>"; };
 		E9B4949629894F9A002C7F34 /* DIMDataParsers.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DIMDataParsers.mm; sourceTree = "<group>"; };
-		E9B494A329898256002C7F34 /* MKMDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKMDocument.h; sourceTree = "<group>"; };
-		E9B494A429898256002C7F34 /* MKMDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKMDocument.m; sourceTree = "<group>"; };
-		E9B494A7298988F0002C7F34 /* MKMDocs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKMDocs.h; sourceTree = "<group>"; };
-		E9B494A8298988F0002C7F34 /* MKMDocs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKMDocs.m; sourceTree = "<group>"; };
-		E9B494AB29898A6B002C7F34 /* MKMMeta.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKMMeta.h; sourceTree = "<group>"; };
-		E9B494AC29898A6B002C7F34 /* MKMMeta.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKMMeta.m; sourceTree = "<group>"; };
 		E9D71F1625BB2B7900773ED1 /* DaoKeDao.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = DaoKeDao.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E9D71F1B25BB2B8800773ED1 /* MingKeMing.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = MingKeMing.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E9D79E1A2583D39200C8E700 /* MKMRSAPrivateKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKMRSAPrivateKey.h; sourceTree = "<group>"; };
@@ -555,18 +543,12 @@
 				E9D79E492583D74000C8E700 /* MKMAddressBTC.m */,
 				E95CB3582587E25300685B1B /* MKMAddressETH.h */,
 				E95CB3592587E25300685B1B /* MKMAddressETH.m */,
-				E9B494AB29898A6B002C7F34 /* MKMMeta.h */,
-				E9B494AC29898A6B002C7F34 /* MKMMeta.m */,
 				E99B20092586834F001A05F1 /* MKMMetaDefault.h */,
 				E99B200A2586834F001A05F1 /* MKMMetaDefault.m */,
 				E9D79E4C2583DCBB00C8E700 /* MKMMetaBTC.h */,
 				E9D79E4D2583DCBB00C8E700 /* MKMMetaBTC.m */,
 				E95CB35C2587E84000685B1B /* MKMMetaETH.h */,
 				E95CB35D2587E84000685B1B /* MKMMetaETH.m */,
-				E9B494A329898256002C7F34 /* MKMDocument.h */,
-				E9B494A429898256002C7F34 /* MKMDocument.m */,
-				E9B494A7298988F0002C7F34 /* MKMDocs.h */,
-				E9B494A8298988F0002C7F34 /* MKMDocs.m */,
 			);
 			path = mkm;
 			sourceTree = "<group>";
@@ -614,7 +596,6 @@
 				E964A10C298B772000AC76F1 /* DIMStation.h in Headers */,
 				E95965572391609600DAA870 /* DIMMetaCommandProcessor.h in Headers */,
 				E99B200B2586834F001A05F1 /* MKMMetaDefault.h in Headers */,
-				E9B494AD29898A6B002C7F34 /* MKMMeta.h in Headers */,
 				E9D79E292583D39200C8E700 /* MKMAESKey.h in Headers */,
 				E95CB3332587972B00685B1B /* sha3.h in Headers */,
 				E95965262391096600DAA870 /* DIMContentProcessor.h in Headers */,
@@ -622,7 +603,6 @@
 				E964A125298BA80300AC76F1 /* MKMBaseKey.h in Headers */,
 				E95CB34E2587BDFA00685B1B /* MKMECCPrivateKey.h in Headers */,
 				E9D79E3B2583D51700C8E700 /* byteswap.h in Headers */,
-				E9B494A529898256002C7F34 /* MKMDocument.h in Headers */,
 				E9D79E4A2583D74000C8E700 /* MKMAddressBTC.h in Headers */,
 				E95965322391273200DAA870 /* DIMCommandProcessor.h in Headers */,
 				E95CB35A2587E25300685B1B /* MKMAddressETH.h in Headers */,
@@ -631,7 +611,6 @@
 				E9D79E4E2583DCBB00C8E700 /* MKMMetaBTC.h in Headers */,
 				E95CB35E2587E84000685B1B /* MKMMetaETH.h in Headers */,
 				E9D79E262583D39200C8E700 /* MKMRSAPublicKey.h in Headers */,
-				E9B494A9298988F0002C7F34 /* MKMDocs.h in Headers */,
 				E9B0CE4B259208FD0082BCFD /* DIMMessagePacker.h in Headers */,
 				E95D4A5728A1936500523488 /* DIMArrayContentProcessor.h in Headers */,
 				E9E8959025B70D7100F5E893 /* types.h in Headers */,
@@ -782,7 +761,6 @@
 				E9D79E462583D67700C8E700 /* MKMPlugins.m in Sources */,
 				E95965582391609600DAA870 /* DIMMetaCommandProcessor.m in Sources */,
 				E9B494942988F834002C7F34 /* DIMDataCoders.mm in Sources */,
-				E9B494AA298988F0002C7F34 /* MKMDocs.m in Sources */,
 				E95CB34F2587BDFA00685B1B /* MKMECCPrivateKey.m in Sources */,
 				E95965272391096600DAA870 /* DIMContentProcessor.m in Sources */,
 				E964A10B298B772000AC76F1 /* DIMRobot.m in Sources */,
@@ -795,10 +773,8 @@
 				E964A131298BE40500AC76F1 /* DIMContentFactory.m in Sources */,
 				E95CB3632587F44D00685B1B /* MKMSecKeyHelper.m in Sources */,
 				E9D79E3C2583D51700C8E700 /* base58.cpp in Sources */,
-				E9B494A629898256002C7F34 /* MKMDocument.m in Sources */,
 				E99B1FF82585DA53001A05F1 /* MKMPrivateKey+Store.m in Sources */,
 				E9D79E282583D39200C8E700 /* MKMRSAPrivateKey.m in Sources */,
-				E9B494AE29898A6B002C7F34 /* MKMMeta.m in Sources */,
 				E95D4A5F28A19AA200523488 /* DIMCustomizedContentProcessor.m in Sources */,
 				E959655C239160A400DAA870 /* DIMDocumentCommandProcessor.m in Sources */,
 				E9846A9D2907D7980022FBC5 /* MKMPlugins+EntityID.m in Sources */,
