@@ -35,9 +35,9 @@
 //  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
-#import "base58.h"
-#import "ripemd160.h"
-#import "sha3.h"
+#import "DIMDataDigesters.h"
+#import "DIMDataCoders.h"
+#import "DIMDataParsers.h"
 
 #import "MKMAESKey.h"
 #import "MKMRSAPublicKey.h"
@@ -202,166 +202,33 @@ static PlainKey *s_sharedPlainKey = nil;
 
 + (void)registerKeyFactories {
     // Symmetric key
-    MKMSymmetricKeyRegister(MKMAlgorithmAES,
-                            [[SymmetricKeyFactory alloc] initWithAlgorithm:MKMAlgorithmAES]);
-    MKMSymmetricKeyRegister(SCAlgorithmPlain,
-                            [[SymmetricKeyFactory alloc] initWithAlgorithm:SCAlgorithmPlain]);
+    MKMSymmetricKeySetFactory(MKMAlgorithmAES,
+                              [[SymmetricKeyFactory alloc] initWithAlgorithm:MKMAlgorithmAES]);
+    MKMSymmetricKeySetFactory(SCAlgorithmPlain,
+                              [[SymmetricKeyFactory alloc] initWithAlgorithm:SCAlgorithmPlain]);
 
     // public key
-    MKMPublicKeyRegister(MKMAlgorithmRSA,
-                         [[PublicKeyFactory alloc] initWithAlgorithm:MKMAlgorithmRSA]);
-    MKMPublicKeyRegister(MKMAlgorithmECC,
-                         [[PublicKeyFactory alloc] initWithAlgorithm:MKMAlgorithmECC]);
+    MKMPublicKeySetFactory(MKMAlgorithmRSA,
+                           [[PublicKeyFactory alloc] initWithAlgorithm:MKMAlgorithmRSA]);
+    MKMPublicKeySetFactory(MKMAlgorithmECC,
+                           [[PublicKeyFactory alloc] initWithAlgorithm:MKMAlgorithmECC]);
 
     // private key
-    MKMPrivateKeyRegister(MKMAlgorithmRSA,
-                          [[PrivateKeyFactory alloc] initWithAlgorithm:MKMAlgorithmRSA]);
-    MKMPrivateKeyRegister(MKMAlgorithmECC,
-                          [[PrivateKeyFactory alloc] initWithAlgorithm:MKMAlgorithmECC]);
+    MKMPrivateKeySetFactory(MKMAlgorithmRSA,
+                            [[PrivateKeyFactory alloc] initWithAlgorithm:MKMAlgorithmRSA]);
+    MKMPrivateKeySetFactory(MKMAlgorithmECC,
+                            [[PrivateKeyFactory alloc] initWithAlgorithm:MKMAlgorithmECC]);
 }
 
 @end
 
 #pragma mark -
-
-@interface Hex : NSObject <MKMDataCoder>
-
-@end
-
-static inline char hex_char(char ch) {
-    if (ch >= '0' && ch <= '9') {
-        return ch - '0';
-    }
-    if (ch >= 'a' && ch <= 'f') {
-        return ch - 'a' + 10;
-    }
-    if (ch >= 'A' && ch <= 'F') {
-        return ch - 'A' + 10;
-    }
-    return 0;
-}
-
-@implementation Hex
-
-- (nullable NSString *)encode:(NSData *)data {
-    NSMutableString *output = nil;
-    
-    const unsigned char *bytes = (const unsigned char *)[data bytes];
-    NSUInteger len = [data length];
-    output = [[NSMutableString alloc] initWithCapacity:(len*2)];
-    for (int i = 0; i < len; ++i) {
-        [output appendFormat:@"%02x", bytes[i]];
-    }
-    
-    return output;
-}
-
-- (nullable NSData *)decode:(NSString *)string {
-    NSMutableData *output = nil;
-    
-    NSString *str = string;
-    // 1. remove ' ', ':', '-', '\n'
-    str = [str stringByReplacingOccurrencesOfString:@" " withString:@""];
-    str = [str stringByReplacingOccurrencesOfString:@":" withString:@""];
-    str = [str stringByReplacingOccurrencesOfString:@"-" withString:@""];
-    str = [str stringByReplacingOccurrencesOfString:@"\n" withString:@""];
-    
-    // 2. skip '0x' prefix
-    char ch0, ch1;
-    NSUInteger pos = 0;
-    NSUInteger len = [string length];
-    if (len > 2) {
-        ch0 = [str characterAtIndex:0];
-        ch1 = [str characterAtIndex:1];
-        if (ch0 == '0' && (ch1 == 'x' || ch1 == 'X')) {
-            pos = 2;
-        }
-    }
-    
-    // 3. decode bytes
-    output = [[NSMutableData alloc] initWithCapacity:(len/2)];
-    unsigned char byte;
-    for (; (pos + 1) < len; pos += 2) {
-        ch0 = [str characterAtIndex:pos];
-        ch1 = [str characterAtIndex:(pos + 1)];
-        byte = hex_char(ch0) * 16 + hex_char(ch1);
-        [output appendBytes:&byte length:1];
-    }
-    
-    return output;
-}
-
-@end
-
-@interface Base58 : NSObject <MKMDataCoder>
-
-@end
-
-@implementation Base58
-
-- (nullable NSString *)encode:(NSData *)data {
-    NSString *output = nil;
-    const unsigned char *pbegin = (const unsigned char *)[data bytes];
-    const unsigned char *pend = pbegin + [data length];
-    std::string str = EncodeBase58(pbegin, pend);
-    output = [[NSString alloc] initWithCString:str.c_str()
-                                      encoding:NSUTF8StringEncoding];
-    return output;
-}
-
-- (nullable NSData *)decode:(NSString *)string {
-    NSData *output = nil;
-    const char *cstr = [string cStringUsingEncoding:NSUTF8StringEncoding];
-    std::vector<unsigned char> vch;
-    DecodeBase58(cstr, vch);
-    std::string str(vch.begin(), vch.end());
-    output = [[NSData alloc] initWithBytes:str.c_str() length:str.size()];
-    return output;
-}
-
-@end
 
 @implementation MKMPlugins (DataCoder)
 
 + (void)registerDataCoders {
-    Hex *hex = [[Hex alloc] init];
-    [MKMHex setCoder:hex];
-    
-    Base58 *base58 = [[Base58 alloc] init];
-    [MKMBase58 setCoder:base58];
-}
-
-@end
-
-#pragma mark -
-
-@interface RIPEMD160 : NSObject <MKMDataDigester>
-
-@end
-
-@implementation RIPEMD160
-
-- (NSData *)digest:(NSData *)data {
-    const unsigned char *bytes = (const unsigned char *)[data bytes];
-    unsigned char digest[CRIPEMD160::OUTPUT_SIZE];
-    CRIPEMD160().Write(bytes, (size_t)[data length]).Finalize(digest);
-    return [[NSData alloc] initWithBytes:digest length:CRIPEMD160::OUTPUT_SIZE];
-}
-
-@end
-
-@interface KECCAK256 : NSObject <MKMDataDigester>
-
-@end
-
-@implementation KECCAK256
-
-- (NSData *)digest:(NSData *)data {
-    const unsigned char *bytes = (const unsigned char *)[data bytes];
-    size_t len = data.length;
-    unsigned char digest[32];
-    sha3_256(digest, 32, bytes, len);
-    return [[NSData alloc] initWithBytes:digest length:32];
+    DIMRegisterDataCoders();
+    DIMRegisterDataParsers();
 }
 
 @end
@@ -369,11 +236,7 @@ static inline char hex_char(char ch) {
 @implementation MKMPlugins (Digest)
 
 + (void)registerDigesters {
-    RIPEMD160 *ripemd = [[RIPEMD160 alloc] init];
-    [MKMRIPEMD160 setDigester:ripemd];
-    
-    KECCAK256 *sha3 = [[KECCAK256 alloc] init];
-    [MKMKECCAK256 setDigester:sha3];
+    DIMRegisterDataDigesters();
 }
 
 @end

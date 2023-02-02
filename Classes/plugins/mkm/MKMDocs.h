@@ -1,13 +1,13 @@
 // license: https://mit-license.org
 //
-//  DIM-SDK : Decentralized Instant Messaging Software Development Kit
+//  Ming-Ke-Ming : Decentralized User Identity Authentication
 //
-//                               Written in 2022 by Moky <albert.moky@gmail.com>
+//                               Written in 2018 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2022 Albert Moky
+// Copyright (c) 2018 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,44 +28,26 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMCustomizedContentProcessor.h
+//  MKMDocs.h
 //  DIMSDK
 //
-//  Created by Albert Moky on 2022/8/9.
-//  Copyright © 2022 Albert Moky. All rights reserved.
+//  Created by Albert Moky on 2018/9/30.
+//  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import <DIMSDK/DIMContentProcessor.h>
+#import <DIMSDK/MKMDocument.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-/**
- *  Handler for Customized Content
- *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- */
-@protocol DIMCustomizedContentHandler <NSObject>
+@interface MKMVisa : MKMDocument <MKMVisa>
 
-/**
- *  Do your job
- */
-- (NSArray<id<DKDContent>> *)handleAction:(NSString *)act
-                                   sender:(id<MKMID>)uid
-                                  content:(id<DKDCustomizedContent>)customized
-                                  message:(id<DKDReliableMessage>)rMsg;
+- (instancetype)initWithID:(id<MKMID>)ID;
 
 @end
 
-@interface DIMCustomizedContentProcessor : DIMContentProcessor <DIMCustomizedContentHandler>
+@interface MKMBulletin : MKMDocument <MKMBulletin>
 
-// override for your application
-- (NSArray<id<DKDContent>> *)filterApplication:(NSString *)app
-                                       content:(id<DKDCustomizedContent>)customized
-                                      messasge:(id<DKDReliableMessage>)rMsg;
-
-// override for your module
-- (id<DIMCustomizedContentHandler>)fetchModule:(NSString *)mod
-                                       content:(id<DKDCustomizedContent>)customized
-                                      messasge:(id<DKDReliableMessage>)rMsg;
+- (instancetype)initWithID:(id<MKMID>)ID;
 
 @end
 

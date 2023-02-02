@@ -1,13 +1,13 @@
 // license: https://mit-license.org
 //
-//  DIM-SDK : Decentralized Instant Messaging Software Development Kit
+//  Ming-Ke-Ming : Decentralized User Identity Authentication
 //
-//                               Written in 2019 by Moky <albert.moky@gmail.com>
+//                               Written in 2020 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Albert Moky
+// Copyright (c) 2020 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,24 +28,17 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  HistoryProcessor.m
+//  DIMDataParsers.h
 //  DIMSDK
 //
-//  Created by Albert Moky on 2019/11/29.
-//  Copyright © 2019 Albert Moky. All rights reserved.
+//  Created by Albert Moky on 2020/4/7.
+//  Copyright © 2020 DIM Group. All rights reserved.
 //
 
-#import "DIMHistoryProcessor.h"
+#import <MingKeMing/MingKeMing.h>
 
-@implementation DIMHistoryCommandProcessor
+NS_ASSUME_NONNULL_BEGIN
 
-- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
-                                withMessage:(id<DKDReliableMessage>)rMsg {
-    NSAssert([content conformsToProtocol:@protocol(DKDHistoryCommand)],
-             @"history error: %@", content);
-    id<DKDHistoryCommand> command = (id<DKDHistoryCommand>)content;
-    NSString *text = [NSString stringWithFormat:@"History command (name: %@) not support yet!", command.cmd];
-    return [self respondText:text withGroup:command.group];
-}
+void DIMRegisterDataParsers(void);
 
-@end
+NS_ASSUME_NONNULL_END

@@ -115,13 +115,13 @@ static inline id<MKMID> parse(NSString *string) {
     if (pair.count == 1) {
         // got address without name
         name = nil;
-        address = MKMAddressFromString(pair.firstObject);
+        address = MKMAddressParse(pair.firstObject);
     } else {
         // got name & address
         assert(pair.count == 2);
         assert(pair.lastObject.length > 0);
         name = pair.firstObject;
-        address = MKMAddressFromString(pair.lastObject);
+        address = MKMAddressParse(pair.lastObject);
     }
     if (address == nil) {
         return nil;
@@ -236,9 +236,9 @@ static inline id<MKMID> parse(NSString *string) {
     return self;
 }
 
-- (id<MKMID>)generateID:(id<MKMMeta>)meta
-                   type:(MKMEntityType)network
-               terminal:(nullable NSString *)location {
+- (id<MKMID>)generateIDWithMeta:(id<MKMMeta>)meta
+                           type:(MKMEntityType)network
+                       terminal:(nullable NSString *)location {
     id<MKMAddress> address = MKMAddressGenerate(network, meta);
     NSAssert(address, @"failed to generate ID with meta: %@", meta);
     return MKMIDCreate(meta.seed, address, location);

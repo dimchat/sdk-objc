@@ -57,18 +57,26 @@ FOUNDATION_EXPORT const unsigned char DIMSDKVersionString[];
 #if !defined(__DIM_SDK__)
 #define __DIM_SDK__ 1
 
-// Extensions
+// Plugins
+#import <DIMSDK/MKMMeta.h>
+#import <DIMSDK/MKMDocument.h>
+#import <DIMSDK/MKMDocs.h>
+
 #import <DIMSDK/MKMPrivateKey+Store.h>
 #import <DIMSDK/MKMAddressBTC.h>
 #import <DIMSDK/MKMAddressETH.h>
 
-// Network
+#import <DIMSDK/MKMPlugins.h>
+
+// MingKeMing
 #import <DIMSDK/DIMServiceProvider.h>
 #import <DIMSDK/DIMStation.h>
 #import <DIMSDK/DIMRobot.h>
-
-// Group
 #import <DIMSDK/DIMChatroom.h>
+
+// DaoKeDao
+#import <DIMSDK/DIMContentFactory.h>
+#import <DIMSDK/DIMCommandFactory.h>
 
 // CPUs
 #import <DIMSDK/DIMFactory.h>

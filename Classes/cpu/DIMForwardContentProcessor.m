@@ -46,10 +46,10 @@
 //
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
-    NSAssert([content conformsToProtocol:@protocol(DIMForwardContent)],
+    NSAssert([content conformsToProtocol:@protocol(DKDForwardContent)],
              @"forward content error: %@", content);
     // get secret messages
-    NSArray<id<DKDReliableMessage>> *secrets = [(id<DIMForwardContent>)content secrets];
+    NSArray<id<DKDReliableMessage>> *secrets = [(id<DKDForwardContent>)content secrets];
     // call messenger to process it
     DIMMessenger *messenger = self.messenger;
     NSMutableArray *responses = [[NSMutableArray alloc] initWithCapacity:[secrets count]];

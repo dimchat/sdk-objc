@@ -99,7 +99,8 @@
 }
 
 - (BOOL)isMatch:(id<MKMEncryptKey>)pKey {
-    return MKMCryptographyKeysMatch(pKey, self);
+    MKMKeyFactoryManager *man = [MKMKeyFactoryManager sharedManager];
+    return [man.generalFactory isEncryptKey:pKey matchDecryptKey:self];
 }
 
 - (void)setData:(NSData *)data {

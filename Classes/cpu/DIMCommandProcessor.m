@@ -41,8 +41,8 @@
 
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
-    NSAssert([content conformsToProtocol:@protocol(DIMCommand)], @"command error: %@", content);
-    id<DIMCommand> command = (id<DIMCommand>)content;
+    NSAssert([content conformsToProtocol:@protocol(DKDCommand)], @"command error: %@", content);
+    id<DKDCommand> command = (id<DKDCommand>)content;
     NSString *text = [NSString stringWithFormat:DIM_CMD_NOT_SUPPORT, command.cmd];
     return [self respondText:text withGroup:command.group];
 }

@@ -40,17 +40,64 @@
 #import "MKMMetaDefault.h"
 #import "MKMMetaBTC.h"
 #import "MKMMetaETH.h"
+#import "MKMDocs.h"
 
 #import "MKMPlugins.h"
 
-@interface AddressFactory : MKMAddressFactory
+@interface AddressFactory : NSObject <MKMAddressFactory> {
+    
+    NSMutableDictionary<NSString *, id<MKMAddress>> *_addresses;
+}
 
 @end
 
 @implementation AddressFactory
 
+- (instancetype)init {
+    if (self = [super init]) {
+        _addresses = [[NSMutableDictionary alloc] init];
+        // cache broadcast addresses
+        id<MKMAddress> anywhere = MKMAnywhere();
+        [_addresses setObject:anywhere forKey:[anywhere string]];
+        id<MKMAddress> everywhere = MKMEverywhere();
+        [_addresses setObject:everywhere forKey:[everywhere string]];
+    }
+    return self;
+}
+
+- (nullable id<MKMAddress>)generateAddressWithMeta:(id<MKMMeta>)meta
+                                              type:(MKMEntityType)network {
+    id<MKMAddress> address = [meta generateAddress:network];
+    if (address) {
+        [_addresses setObject:address forKey:address.string];
+    }
+    return address;
+}
+
+- (nullable id<MKMAddress>)parseAddress:(NSString *)address {
+    id<MKMAddress> addr = [_addresses objectForKey:address];
+    if (!addr) {
+        addr = [self createAddress:address];
+        if (addr) {
+            [_addresses setObject:addr forKey:address];
+        }
+    }
+    return addr;
+}
+
 - (nullable id<MKMAddress>)createAddress:(NSString *)address {
     NSUInteger len = [address length];
+    if (len == 8) {
+        NSString *lower = [address lowercaseString];
+        if ([MKMAnywhere() isEqual:lower]) {
+            return MKMAnywhere();
+        }
+    } else if (len == 9) {
+        NSString *lower = [address lowercaseString];
+        if ([MKMEverywhere() isEqual:lower]) {
+            return MKMEverywhere();
+        }
+    }
     if (len == 42) {
         // ETH address
         return [MKMAddressETH parse:address];
@@ -80,7 +127,9 @@
     return self;
 }
 
-- (id<MKMMeta>)createMeta:(id<MKMPublicKey>)PK seed:(nullable NSString *)name fingerprint:(nullable NSData *)CT {
+- (nonnull id<MKMMeta>)createMetaWithKey:(id<MKMVerifyKey>)PK
+                                    seed:(nullable NSString *)name
+                             fingerprint:(nullable NSData *)CT {
     id<MKMMeta> meta;
     switch (_type) {
         case MKMMetaVersion_MKM:
@@ -105,20 +154,22 @@
     return meta;
 }
 
-- (id<MKMMeta>)generateMeta:(id<MKMPrivateKey>)SK seed:(nullable NSString *)name {
+- (nonnull id<MKMMeta>)generateMetaWithKey:(id<MKMSignKey>)SK
+                                      seed:(nullable NSString *)name {
     NSData *CT;
     if (name.length > 0) {
         CT = [SK sign:MKMUTF8Encode(name)];
     } else {
         CT = nil;
     }
-    id<MKMPublicKey> PK = [SK publicKey];
-    return [self createMeta:PK seed:name fingerprint:CT];
+    id<MKMPublicKey> PK = [(id<MKMPrivateKey>)SK publicKey];
+    return [self createMetaWithKey:PK seed:name fingerprint:CT];
 }
 
 - (nullable id<MKMMeta>)parseMeta:(NSDictionary *)info {
     id<MKMMeta> meta = nil;
-    MKMMetaType version = MKMMetaGetType(info);
+    MKMFactoryManager *man = [MKMFactoryManager sharedManager];
+    MKMMetaType version = [man.generalFactory metaType:info];
     switch (version) {
         case MKMMetaVersion_MKM:
             meta = [[MKMMetaDefault alloc] initWithDictionary:info];
@@ -198,7 +249,7 @@
 }
 
 - (nullable id<MKMDocument>)parseDocument:(NSDictionary *)doc {
-    id<MKMID> ID = MKMIDFromString([doc objectForKey:@"ID"]);
+    id<MKMID> ID = MKMIDParse([doc objectForKey:@"ID"]);
     if (!ID) {
         return nil;
     }
@@ -229,27 +280,27 @@
 }
 
 + (void)registerMetaFactory {
-    MKMMetaRegister(MKMMetaVersion_MKM,
-                    [[MetaFactory alloc] initWithType:MKMMetaVersion_MKM]);
-    MKMMetaRegister(MKMMetaVersion_BTC,
-                    [[MetaFactory alloc] initWithType:MKMMetaVersion_BTC]);
-    MKMMetaRegister(MKMMetaVersion_ExBTC,
-                    [[MetaFactory alloc] initWithType:MKMMetaVersion_ExBTC]);
-    MKMMetaRegister(MKMMetaVersion_ETH,
-                    [[MetaFactory alloc] initWithType:MKMMetaVersion_ETH]);
-    MKMMetaRegister(MKMMetaVersion_ExETH,
-                    [[MetaFactory alloc] initWithType:MKMMetaVersion_ExETH]);
+    MKMMetaSetFactory(MKMMetaVersion_MKM,
+                      [[MetaFactory alloc] initWithType:MKMMetaVersion_MKM]);
+    MKMMetaSetFactory(MKMMetaVersion_BTC,
+                      [[MetaFactory alloc] initWithType:MKMMetaVersion_BTC]);
+    MKMMetaSetFactory(MKMMetaVersion_ExBTC,
+                      [[MetaFactory alloc] initWithType:MKMMetaVersion_ExBTC]);
+    MKMMetaSetFactory(MKMMetaVersion_ETH,
+                      [[MetaFactory alloc] initWithType:MKMMetaVersion_ETH]);
+    MKMMetaSetFactory(MKMMetaVersion_ExETH,
+                      [[MetaFactory alloc] initWithType:MKMMetaVersion_ExETH]);
 }
 
 + (void)registerDocumentFactory {
-    MKMDocumentRegister(@"*",
-                        [[DocumentFactory alloc] initWithType:@"*"]);
-    MKMDocumentRegister(MKMDocument_Visa,
-                        [[DocumentFactory alloc] initWithType:MKMDocument_Visa]);
-    MKMDocumentRegister(MKMDocument_Profile,
-                        [[DocumentFactory alloc] initWithType:MKMDocument_Profile]);
-    MKMDocumentRegister(MKMDocument_Bulletin,
-                        [[DocumentFactory alloc] initWithType:MKMDocument_Bulletin]);
+    MKMDocumentSetFactory(@"*",
+                          [[DocumentFactory alloc] initWithType:@"*"]);
+    MKMDocumentSetFactory(MKMDocument_Visa,
+                          [[DocumentFactory alloc] initWithType:MKMDocument_Visa]);
+    MKMDocumentSetFactory(MKMDocument_Profile,
+                          [[DocumentFactory alloc] initWithType:MKMDocument_Profile]);
+    MKMDocumentSetFactory(MKMDocument_Bulletin,
+                          [[DocumentFactory alloc] initWithType:MKMDocument_Bulletin]);
 }
 
 @end

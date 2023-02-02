@@ -46,7 +46,7 @@
     // TODO: send 'query' group command to owner
 }
 
-- (NSArray<id<DKDContent>> *)temporarySave:(id<DIMGroupCommand>)command sender:(id<MKMID>)sender {
+- (NSArray<id<DKDContent>> *)temporarySave:(id<DKDGroupCommand>)command sender:(id<MKMID>)sender {
     DIMFacebook *facebook = self.facebook;
     id<MKMID> group = command.group;
     // check whether the owner contained in the new members
@@ -75,16 +75,16 @@
     }
     // NOTICE: this is a partial member-list
     //         query the sender for full-list
-    id<DIMCommand> query = [[DIMQueryGroupCommand alloc] initWithGroup:group];
+    id<DKDCommand> query = [[DIMQueryGroupCommand alloc] initWithGroup:group];
     return [self respondContent:query];
 }
 
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
-    NSAssert([content conformsToProtocol:@protocol(DIMResetGroupCommand)] ||
-             [content conformsToProtocol:@protocol(DIMInviteGroupCommand)],
+    NSAssert([content conformsToProtocol:@protocol(DKDResetGroupCommand)] ||
+             [content conformsToProtocol:@protocol(DKDInviteGroupCommand)],
              @"invite command error: %@", content);
-    id<DIMGroupCommand> command = (id<DIMGroupCommand>)content;
+    id<DKDGroupCommand> command = (id<DKDGroupCommand>)content;
     DIMFacebook *facebook = self.facebook;
 
     // 0. check group

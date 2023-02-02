@@ -51,7 +51,7 @@
         // broadcast message is always overt
         return group;
     }
-    if ([content conformsToProtocol:@protocol(DIMCommand)]) {
+    if ([content conformsToProtocol:@protocol(DKDCommand)]) {
         // group command should be sent to each member directly, so
         // don't expose group ID
         return nil;
@@ -162,7 +162,7 @@
     //       ------------------
     //       'M' -> 'meta'
     //       'P' -> 'visa'
-    return DKDReliableMessageFromDictionary(dict);
+    return DKDReliableMessageParse(dict);
 }
 
 // TODO: make sure meta exists before verifying message

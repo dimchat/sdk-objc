@@ -44,9 +44,9 @@
 
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
-    NSAssert([content conformsToProtocol:@protocol(DIMQueryGroupCommand)],
+    NSAssert([content conformsToProtocol:@protocol(DKDQueryGroupCommand)],
              @"query group command error: %@", content);
-    id<DIMQueryGroupCommand> command = (id<DIMQueryGroupCommand>)content;
+    id<DKDQueryGroupCommand> command = (id<DKDQueryGroupCommand>)content;
     DIMFacebook *facebook = self.facebook;
     
     // 0. check group
@@ -70,7 +70,7 @@
     // 2. respond
     id<DIMUser> user = [self.facebook currentUser];
     NSAssert(user, @"current user not set");
-    id<DIMCommand> res;
+    id<DKDCommand> res;
     if ([user.ID isEqual:owner]) {
         res = [[DIMResetGroupCommand alloc] initWithGroup:group members:members];
     } else {

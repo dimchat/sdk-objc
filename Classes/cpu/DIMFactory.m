@@ -145,13 +145,13 @@
 - (id<DIMContentProcessor>)getProcessor:(id<DKDContent>)content {
     id<DIMContentProcessor> cpu;
     DKDContentType msgType = content.type;
-    if ([content conformsToProtocol:@protocol(DIMCommand)]) {
-        NSString *cmd = [(id<DIMCommand>)content cmd];
+    if ([content conformsToProtocol:@protocol(DKDCommand)]) {
+        NSString *cmd = [(id<DKDCommand>)content cmd];
         // command processor
         cpu = [self getCommandProcessor:cmd type:msgType];
         if (cpu) {
             return cpu;
-        } else if ([content conformsToProtocol:@protocol(DIMGroupCommand)]) {
+        } else if ([content conformsToProtocol:@protocol(DKDGroupCommand)]) {
             // group command processor
             cpu = [self getCommandProcessor:@"group" type:msgType];
             if (cpu) {

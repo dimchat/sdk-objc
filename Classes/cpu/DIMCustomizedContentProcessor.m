@@ -41,7 +41,7 @@
 
 // override for your application
 - (NSArray<id<DKDContent>> *)filterApplication:(NSString *)app
-                                       content:(id<DIMCustomizedContent>)customized
+                                       content:(id<DKDCustomizedContent>)customized
                                       messasge:(id<DKDReliableMessage>)rMsg {
     NSString *text = [NSString stringWithFormat:@"Customized Content (app: %@) not support yet!", app];
     return [self respondText:text withGroup:nil];
@@ -49,7 +49,7 @@
 
 // override for your module
 - (id<DIMCustomizedContentHandler>)fetchModule:(NSString *)mod
-                                       content:(id<DIMCustomizedContent>)customized
+                                       content:(id<DKDCustomizedContent>)customized
                                       messasge:(id<DKDReliableMessage>)rMsg {
     // if the application has too many modules, I suggest you to
     // use different handler to do the jobs for each module.
@@ -59,7 +59,7 @@
 // override for customized actions
 - (NSArray<id<DKDContent>> *)handleAction:(NSString *)act
                                    sender:(id<MKMID>)uid
-                                  content:(id<DIMCustomizedContent>)customized
+                                  content:(id<DKDCustomizedContent>)customized
                                   message:(id<DKDReliableMessage>)rMsg {
     NSString *app = [customized application];
     NSString *mod = [customized module];
@@ -70,9 +70,9 @@
 // override for customized actions
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
-    NSAssert([content conformsToProtocol:@protocol(DIMCustomizedContent)],
+    NSAssert([content conformsToProtocol:@protocol(DKDCustomizedContent)],
              @"customized content error: %@", content);
-    id<DIMCustomizedContent> customized = (id<DIMCustomizedContent>)content;
+    id<DKDCustomizedContent> customized = (id<DKDCustomizedContent>)content;
     // 1. check app id
     NSString *app = [customized application];
     NSArray *res = [self filterApplication:app content:customized messasge:rMsg];

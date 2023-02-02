@@ -35,7 +35,7 @@
 //  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
-#import <MingKeMing/MingKeMing.h>
+#import <DIMSDK/MKMMeta.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

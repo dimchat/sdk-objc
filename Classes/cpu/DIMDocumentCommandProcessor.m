@@ -46,7 +46,7 @@
     // query document for ID
     id<MKMDocument> doc = [facebook documentForID:ID type:type];
     if (doc) {
-        id<DIMCommand> command = [[DIMDocumentCommand alloc] initWithID:ID document:doc];
+        id<DKDCommand> command = [[DIMDocumentCommand alloc] initWithID:ID document:doc];
         return [self respondContent:command];
     } else {
         NSString *text = [NSString stringWithFormat:@"Sorry, document not found for ID: %@", ID];
@@ -76,9 +76,9 @@
 
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
-    NSAssert([content conformsToProtocol:@protocol(DIMDocumentCommand)],
+    NSAssert([content conformsToProtocol:@protocol(DKDDocumentCommand)],
              @"document command error: %@", content);
-    id<DIMDocumentCommand> command = (id<DIMDocumentCommand>)content;
+    id<DKDDocumentCommand> command = (id<DKDDocumentCommand>)content;
     id<MKMID> ID = command.ID;
     if (ID) {
         id<MKMDocument> doc = command.document;

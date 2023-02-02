@@ -35,6 +35,9 @@
 //  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
+#import "DIMContentFactory.h"
+#import "DIMCommandFactory.h"
+
 #import "DIMContentProcessor.h"
 #import "DIMCommandProcessor.h"
 
