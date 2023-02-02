@@ -42,13 +42,6 @@
 #import "DIMMetaCommandProcessor.h"
 #import "DIMDocumentCommandProcessor.h"
 
-#import "DIMGroupCommandProcessor.h"
-#import "DIMInviteCommandProcessor.h"
-#import "DIMExpelCommandProcessor.h"
-#import "DIMQuitCommandProcessor.h"
-#import "DIMQueryCommandProcessor.h"
-#import "DIMResetCommandProcessor.h"
-
 #import "DIMFactory.h"
 
 #define CREATE_CPU(clazz)                                                      \
@@ -78,8 +71,6 @@
     // default commands
     if (type == DKDContentType_Command) {
         return CREATE_CPU(DIMCommandProcessor);
-    } else if (type == DKDContentType_History) {
-        return CREATE_CPU(DIMHistoryCommandProcessor);
     }
     /*
     // default contents
@@ -100,20 +91,6 @@
     // document command
     if ([name isEqualToString:DIMCommand_Document]) {
         return CREATE_CPU(DIMDocumentCommandProcessor);
-    }
-    // group commands
-    if ([name isEqualToString:@"group"]) {
-        return CREATE_CPU(DIMGroupCommandProcessor);
-    } else if ([name isEqualToString:DIMGroupCommand_Invite]) {
-        return CREATE_CPU(DIMInviteGroupCommandProcessor);
-    } else if ([name isEqualToString:DIMGroupCommand_Expel]) {
-        return CREATE_CPU(DIMExpelGroupCommandProcessor);
-    } else if ([name isEqualToString:DIMGroupCommand_Quit]) {
-        return CREATE_CPU(DIMQuitGroupCommandProcessor);
-    } else if ([name isEqualToString:DIMGroupCommand_Query]) {
-        return CREATE_CPU(DIMQueryGroupCommandProcessor);
-    } else if ([name isEqualToString:DIMGroupCommand_Reset]) {
-        return CREATE_CPU(DIMResetGroupCommandProcessor);
     }
     // unknown
     return nil;

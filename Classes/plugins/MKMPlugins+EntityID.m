@@ -35,47 +35,26 @@
 //  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
-#import <MingKeMing/MingKeMing.h>
-
 #import "MKMAddressBTC.h"
 
 #import "MKMPlugins.h"
 
-@interface MKMEntityID : MKMString <MKMID>
+@interface MKMEntityID : MKMID
 
-@property (strong, nonatomic, nullable) NSString *name;
-@property (strong, nonatomic) id<MKMAddress> address;
-@property (strong, nonatomic, nullable) NSString *terminal;
-
-/**
- *  Initialize an ID with string form "name@address[/terminal]"
- *
- * @param string - ID string
- * @param seed - username
- * @param address - hash(fingerprint)
- * @param location - login point (optional)
- * @return ID object
- */
-- (instancetype)initWithString:(NSString *)string
-                          name:(nullable NSString *)seed
-                       address:(id<MKMAddress>)address
-                      terminal:(nullable NSString *)location
-NS_DESIGNATED_INITIALIZER;
-
-- (instancetype)initWithName:(NSString *)seed
-                     address:(id<MKMAddress>)address
-                    terminal:(NSString *)location;
-
-/**
- *  Default ID form (name@address)
- */
-- (instancetype)initWithName:(NSString *)seed
-                     address:(id<MKMAddress>)address;
-
-/**
- *  For ID without name(only contains address), likes BTC/ETH/...
- */
-- (instancetype)initWithAddress:(id<MKMAddress>)addr;
+//- (instancetype)initWithName:(NSString *)seed
+//                     address:(id<MKMAddress>)address
+//                    terminal:(NSString *)location;
+//
+///**
+// *  Default ID form (name@address)
+// */
+//- (instancetype)initWithName:(NSString *)seed
+//                     address:(id<MKMAddress>)address;
+//
+///**
+// *  For ID without name(only contains address), likes BTC/ETH/...
+// */
+//- (instancetype)initWithAddress:(id<MKMAddress>)addr;
 
 @end
 
@@ -131,89 +110,34 @@ static inline id<MKMID> parse(NSString *string) {
 
 @implementation MKMEntityID
 
-- (instancetype)init {
-    NSAssert(false, @"DON'T call me!");
-    NSString *string = nil;
-    id<MKMAddress> address = nil;
-    return [self initWithString:string name:nil address:address terminal:nil];
-}
-
-- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
-    NSAssert(false, @"DON'T call me!");
-    NSString *string = nil;
-    id<MKMAddress> address = nil;
-    return [self initWithString:string name:nil address:address terminal:nil];
-}
-
-- (instancetype)initWithString:(NSString *)aString {
-    //NSAssert(false, @"DON'T call me!");
-    id<MKMAddress> address = nil;
-    return [self initWithString:aString name:nil address:address terminal:nil];
-}
-
-/* designated initializer */
-- (instancetype)initWithString:(NSString *)string
-                          name:(nullable NSString *)seed
-                       address:(id<MKMAddress>)address
-                      terminal:(nullable NSString *)location {
-    if (self = [super initWithString:string]) {
-        _name = seed;
-        _address = address;
-        _terminal = location;
-    }
-    return self;
-}
-
-- (instancetype)initWithName:(NSString *)seed
-                     address:(id<MKMAddress>)address
-                    terminal:(NSString *)location {
-    return [self initWithString:concat(seed, address, location)
-                           name:seed
-                        address:address
-                       terminal:location];
-}
-
-- (instancetype)initWithName:(NSString *)seed
-                     address:(id<MKMAddress>)address {
-    return [self initWithString:concat(seed, address, nil)
-                           name:seed
-                        address:address
-                       terminal:nil];
-}
-
-- (instancetype)initWithAddress:(id<MKMAddress>)address {
-    return [self initWithString:concat(nil, address, nil)
-                           name:nil
-                        address:address
-                       terminal:nil];
-}
-
-- (id)copyWithZone:(nullable NSZone *)zone {
-    MKMEntityID *identifier = [super copyWithZone:zone];
-    if (identifier) {
-        identifier.name = _name;
-        identifier.address = _address;
-        identifier.terminal = _terminal;
-    }
-    return identifier;
-}
+//- (instancetype)initWithName:(NSString *)seed
+//                     address:(id<MKMAddress>)address
+//                    terminal:(NSString *)location {
+//    return [self initWithString:concat(seed, address, location)
+//                           name:seed
+//                        address:address
+//                       terminal:location];
+//}
+//
+//- (instancetype)initWithName:(NSString *)seed
+//                     address:(id<MKMAddress>)address {
+//    return [self initWithString:concat(seed, address, nil)
+//                           name:seed
+//                        address:address
+//                       terminal:nil];
+//}
+//
+//- (instancetype)initWithAddress:(id<MKMAddress>)address {
+//    return [self initWithString:concat(nil, address, nil)
+//                           name:nil
+//                        address:address
+//                       terminal:nil];
+//}
 
 - (MKMEntityType)type {
-    MKMNetworkID network = [_address type];
+    MKMNetworkID network = [self.address type];
     // compatible with MKM 0.9.*
     return MKMEntityTypeFromNetworkID(network);
-}
-
-- (BOOL)isBroadcast {
-    return [_address isBroadcast];
-}
-
-- (BOOL)isUser {
-    return [_address isUser];
-}
-
-- (BOOL)isGroup {
-    return [_address isGroup];
 }
 
 @end
