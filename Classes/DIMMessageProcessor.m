@@ -35,6 +35,7 @@
 //  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
+#import "DIMMessageFactory.h"
 #import "DIMContentFactory.h"
 #import "DIMCommandFactory.h"
 
@@ -243,6 +244,7 @@
     //
     //  Register core factories
     //
+    DIMRegisterMessageFactories();
     DIMRegisterContentFactories();
     DIMRegisterCommandFactories();
     

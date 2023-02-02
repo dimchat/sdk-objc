@@ -1,13 +1,13 @@
 // license: https://mit-license.org
 //
-//  DIM-SDK : Decentralized Instant Messaging Software Development Kit
+//  DIMP : Decentralized Instant Messaging Protocol
 //
-//                               Written in 2018 by Moky <albert.moky@gmail.com>
+//                               Written in 2023 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Albert Moky
+// Copyright (c) 2023 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,33 +28,20 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMServiceProvider.m
-//  DIMCore
+//  DIMMessageFactory.m
+//  DIMSDK
 //
-//  Created by Albert Moky on 2018/10/13.
-//  Copyright © 2018 DIM Group. All rights reserved.
+//  Created by Albert Moky on 2023/2/2.
+//  Copyright © 2023 Albert Moky. All rights reserved.
 //
 
-#import "DIMServiceProvider.h"
+#import "DIMMessageFactory.h"
 
-@implementation DIMServiceProvider
-
-/* designated initializer */
-- (instancetype)initWithID:(id<MKMID>)ID {
-    NSAssert(ID.type == MKMEntityType_ISP, @"SP ID error: %@", ID);
-    if (self = [super initWithID:ID]) {
-        //
-    }
-    return self;
+void DIMRegisterMessageFactories(void) {
+    // Envelope factory
+    DKDEnvelopeSetFactory([[DIMEnvelopeFactory alloc] init]);
+    // Message factories
+    DKDInstantMessageSetFactory([[DIMInstantMessageFactory alloc] init]);
+    DKDSecureMessageSetFactory([[DIMSecureMessageFactory alloc] init]);
+    DKDReliableMessageSetFactory([[DIMReliableMessageFactory alloc] init]);
 }
-
-#pragma mark Station
-
-- (NSArray<id<MKMID>> *)stations {
-    id<DIMGroupDataSource> delegate = (id<DIMGroupDataSource>)[self dataSource];
-    NSAssert(delegate, @"data source not set yet");
-    NSArray *list = [delegate membersOfGroup:self.ID];
-    return [list mutableCopy];
-}
-
-@end

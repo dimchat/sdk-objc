@@ -116,7 +116,7 @@
     if (!_key) {
         id dict = [self objectForKey:@"key"];
         NSAssert(dict, @"meta key not found: %@", self);
-        _key = (id<MKMVerifyKey>)MKMPrivateKeyParse(dict);
+        _key = (id<MKMVerifyKey>)MKMPublicKeyParse(dict);
     }
     return _key;
 }

@@ -75,6 +75,7 @@ FOUNDATION_EXPORT const unsigned char DIMSDKVersionString[];
 #import <DIMSDK/DIMChatroom.h>
 
 // DaoKeDao
+#import <DIMSDK/DIMMessageFactory.h>
 #import <DIMSDK/DIMContentFactory.h>
 #import <DIMSDK/DIMCommandFactory.h>
 

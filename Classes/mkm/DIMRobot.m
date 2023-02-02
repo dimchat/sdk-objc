@@ -35,8 +35,6 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import "DIMFacebook.h"
-
 #import "DIMRobot.h"
 
 @implementation DIMBot
