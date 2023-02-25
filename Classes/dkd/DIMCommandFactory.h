@@ -41,7 +41,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark Command Factory
 
-typedef id<DKDCommand>_Nullable(^DIMCommandParserBlock)(NSDictionary *command);
+typedef id<DKDCommand>_Nullable(^DIMCommandParserBlock)(NSDictionary *content);
 
 /**
  *  Base Command Factory
@@ -61,8 +61,8 @@ NS_DESIGNATED_INITIALIZER;
                                    /* EOF 'DIMCommandFactoryWithBlock(block)' */
 
 #define DIMCommandFactoryWithClass(clazz)                                      \
-            DIMCommandFactoryWithBlock(^(NSDictionary *command) {              \
-                return [[clazz alloc] initWithDictionary:command];             \
+            DIMCommandFactoryWithBlock(^(NSDictionary *content) {              \
+                return [[clazz alloc] initWithDictionary:content];             \
             })                                                                 \
                                    /* EOF 'DIMCommandFactoryWithClass(clazz)' */
 

@@ -61,8 +61,8 @@
 }
 
 // Override
-- (nullable id<DKDCommand>)parseCommand:(NSDictionary *)command {
-    return _block(command);
+- (nullable id<DKDCommand>)parseCommand:(NSDictionary *)content {
+    return _block(content);
 }
 
 @end
@@ -88,8 +88,8 @@
 }
 
 // Override
-- (nullable id<DKDCommand>)parseCommand:(NSDictionary *)command {
-    return [[DIMCommand alloc] initWithDictionary:command];
+- (nullable id<DKDCommand>)parseCommand:(NSDictionary *)content {
+    return [[DIMCommand alloc] initWithDictionary:content];
 }
 
 @end
@@ -97,8 +97,8 @@
 @implementation DIMHistoryCommandFactory
 
 // Override
-- (nullable id<DKDCommand>)parseCommand:(NSDictionary *)command {
-    return [[DIMHistoryCommand alloc] initWithDictionary:command];
+- (nullable id<DKDCommand>)parseCommand:(NSDictionary *)content {
+    return [[DIMHistoryCommand alloc] initWithDictionary:content];
 }
 
 @end
@@ -118,8 +118,8 @@
 }
 
 // Override
-- (nullable id<DKDCommand>)parseCommand:(NSDictionary *)command {
-    return [[DIMGroupCommand alloc] initWithDictionary:command];
+- (nullable id<DKDCommand>)parseCommand:(NSDictionary *)content {
+    return [[DIMGroupCommand alloc] initWithDictionary:content];
 }
 
 @end
