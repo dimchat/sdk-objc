@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
     s.name                  = 'DIMSDK'
-    s.version               = '0.6.0'
+    s.version               = '0.6.1'
     s.summary               = 'Decentralized Instant Messaging'
     s.description           = <<-DESC
             Decentralized Instant Messaging (Objective-C SDK)
@@ -20,7 +20,7 @@ Pod::Spec.new do |s|
     # s.platform            = :ios, "11.0"
     s.ios.deployment_target = '12.0'
 
-    s.source_files          = 'Classes', 'Classes/**/*.{h,m}'
+    s.source_files          = 'Classes', 'Classes/**/*'
     # s.exclude_files       = 'Classes/Exclude'
     s.public_header_files   = 'Classes/**/*.h'
 
