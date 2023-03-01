@@ -77,10 +77,6 @@
 		E9B494942988F834002C7F34 /* DIMDataCoders.mm in Sources */ = {isa = PBXBuildFile; fileRef = E9B494922988F834002C7F34 /* DIMDataCoders.mm */; };
 		E9B4949729894F9A002C7F34 /* DIMDataParsers.h in Headers */ = {isa = PBXBuildFile; fileRef = E9B4949529894F9A002C7F34 /* DIMDataParsers.h */; };
 		E9B4949829894F9A002C7F34 /* DIMDataParsers.mm in Sources */ = {isa = PBXBuildFile; fileRef = E9B4949629894F9A002C7F34 /* DIMDataParsers.mm */; };
-		E9D71E0B25BAE5C600773ED1 /* DIMCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9798B5523BC992E00A14FD8 /* DIMCore.framework */; };
-		E9D71E0C25BAE5C600773ED1 /* DIMCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E9798B5523BC992E00A14FD8 /* DIMCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		E9D71F1725BB2B7900773ED1 /* DaoKeDao.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9D71F1625BB2B7900773ED1 /* DaoKeDao.framework */; };
-		E9D71F1C25BB2B8800773ED1 /* MingKeMing.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9D71F1B25BB2B8800773ED1 /* MingKeMing.framework */; };
 		E9D79E232583D39200C8E700 /* MKMRSAPrivateKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E9D79E1A2583D39200C8E700 /* MKMRSAPrivateKey.h */; };
 		E9D79E252583D39200C8E700 /* MKMAESKey.m in Sources */ = {isa = PBXBuildFile; fileRef = E9D79E1C2583D39200C8E700 /* MKMAESKey.m */; };
 		E9D79E262583D39200C8E700 /* MKMRSAPublicKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E9D79E1D2583D39200C8E700 /* MKMRSAPublicKey.h */; };
@@ -118,27 +114,6 @@
 			remoteGlobalIDString = E919AFD12390F8DD004F7FF9;
 			remoteInfo = DIMSDK;
 		};
-		E9798B5423BC992E00A14FD8 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E9798B4D23BC992E00A14FD8 /* DIMCore.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = E9F3AA3C21CBD02C009690F6;
-			remoteInfo = DIMCore;
-		};
-		E9798B5623BC992E00A14FD8 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E9798B4D23BC992E00A14FD8 /* DIMCore.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = E9F3AA4521CBD02C009690F6;
-			remoteInfo = DIMCoreTests;
-		};
-		E9798B5823BC993800A14FD8 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E9798B4D23BC992E00A14FD8 /* DIMCore.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = E9F3AA3B21CBD02C009690F6;
-			remoteInfo = DIMCore;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -148,7 +123,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				E9D71E0C25BAE5C600773ED1 /* DIMCore.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -212,7 +186,6 @@
 		E964A12E298BE40500AC76F1 /* DIMContentFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMContentFactory.h; sourceTree = "<group>"; };
 		E964A133298BF59300AC76F1 /* DIMMessageFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMMessageFactory.h; sourceTree = "<group>"; };
 		E964A134298BF59300AC76F1 /* DIMMessageFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMMessageFactory.m; sourceTree = "<group>"; };
-		E9798B4D23BC992E00A14FD8 /* DIMCore.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DIMCore.xcodeproj; path = "../../core-objc/DIMCore/DIMCore.xcodeproj"; sourceTree = "<group>"; };
 		E9846A9C2907D7980022FBC5 /* MKMPlugins+EntityID.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MKMPlugins+EntityID.m"; sourceTree = "<group>"; };
 		E988C94A23F54BBE00BA5D66 /* DIMForwardContentProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMForwardContentProcessor.h; sourceTree = "<group>"; };
 		E988C94B23F54BBE00BA5D66 /* DIMForwardContentProcessor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMForwardContentProcessor.m; sourceTree = "<group>"; };
@@ -230,8 +203,6 @@
 		E9B494922988F834002C7F34 /* DIMDataCoders.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DIMDataCoders.mm; sourceTree = "<group>"; };
 		E9B4949529894F9A002C7F34 /* DIMDataParsers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMDataParsers.h; sourceTree = "<group>"; };
 		E9B4949629894F9A002C7F34 /* DIMDataParsers.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DIMDataParsers.mm; sourceTree = "<group>"; };
-		E9D71F1625BB2B7900773ED1 /* DaoKeDao.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = DaoKeDao.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		E9D71F1B25BB2B8800773ED1 /* MingKeMing.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = MingKeMing.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E9D79E1A2583D39200C8E700 /* MKMRSAPrivateKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKMRSAPrivateKey.h; sourceTree = "<group>"; };
 		E9D79E1C2583D39200C8E700 /* MKMAESKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKMAESKey.m; sourceTree = "<group>"; };
 		E9D79E1D2583D39200C8E700 /* MKMRSAPublicKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKMRSAPublicKey.h; sourceTree = "<group>"; };
@@ -268,9 +239,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E9D71F1725BB2B7900773ED1 /* DaoKeDao.framework in Frameworks */,
-				E9D71E0B25BAE5C600773ED1 /* DIMCore.framework in Frameworks */,
-				E9D71F1C25BB2B8800773ED1 /* MingKeMing.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -306,7 +274,6 @@
 		E919AFC82390F8DD004F7FF9 = {
 			isa = PBXGroup;
 			children = (
-				E9798B4D23BC992E00A14FD8 /* DIMCore.xcodeproj */,
 				E919AFEE2390F932004F7FF9 /* Classes */,
 				E919AFD42390F8DD004F7FF9 /* DIMSDK */,
 				E919AFDF2390F8DD004F7FF9 /* DIMSDKTests */,
@@ -367,8 +334,6 @@
 		E919B01F2390FCF4004F7FF9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				E9D71F1B25BB2B8800773ED1 /* MingKeMing.framework */,
-				E9D71F1625BB2B7900773ED1 /* DaoKeDao.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -440,15 +405,6 @@
 				E964A105298B771F00AC76F1 /* DIMChatroom.m */,
 			);
 			path = mkm;
-			sourceTree = "<group>";
-		};
-		E9798B4E23BC992E00A14FD8 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				E9798B5523BC992E00A14FD8 /* DIMCore.framework */,
-				E9798B5723BC992E00A14FD8 /* DIMCoreTests.xctest */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		E9B4948B2988F3FB002C7F34 /* data */ = {
@@ -641,7 +597,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				E9798B5923BC993800A14FD8 /* PBXTargetDependency */,
 			);
 			name = DIMSDK;
 			productName = DIMSDK;
@@ -694,12 +649,6 @@
 			mainGroup = E919AFC82390F8DD004F7FF9;
 			productRefGroup = E919AFD32390F8DD004F7FF9 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = E9798B4E23BC992E00A14FD8 /* Products */;
-					ProjectRef = E9798B4D23BC992E00A14FD8 /* DIMCore.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				E919AFD12390F8DD004F7FF9 /* DIMSDK */,
@@ -707,23 +656,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		E9798B5523BC992E00A14FD8 /* DIMCore.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = DIMCore.framework;
-			remoteRef = E9798B5423BC992E00A14FD8 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		E9798B5723BC992E00A14FD8 /* DIMCoreTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = DIMCoreTests.xctest;
-			remoteRef = E9798B5623BC992E00A14FD8 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		E919AFD02390F8DD004F7FF9 /* Resources */ = {
@@ -811,11 +743,6 @@
 			isa = PBXTargetDependency;
 			target = E919AFD12390F8DD004F7FF9 /* DIMSDK */;
 			targetProxy = E919AFDD2390F8DD004F7FF9 /* PBXContainerItemProxy */;
-		};
-		E9798B5923BC993800A14FD8 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = DIMCore;
-			targetProxy = E9798B5823BC993800A14FD8 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -947,11 +874,8 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)",
-				);
-				HEADER_SEARCH_PATHS = "";
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = DIMSDK/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -975,11 +899,8 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)",
-				);
-				HEADER_SEARCH_PATHS = "";
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = DIMSDK/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
