@@ -29,7 +29,7 @@
 // =============================================================================
 //
 //  DIMAddressNameService.h
-//  DIMClient
+//  DIMSDK
 //
 //  Created by Albert Moky on 2019/11/28.
 //  Copyright © 2019 DIM Group. All rights reserved.
@@ -41,26 +41,29 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol DIMAddressNameService <NSObject>
 
-- (nullable id<MKMID>)IDWithName:(NSString *)username;
-
-- (nullable NSArray<NSString *> *)namesWithID:(id<MKMID>)ID;
-
-@end
-
-@interface DIMAddressNameService : NSObject <DIMAddressNameService>
-
-- (BOOL)isReservedName:(NSString *)username;
-
-- (BOOL)cacheID:(id<MKMID>)ID withName:(NSString *)username;
+/**
+ *  Check whether the alias is available
+ *
+ * @param name - alias (short name)
+ * @return true on reserved
+ */
+- (BOOL)isReserved:(NSString *)name;
 
 /**
- *  Save ANS record
+ *  Get ID for alias
  *
- * @param username - short name for user ID
- * @param ID - user ID; if empty, means delete this name
- * @return true on success
+ * @param name - alias (short name)
+ * @return ID
  */
-- (BOOL)saveID:(id<MKMID>)ID withName:(NSString *)username;
+- (nullable id<MKMID>)getID:(NSString *)name;
+
+/**
+ *  Get all short names with the same ID
+ *
+ * @param identifier - user ID
+ * @return short name list
+ */
+- (NSArray<NSString *> *)getNames:(id<MKMID>)ID;
 
 @end
 

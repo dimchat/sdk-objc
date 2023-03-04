@@ -51,7 +51,7 @@
 #pragma mark Station
 
 - (NSArray<id<MKMID>> *)stations {
-    id<DIMGroupDataSource> delegate = (id<DIMGroupDataSource>)[self dataSource];
+    id<MKMGroupDataSource> delegate = (id<MKMGroupDataSource>)[self dataSource];
     NSAssert(delegate, @"data source not set yet");
     NSArray *list = [delegate membersOfGroup:self.ID];
     return [list mutableCopy];

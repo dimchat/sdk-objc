@@ -92,7 +92,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMContentProcessorFactory : DIMTwinsHelper <DIMContentProcessorFactory>
 
-@property(nonatomic, retain) id<DIMContentProcessorCreator> creator;
+- (instancetype)initWithFacebook:(DIMFacebook *)barrack
+                       messenger:(DIMMessenger *)transceiver
+                         creator:(id<DIMContentProcessorCreator>)cpc
+NS_DESIGNATED_INITIALIZER;
 
 @end
 

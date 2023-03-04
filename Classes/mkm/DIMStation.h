@@ -39,16 +39,20 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class DIMServiceProvider;
+@protocol MKMStation <MKMUser>
 
-@interface DIMStation : NSObject <DIMUser, NSCopying>
+@property (nonatomic, readonly) NSString *host; // Domain/IP
+@property (nonatomic, readonly) UInt16    port; // default: 9394
 
-@property (readonly, strong, nonatomic) NSString *host; // Domain/IP
-@property (readonly, nonatomic)         UInt32    port; // default: 9394
+@property (nonatomic, readonly) id<MKMID> provider;  // SPID: station group
+
+@end
+
+@interface DIMStation : NSObject <MKMStation, NSCopying>
 
 - (instancetype)initWithID:(id<MKMID>)ID
                       host:(NSString *)IP
-                      port:(UInt32)port
+                      port:(UInt16)port
 NS_DESIGNATED_INITIALIZER;
 
 - (instancetype)initWithID:(id<MKMID>)ID;

@@ -29,7 +29,7 @@
 // =============================================================================
 //
 //  DIMMessenger.m
-//  DIMClient
+//  DIMSDK
 //
 //  Created by Albert Moky on 2019/8/6.
 //  Copyright © 2019 DIM Group. All rights reserved.
@@ -151,11 +151,11 @@ static inline BOOL isBroadcast(id<DKDMessage> msg) {
                        deserializeKey:(nullable NSData *)data
                                  from:(id<MKMID>)sender
                                    to:(id<MKMID>)receiver {
-    if ([data length] > 0) {
-        return [super message:sMsg deserializeKey:data from:sender to:receiver];
-    } else {
+    if ([data length] == 0) {
         // get key from cache
         return [self cipherKeyFrom:sender to:receiver generate:NO];
+    } else {
+        return [super message:sMsg deserializeKey:data from:sender to:receiver];
     }
 }
 

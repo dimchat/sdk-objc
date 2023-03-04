@@ -37,15 +37,12 @@
 
 #import "DIMStation.h"
 
-@interface DIMStation () {
-    
-    id<DIMUser> _user;
-}
+@interface DIMStation ()
 
-@property (strong, nonatomic) id<DIMUser> user;
+@property (nonatomic, strong) id<MKMUser> user;
 
-@property (strong, nonatomic) NSString *host;
-@property (nonatomic) UInt32 port;
+@property (nonatomic, strong) NSString *host;
+@property (nonatomic, assign) UInt16 port;
 
 @end
 
@@ -60,12 +57,12 @@
 /* designated initializer */
 - (instancetype)initWithID:(id<MKMID>)ID
                       host:(NSString *)IP
-                      port:(UInt32)port {
+                      port:(UInt16)port {
     NSAssert(ID.type == MKMEntityType_Station, @"station ID error: %@", ID);
     if (self = [super init]) {
-        _user = [[DIMUser alloc] initWithID:ID];
-        _host = IP;
-        _port = port;
+        self.user = [[DIMUser alloc] initWithID:ID];
+        self.host = IP;
+        self.port = port;
     }
     return self;
 }
@@ -115,6 +112,36 @@
     return YES;
 }
 
+- (NSString *)host {
+    if (_host == nil) {
+        id<MKMDocument> doc = [self documentWithType:@"*"];
+        if (doc) {
+            _host = [doc propertyForKey:@"host"];
+        }
+    }
+    return _host;
+}
+
+- (UInt16)port {
+    if (_port == 0) {
+        id<MKMDocument> doc = [self documentWithType:@"*"];
+        if (doc) {
+            NSNumber *value = [doc propertyForKey:@"port"];
+            _port = [value unsignedShortValue];
+        }
+    }
+    return _port;
+}
+
+- (id<MKMID>)provider {
+    id<MKMDocument> doc = [self documentWithType:@"*"];
+    if (doc) {
+        id ISP = [doc propertyForKey:@"ISP"];
+        return MKMIDParse(ISP);
+    }
+    return nil;
+}
+
 #pragma mark Entity
 
 - (id<MKMID>)ID {
@@ -125,11 +152,11 @@
     return _user.type;
 }
 
-- (id<DIMEntityDataSource>)dataSource {
+- (id<MKMEntityDataSource>)dataSource {
     return _user.dataSource;
 }
 
-- (void)setDataSource:(id<DIMEntityDataSource>)dataSource {
+- (void)setDataSource:(id<MKMEntityDataSource>)dataSource {
     _user.dataSource = dataSource;
 }
 

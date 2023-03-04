@@ -89,20 +89,19 @@
     if (group) {
         // group message (excludes group command)
         password = [transceiver cipherKeyFrom:sender to:group generate:YES];
-        NSAssert(password, @"failed to get msg key: %@ -> %@", sender, group);
+        NSAssert(password, @"failed to get group msg key: %@ -> %@", sender, group);
     } else {
         // personal message or (group) command
         password = [transceiver cipherKeyFrom:sender to:receiver generate:YES];
         NSAssert(password, @"failed to get msg key: %@ -> %@", sender, receiver);
     }
-
-    NSAssert(iMsg.content, @"content cannot be empty");
+    //NSAssert(iMsg.content, @"content cannot be empty");
     
     // 2. encrypt 'content' to 'data' for receiver/group members
     id<DKDSecureMessage> sMsg = nil;
     if (MKMIDIsGroup(receiver)) {
         // group message
-        id<DIMGroup> grp = [self.facebook groupWithID:receiver];
+        id<MKMGroup> grp = [self.facebook groupWithID:receiver];
         NSArray<id<MKMID>> *members = [grp members];
         if (members.count == 0) {
             // group not ready
@@ -113,6 +112,11 @@
     } else {
         // personal message (or split group message)
         sMsg = [iMsg encryptWithKey:password];
+    }
+    if (!sMsg) {
+        // public key for encryption not found
+        // TODO: suspend this message for waiting receiver's meta
+        return nil;
     }
     
     // overt group ID
@@ -198,7 +202,7 @@
 // TODO: make sure private key (decrypt key) exists before decrypting message
 - (id<DKDInstantMessage>)decryptMessage:(id<DKDSecureMessage>)sMsg {
     id<MKMID> receiver = sMsg.receiver;
-    id<DIMUser> user = [self.facebook selectLocalUserWithID:receiver];
+    id<MKMUser> user = [self.facebook selectLocalUserWithID:receiver];
     id<DKDSecureMessage> trimmed;
     if (!user) {
         // local users not matched

@@ -39,11 +39,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class DIMStation;
-
-@interface DIMServiceProvider : DIMGroup
+@protocol MKMServiceProvider <MKMGroup>
 
 @property (readonly, copy, nonatomic) NSArray<id<MKMID>> *stations;
+
+@end
+
+@interface DIMServiceProvider : DIMGroup <MKMServiceProvider>
 
 @end
 

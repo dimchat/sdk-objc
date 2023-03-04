@@ -47,8 +47,6 @@
 
 #import "MKMPlugins.h"
 
-#define SCAlgorithmPlain @"PLAIN"
-
 /*
  *  Symmetric key for broadcast message,
  *  which will do nothing when en/decoding message data
@@ -79,7 +77,7 @@ static PlainKey *s_sharedPlainKey = nil;
 }
 
 - (instancetype)init {
-    NSDictionary *dict = @{@"algorithm": SCAlgorithmPlain};
+    NSDictionary *dict = @{@"algorithm": MKMAlgorithmPlain};
     if (self = [super initWithDictionary:dict]) {
         //
     }
@@ -126,7 +124,7 @@ static PlainKey *s_sharedPlainKey = nil;
 @implementation SymmetricKeyFactory
 
 - (id<MKMSymmetricKey>)generateSymmetricKey {
-    if ([self.algorithm isEqualToString:SCAlgorithmPlain]) {
+    if ([self.algorithm isEqualToString:MKMAlgorithmPlain]) {
         return [PlainKey sharedInstance];
     }
     NSMutableDictionary *key = [[NSMutableDictionary alloc] init];
@@ -141,7 +139,7 @@ static PlainKey *s_sharedPlainKey = nil;
         return [[MKMAESKey alloc] initWithDictionary:key];
     }
     // Plain Key
-    if ([algorithm isEqualToString:SCAlgorithmPlain]) {
+    if ([algorithm isEqualToString:MKMAlgorithmPlain]) {
         return [PlainKey sharedInstance];
     }
     NSAssert(false, @"symmetric key algorithm (%@) not support yet", algorithm);
@@ -204,8 +202,8 @@ static PlainKey *s_sharedPlainKey = nil;
     // Symmetric key
     MKMSymmetricKeySetFactory(MKMAlgorithmAES,
                               [[SymmetricKeyFactory alloc] initWithAlgorithm:MKMAlgorithmAES]);
-    MKMSymmetricKeySetFactory(SCAlgorithmPlain,
-                              [[SymmetricKeyFactory alloc] initWithAlgorithm:SCAlgorithmPlain]);
+    MKMSymmetricKeySetFactory(MKMAlgorithmPlain,
+                              [[SymmetricKeyFactory alloc] initWithAlgorithm:MKMAlgorithmPlain]);
 
     // public key
     MKMPublicKeySetFactory(MKMAlgorithmRSA,

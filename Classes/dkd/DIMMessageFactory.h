@@ -48,6 +48,11 @@ extern "C" {
  */
 void DIMRegisterMessageFactories(void);
 
+/**
+ *  Register All Factories (messages, contents & commands)
+ */
+void DIMRegisterAllFactories(void);
+
 #ifdef __cplusplus
 } /* end of extern "C" */
 #endif

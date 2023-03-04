@@ -48,4 +48,13 @@
     return self;
 }
 
+- (id<MKMID>)provider {
+    id<MKMDocument> doc = [self documentWithType:@"*"];
+    if (doc) {
+        id ICP = [doc propertyForKey:@"ICP"];
+        return MKMIDParse(ICP);
+    }
+    return nil;
+}
+
 @end

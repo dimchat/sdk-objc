@@ -35,6 +35,9 @@
 //  Copyright © 2023 Albert Moky. All rights reserved.
 //
 
+#import "DIMContentFactory.h"
+#import "DIMCommandFactory.h"
+
 #import "DIMMessageFactory.h"
 
 void DIMRegisterMessageFactories(void) {
@@ -44,4 +47,19 @@ void DIMRegisterMessageFactories(void) {
     DKDInstantMessageSetFactory([[DIMInstantMessageFactory alloc] init]);
     DKDSecureMessageSetFactory([[DIMSecureMessageFactory alloc] init]);
     DKDReliableMessageSetFactory([[DIMReliableMessageFactory alloc] init]);
+}
+
+void DIMRegisterAllFactories(void) {
+    //
+    //  Register core factories
+    //
+    DIMRegisterMessageFactories();
+    DIMRegisterContentFactories();
+    DIMRegisterCommandFactories();
+    
+    //
+    //  Register customized factories
+    //
+    DIMContentRegisterClass(DKDContentType_Customized, DIMCustomizedContent);
+    DIMContentRegisterClass(DKDContentType_Application, DIMCustomizedContent);
 }

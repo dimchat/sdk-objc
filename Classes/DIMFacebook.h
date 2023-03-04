@@ -29,7 +29,7 @@
 // =============================================================================
 //
 //  DIMFacebook.h
-//  DIMClient
+//  DIMSDK
 //
 //  Created by Albert Moky on 2019/6/26.
 //  Copyright © 2019 DIM Group. All rights reserved.
@@ -56,14 +56,14 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @return first local user
  */
-@property (readonly, strong, nonatomic, nullable) id<DIMUser> currentUser;
+@property (readonly, strong, nonatomic, nullable) id<MKMUser> currentUser;
 
 /**
  *  Get all local users (for decrypting received message)
  *
  * @return users with private key
  */
-@property (readonly, strong, nonatomic, nullable) NSArray<id<DIMUser>> *localUsers;
+@property (readonly, strong, nonatomic, nullable) NSArray<id<MKMUser>> *localUsers;
 
 /**
  * Call it when received 'UIApplicationDidReceiveMemoryWarningNotification',
@@ -74,9 +74,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSInteger)reduceMemory;
 
 // override to create user
-- (nullable id<DIMUser>)createUser:(id<MKMID>)ID;
+- (nullable id<MKMUser>)createUser:(id<MKMID>)ID;
 // override to create group
-- (nullable id<DIMGroup>)createGroup:(id<MKMID>)ID;
+- (nullable id<MKMGroup>)createGroup:(id<MKMID>)ID;
 
 /**
  *  Select local user for receiver
@@ -84,7 +84,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param receiver - user/group ID
  * @return local user
  */
-- (nullable id<DIMUser>)selectLocalUserWithID:(id<MKMID>)receiver;
+- (nullable id<MKMUser>)selectLocalUserWithID:(id<MKMID>)receiver;
 
 /**
  *  Save meta for entity ID (must verify first)

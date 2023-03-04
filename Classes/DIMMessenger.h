@@ -29,7 +29,7 @@
 // =============================================================================
 //
 //  DIMMessenger.h
-//  DIMClient
+//  DIMSDK
 //
 //  Created by Albert Moky on 2019/8/6.
 //  Copyright © 2019 DIM Group. All rights reserved.
@@ -49,7 +49,9 @@ NS_ASSUME_NONNULL_BEGIN
  * @param create - generate when key not exists
  * @return cipher key
  */
-- (nullable id<MKMSymmetricKey>)cipherKeyFrom:(id<MKMID>)sender to:(id<MKMID>)receiver generate:(BOOL)create;
+- (nullable id<MKMSymmetricKey>)cipherKeyFrom:(id<MKMID>)sender
+                                           to:(id<MKMID>)receiver
+                                     generate:(BOOL)create;
 
 /**
  *  Cache cipher key for reusing, with the direction (from 'sender' to 'receiver')
@@ -58,7 +60,9 @@ NS_ASSUME_NONNULL_BEGIN
  * @param sender - user or contact ID
  * @param receiver - contact or user/group ID
  */
-- (void)cacheCipherKey:(id<MKMSymmetricKey>)key from:(id<MKMID>)sender to:(id<MKMID>)receiver;
+- (void)cacheCipherKey:(id<MKMSymmetricKey>)key
+                  from:(id<MKMID>)sender
+                    to:(id<MKMID>)receiver;
 
 @end
 

@@ -35,16 +35,8 @@
 //  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
-#import "DIMMessageFactory.h"
-#import "DIMContentFactory.h"
-#import "DIMCommandFactory.h"
-
-#import "DIMContentProcessor.h"
-#import "DIMCommandProcessor.h"
-
 #import "DIMFacebook.h"
 #import "DIMMessenger.h"
-#import "DIMMessagePacker.h"
 
 #import "DIMMessageProcessor.h"
 
@@ -67,18 +59,15 @@
 }
 
 - (id<DIMContentProcessorCreator>)createContentProcessorCreator {
-    DIMContentProcessorCreator *creator;
-    creator = [[DIMContentProcessorCreator alloc] initWithFacebook:self.facebook
-                                                         messenger:self.messenger];
-    return creator;
+    return [[DIMContentProcessorCreator alloc] initWithFacebook:self.facebook
+                                                      messenger:self.messenger];
 }
 
 - (id<DIMContentProcessorFactory>)createContentProcessorFactory {
-    DIMContentProcessorFactory *factory;
-    factory = [[DIMContentProcessorFactory alloc] initWithFacebook:self.facebook
-                                                         messenger:self.messenger];
-    factory.creator = [self createContentProcessorCreator];
-    return factory;
+    id<DIMContentProcessorCreator> creator = [self createContentProcessorCreator];
+    return [[DIMContentProcessorFactory alloc] initWithFacebook:self.facebook
+                                                      messenger:self.messenger
+                                                        creator:creator];
 }
 
 - (NSArray<NSData *> *)processData:(NSData *)data {
@@ -183,7 +172,7 @@
     // 2. select a local user to build message
     id<MKMID> sender = iMsg.sender;
     id<MKMID> receiver = iMsg.receiver;
-    id<DIMUser> user = [self.facebook selectLocalUserWithID:receiver];
+    id<MKMUser> user = [self.facebook selectLocalUserWithID:receiver];
     NSAssert(user, @"receiver error: %@", receiver);
     
     // 3. pack messages
@@ -207,7 +196,7 @@
 }
 
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
-                              withMessage:(id<DKDReliableMessage>)rMsg {
+                                withMessage:(id<DKDReliableMessage>)rMsg {
     // TODO: override to check group before calling this
     id<DIMContentProcessor> cpu = [self processorForContent:content];
     if (!cpu) {
@@ -233,26 +222,6 @@
 
 - (id<DIMContentProcessor> )processorForName:(NSString *)cmd type:(DKDContentType)type {
     return [_factory getCommandProcessor:cmd type:type];
-}
-
-@end
-
-@implementation DIMMessageProcessor (Register)
-
-+ (void)registerAllFactories {
-    
-    //
-    //  Register core factories
-    //
-    DIMRegisterMessageFactories();
-    DIMRegisterContentFactories();
-    DIMRegisterCommandFactories();
-    
-    //
-    //  Register customized factories
-    //
-    DIMContentRegisterClass(DKDContentType_Customized, DIMCustomizedContent);
-    DIMContentRegisterClass(DKDContentType_Application, DIMCustomizedContent);
 }
 
 @end

@@ -58,6 +58,7 @@ FOUNDATION_EXPORT const unsigned char DIMSDKVersionString[];
 #define __DIM_SDK__ 1
 
 // Plugins
+#import <DIMSDK/MKMBaseKey.h>
 #import <DIMSDK/MKMPrivateKey+Store.h>
 #import <DIMSDK/MKMAddressBTC.h>
 #import <DIMSDK/MKMAddressETH.h>
@@ -76,19 +77,21 @@ FOUNDATION_EXPORT const unsigned char DIMSDKVersionString[];
 #import <DIMSDK/DIMCommandFactory.h>
 
 // CPUs
-#import <DIMSDK/DIMFactory.h>
 #import <DIMSDK/DIMContentProcessor.h>
+#import <DIMSDK/DIMFactory.h>
+#import <DIMSDK/DIMForwardContentProcessor.h>
 #import <DIMSDK/DIMArrayContentProcessor.h>
 #import <DIMSDK/DIMCustomizedContentProcessor.h>
-#import <DIMSDK/DIMForwardContentProcessor.h>
+
 #import <DIMSDK/DIMCommandProcessor.h>
 #import <DIMSDK/DIMMetaCommandProcessor.h>
 #import <DIMSDK/DIMDocumentCommandProcessor.h>
 
+// Core
 #import <DIMSDK/DIMAddressNameService.h>
 #import <DIMSDK/DIMFacebook.h>
+#import <DIMSDK/DIMMessenger.h>
 #import <DIMSDK/DIMMessagePacker.h>
 #import <DIMSDK/DIMMessageProcessor.h>
-#import <DIMSDK/DIMMessenger.h>
 
 #endif /* ! __DIM_SDK__== */

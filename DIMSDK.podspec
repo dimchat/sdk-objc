@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
     s.name                  = 'DIMSDK'
-    s.version               = '0.6.2'
+    s.version               = '0.6.3'
     s.summary               = 'Decentralized Instant Messaging'
     s.description           = <<-DESC
             Decentralized Instant Messaging (Objective-C SDK)
@@ -24,10 +24,10 @@ Pod::Spec.new do |s|
     # s.exclude_files       = 'Classes/Exclude'
     s.public_header_files   = 'Classes/*.h', 'Classes/mkm/*.h', 'Classes/dkd/*.h', 'Classes/cpu/*.h', 'Classes/plugins/*.h', 'Classes/plugins/extends/*.h', 'Classes/plugins/crypto/*.h', 'Classes/plugins/data/*.h', 'Classes/plugins/mkm/*.h'
 
-    # s.frameworks          = 'Security'
+    s.frameworks            = 'Security'
     # s.requires_arc        = true
 
-    s.dependency 'DIMCore', '~> 0.6.0'
+    s.dependency 'DIMCore', '~> 0.6.1'
     s.dependency 'DaoKeDao', '~> 0.6.2'
     s.dependency 'MingKeMing', '~> 0.6.1'
 end

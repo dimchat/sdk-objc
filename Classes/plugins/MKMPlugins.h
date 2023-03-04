@@ -39,6 +39,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#define MKMAlgorithmPlain @"PLAIN"
+
 @interface MKMPlugins : NSObject
 
 + (void)registerAddressFactory;

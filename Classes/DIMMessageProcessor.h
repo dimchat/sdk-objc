@@ -40,10 +40,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol DIMContentProcessor;
-@protocol DIMContentProcessorCreator;
-@protocol DIMContentProcessorFactory;
-
 @interface DIMMessageProcessor : DIMTwinsHelper <DIMProcessor>
 
 - (id<DIMContentProcessorCreator>)createContentProcessorCreator;
@@ -64,15 +60,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable id<DIMContentProcessor>)processorForType:(DKDContentType)type;
 
 - (nullable id<DIMContentProcessor>)processorForName:(NSString *)cmd type:(DKDContentType)type;
-
-@end
-
-@interface DIMMessageProcessor (Register)
-
-/**
- *  Register All Content/Command Factories
- */
-+ (void)registerAllFactories;
 
 @end
 

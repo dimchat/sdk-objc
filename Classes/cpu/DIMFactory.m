@@ -51,7 +51,7 @@
 
 @implementation DIMContentProcessorCreator
 
-- (nonnull id<DIMContentProcessor>)createContentProcessor:(DKDContentType)type {
+- (id<DIMContentProcessor>)createContentProcessor:(DKDContentType)type {
     // forward content
     if (type == DKDContentType_Forward) {
         return CREATE_CPU(DIMForwardContentProcessor);
@@ -83,7 +83,7 @@
     return nil;
 }
 
-- (nonnull id<DIMContentProcessor>)createCommandProcessor:(nonnull NSString *)name type:(DKDContentType)msgType { 
+- (id<DIMContentProcessor>)createCommandProcessor:(NSString *)name type:(DKDContentType)msgType { 
     // meta command
     if ([name isEqualToString:DIMCommand_Meta]) {
         return CREATE_CPU(DIMMetaCommandProcessor);
@@ -102,6 +102,8 @@
 
 @interface DIMContentProcessorFactory () {
     
+    id<DIMContentProcessorCreator> _creator;
+    
     NSMutableDictionary<NSNumber *, id<DIMContentProcessor>> *_contentProcessors;
     NSMutableDictionary<NSString *, id<DIMContentProcessor>> *_commandProcessors;
 }
@@ -112,7 +114,17 @@
 
 - (instancetype)initWithFacebook:(DIMFacebook *)barrack
                        messenger:(DIMMessenger *)transceiver {
+    NSAssert(false, @"don't call me!");
+    id<DIMContentProcessorCreator> cpc = nil;
+    return [self initWithFacebook:barrack messenger:transceiver creator:cpc];
+}
+
+/* designated initializer */
+- (instancetype)initWithFacebook:(DIMFacebook *)barrack
+                       messenger:(DIMMessenger *)transceiver
+                         creator:(id<DIMContentProcessorCreator>)cpc {
     if (self = [super initWithFacebook:barrack messenger:transceiver]) {
+        _creator = cpc;
         _contentProcessors = [[NSMutableDictionary alloc] init];
         _commandProcessors = [[NSMutableDictionary alloc] init];
     }
@@ -143,7 +155,7 @@
 - (id<DIMContentProcessor>)getContentProcessor:(DKDContentType)msgType {
     id<DIMContentProcessor> cpu = [_contentProcessors objectForKey:@(msgType)];
     if (!cpu) {
-        cpu = [self.creator createContentProcessor:msgType];
+        cpu = [_creator createContentProcessor:msgType];
         if (cpu) {
             [_contentProcessors setObject:cpu forKey:@(msgType)];
         }
@@ -154,7 +166,7 @@
 - (id<DIMContentProcessor>)getCommandProcessor:(NSString *)name type:(DKDContentType)msgType {
     id<DIMContentProcessor> cpu = [_commandProcessors objectForKey:name];
     if (!cpu) {
-        cpu = [self.creator createCommandProcessor:name type:msgType];
+        cpu = [_creator createCommandProcessor:name type:msgType];
         if (cpu) {
             [_commandProcessors setObject:cpu forKey:name];
         }

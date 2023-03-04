@@ -29,7 +29,7 @@
 // =============================================================================
 //
 //  DIMFacebook.m
-//  DIMClient
+//  DIMSDK
 //
 //  Created by Albert Moky on 2019/6/26.
 //  Copyright © 2019 DIM Group. All rights reserved.
@@ -62,8 +62,8 @@ static inline NSInteger thanos(NSMutableDictionary *mDict, NSInteger finger) {
 
 @interface DIMFacebook () {
     
-    NSMutableDictionary<id<MKMID>, id<DIMUser>> *_userTable;
-    NSMutableDictionary<id<MKMID>, id<DIMGroup>> *_groupTable;
+    NSMutableDictionary<id<MKMID>, id<MKMUser>> *_userTable;
+    NSMutableDictionary<id<MKMID>, id<MKMGroup>> *_groupTable;
 }
 
 @end
@@ -85,14 +85,14 @@ static inline NSInteger thanos(NSMutableDictionary *mDict, NSInteger finger) {
     return finger >> 1;
 }
 
-- (void)cacheUser:(id<DIMUser>)user {
+- (void)cacheUser:(id<MKMUser>)user {
     if (user.dataSource == nil) {
         user.dataSource = self;
     }
     [_userTable setObject:user forKey:user.ID];
 }
 
-- (void)cacheGroup:(id<DIMGroup>)group {
+- (void)cacheGroup:(id<MKMGroup>)group {
     if (group.dataSource == nil) {
         group.dataSource = self;
     }
@@ -165,7 +165,7 @@ static inline NSInteger thanos(NSMutableDictionary *mDict, NSInteger finger) {
     return [doc verify:meta.key];
 }
 
-- (nullable id<DIMUser>)createUser:(id<MKMID>)ID {
+- (nullable id<MKMUser>)createUser:(id<MKMID>)ID {
     if (MKMIDIsBroadcast(ID)) {
         // create user 'anyone@anywhere'
         return [[DIMUser alloc] initWithID:ID];
@@ -184,7 +184,7 @@ static inline NSInteger thanos(NSMutableDictionary *mDict, NSInteger finger) {
     return [[DIMUser alloc] initWithID:ID];
 }
 
-- (nullable id<DIMGroup>)createGroup:(id<MKMID>)ID {
+- (nullable id<MKMGroup>)createGroup:(id<MKMID>)ID {
     if (MKMIDIsBroadcast(ID)) {
         // create group 'everyone@everywhere'
         return [[DIMGroup alloc] initWithID:ID];
@@ -200,21 +200,21 @@ static inline NSInteger thanos(NSMutableDictionary *mDict, NSInteger finger) {
     return [[DIMGroup alloc] initWithID:ID];
 }
 
-- (nullable NSArray<id<DIMUser>> *)localUsers {
+- (nullable NSArray<id<MKMUser>> *)localUsers {
     NSAssert(false, @"implement me!");
     return nil;
 }
 
-- (nullable id<DIMUser>)currentUser {
-    NSArray<id<DIMUser>> *users = self.localUsers;
+- (nullable id<MKMUser>)currentUser {
+    NSArray<id<MKMUser>> *users = self.localUsers;
     if ([users count] == 0) {
         return nil;
     }
     return [users firstObject];
 }
 
-- (nullable id<DIMUser>)selectLocalUserWithID:(id<MKMID>)receiver {
-    NSArray<id<DIMUser>> *users = self.localUsers;
+- (nullable id<MKMUser>)selectLocalUserWithID:(id<MKMID>)receiver {
+    NSArray<id<MKMUser>> *users = self.localUsers;
     if ([users count] == 0) {
         NSAssert(false, @"local users should not be empty");
         return nil;
@@ -229,7 +229,7 @@ static inline NSInteger thanos(NSMutableDictionary *mDict, NSInteger finger) {
             // TODO: group not ready, waiting for group info
             return nil;
         }
-        for (id<DIMUser> item in users) {
+        for (id<MKMUser> item in users) {
             if ([members containsObject:item.ID]) {
                 // DISCUSS: set this item to be current user?
                 return item;
@@ -238,7 +238,7 @@ static inline NSInteger thanos(NSMutableDictionary *mDict, NSInteger finger) {
     } else {
         // 1. personal message
         // 2. split group message
-        for (id<DIMUser> item in users) {
+        for (id<MKMUser> item in users) {
             if ([receiver isEqual:item.ID]) {
                 // DISCUSS: set this item to be current user?
                 return item;
@@ -251,9 +251,9 @@ static inline NSInteger thanos(NSMutableDictionary *mDict, NSInteger finger) {
 
 #pragma mark - DIMEntityDelegate
 
-- (nullable id<DIMUser>)userWithID:(id<MKMID>)ID {
+- (nullable id<MKMUser>)userWithID:(id<MKMID>)ID {
     // 1. get from user cache
-    id<DIMUser> user = [_userTable objectForKey:ID];
+    id<MKMUser> user = [_userTable objectForKey:ID];
     if (!user) {
         // 2. create user and cache it
         user = [self createUser:ID];
@@ -264,9 +264,9 @@ static inline NSInteger thanos(NSMutableDictionary *mDict, NSInteger finger) {
     return user;
 }
 
-- (nullable id<DIMGroup>)groupWithID:(id<MKMID>)ID {
+- (nullable id<MKMGroup>)groupWithID:(id<MKMID>)ID {
     // 1. get from group cache
-    id<DIMGroup> group = [_groupTable objectForKey:ID];
+    id<MKMGroup> group = [_groupTable objectForKey:ID];
     if (!group) {
         // 2. create group and cache it
         group = [self createGroup:ID];

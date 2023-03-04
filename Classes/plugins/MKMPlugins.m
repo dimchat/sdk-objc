@@ -91,9 +91,9 @@
     return self;
 }
 
-- (nonnull id<MKMMeta>)createMetaWithKey:(id<MKMVerifyKey>)PK
-                                    seed:(nullable NSString *)name
-                             fingerprint:(nullable NSData *)CT {
+- (id<MKMMeta>)createMetaWithKey:(id<MKMVerifyKey>)PK
+                            seed:(nullable NSString *)name
+                     fingerprint:(nullable NSData *)CT {
     id<MKMMeta> meta;
     switch (_type) {
         case MKMMetaVersion_MKM:
@@ -118,8 +118,8 @@
     return meta;
 }
 
-- (nonnull id<MKMMeta>)generateMetaWithKey:(id<MKMSignKey>)SK
-                                      seed:(nullable NSString *)name {
+- (id<MKMMeta>)generateMetaWithKey:(id<MKMSignKey>)SK
+                              seed:(nullable NSString *)name {
     NSData *CT;
     if (name.length > 0) {
         CT = [SK sign:MKMUTF8Encode(name)];

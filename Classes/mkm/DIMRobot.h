@@ -39,7 +39,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMBot : DIMUser
+@protocol MKMBot <MKMUser>
+
+@property (nonatomic, readonly) id<MKMID> provider;  // CPID: bot group
+
+@end
+
+@interface DIMBot : DIMUser <MKMBot>
 
 @end
 
