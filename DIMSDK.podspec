@@ -20,9 +20,9 @@ Pod::Spec.new do |s|
     # s.platform            = :ios, "11.0"
     s.ios.deployment_target = '12.0'
 
-    s.source_files          = 'Classes', 'Classes/**/*'
+    s.source_files          = 'Classes', 'Classes/**/*.{h,inc,m,mm,c,cpp}'
     # s.exclude_files       = 'Classes/Exclude'
-    s.public_header_files   = 'Classes/*.h', 'Classes/mkm/*.h', 'Classes/dkd/*.h', 'Classes/cpu/*.h', 'Classes/plugins/*.h', 'Classes/plugins/extends/*.h', 'Classes/plugins/crypto/*.h', 'Classes/plugins/data/*.h', 'Classes/plugins/mkm/*.h'
+    s.public_header_files   = 'Classes/*.h', 'Classes/mkm/*.h', 'Classes/dkd/*.h', 'Classes/cpu/*.h', 'Classes/plugins/*.h', 'Classes/plugins/crypto/*.h', 'Classes/plugins/data/*.h', 'Classes/plugins/mkm/*.h'
 
     s.frameworks            = 'Security'
     # s.requires_arc        = true

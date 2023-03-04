@@ -25,15 +25,15 @@ git clone https://github.com/dimchat/mkm-objc.git
 
 ## Account
 
-User private key, ID, meta, and profile are generated in client,
-and broadcast only ```meta``` & ```profile``` onto DIM station.
+User private key, ID, meta, and visa document are generated in client,
+and broadcast only ```meta``` & ```document``` onto DIM station.
 
 ### Register User Account
 
 _Step 1_. generate private key (with asymmetric algorithm)
 
 ```objective-c
-DIMPrivateKey *SK = MKMPrivateKeyWithAlgorithm(ACAlgorithmRSA);
+id<MKMPrivateKey> SK = MKMPrivateKeyGenerate(ACAlgorithmRSA);
 ```
 
 **NOTICE**: After registered, the client should save the private key in secret storage.
@@ -42,39 +42,40 @@ _Step 2_. generate meta with private key (and meta seed)
 
 ```objective-c
 NSString *seed = @"username";
-DIMMeta *meta = [DIMMeta generateWithVersion:MKMMetaDefaultVersion
-                                  privateKey:SK
-                                        seed:seed];
+id<MKMMeta> meta = MKMMetaGenerate(MKMMetaDefaultVersion, SK, seed);
 ```
 
 _Step 3_. generate ID with meta (and network type)
 
 ```objective-c
-DIMID *ID = [meta generateID:MKMNetwork_Main];
+NSString *terminal = nil;
+id<MKMID> ID = MKMIDGenerate(meta, MKMEntityType_User, terminal);
 ```
 
-### Create and upload User Profile
+### Create and upload User Document
 
-_Step 4_. create profile with ID and sign with private key
+_Step 4_. create document with ID and sign with private key
 
 ```objective-c
-DIMProfile *profile = [[DIMProfile alloc] initWithID:ID];
+id<MKMVisa> doc = MKMDocumentNew(MKMDocument_Visa, ID);
 // set nickname and avatar URL
-[profile setName:@"Albert Moky"];
-[profile setAvatar:@"https://secure.gravatar.com/avatar/34aa0026f924d017dcc7a771f495c086"];
+[doc setName:@"Albert Moky"];
+[doc setAvatar:@"https://secure.gravatar.com/avatar/34aa0026f924d017dcc7a771f495c086"];
 // sign
-[profile sign:SK];
+[doc sign:SK];
 ```
 
-_Step 5_. send meta & profile to station
+_Step 5_. send meta & document to station
 
 ```objective-c
-DIMCommand *cmd = [[DIMProfileCommand alloc] initWithID:ID meta:meta profile:profile];
-DIMMessenger *messenger = [DIMMessenger sharedInstance];
-[messenger sendCommand:cmd];
+id<MKMID> gid = MKMEveryone();
+id<MKMID> sid = MKMIDParse(@"station@anywhere");
+id<DKDContent> cmd = [[DIMDocumentCommand alloc] initWithID:ID meta:meta document:doc];
+[cmd setGroup:gid];
+[messenger sendContent:cmd sender:nil receiver:sid priority:0];
 ```
 
-The profile should be sent to station after connected
+The visa document should be sent to station after connected
 and handshake accepted, details are provided in later chapters
 
 ## Connect and Handshake
@@ -85,7 +86,6 @@ _Step 2_. prepare for receiving message data package
 
 ```objective-c
 - (void)onReceive:(NSData *)data {
-    DIMMessenger *messenger = [DIMMessenger sharedInstance];
     NSData *response = [messenger onReceivePackage:data];
     if ([response length] > 0) {
         // send processing result back to the station
@@ -101,16 +101,17 @@ _Step 3_. send first **handshake** command
 ```objective-c
 // first handshake will have no session key
 NSString *session = nil;
-DIMHandshakeCommand *cmd;
 cmd = [[DIMHandshakeCommand alloc] initWithSessionKey:session];
 ```
 
 (2) pack, encrypt and sign
 
 ```objective-c
-DIMInstantMessage *iMsg = DKDInstantMessageCreate(cmd, user.ID, station.ID, nil);
-DIMSecureMessage *sMsg = [messenger encryptMessage:iMsg];
-DIMReliableMessage *rMsg = [messenger signMessage:sMsg];
+NSDate *now = nil;
+id<DKDEnvelope> env = DKDEnvelopeCreate(sender, receiver, now);
+id<DKDInstantMessage> iMsg = DKDInstantMessageCreate(env, cmd);
+id<DKDSecureMessage>  sMsg = [messenger encryptMessage:iMsg];
+id<DKDReliableMessage rMsg = [messenger signMessage:sMsg];
 ```
 
 (3) Meta protocol
@@ -142,7 +143,7 @@ The CPU (Command Processing Units) will catch the handshake command response fro
 * Text message
 
 ```objective-c
-DIMContent *content = [[DIMTextContent alloc] initWithText:@"Hey, girl!"];
+id<DKDContent> content = [[DIMTextContent alloc] initWithText:@"Hey, girl!"];
 ```
 
 * Image message
@@ -159,6 +160,14 @@ content = [[DIMAudioContent alloc] initWithAudioData:data
                                             filename:@"voice.mp3"];
 ```
 
+* Video message
+
+```objective-c
+content = [[DIMVideoContent alloc] initWithVideoData:data
+                                            filename:@"movie.mp4"];
+```
+
+
 **NOTICE**: file message content (Image, Audio, Video)
 will be sent out only includes the filename and a URL
 where the file data (encrypted with the same symmetric key) be stored.
@@ -168,13 +177,13 @@ where the file data (encrypted with the same symmetric key) be stored.
 * Query meta with contact ID
 
 ```objective-c
-DIMCommand *cmd = [[DIMMetaCommand alloc] initWithID:ID];
+id<DKDCommand> cmd = [[DIMMetaCommand alloc] initWithID:ID];
 ```
 
-* Query profile with contact ID
+* Query document with contact ID
 
 ```objective-c
-DIMCommand *cmd = [[DIMProfileCommand alloc] initWithID:ID];
+id<DKDCommand> cmd = [[DIMDocumentCommand alloc] initWithID:ID];
 ```
 
 ### Send command
@@ -182,7 +191,7 @@ DIMCommand *cmd = [[DIMProfileCommand alloc] initWithID:ID];
 ```objective-c
 @implementation DIMMessenger (Extension)
 
-- (BOOL)sendCommand:(DIMCommand *)cmd {
+- (BOOL)sendCommand:(id<DKDCommand>)cmd {
     DIMStation *server = [self currentServer];
     NSAssert(server, @"server not connected yet");
     return [self sendContent:cmd receiver:server.ID];
@@ -191,7 +200,7 @@ DIMCommand *cmd = [[DIMProfileCommand alloc] initWithID:ID];
 @end
 ```
 
-MetaCommand or ProfileCommand with only ID means querying, and the CPUs will catch and process all the response automatically.
+MetaCommand or DocumentCommand with only ID means querying, and the CPUs will catch and process all the response automatically.
 
 ## Command Processing Units
 
@@ -210,19 +219,24 @@ NSString * const kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
 
 @implementation DIMSearchCommandProcessor
 
-- (void)_parse:(DIMSearchCommand *)cmd {
-    NSDictionary *result = cmd.results;
-    // TODO: processing results
-}
-
-- (nullable DIMContent *)processContent:(DIMContent *)content
-                                 sender:(DIMID *)sender
-                                message:(DIMInstantMessage *)iMsg {
+- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
+                                withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMSearchCommand class]], @"search command error: %@", content);
-    [self _parse:(DIMSearchCommand *)content];
+    DIMSearchCommand *command = (DIMSearchCommand *)content;
+    NSString *cmd = command.cmd;
+    
+    NSString *notificationName;
+    if ([cmd isEqualToString:DIMCommand_Search]) {
+        notificationName = kNotificationName_SearchUsersUpdated;
+    } else if ([cmd isEqualToString:DIMCommand_OnlineUsers]) {
+        notificationName = kNotificationName_OnlineUsersUpdated;
+    } else {
+        NSAssert(false, @"search command error: %@", cmd);
+        return nil;
+    }
     
     NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
-    [nc postNotificationName:kNotificationName_SearchUsersUpdated
+    [nc postNotificationName:notificationName
                       object:self
                     userInfo:content];
     // response nothing to the station
@@ -244,33 +258,32 @@ NSString * const kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
 
 @implementation DIMHandshakeCommandProcessor
 
-- (nullable DIMContent *)_success {
-    NSString *sessionKey = [self valueForContextName:@"session_key"];
-    DIMServer *server = [self valueForContextName:@"server"];
-    [server handshakeAccepted:YES session:sessionKey];
+- (NSArray<id<DKDContent>> *)success {
+    DIMServer *server = (DIMServer *)[self.messenger currentServer];
+    [server handshakeAccepted:YES];
     return nil;
 }
 
-- (nullable DIMContent *)_ask:(NSString *)sessionKey {
-    [self setContextValue:sessionKey forName:@"session_key"];
-    return [[DIMHandshakeCommand alloc] initWithSessionKey:sessionKey];
+- (NSArray<id<DKDContent>> *)ask:(NSString *)sessionKey {
+    DIMServer *server = (DIMServer *)[self.messenger currentServer];
+    [server handshakeWithSession:sessionKey];
+    return nil;
 }
 
-- (nullable DIMContent *)processContent:(DIMContent *)content
-                                 sender:(DIMID *)sender
-                                message:(DIMInstantMessage *)iMsg {
+- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
+                                withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMHandshakeCommand class]], @"handshake error: %@", content);
-    DIMHandshakeCommand *cmd = (DIMHandshakeCommand *)content;
-    NSString *message = cmd.message;
-    if ([message isEqualToString:@"DIM!"]) {
+    DIMHandshakeCommand *command = (DIMHandshakeCommand *)content;
+    NSString *title = command.title;
+    if ([title isEqualToString:@"DIM!"]) {
         // S -> C
-        return [self _success];
-    } else if ([message isEqualToString:@"DIM?"]) {
+        return [self success];
+    } else if ([title isEqualToString:@"DIM?"]) {
         // S -> C
-        return [self _ask:cmd.sessionKey];
+        return [self ask:command.sessionKey];
     } else {
         // C -> S: Hello world!
-        NSAssert(false, @"handshake command error: %@", cmd);
+        NSAssert(false, @"handshake command error: %@", command);
         return nil;
     }
 }
@@ -281,10 +294,26 @@ NSString * const kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
 And don't forget to register them.
 
 ```objective-c
-[DIMCommandProcessor registerClass:[DIMHandshakeCommandProcessor class]
-                        forCommand:DIMCommand_Handshake];
-[DIMCommandProcessor registerClass:[DIMSearchCommandProcessor class]
-                        forCommand:DIMCommand_Search];
+@implementation DIMClientContentProcessorCreator
+
+- (id<DIMContentProcessor>)createCommandProcessor:(NSString *)name type:(DKDContentType)msgType {
+    // handshake
+    if ([name isEqualToString:DIMCommand_Handshake]) {
+        return CREATE_CPU(DIMHandshakeCommandProcessor);
+    }
+    // search
+    if ([name isEqualToString:DIMCommand_Search]) {
+        return CREATE_CPU(DIMSearchCommandProcessor);
+    } else if ([name isEqualToString:DIMCommand_OnlineUsers]) {
+        // TODO: shared the same processor with 'search'?
+        return CREATE_CPU(DIMSearchCommandProcessor);
+    }
+
+    // others
+    return [super createCommandProcessor:name type:msgType];
+}
+
+@end
 ```
 
 ## Save instant message
@@ -292,30 +321,24 @@ And don't forget to register them.
 Override interface ```saveMessage:``` in DIMMessenger to store instant message:
 
 ```objective-c
-- (BOOL)saveMessage:(DIMInstantMessage *)iMsg {
-    DIMContent *content = iMsg.content;
+- (BOOL)saveMessage:(id<DKDInstantMessage>)iMsg {
+    id<DKDContent> content = iMsg.content;
     // TODO: check message type
     //       only save normal message and group commands
     //       ignore 'Handshake', ...
     //       return true to allow responding
     
-    if ([content isKindOfClass:[DIMHandshakeCommand class]]) {
+    if ([content conformsToProtocol:@protocol(DKDHandshakeCommand)]) {
         // handshake command will be processed by CPUs
         // no need to save handshake command here
         return YES;
     }
-    if ([content isKindOfClass:[DIMMetaCommand class]]) {
-        // meta & profile command will be checked and saved by CPUs
-        // no need to save meta & profile command here
+    if ([content conformsToProtocol:@protocol(DKDMetaCommand)]) {
+        // meta & document command will be checked and saved by CPUs
+        // no need to save meta & document command here
         return YES;
     }
-    if ([content isKindOfClass:[DIMMuteCommand class]] ||
-        [content isKindOfClass:[DIMBlockCommand class]]) {
-        // TODO: create CPUs for mute & block command
-        // no need to save mute & block command here
-        return YES;
-    }
-    if ([content isKindOfClass:[DIMSearchCommand class]]) {
+    if ([content conformsToProtocol:@protocol(DKDSearchCommand)]) {
         // search result will be parsed by CPUs
         // no need to save search command here
         return YES;
@@ -323,7 +346,7 @@ Override interface ```saveMessage:``` in DIMMessenger to store instant message:
     
     DIMAmanuensis *clerk = [DIMAmanuensis sharedInstance];
     
-    if ([content isKindOfClass:[DIMReceiptCommand class]]) {
+    if ([content conformsToProtocol:@protocol(DKDReceiptCommand)]) {
         return [clerk saveReceipt:iMsg];
     } else {
         return [clerk saveMessage:iMsg];
@@ -331,4 +354,4 @@ Override interface ```saveMessage:``` in DIMMessenger to store instant message:
 }
 ```
 
-Copyright &copy; 2018-2019 Albert Moky
+Copyright &copy; 2018-2023 Albert Moky

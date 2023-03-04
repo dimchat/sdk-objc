@@ -52,26 +52,11 @@ NS_ASSUME_NONNULL_BEGIN
 @interface DIMFacebook : DIMBarrack
 
 /**
- *  Get current user
- *
- * @return first local user
- */
-@property (readonly, strong, nonatomic, nullable) id<MKMUser> currentUser;
-
-/**
  *  Get all local users (for decrypting received message)
  *
  * @return users with private key
  */
 @property (readonly, strong, nonatomic, nullable) NSArray<id<MKMUser>> *localUsers;
-
-/**
- * Call it when received 'UIApplicationDidReceiveMemoryWarningNotification',
- * this will remove 50% of cached objects
- *
- * @return number of survivors
- */
-- (NSInteger)reduceMemory;
 
 // override to create user
 - (nullable id<MKMUser>)createUser:(id<MKMID>)ID;
@@ -119,6 +104,18 @@ NS_ASSUME_NONNULL_BEGIN
  * @return true on accepted
  */
 - (BOOL)checkDocument:(id<MKMDocument>)doc;
+
+@end
+
+@interface DIMFacebook (Thanos)
+
+/**
+ * Call it when received 'UIApplicationDidReceiveMemoryWarningNotification',
+ * this will remove 50% of cached objects
+ *
+ * @return number of survivors
+ */
+- (NSInteger)reduceMemory;
 
 @end
 

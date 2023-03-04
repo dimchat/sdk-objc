@@ -43,23 +43,6 @@
 
 #import "DIMFacebook.h"
 
-/**
- *  Remove 1/2 objects from the dictionary
- *
- * @param mDict - mutable dictionary
- */
-static inline NSInteger thanos(NSMutableDictionary *mDict, NSInteger finger) {
-    NSArray *keys = [mDict allKeys];
-    for (id addr in keys) {
-        if ((++finger & 1) == 1) {
-            // kill it
-            [mDict removeObjectForKey:addr];
-        }
-        // let it go
-    }
-    return finger;
-}
-
 @interface DIMFacebook () {
     
     NSMutableDictionary<id<MKMID>, id<MKMUser>> *_userTable;
@@ -76,13 +59,6 @@ static inline NSInteger thanos(NSMutableDictionary *mDict, NSInteger finger) {
         _groupTable = [[NSMutableDictionary alloc] init];
     }
     return self;
-}
-
-- (NSInteger)reduceMemory {
-    NSInteger finger = 0;
-    finger = thanos(_userTable, finger);
-    finger = thanos(_groupTable, finger);
-    return finger >> 1;
 }
 
 - (void)cacheUser:(id<MKMUser>)user {
@@ -205,14 +181,6 @@ static inline NSInteger thanos(NSMutableDictionary *mDict, NSInteger finger) {
     return nil;
 }
 
-- (nullable id<MKMUser>)currentUser {
-    NSArray<id<MKMUser>> *users = self.localUsers;
-    if ([users count] == 0) {
-        return nil;
-    }
-    return [users firstObject];
-}
-
 - (nullable id<MKMUser>)selectLocalUserWithID:(id<MKMID>)receiver {
     NSArray<id<MKMUser>> *users = self.localUsers;
     if ([users count] == 0) {
@@ -275,6 +243,17 @@ static inline NSInteger thanos(NSMutableDictionary *mDict, NSInteger finger) {
         }
     }
     return group;
+}
+
+@end
+
+@implementation DIMFacebook (Thanos)
+
+- (NSInteger)reduceMemory {
+    NSUInteger snap = 0;
+    snap = [DIMAddressFactory thanos:_userTable finger:snap];
+    snap = [DIMAddressFactory thanos:_groupTable finger:snap];
+    return snap;
 }
 
 @end
