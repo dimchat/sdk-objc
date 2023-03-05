@@ -65,6 +65,8 @@
 		E99B1FF82585DA53001A05F1 /* MKMPrivateKey+Store.m in Sources */ = {isa = PBXBuildFile; fileRef = E99B1FF62585DA53001A05F1 /* MKMPrivateKey+Store.m */; };
 		E99B200B2586834F001A05F1 /* MKMMetaDefault.h in Headers */ = {isa = PBXBuildFile; fileRef = E99B20092586834F001A05F1 /* MKMMetaDefault.h */; };
 		E99B200C2586834F001A05F1 /* MKMMetaDefault.m in Sources */ = {isa = PBXBuildFile; fileRef = E99B200A2586834F001A05F1 /* MKMMetaDefault.m */; };
+		E99F068829B45B62005A2FE9 /* MKMSymmetricKey+Password.h in Headers */ = {isa = PBXBuildFile; fileRef = E99F068629B45B62005A2FE9 /* MKMSymmetricKey+Password.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E99F068929B45B62005A2FE9 /* MKMSymmetricKey+Password.m in Sources */ = {isa = PBXBuildFile; fileRef = E99F068729B45B62005A2FE9 /* MKMSymmetricKey+Password.m */; };
 		E9B07FFA2802143B00AE5B4A /* DIMFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = E9B07FF82802143B00AE5B4A /* DIMFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9B07FFB2802143B00AE5B4A /* DIMFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = E9B07FF92802143B00AE5B4A /* DIMFactory.m */; };
 		E9B0CE4B259208FD0082BCFD /* DIMMessagePacker.h in Headers */ = {isa = PBXBuildFile; fileRef = E9B0CE49259208FD0082BCFD /* DIMMessagePacker.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -189,6 +191,8 @@
 		E99B1FF62585DA53001A05F1 /* MKMPrivateKey+Store.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MKMPrivateKey+Store.m"; sourceTree = "<group>"; };
 		E99B20092586834F001A05F1 /* MKMMetaDefault.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKMMetaDefault.h; sourceTree = "<group>"; };
 		E99B200A2586834F001A05F1 /* MKMMetaDefault.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKMMetaDefault.m; sourceTree = "<group>"; };
+		E99F068629B45B62005A2FE9 /* MKMSymmetricKey+Password.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MKMSymmetricKey+Password.h"; sourceTree = "<group>"; };
+		E99F068729B45B62005A2FE9 /* MKMSymmetricKey+Password.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MKMSymmetricKey+Password.m"; sourceTree = "<group>"; };
 		E9B07FF82802143B00AE5B4A /* DIMFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMFactory.h; sourceTree = "<group>"; };
 		E9B07FF92802143B00AE5B4A /* DIMFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMFactory.m; sourceTree = "<group>"; };
 		E9B0CE49259208FD0082BCFD /* DIMMessagePacker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMMessagePacker.h; sourceTree = "<group>"; };
@@ -419,6 +423,8 @@
 			children = (
 				E964A123298BA80300AC76F1 /* MKMBaseKey.h */,
 				E964A124298BA80300AC76F1 /* MKMBaseKey.m */,
+				E99F068629B45B62005A2FE9 /* MKMSymmetricKey+Password.h */,
+				E99F068729B45B62005A2FE9 /* MKMSymmetricKey+Password.m */,
 				E9D79E202583D39200C8E700 /* MKMAESKey.h */,
 				E9D79E1C2583D39200C8E700 /* MKMAESKey.m */,
 				E95CB3602587F44D00685B1B /* MKMSecKeyHelper.h */,
@@ -547,6 +553,7 @@
 				E95965572391609600DAA870 /* DIMMetaCommandProcessor.h in Headers */,
 				E99B200B2586834F001A05F1 /* MKMMetaDefault.h in Headers */,
 				E9D79E292583D39200C8E700 /* MKMAESKey.h in Headers */,
+				E99F068829B45B62005A2FE9 /* MKMSymmetricKey+Password.h in Headers */,
 				E95CB3332587972B00685B1B /* sha3.h in Headers */,
 				E95965262391096600DAA870 /* DIMContentProcessor.h in Headers */,
 				E95D4A5E28A19AA200523488 /* DIMCustomizedContentProcessor.h in Headers */,
@@ -677,6 +684,7 @@
 				E964A12F298BE40500AC76F1 /* DIMCommandFactory.m in Sources */,
 				E9E8959125B70D7100F5E893 /* uECC.c in Sources */,
 				E964A136298BF59300AC76F1 /* DIMMessageFactory.m in Sources */,
+				E99F068929B45B62005A2FE9 /* MKMSymmetricKey+Password.m in Sources */,
 				E964A10A298B772000AC76F1 /* DIMServiceProvider.m in Sources */,
 				E95CB3532587C29500685B1B /* MKMECCPublicKey.m in Sources */,
 				E9D79E272583D39200C8E700 /* MKMRSAPrivateKey+Store.m in Sources */,

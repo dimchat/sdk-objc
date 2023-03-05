@@ -59,6 +59,7 @@ FOUNDATION_EXPORT const unsigned char DIMSDKVersionString[];
 
 // Plugins
 #import <DIMSDK/MKMBaseKey.h>
+#import <DIMSDK/MKMSymmetricKey+Password.h>
 #import <DIMSDK/MKMPrivateKey+Store.h>
 #import <DIMSDK/MKMAddressBTC.h>
 #import <DIMSDK/MKMAddressETH.h>
