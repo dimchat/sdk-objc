@@ -37,6 +37,25 @@
 
 #import "DIMStation.h"
 
+static id<MKMID> s_any_station = nil;
+static id<MKMID> s_every_stations = nil;
+
+id<MKMID> MKMAnyStation(void) {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        s_any_station = MKMIDParse(@"station@anywhere");
+    });
+    return s_any_station;
+}
+
+id<MKMID> MKMEveryStations(void) {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        s_every_stations = MKMIDParse(@"stations@everywhere");
+    });
+    return s_every_stations;
+}
+
 @interface DIMStation ()
 
 @property (nonatomic, strong) id<MKMUser> user;
@@ -70,6 +89,10 @@
 - (instancetype)initWithID:(id<MKMID>)ID {
     NSString *ip = nil;
     return [self initWithID:ID host:ip port:0];
+}
+
+- (instancetype)initWithHost:(NSString *)IP port:(UInt16)port {
+    return [self initWithID:MKMAnyStation() host:IP port:port];
 }
 
 - (id)copyWithZone:(nullable NSZone *)zone {
@@ -140,6 +163,13 @@
         return MKMIDParse(ISP);
     }
     return nil;
+}
+
+- (void)setID:(id<MKMID>)ID {
+    id<MKMEntityDataSource> delegate = [self dataSource];
+    id<MKMUser> inner = [[DIMUser alloc] initWithID:ID];
+    [inner setDataSource:delegate];
+    _user = inner;
 }
 
 #pragma mark Entity

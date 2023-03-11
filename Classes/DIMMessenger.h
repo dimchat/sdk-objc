@@ -73,17 +73,17 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  Delegate for getting message key
  */
-@property (weak, nonatomic) id<DIMCipherKeyDelegate> keyCache;
+@property(nonatomic, readonly) id<DIMCipherKeyDelegate> keyCache;
 
 /**
  *  Delegate for parsing message
  */
-@property (weak, nonatomic) id<DIMPacker> packer;
+@property(nonatomic, readonly) id<DIMPacker> packer;
 
 /**
  *  Delegate for processing message
  */
-@property (weak, nonatomic) id<DIMProcessor> processor;
+@property(nonatomic, readonly) id<DIMProcessor> processor;
 
 @end
 

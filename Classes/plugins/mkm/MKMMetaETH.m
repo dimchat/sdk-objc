@@ -72,7 +72,7 @@
 }
 
 - (nullable id<MKMAddress>)generateAddress:(MKMEntityType)network {
-    NSAssert(self.type == MKMMetaVersion_ETH || self.type == MKMMetaVersion_ExETH,
+    NSAssert(self.type == MKMMetaType_ETH || self.type == MKMMetaType_ExETH,
              @"meta version error: %d", self.type);
     NSAssert(network == MKMEntityType_User, @"ETH address type error: %d", network);
     if (!_cachedAddress) {

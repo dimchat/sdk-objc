@@ -60,7 +60,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  Get all short names with the same ID
  *
- * @param identifier - user ID
+ * @param ID - user ID
  * @return short name list
  */
 - (NSArray<NSString *> *)getNames:(id<MKMID>)ID;

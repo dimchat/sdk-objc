@@ -39,7 +39,20 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+id<MKMID> MKMAnyStation(void);
+id<MKMID> MKMEveryStations(void);
+
+#ifdef __cplusplus
+} /* end of extern "C" */
+#endif
+
 @protocol MKMStation <MKMUser>
+
+@property (nonatomic, copy) id<MKMID> ID;
 
 @property (nonatomic, readonly) NSString *host; // Domain/IP
 @property (nonatomic, readonly) UInt16    port; // default: 9394
@@ -56,6 +69,8 @@ NS_ASSUME_NONNULL_BEGIN
 NS_DESIGNATED_INITIALIZER;
 
 - (instancetype)initWithID:(id<MKMID>)ID;
+
+- (instancetype)initWithHost:(NSString *)IP port:(UInt16)port;
 
 @end
 

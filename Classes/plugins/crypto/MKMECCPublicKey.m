@@ -233,7 +233,7 @@ static inline int ecc_der_to_sig(const uint8_t *der, int der_len, uint8_t *sig_6
                 if (bytes[88 - 65] == 0x04) {
                     _data = [_data subdataWithRange:NSMakeRange(88 - 65, 65)];
                 } else {
-                    @throw [NSException exceptionWithName:@"ECCKeyError" reason:@"not support" userInfo:self.dictionary];
+                    //@throw [NSException exceptionWithName:@"ECCKeyError" reason:@"not support" userInfo:self.dictionary];
                 }
             }
         }

@@ -215,7 +215,8 @@
     }
     if (!trimmed) {
         // not for you?
-        @throw [NSException exceptionWithName:@"ReceiverError" reason:@"not for you?" userInfo:sMsg.dictionary];
+        return nil;
+        //@throw [NSException exceptionWithName:@"ReceiverError" reason:@"not for you?" userInfo:sMsg.dictionary];
     }
     
     // check message delegate

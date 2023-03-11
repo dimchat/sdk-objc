@@ -72,7 +72,7 @@
 }
 
 - (nullable id<MKMAddress>)generateAddress:(MKMEntityType)network {
-    NSAssert(self.type == MKMMetaVersion_BTC || self.type == MKMMetaVersion_ExBTC,
+    NSAssert(self.type == MKMMetaType_BTC || self.type == MKMMetaType_ExBTC,
              @"meta version error: %d", self.type);
     NSAssert(network == MKMNetwork_BTCMain, @"BTC address type error: %d", network);
     if (!_cachedAddress) {

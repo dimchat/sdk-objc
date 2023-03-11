@@ -63,8 +63,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMTwinsHelper : NSObject
 
-@property (readonly, weak, nonatomic) DIMFacebook *facebook;
-@property (readonly, weak, nonatomic) DIMMessenger *messenger;
+@property (readonly, weak, nonatomic) __kindof DIMFacebook *facebook;
+@property (readonly, weak, nonatomic) __kindof DIMMessenger *messenger;
 
 - (instancetype)initWithFacebook:(DIMFacebook *)barrack
                        messenger:(DIMMessenger *)transceiver

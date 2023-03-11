@@ -54,18 +54,18 @@ static inline BOOL isBroadcast(id<DKDMessage> msg) {
 @implementation DIMMessenger
 
 - (id<DIMCipherKeyDelegate>)keyCache {
-    NSAssert(_keyCache, @"cipher key delegate not set yet!");
-    return _keyCache;
+    NSAssert(false, @"implement me!");
+    return nil;
 }
 
 - (id<DIMPacker>)packer {
-    NSAssert(_packer, @"message packer not set yet!");
-    return _packer;
+    NSAssert(false, @"implement me!");
+    return nil;
 }
 
 - (id<DIMProcessor>)processor {
-    NSAssert(_processor, @"message processor not set yet!");
-    return _processor;
+    NSAssert(false, @"implement me!");
+    return nil;
 }
 
 - (BOOL)sendContent:(id<DKDContent>)content
