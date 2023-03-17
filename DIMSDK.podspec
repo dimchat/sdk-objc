@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
     s.name                  = 'DIMSDK'
-    s.version               = '0.6.3'
+    s.version               = '0.6.4'
     s.summary               = 'Decentralized Instant Messaging'
     s.description           = <<-DESC
             Decentralized Instant Messaging (Objective-C SDK)

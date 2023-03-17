@@ -77,7 +77,7 @@ id<MKMID> MKMEveryStations(void) {
 - (instancetype)initWithID:(id<MKMID>)ID
                       host:(NSString *)IP
                       port:(UInt16)port {
-    NSAssert(ID.type == MKMEntityType_Station, @"station ID error: %@", ID);
+    NSAssert(ID.type == MKMEntityType_Station || ID.type == MKMEntityType_Any, @"station ID error: %@", ID);
     if (self = [super init]) {
         self.user = [[DIMUser alloc] initWithID:ID];
         self.host = IP;
@@ -105,18 +105,12 @@ id<MKMID> MKMEveryStations(void) {
     return server;
 }
 
+- (NSString *)description {
+    return [NSString stringWithFormat:@"<%@ ID=\"%@\" host=\"%@\" port=%u />", [self class], [self ID], [self host], [self port]];
+}
+
 - (NSString *)debugDescription {
-    NSString *desc = [super debugDescription];
-    NSDictionary *dict = MKMJSONDecode(desc);
-    NSMutableDictionary *info;
-    if ([dict isKindOfClass:[NSMutableDictionary class]]) {
-        info = (NSMutableDictionary *)dict;
-    } else {
-        info = [dict mutableCopy];
-    }
-    [info setObject:self.host forKey:@"host"];
-    [info setObject:@(self.port) forKey:@"port"];
-    return MKMJSONEncode(info);
+    return [self description];
 }
 
 - (BOOL)isEqual:(id)object {
