@@ -35,8 +35,6 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import "MKMPlugins.h"
-
 #import "DIMServiceProvider.h"
 #import "DIMStation.h"
 #import "DIMRobot.h"
@@ -85,70 +83,42 @@
     return NO;
 }
 
-- (BOOL)saveMembers:(NSArray<id<MKMID>> *)members group:(id<MKMID>)ID {
-    NSAssert(false, @"implement me!");
-    return NO;
-}
-
 - (BOOL)checkDocument:(id<MKMDocument>)doc {
     id<MKMID> ID = doc.ID;
     if (!ID) {
         NSAssert(false, @"ID error: %@", doc);
         return NO;
     }
-    // NOTICE: if this is a group profile,
-    //             verify it with each member's meta.key
-    //         else (this is a user profile)
+    // NOTICE: if this is a bulletin document for group,
+    //             verify it with the group owner's meta.key
+    //         else (this is a visa document for user)
     //             verify it with the user's meta.key
     id<MKMMeta> meta;
     if (MKMIDIsGroup(ID)) {
-        // check by each member
-        NSArray<id<MKMID>> *members = [self membersOfGroup:ID];
-        for (id<MKMID> item in members) {
-            meta = [self metaForID:item];
-            if (!meta) {
-                // FIXME: meta not found for this member
-                continue;
-            }
-            if ([doc verify:meta.key]) {
-                return YES;
-            }
-        }
-        // DISCUSS: what to do about assistants?
-        
-        // check by owner
         id<MKMID> owner = [self ownerOfGroup:ID];
-        if (!owner) {
-            if (ID.type == MKMEntityType_Group) {
-                // NOTICE: if this is a polylogue profile
-                //             verify it with the founder's meta.key
-                //             (which equals to the group's meta.key)
-                meta = [self metaForID:ID];
-            } else {
-                // FIXME: owner not found for this group
-                return NO;
-            }
-        } else if ([members containsObject:owner]) {
-            // already checked
-            return NO;
-        } else {
+        if (owner) {
+            // check by owner's meta.key
             meta = [self metaForID:owner];
+        } else if (ID.type == MKMEntityType_Group) {
+            // NOTICE: if this is a polylogue document
+            //             verify it with the founder's meta.key
+            //             (which equals to the group's meta.key)
+            meta = [self metaForID:ID];
+        } else {
+            // FIXME: owner not found for this group
+            return NO;
         }
     } else {
         NSAssert(MKMIDIsUser(ID), @"document ID error: %@", ID);
         meta = [self metaForID:ID];
     }
-    return [doc verify:meta.key];
+    return meta && [doc verify:meta.key];
 }
 
 - (nullable id<MKMUser>)createUser:(id<MKMID>)ID {
-    if (MKMIDIsBroadcast(ID)) {
-        // create user 'anyone@anywhere'
-        return [[DIMUser alloc] initWithID:ID];
-    }
-    // make sure meta exists
-    NSAssert([self metaForID:ID], @"meta not found for user: %@", ID);
-    // NOTICE: make sure visa key exists before calling this
+    // make sure visa key exists before calling this
+    NSAssert(MKMIDIsBroadcast(ID) || [self publicKeyForEncryption:ID],
+             @"visa key not found for user: %@", ID);
     MKMEntityType type = ID.type;
     // check user type
     if (type == MKMEntityType_Station) {
@@ -156,23 +126,20 @@
     } else if (type == MKMEntityType_Bot) {
         return [[DIMBot alloc] initWithID:ID];
     }
-    //NSAssert(type == MKMEntityType_User, @"Unsupported user type: %d", type);
+    // general user, or 'anyone@anywhere'
     return [[DIMUser alloc] initWithID:ID];
 }
 
 - (nullable id<MKMGroup>)createGroup:(id<MKMID>)ID {
-    if (MKMIDIsBroadcast(ID)) {
-        // create group 'everyone@everywhere'
-        return [[DIMGroup alloc] initWithID:ID];
-    }
-    // make user meta exists
-    NSAssert([self metaForID:ID], @"failed to get meta for group: %@", ID);
+    // make user meta exists before calling this
+    NSAssert(MKMIDIsBroadcast(ID) || [self metaForID:ID],
+             @"failed to get meta for group: %@", ID);
     MKMEntityType type = ID.type;
     // check group type
     if (type == MKMEntityType_ISP) {
         return [[DIMServiceProvider alloc] initWithID:ID];
     }
-    //NSAssert(type == MKMEntityType_Group, @"Unsupported group type: %d", type);
+    // general group, or 'everyone@everywhere'
     return [[DIMGroup alloc] initWithID:ID];
 }
 
@@ -189,21 +156,7 @@
     } else if (MKMIDIsBroadcast(receiver)) {
         // broadcast message can decrypt by anyone, so just return current user
         return [users firstObject];
-    }
-    if (MKMIDIsGroup(receiver)) {
-        // group message (recipient not designated)
-        NSArray<id<MKMID>> *members = [self membersOfGroup:receiver];
-        if (members.count == 0) {
-            // TODO: group not ready, waiting for group info
-            return nil;
-        }
-        for (id<MKMUser> item in users) {
-            if ([members containsObject:item.ID]) {
-                // DISCUSS: set this item to be current user?
-                return item;
-            }
-        }
-    } else {
+    } else if (MKMIDIsUser(receiver)) {
         // 1. personal message
         // 2. split group message
         for (id<MKMUser> item in users) {
@@ -212,12 +165,28 @@
                 return item;
             }
         }
+        //NSAssert(false, @"receiver not in local users: %@, %@", receiver, users);
+        return nil;
     }
-    NSAssert(false, @"receiver not in local users: %@, %@", receiver, users);
+    // group message (recipient not designated)
+    NSAssert(MKMIDIsGroup(receiver), @"receiver error: %@", receiver);
+    // the messenger will check group info before decrypting message,
+    // so we can trust that the group's meta & members MUST exist here.
+    id<MKMGroup> grp = [self groupWithID:receiver];
+    NSAssert(grp, @"group not ready: %@", receiver);
+    NSArray<id<MKMID>> *members = [grp members];
+    NSAssert([members count] > 0, @"members not found: %@", receiver);
+    for (id<MKMUser> item in users) {
+        if ([members containsObject:item.ID]) {
+            // DISCUSS: set this item to be current user?
+            return item;
+        }
+    }
+    //NSAssert(false, @"receiver not in local users: %@, %@", receiver, users);
     return nil;
 }
 
-#pragma mark - DIMEntityDelegate
+#pragma mark - MKMEntityDelegate
 
 - (nullable id<MKMUser>)userWithID:(id<MKMID>)ID {
     // 1. get from user cache
@@ -254,46 +223,6 @@
     snap = [DIMAddressFactory thanos:_userTable finger:snap];
     snap = [DIMAddressFactory thanos:_groupTable finger:snap];
     return snap;
-}
-
-@end
-
-@implementation DIMFacebook (MemberShip)
-
-- (BOOL)group:(id<MKMID>)group isFounder:(id<MKMID>)member {
-    // check member's public key with group's meta.key
-    id<MKMMeta> gMeta = [self metaForID:group];
-    NSAssert(gMeta, @"failed to get meta for group: %@", group);
-    id<MKMMeta> mMeta = [self metaForID:member];
-    //NSAssert(mMeta, @"failed to get meta for member: %@", member);
-    return MKMMetaMatchKey(mMeta.key, gMeta);
-}
-
-- (BOOL)group:(id<MKMID>)group isOwner:(id<MKMID>)member {
-    if (group.type == MKMEntityType_Group) {
-        return [self group:group isFounder:member];
-    }
-    NSAssert(false, @"only Polylogue so far: %@", group);
-    return NO;
-}
-
-@end
-
-@implementation DIMFacebook (Plugins)
-
-+ (void)loadPlugins {
-    // load plugins
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        [MKMPlugins registerIDFactory];
-        [MKMPlugins registerAddressFactory];
-        [MKMPlugins registerMetaFactory];
-        [MKMPlugins registerDocumentFactory];
-        
-        [MKMPlugins registerKeyFactories];
-        [MKMPlugins registerDataCoders];
-        [MKMPlugins registerDigesters];
-    });
 }
 
 @end

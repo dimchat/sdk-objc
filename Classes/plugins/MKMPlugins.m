@@ -192,3 +192,23 @@
 }
 
 @end
+
+@implementation MKMPlugins (Prepare)
+
++ (void)loadPlugins {
+    // load plugins
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        [MKMPlugins registerDataCoders];
+        [MKMPlugins registerDigesters];
+        
+        [MKMPlugins registerKeyFactories];
+
+        [MKMPlugins registerIDFactory];
+        [MKMPlugins registerAddressFactory];
+        [MKMPlugins registerMetaFactory];
+        [MKMPlugins registerDocumentFactory];
+    });
+}
+
+@end

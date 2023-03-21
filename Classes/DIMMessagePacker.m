@@ -102,12 +102,13 @@
     if (MKMIDIsGroup(receiver)) {
         // group message
         id<MKMGroup> grp = [self.facebook groupWithID:receiver];
+        // a station will never send group message, so here must be a client;
+        // and the client messenger should check the group's meta & members
+        // before encrypting message, so we can trust that the group can be
+        // created and its members MUST exist here.
+        NSAssert(group, @"group not ready: %@", receiver);
         NSArray<id<MKMID>> *members = [grp members];
-        if (members.count == 0) {
-            // group not ready
-            // TODO: suspend this message for waiting group info
-            return nil;
-        }
+        NSAssert([members count] > 0, @"group members not found: %@", receiver);
         sMsg = [iMsg encryptWithKey:password forMembers:members];
     } else {
         // personal message (or split group message)

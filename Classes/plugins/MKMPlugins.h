@@ -73,4 +73,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@interface MKMPlugins (Prepare)
+
++ (void)loadPlugins;
+
+@end
+
 NS_ASSUME_NONNULL_END

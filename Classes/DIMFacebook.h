@@ -89,15 +89,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)saveDocument:(id<MKMDocument>)doc;
 
 /**
- *  Save members of group
- *
- * @param members - member ID list
- * @param ID - group ID
- * @return true on success
- */
-- (BOOL)saveMembers:(NSArray<id<MKMID>> *)members group:(id<MKMID>)ID;
-
-/**
  *  Document checking
  *
  * @param doc - entity document
@@ -116,19 +107,6 @@ NS_ASSUME_NONNULL_BEGIN
  * @return number of survivors
  */
 - (NSInteger)reduceMemory;
-
-@end
-
-@interface DIMFacebook (MemberShip)
-
-- (BOOL)group:(id<MKMID>)group isFounder:(id<MKMID>)member;
-- (BOOL)group:(id<MKMID>)group isOwner:(id<MKMID>)member;
-
-@end
-
-@interface DIMFacebook (Plugins)
-
-+ (void)loadPlugins;
 
 @end
 

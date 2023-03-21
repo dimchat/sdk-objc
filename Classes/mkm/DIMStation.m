@@ -114,16 +114,13 @@ id<MKMID> MKMEveryStations(void) {
 }
 
 - (BOOL)isEqual:(id)object {
-    if ([super isEqual:object]) {
-        YES;
-    }
-    NSAssert([object isKindOfClass:[DIMStation class]], @"error: %@", object);
-    DIMStation *server = (DIMStation *)object;
-    if (![server.host isEqualToString:_host]) {
-        return NO;
-    }
-    if (server.port != _port) {
-        return NO;
+    if ([object conformsToProtocol:@protocol(MKMStation)]) {
+        if ([super isEqual:object]) {
+            // same object
+            return YES;
+        }
+        id<MKMStation> server = (id<MKMStation>)object;
+        return server.port == _port && [server.host isEqualToString:_host];
     }
     // others?
     return YES;
