@@ -43,7 +43,10 @@ static id<MKMID> s_every_stations = nil;
 id<MKMID> MKMAnyStation(void) {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        s_any_station = MKMIDParse(@"station@anywhere");
+        s_any_station = [[MKMID alloc] initWithString:@"station@anywhere"
+                                                 name:@"station"
+                                              address:MKMAnywhere()
+                                             terminal:nil];
     });
     return s_any_station;
 }
@@ -51,7 +54,10 @@ id<MKMID> MKMAnyStation(void) {
 id<MKMID> MKMEveryStations(void) {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        s_every_stations = MKMIDParse(@"stations@everywhere");
+        s_every_stations = [[MKMID alloc] initWithString:@"stations@everywhere"
+                                                    name:@"stations"
+                                                 address:MKMEverywhere()
+                                                terminal:nil];
     });
     return s_every_stations;
 }

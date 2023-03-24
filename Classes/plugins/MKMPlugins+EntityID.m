@@ -39,6 +39,8 @@
 
 #import "MKMAddressBTC.h"
 
+#import "DIMStation.h"
+
 #import "MKMPlugins.h"
 
 @interface MKMEntityID : MKMID
@@ -71,16 +73,28 @@
 - (nullable id<MKMID>)parse:(NSString *)identifier {
     NSUInteger len = [identifier length];
     if (len == 15) {
+        // "anyone@anywhere"
         NSString *lower = [identifier lowercaseString];
         if ([MKMAnyone() isEqual:lower]) {
             return MKMAnyone();
         }
     } else if (len == 19) {
+        // "everyone@everywhere"
+        // "stations@everywhere"
         NSString *lower = [identifier lowercaseString];
         if ([MKMEveryone() isEqual:lower]) {
             return MKMEveryone();
+        } else if (MKMEveryStations()) {
+            return MKMEveryStations();
+        }
+    } else if (len == 16) {
+        // "station@anywhere"
+        NSString *lower = [identifier lowercaseString];
+        if ([MKMAnyStation() isEqual:lower]) {
+            return MKMAnyStation();
         }
     } else if (len == 13) {
+        // "moky@anywhere"
         NSString *lower = [identifier lowercaseString];
         if ([MKMFounder() isEqual:lower]) {
             return MKMFounder();

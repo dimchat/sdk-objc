@@ -52,11 +52,13 @@
 - (nullable id<MKMAddress>)createAddress:(NSString *)address {
     NSUInteger len = [address length];
     if (len == 8) {
+        // "anywhere"
         NSString *lower = [address lowercaseString];
         if ([MKMAnywhere() isEqual:lower]) {
             return MKMAnywhere();
         }
-    } else if (len == 9) {
+    } else if (len == 10) {
+        // "everywhere"
         NSString *lower = [address lowercaseString];
         if ([MKMEverywhere() isEqual:lower]) {
             return MKMEverywhere();
