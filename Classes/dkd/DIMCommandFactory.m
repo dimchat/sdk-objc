@@ -67,17 +67,18 @@
 
 @end
 
-@implementation DIMGeneralCommandFactory
+@implementation DIMBaseCommandFactory
 
 // Override
 - (nullable id<DKDContent>)parseContent:(NSDictionary *)content {
-    DIMFactoryManager *man = [DIMFactoryManager sharedManager];
+    DIMCommandFactoryManager *man = [DIMCommandFactoryManager sharedManager];
     NSString *cmd = [man.generalFactory getCmd:content];
     // get factory by command name
-    id<DKDCommandFactory> factory = [man.generalFactory commandFactoryForName:cmd];
+    id<DKDCommandFactory> factory;
+    factory = cmd.length == 0 ? nil : [man.generalFactory commandFactoryForName:cmd];
     if (!factory) {
         // check for group commands
-        if ([content objectForKey:@"group"]) {
+        if ([content objectForKey:@"group"] && ![cmd isEqualToString:@"group"]) {
             factory = [man.generalFactory commandFactoryForName:@"group"];
         }
         if (!factory) {
@@ -107,10 +108,11 @@
 
 // Override
 - (nullable id<DKDContent>)parseContent:(NSDictionary *)content {
-    DIMFactoryManager *man = [DIMFactoryManager sharedManager];
+    DIMCommandFactoryManager *man = [DIMCommandFactoryManager sharedManager];
     NSString *cmd = [man.generalFactory getCmd:content];
     // get factory by command name
-    id<DKDCommandFactory> factory = [man.generalFactory commandFactoryForName:cmd];
+    id<DKDCommandFactory> factory;
+    factory = cmd.length == 0 ? nil : [man.generalFactory commandFactoryForName:cmd];
     if (!factory) {
         factory = self;
     }

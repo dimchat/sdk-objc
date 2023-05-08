@@ -91,7 +91,7 @@ void DIMRegisterContentFactories(void) {
     DIMContentRegisterClass(DKDContentType_Transfer, DIMTransferContent);
     
     // Command
-    id<DKDContentFactory> cmdParser = [[DIMGeneralCommandFactory alloc] init];
+    id<DKDContentFactory> cmdParser = [[DIMBaseCommandFactory alloc] init];
     DIMContentRegister(DKDContentType_Command, cmdParser);
     
     // History Command

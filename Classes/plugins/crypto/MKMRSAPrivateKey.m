@@ -216,28 +216,37 @@
 #pragma mark - Protocol
 
 - (nullable NSData *)decrypt:(NSData *)ciphertext {
-    NSAssert(self.privateKeyRef != NULL, @"RSA private key cannot be empty");
     if (ciphertext.length != (self.keySize)) {
-        // ciphertext length not match RSA key
+        NSLog(@"[RSA] ciphertext length not correct: %lu", ciphertext.length);
         return nil;
     }
     NSData *plaintext = nil;
     
-    CFErrorRef error = NULL;
-    SecKeyAlgorithm alg = kSecKeyAlgorithmRSAEncryptionPKCS1;
-    CFDataRef data;
-    data = SecKeyCreateDecryptedData(self.privateKeyRef,
-                                     alg,
-                                     (CFDataRef)ciphertext,
-                                     &error);
-    if (error) {
-        NSAssert(!data, @"RSA decrypted data should be empty when failed");
-        //NSAssert(false, @"RSA decrypt error: %@", error);
-        CFRelease(error);
-        error = NULL;
-    } else {
-        NSAssert(data, @"RSA decrypted data should not be empty");
-        plaintext = (__bridge_transfer NSData *)data;
+    @try {
+        SecKeyRef keyRef = self.privateKeyRef;
+        NSAssert(keyRef != NULL, @"RSA private key error");
+        
+        CFErrorRef error = NULL;
+        SecKeyAlgorithm alg = kSecKeyAlgorithmRSAEncryptionPKCS1;
+        CFDataRef data;
+        data = SecKeyCreateDecryptedData(keyRef,
+                                         alg,
+                                         (CFDataRef)ciphertext,
+                                         &error);
+        if (error) {
+            NSLog(@"[RSA] failed to decrypt: %@", error);
+            NSAssert(!data, @"RSA decrypted data should be empty when failed");
+            //NSAssert(false, @"RSA decrypt error: %@", error);
+            CFRelease(error);
+            error = NULL;
+        } else {
+            NSAssert(data, @"RSA decrypted data should not be empty");
+            plaintext = (__bridge_transfer NSData *)data;
+        }
+    } @catch (NSException *exception) {
+        NSLog(@"[RSA] failed to decrypt: %@", exception);
+    } @finally {
+        //
     }
     
     //NSAssert(plaintext, @"RSA decrypt failed");
@@ -257,6 +266,7 @@
                                (CFDataRef)data,
                                &error);
     if (error) {
+        NSLog(@"[RSA] failed to sign: %@", error);
         NSAssert(!CT, @"RSA signature should be empty when failed");
         NSAssert(false, @"RSA sign error: %@", error);
         CFRelease(error);

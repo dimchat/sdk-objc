@@ -93,11 +93,11 @@ void DIMRegisterCommandFactories(void);
 
 #pragma mark -
 
-@interface DIMGeneralCommandFactory : NSObject <DKDContentFactory, DKDCommandFactory>
+@interface DIMBaseCommandFactory : NSObject <DKDContentFactory, DKDCommandFactory>
 
 @end
 
-@interface DIMHistoryCommandFactory : DIMGeneralCommandFactory
+@interface DIMHistoryCommandFactory : DIMBaseCommandFactory
 
 @end
 

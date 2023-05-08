@@ -259,12 +259,18 @@ static inline int ecc_der_to_sig(const uint8_t *der, int der_len, uint8_t *sig_6
 - (BOOL)verify:(NSData *)data withSignature:(NSData *)signature {
     NSData *hash = MKMSHA256Digest(data);
     uint8_t sig[64];
-    int res = ecc_der_to_sig(signature.bytes, (int)signature.length, sig);
-    if (res != 0) {
-        NSAssert(false, @"failed to verify with ECC private key");
-        return NO;
+    @try {
+        int res = ecc_der_to_sig(signature.bytes, (int)signature.length, sig);
+        if (res != 0) {
+            NSAssert(false, @"failed to verify with ECC private key");
+            return NO;
+        }
+        return uECC_verify(self.pubkey, hash.bytes, (unsigned)hash.length, sig, self.curve);
+    } @catch (NSException *exception) {
+        NSLog(@"[ECC] failed to verify: %@", exception);
+    } @finally {
+        //
     }
-    return uECC_verify(self.pubkey, hash.bytes, (unsigned)hash.length, sig, self.curve);
 }
 
 @end

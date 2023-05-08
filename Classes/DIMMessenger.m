@@ -68,14 +68,6 @@ static inline BOOL isBroadcast(id<DKDMessage> msg) {
     return nil;
 }
 
-- (BOOL)sendContent:(id<DKDContent>)content
-             sender:(nullable id<MKMID>)from
-           receiver:(id<MKMID>)to
-           priority:(NSInteger)prior {
-    NSAssert(false, @"implement me!");
-    return NO;
-}
-
 #pragma mark DIMCipherKeyDelegate
 
 - (id<MKMSymmetricKey>)cipherKeyFrom:(id<MKMID>)sender
@@ -164,7 +156,7 @@ static inline BOOL isBroadcast(id<DKDMessage> msg) {
                            withKey:(id<MKMSymmetricKey>)password {
     id<DKDContent> content = [super message:sMsg deserializeContent:data withKey:password];
     NSAssert(content, @"content error: %@", data);
-    if (!isBroadcast(sMsg)) {
+    if (!isBroadcast(sMsg)/* && content*/) {
         // check and cache key for reuse
         id<MKMID> sender = sMsg.sender;
         id<MKMID> group = [self overtGroupForContent:content];

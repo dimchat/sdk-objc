@@ -43,7 +43,7 @@
 
 @implementation JSON
 
-- (nullable NSString *)encode:(id)container {
+- (NSString *)encode:(id)container {
     if (![NSJSONSerialization isValidJSONObject:container]) {
         NSAssert(false, @"object format not support for json: %@", container);
         return nil;
@@ -78,7 +78,7 @@
 
 @implementation UTF8
 
-- (nullable NSData *)encode:(NSString *)string {
+- (NSData *)encode:(NSString *)string {
     return [string dataUsingEncoding:NSUTF8StringEncoding];
 }
 

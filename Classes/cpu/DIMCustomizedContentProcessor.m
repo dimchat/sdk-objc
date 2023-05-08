@@ -62,7 +62,7 @@
                                   content:(id<DKDCustomizedContent>)customized
                                   message:(id<DKDReliableMessage>)rMsg {
     NSString *app = [customized application];
-    NSString *mod = [customized module];
+    NSString *mod = [customized moduleName];
     NSString *text = [NSString stringWithFormat:@"Customized Content (app: %@, mod: %@, act: %@) not support yet!", app, mod, act];
     return [self respondText:text withGroup:nil];
 }
@@ -81,14 +81,14 @@
         return res;
     }
     // 2. get handler with module name
-    NSString *mod = [customized module];
+    NSString *mod = [customized moduleName];
     id<DIMCustomizedContentHandler> handler = [self fetchModule:mod content:customized messasge:rMsg];
     if (!handler) {
         // module not support
         return nil;
     }
     // 3. do the job
-    NSString *act = [customized action];
+    NSString *act = [customized actionName];
     id<MKMID> sender = [rMsg sender];
     return [handler handleAction:act sender:sender content:customized message:rMsg];
 }

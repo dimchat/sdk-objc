@@ -133,6 +133,16 @@ typedef NS_ENUM(UInt8, MKMNetworkID) {
 };
 typedef UInt8 MKMNetworkType;
 
+// Network ID
+#define MKMNetwork_IsPerson(network)   (((network) == MKMNetwork_Main) ||      \
+                                       ((network) == MKMNetwork_BTCMain))
+
+#define MKMNetwork_IsStation(network)  ((network) == MKMNetwork_Station)
+#define MKMNetwork_IsProvider(network) ((network) == MKMNetwork_Provider)
+
+#define MKMNetwork_IsThing(network)    ((network) & MKMNetwork_Thing)
+#define MKMNetwork_IsBot(network)      ((network) == MKMNetwork_Bot)
+
 #ifdef __cplusplus
 extern "C" {
 #endif

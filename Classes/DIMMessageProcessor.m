@@ -104,7 +104,7 @@
     // 1. verify message
     id<DKDSecureMessage> sMsg = [transceiver verifyMessage:rMsg];
     if (!sMsg) {
-        // waiting for sender's meta if not eixsts
+        // TODO: suspend and waiting for sender's meta if not exists
         return nil;
     }
     // 2. process message
@@ -125,7 +125,6 @@
         [messages addObject:msg];
     }
     return messages;
-    // TODO: override to deliver to the receiver when catch exception "receiver error ..."
 }
 
 - (NSArray<id<DKDSecureMessage>> *)processSecure:(id<DKDSecureMessage>)sMsg

@@ -60,6 +60,10 @@
 }
 
 - (nullable id<DKDSecureMessage>)encryptMessage:(id<DKDInstantMessage>)iMsg {
+    // TODO: check receiver before calling this, make sure the visa.key exists;
+    //       otherwise, suspend this message for waiting receiver's visa/meta;
+    //       if receiver is a group, query all members' visa too!
+
     DIMMessenger *transceiver = self.messenger;
     // check message delegate
     if (!iMsg.delegate) {
@@ -106,7 +110,7 @@
         // and the client messenger should check the group's meta & members
         // before encrypting message, so we can trust that the group can be
         // created and its members MUST exist here.
-        NSAssert(group, @"group not ready: %@", receiver);
+        NSAssert(grp, @"group not ready: %@", receiver);
         NSArray<id<MKMID>> *members = [grp members];
         NSAssert([members count] > 0, @"group members not found: %@", receiver);
         sMsg = [iMsg encryptWithKey:password forMembers:members];
@@ -116,6 +120,7 @@
     }
     if (!sMsg) {
         // public key for encryption not found
+        NSAssert(false, @"failed to encrypt message: %@", self);
         // TODO: suspend this message for waiting receiver's meta
         return nil;
     }
@@ -170,8 +175,8 @@
     return DKDReliableMessageParse(dict);
 }
 
-// TODO: make sure meta exists before verifying message
 - (id<DKDSecureMessage>)verifyMessage:(id<DKDReliableMessage>)rMsg {
+    // TODO: check sender before calling this, make sure meta exists
     DIMFacebook *facebook = self.facebook;
     id<MKMID> sender = rMsg.sender;
     // [Meta Protocol]
@@ -200,8 +205,10 @@
     return [rMsg verify];
 }
 
-// TODO: make sure private key (decrypt key) exists before decrypting message
 - (id<DKDInstantMessage>)decryptMessage:(id<DKDSecureMessage>)sMsg {
+    // TODO: check receiver before calling this, make sure you are the receiver,
+    //       or you are a member of the group when this is a group message,
+    //       so that you will have a private key (decrypt key) to decrypt it.
     id<MKMID> receiver = sMsg.receiver;
     id<MKMUser> user = [self.facebook selectLocalUserWithID:receiver];
     id<DKDSecureMessage> trimmed;
@@ -216,8 +223,8 @@
     }
     if (!trimmed) {
         // not for you?
+        NSAssert(false, @"receiver error: %@", self);
         return nil;
-        //@throw [NSException exceptionWithName:@"ReceiverError" reason:@"not for you?" userInfo:sMsg.dictionary];
     }
     
     // check message delegate

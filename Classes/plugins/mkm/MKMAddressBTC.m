@@ -156,7 +156,7 @@ static inline NSData *check_code(NSData *data) {
 }
 
 + (instancetype)parse:(NSString *)string {
-    if (string.length < 26) {
+    if (string.length < 26 || string.length > 35) {
         return nil;
     }
     // decode

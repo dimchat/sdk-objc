@@ -58,7 +58,7 @@ static inline char hex_char(char ch) {
 
 @implementation Hex
 
-- (nullable NSString *)encode:(NSData *)data {
+- (NSString *)encode:(NSData *)data {
     NSMutableString *output = nil;
     
     const unsigned char *bytes = (const unsigned char *)[data bytes];
@@ -114,7 +114,7 @@ static inline char hex_char(char ch) {
 
 @implementation Base58
 
-- (nullable NSString *)encode:(NSData *)data {
+- (NSString *)encode:(NSData *)data {
     NSString *output = nil;
     const unsigned char *pbegin = (const unsigned char *)[data bytes];
     const unsigned char *pend = pbegin + [data length];
@@ -142,7 +142,7 @@ static inline char hex_char(char ch) {
 
 @implementation Base64
 
-- (nullable NSString *)encode:(NSData *)data {
+- (NSString *)encode:(NSData *)data {
     NSDataBase64EncodingOptions opt;
     opt = NSDataBase64EncodingEndLineWithCarriageReturn;
     return [data base64EncodedStringWithOptions:opt];

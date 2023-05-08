@@ -162,10 +162,16 @@ static inline NSData *random_data(NSUInteger size) {
     NSData *ciphertext = nil;
     NSAssert(self.keySize == kCCKeySizeAES256, @"only support AES-256 now");
     
-    // AES encrypt algorithm
-    if (self.keySize == kCCKeySizeAES256) {
-        ciphertext = [plaintext AES256EncryptWithKey:self.data
-                                initializationVector:self.iv];
+    @try {
+        // AES encrypt algorithm
+        if (self.keySize == kCCKeySizeAES256) {
+            ciphertext = [plaintext AES256EncryptWithKey:self.data
+                                    initializationVector:self.iv];
+        }
+    } @catch (NSException *exception) {
+        NSLog(@"[AES] failed to encrypt: %@", exception);
+    } @finally {
+        //
     }
     
     NSAssert(ciphertext, @"AES encrypt failed");
@@ -176,10 +182,16 @@ static inline NSData *random_data(NSUInteger size) {
     NSData *plaintext = nil;
     NSAssert(self.keySize == kCCKeySizeAES256, @"only support AES-256 now");
     
-    // AES decrypt algorithm
-    if (self.keySize == kCCKeySizeAES256) {
-        plaintext = [ciphertext AES256DecryptWithKey:self.data
-                                initializationVector:self.iv];
+    @try {
+        // AES decrypt algorithm
+        if (self.keySize == kCCKeySizeAES256) {
+            plaintext = [ciphertext AES256DecryptWithKey:self.data
+                                    initializationVector:self.iv];
+        }
+    } @catch (NSException *exception) {
+        NSLog(@"[AES] failed to decrypt: %@", exception);
+    } @finally {
+        //
     }
     
     //NSAssert(plaintext, @"AES decrypt failed");

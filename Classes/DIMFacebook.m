@@ -85,10 +85,7 @@
 
 - (BOOL)checkDocument:(id<MKMDocument>)doc {
     id<MKMID> ID = doc.ID;
-    if (!ID) {
-        NSAssert(false, @"ID error: %@", doc);
-        return NO;
-    }
+    NSAssert(ID, @"ID error: %@", doc);
     // NOTICE: if this is a bulletin document for group,
     //             verify it with the group owner's meta.key
     //         else (this is a visa document for user)
@@ -116,7 +113,7 @@
 }
 
 - (nullable id<MKMUser>)createUser:(id<MKMID>)ID {
-    // make sure visa key exists before calling this
+    // TODO: make sure visa key exists before calling this
     NSAssert(MKMIDIsBroadcast(ID) || [self publicKeyForEncryption:ID],
              @"visa key not found for user: %@", ID);
     MKMEntityType type = ID.type;
@@ -131,7 +128,7 @@
 }
 
 - (nullable id<MKMGroup>)createGroup:(id<MKMID>)ID {
-    // make user meta exists before calling this
+    // TODO: make group meta exists before calling this
     NSAssert(MKMIDIsBroadcast(ID) || [self metaForID:ID],
              @"failed to get meta for group: %@", ID);
     MKMEntityType type = ID.type;
@@ -220,8 +217,8 @@
 
 - (NSInteger)reduceMemory {
     NSUInteger snap = 0;
-    snap = [DIMAddressFactory thanos:_userTable finger:snap];
-    snap = [DIMAddressFactory thanos:_groupTable finger:snap];
+    snap = DIMThanos(_userTable, snap);
+    snap = DIMThanos(_groupTable, snap);
     return snap;
 }
 

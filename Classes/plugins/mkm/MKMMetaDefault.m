@@ -71,7 +71,7 @@
     return self;
 }
 
-- (nullable id<MKMAddress>)generateAddress:(MKMEntityType)network {
+- (id<MKMAddress>)generateAddress:(MKMEntityType)network {
     NSAssert(self.type == MKMMetaType_MKM, @"meta version error: %d", self.type);
     // check caches
     MKMAddressBTC *address = [_cachedAddresses objectForKey:@(network)];

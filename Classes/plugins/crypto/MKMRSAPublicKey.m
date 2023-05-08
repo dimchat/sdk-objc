@@ -134,7 +134,13 @@
 
 - (SecKeyRef)publicKeyRef {
     if (!_publicKeyRef) {
-        _publicKeyRef = [MKMSecKeyHelper publicKeyFromData:self.data algorithm:MKMAlgorithmRSA];
+        @try {
+            _publicKeyRef = [MKMSecKeyHelper publicKeyFromData:self.data algorithm:MKMAlgorithmRSA];
+        } @catch (NSException *exception) {
+            NSLog(@"[RSA] public key error: %@", exception);
+        } @finally {
+            //
+        }
     }
     return _publicKeyRef;
 }
@@ -142,26 +148,35 @@
 #pragma mark - Protocol
 
 - (NSData *)encrypt:(NSData *)plaintext {
-    NSAssert(self.publicKeyRef != NULL, @"RSA public key cannot be empty");
-    NSAssert(plaintext.length > 0 && plaintext.length <= (self.keySize - 11),
-             @"RSA data length error: %lu", plaintext.length);
+    NSAssert(plaintext.length > 0, @"[RSA] data cannot be empty");
+    NSAssert(plaintext.length <= (self.keySize - 11), @"[RSA] data too long: %lu", plaintext.length);
     NSData *ciphertext = nil;
     
-    CFErrorRef error = NULL;
-    SecKeyAlgorithm alg = kSecKeyAlgorithmRSAEncryptionPKCS1;
-    CFDataRef CT;
-    CT = SecKeyCreateEncryptedData(self.publicKeyRef,
-                                   alg,
-                                   (CFDataRef)plaintext,
-                                   &error);
-    if (error) {
-        NSAssert(!CT, @"RSA encrypted data should be empty when failed");
-        NSAssert(false, @"RSA encrypt error: %@", error);
-        CFRelease(error);
-        error = NULL;
-    } else {
-        NSAssert(CT, @"RSA encrypted should not be empty");
-        ciphertext = (__bridge_transfer NSData *)CT;
+    @try {
+        SecKeyRef keyRef = self.publicKeyRef;
+        NSAssert(keyRef != NULL, @"RSA public key error");
+        
+        CFErrorRef error = NULL;
+        SecKeyAlgorithm alg = kSecKeyAlgorithmRSAEncryptionPKCS1;
+        CFDataRef CT;
+        CT = SecKeyCreateEncryptedData(keyRef,
+                                       alg,
+                                       (CFDataRef)plaintext,
+                                       &error);
+        if (error) {
+            NSLog(@"[RSA] failed to encrypt: %@", error);
+            NSAssert(!CT, @"RSA encrypted data should be empty when failed");
+            NSAssert(false, @"RSA encrypt error: %@", error);
+            CFRelease(error);
+            error = NULL;
+        } else {
+            NSAssert(CT, @"RSA encrypted should not be empty");
+            ciphertext = (__bridge_transfer NSData *)CT;
+        }
+    } @catch (NSException *exception) {
+        NSLog(@"[RSA] failed to encrypt: %@", exception);
+    } @finally {
+        //
     }
     
     NSAssert(ciphertext, @"RSA encrypt failed");
@@ -169,26 +184,35 @@
 }
 
 - (BOOL)verify:(NSData *)data withSignature:(NSData *)signature {
-    NSAssert(self.publicKeyRef != NULL, @"RSA public key cannot be empty");
-    NSAssert(data.length > 0, @"RSA data cannot be empty");
+    NSAssert(data.length > 0, @"[RSA] data cannot be empty");
     if (signature.length != (self.keySize)) {
-        // signature length not match RSA key
+        NSLog(@"[RSA] signature length not match: %lu", signature.length);
         return NO;
     }
     BOOL OK = NO;
     
-    CFErrorRef error = NULL;
-    SecKeyAlgorithm alg = kSecKeyAlgorithmRSASignatureMessagePKCS1v15SHA256;
-    OK = SecKeyVerifySignature(self.publicKeyRef,
-                               alg,
-                               (CFDataRef)data,
-                               (CFDataRef)signature,
-                               &error);
-    if (error) {
-        NSAssert(!OK, @"RSA verify error");
-        //NSAssert(false, @"RSA verify error: %@", error);
-        CFRelease(error);
-        error = NULL;
+    @try {
+        SecKeyRef keyRef = self.publicKeyRef;
+        NSAssert(keyRef != NULL, @"RSA public key error");
+        
+        CFErrorRef error = NULL;
+        SecKeyAlgorithm alg = kSecKeyAlgorithmRSASignatureMessagePKCS1v15SHA256;
+        OK = SecKeyVerifySignature(keyRef,
+                                   alg,
+                                   (CFDataRef)data,
+                                   (CFDataRef)signature,
+                                   &error);
+        if (error) {
+            NSLog(@"[RSA] failed to verify: %@", error);
+            NSAssert(!OK, @"RSA verify error");
+            //NSAssert(false, @"RSA verify error: %@", error);
+            CFRelease(error);
+            error = NULL;
+        }
+    } @catch (NSException *exception) {
+        NSLog(@"[RSA] failed to verify: %@", exception);
+    } @finally {
+        //
     }
     
     return OK;

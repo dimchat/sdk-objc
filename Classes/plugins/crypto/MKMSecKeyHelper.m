@@ -178,9 +178,13 @@ NSString *NSStringFromKeyContent(NSString *content, NSString *tag) {
 }
 
 + (NSString *)serializePublicKey:(SecKeyRef)pKey algorithm:(NSString *)name {
-    NSData *data = NSDataFromSecKeyRef(pKey);
+    if ([name isEqualToString:MKMAlgorithmECC]) {
+        name = @"EC";
+    }
+    NSString *tag = [NSString stringWithFormat:@"%@ PUBLIC", name];
+    NSData *data = NSDataFromSecKeyRef(pKey);  // kSecAttrKeyTypeRSA PKCS#1 format
     NSString *base64 = MKMBase64Encode(data);
-    return NSStringFromKeyContent(base64, @"PUBLIC");
+    return NSStringFromKeyContent(base64, tag);
 }
 
 + (NSString *)serializePrivateKey:(SecKeyRef)sKey algorithm:(NSString *)name {
