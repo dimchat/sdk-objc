@@ -39,6 +39,8 @@
 
 #import "MKMECCPrivateKey.h"
 
+extern NSString *NSStringFromKeyContent(NSString *content, NSString *tag);
+
 @implementation MKMECCPrivateKey (PersistentStore)
 
 static NSString *s_application_tag = @"chat.dim.ecc.private";
@@ -68,10 +70,18 @@ static NSString *s_application_tag = @"chat.dim.ecc.private";
     if (status == errSecSuccess) { // noErr
         // private key
         NSData *privateKeyData = (__bridge NSData *)result;
-        NSString *hex = MKMHexEncode(privateKeyData);
+        NSString *content;
+        if (privateKeyData.length == 32) {
+            // Hex encode
+            content = MKMHexEncode(privateKeyData);
+        } else {
+            // PEM
+            content = MKMBase64Encode(privateKeyData);
+            content = NSStringFromKeyContent(content, @"EC PRIVATE");
+        }
         NSString *algorithm = MKMAlgorithmECC;
         NSDictionary *keyInfo = @{@"algorithm":algorithm,
-                                  @"data"     :hex,
+                                  @"data"     :content,
                                   };
         SK = [[MKMECCPrivateKey alloc] initWithDictionary:keyInfo];
     } else {
