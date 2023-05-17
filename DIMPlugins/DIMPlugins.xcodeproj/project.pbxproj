@@ -1,0 +1,772 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		E9BCD1072A1473D7002A794F /* DIMPlugins.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9BCD0FE2A1473D6002A794F /* DIMPlugins.framework */; };
+		E9BCD10C2A1473D7002A794F /* DIMPluginsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BCD10B2A1473D7002A794F /* DIMPluginsTests.m */; };
+		E9BCD10D2A1473D7002A794F /* DIMPlugins.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BCD1012A1473D6002A794F /* DIMPlugins.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E9BCD15C2A147627002A794F /* MKMMetaDefault.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BCD1182A147625002A794F /* MKMMetaDefault.m */; };
+		E9BCD15D2A147627002A794F /* MKMMetaBTC.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BCD1192A147625002A794F /* MKMMetaBTC.h */; };
+		E9BCD15E2A147627002A794F /* MKMAddressETH.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BCD11A2A147625002A794F /* MKMAddressETH.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E9BCD15F2A147627002A794F /* MKMAddressBTC.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BCD11B2A147625002A794F /* MKMAddressBTC.m */; };
+		E9BCD1602A147627002A794F /* MKMMetaETH.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BCD11C2A147625002A794F /* MKMMetaETH.m */; };
+		E9BCD1612A147627002A794F /* MKMMetaDefault.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BCD11D2A147625002A794F /* MKMMetaDefault.h */; };
+		E9BCD1622A147627002A794F /* MKMAddressETH.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BCD11E2A147625002A794F /* MKMAddressETH.m */; };
+		E9BCD1632A147627002A794F /* MKMMetaBTC.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BCD11F2A147625002A794F /* MKMMetaBTC.m */; };
+		E9BCD1642A147627002A794F /* MKMMetaETH.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BCD1202A147625002A794F /* MKMMetaETH.h */; };
+		E9BCD1652A147627002A794F /* MKMAddressBTC.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BCD1212A147625002A794F /* MKMAddressBTC.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E9BCD1662A147627002A794F /* MKMPlugins+EntityID.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BCD1222A147625002A794F /* MKMPlugins+EntityID.m */; };
+		E9BCD1672A147627002A794F /* MKMPlugins.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BCD1232A147625002A794F /* MKMPlugins.h */; };
+		E9BCD1682A147627002A794F /* MKMRSAPrivateKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BCD1252A147625002A794F /* MKMRSAPrivateKey.h */; };
+		E9BCD1692A147627002A794F /* MKMECCPrivateKey.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BCD1262A147625002A794F /* MKMECCPrivateKey.m */; };
+		E9BCD16A2A147627002A794F /* MKMAESKey.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BCD1272A147625002A794F /* MKMAESKey.m */; };
+		E9BCD16B2A147627002A794F /* MKMBaseKey.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BCD1282A147625002A794F /* MKMBaseKey.m */; };
+		E9BCD16C2A147627002A794F /* MKMPrivateKey+Store.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BCD1292A147625002A794F /* MKMPrivateKey+Store.m */; };
+		E9BCD16D2A147627002A794F /* MKMSymmetricKey+Password.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BCD12A2A147625002A794F /* MKMSymmetricKey+Password.m */; };
+		E9BCD16E2A147627002A794F /* MKMECCPrivateKey+Store.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BCD12B2A147625002A794F /* MKMECCPrivateKey+Store.m */; };
+		E9BCD16F2A147627002A794F /* MKMSecKeyHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BCD12C2A147625002A794F /* MKMSecKeyHelper.m */; };
+		E9BCD1702A147627002A794F /* MKMRSAPublicKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BCD12D2A147625002A794F /* MKMRSAPublicKey.h */; };
+		E9BCD1712A147627002A794F /* MKMECCPublicKey.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BCD12E2A147625002A794F /* MKMECCPublicKey.m */; };
+		E9BCD1722A147627002A794F /* MKMECCPrivateKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BCD12F2A147625002A794F /* MKMECCPrivateKey.h */; };
+		E9BCD1732A147627002A794F /* MKMRSAPrivateKey.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BCD1302A147625002A794F /* MKMRSAPrivateKey.m */; };
+		E9BCD1742A147627002A794F /* MKMAESKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BCD1312A147625002A794F /* MKMAESKey.h */; };
+		E9BCD1752A147627002A794F /* MKMRSAPrivateKey+Store.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BCD1322A147625002A794F /* MKMRSAPrivateKey+Store.m */; };
+		E9BCD1762A147627002A794F /* MKMSymmetricKey+Password.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BCD1332A147625002A794F /* MKMSymmetricKey+Password.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E9BCD1772A147627002A794F /* MKMPrivateKey+Store.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BCD1342A147625002A794F /* MKMPrivateKey+Store.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E9BCD1782A147627002A794F /* MKMBaseKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BCD1352A147625002A794F /* MKMBaseKey.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E9BCD1792A147627002A794F /* MKMECCPublicKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BCD1362A147625002A794F /* MKMECCPublicKey.h */; };
+		E9BCD17A2A147627002A794F /* MKMRSAPublicKey.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BCD1372A147625002A794F /* MKMRSAPublicKey.m */; };
+		E9BCD17B2A147627002A794F /* MKMSecKeyHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BCD1382A147625002A794F /* MKMSecKeyHelper.h */; };
+		E9BCD17C2A147627002A794F /* MKMPlugins+Crypto.mm in Sources */ = {isa = PBXBuildFile; fileRef = E9BCD1392A147625002A794F /* MKMPlugins+Crypto.mm */; };
+		E9BCD17D2A147627002A794F /* MKMPlugins.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BCD13A2A147625002A794F /* MKMPlugins.m */; };
+		E9BCD17E2A147627002A794F /* uECC.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BCD13C2A147626002A794F /* uECC.h */; };
+		E9BCD17F2A147627002A794F /* uECC_vli.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BCD13D2A147626002A794F /* uECC_vli.h */; };
+		E9BCD1812A147627002A794F /* types.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BCD13F2A147626002A794F /* types.h */; };
+		E9BCD1832A147627002A794F /* uECC.c in Sources */ = {isa = PBXBuildFile; fileRef = E9BCD1412A147626002A794F /* uECC.c */; };
+		E9BCD1842A147627002A794F /* NSData+Crypto.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BCD1432A147626002A794F /* NSData+Crypto.h */; };
+		E9BCD1852A147627002A794F /* NSData+Crypto.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BCD1442A147626002A794F /* NSData+Crypto.m */; };
+		E9BCD1862A147627002A794F /* DIMDataDigesters.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BCD1462A147626002A794F /* DIMDataDigesters.h */; };
+		E9BCD1872A147627002A794F /* DIMDataCoders.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BCD1472A147626002A794F /* DIMDataCoders.h */; };
+		E9BCD1882A147627002A794F /* DIMDataParsers.mm in Sources */ = {isa = PBXBuildFile; fileRef = E9BCD1482A147626002A794F /* DIMDataParsers.mm */; };
+		E9BCD1892A147627002A794F /* DIMDataDigesters.mm in Sources */ = {isa = PBXBuildFile; fileRef = E9BCD1492A147626002A794F /* DIMDataDigesters.mm */; };
+		E9BCD18A2A147627002A794F /* DIMDataParsers.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BCD14A2A147626002A794F /* DIMDataParsers.h */; };
+		E9BCD18B2A147627002A794F /* DIMDataCoders.mm in Sources */ = {isa = PBXBuildFile; fileRef = E9BCD14B2A147626002A794F /* DIMDataCoders.mm */; };
+		E9BCD18C2A147627002A794F /* compiler.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BCD14E2A147626002A794F /* compiler.h */; };
+		E9BCD18D2A147627002A794F /* sha3.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BCD14F2A147626002A794F /* sha3.h */; };
+		E9BCD18E2A147627002A794F /* sha3.c in Sources */ = {isa = PBXBuildFile; fileRef = E9BCD1502A147626002A794F /* sha3.c */; };
+		E9BCD18F2A147627002A794F /* ripemd160.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BCD1542A147626002A794F /* ripemd160.h */; };
+		E9BCD1902A147627002A794F /* common.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BCD1552A147626002A794F /* common.h */; };
+		E9BCD1912A147627002A794F /* ripemd160.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9BCD1562A147626002A794F /* ripemd160.cpp */; };
+		E9BCD1922A147627002A794F /* endian.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BCD1582A147626002A794F /* endian.h */; };
+		E9BCD1932A147627002A794F /* byteswap.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BCD1592A147626002A794F /* byteswap.h */; };
+		E9BCD1942A147627002A794F /* base58.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9BCD15A2A147626002A794F /* base58.cpp */; };
+		E9BCD1952A147627002A794F /* base58.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BCD15B2A147626002A794F /* base58.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		E9BCD1082A1473D7002A794F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E9BCD0F52A1473D6002A794F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E9BCD0FD2A1473D6002A794F;
+			remoteInfo = DIMPlugins;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		E9BCD0FE2A1473D6002A794F /* DIMPlugins.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DIMPlugins.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E9BCD1012A1473D6002A794F /* DIMPlugins.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMPlugins.h; sourceTree = "<group>"; };
+		E9BCD1062A1473D7002A794F /* DIMPluginsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DIMPluginsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E9BCD10B2A1473D7002A794F /* DIMPluginsTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMPluginsTests.m; sourceTree = "<group>"; };
+		E9BCD1182A147625002A794F /* MKMMetaDefault.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKMMetaDefault.m; sourceTree = "<group>"; };
+		E9BCD1192A147625002A794F /* MKMMetaBTC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKMMetaBTC.h; sourceTree = "<group>"; };
+		E9BCD11A2A147625002A794F /* MKMAddressETH.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKMAddressETH.h; sourceTree = "<group>"; };
+		E9BCD11B2A147625002A794F /* MKMAddressBTC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKMAddressBTC.m; sourceTree = "<group>"; };
+		E9BCD11C2A147625002A794F /* MKMMetaETH.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKMMetaETH.m; sourceTree = "<group>"; };
+		E9BCD11D2A147625002A794F /* MKMMetaDefault.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKMMetaDefault.h; sourceTree = "<group>"; };
+		E9BCD11E2A147625002A794F /* MKMAddressETH.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKMAddressETH.m; sourceTree = "<group>"; };
+		E9BCD11F2A147625002A794F /* MKMMetaBTC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKMMetaBTC.m; sourceTree = "<group>"; };
+		E9BCD1202A147625002A794F /* MKMMetaETH.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKMMetaETH.h; sourceTree = "<group>"; };
+		E9BCD1212A147625002A794F /* MKMAddressBTC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKMAddressBTC.h; sourceTree = "<group>"; };
+		E9BCD1222A147625002A794F /* MKMPlugins+EntityID.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MKMPlugins+EntityID.m"; sourceTree = "<group>"; };
+		E9BCD1232A147625002A794F /* MKMPlugins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKMPlugins.h; sourceTree = "<group>"; };
+		E9BCD1252A147625002A794F /* MKMRSAPrivateKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKMRSAPrivateKey.h; sourceTree = "<group>"; };
+		E9BCD1262A147625002A794F /* MKMECCPrivateKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKMECCPrivateKey.m; sourceTree = "<group>"; };
+		E9BCD1272A147625002A794F /* MKMAESKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKMAESKey.m; sourceTree = "<group>"; };
+		E9BCD1282A147625002A794F /* MKMBaseKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKMBaseKey.m; sourceTree = "<group>"; };
+		E9BCD1292A147625002A794F /* MKMPrivateKey+Store.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MKMPrivateKey+Store.m"; sourceTree = "<group>"; };
+		E9BCD12A2A147625002A794F /* MKMSymmetricKey+Password.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MKMSymmetricKey+Password.m"; sourceTree = "<group>"; };
+		E9BCD12B2A147625002A794F /* MKMECCPrivateKey+Store.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MKMECCPrivateKey+Store.m"; sourceTree = "<group>"; };
+		E9BCD12C2A147625002A794F /* MKMSecKeyHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKMSecKeyHelper.m; sourceTree = "<group>"; };
+		E9BCD12D2A147625002A794F /* MKMRSAPublicKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKMRSAPublicKey.h; sourceTree = "<group>"; };
+		E9BCD12E2A147625002A794F /* MKMECCPublicKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKMECCPublicKey.m; sourceTree = "<group>"; };
+		E9BCD12F2A147625002A794F /* MKMECCPrivateKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKMECCPrivateKey.h; sourceTree = "<group>"; };
+		E9BCD1302A147625002A794F /* MKMRSAPrivateKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKMRSAPrivateKey.m; sourceTree = "<group>"; };
+		E9BCD1312A147625002A794F /* MKMAESKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKMAESKey.h; sourceTree = "<group>"; };
+		E9BCD1322A147625002A794F /* MKMRSAPrivateKey+Store.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MKMRSAPrivateKey+Store.m"; sourceTree = "<group>"; };
+		E9BCD1332A147625002A794F /* MKMSymmetricKey+Password.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MKMSymmetricKey+Password.h"; sourceTree = "<group>"; };
+		E9BCD1342A147625002A794F /* MKMPrivateKey+Store.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MKMPrivateKey+Store.h"; sourceTree = "<group>"; };
+		E9BCD1352A147625002A794F /* MKMBaseKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKMBaseKey.h; sourceTree = "<group>"; };
+		E9BCD1362A147625002A794F /* MKMECCPublicKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKMECCPublicKey.h; sourceTree = "<group>"; };
+		E9BCD1372A147625002A794F /* MKMRSAPublicKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKMRSAPublicKey.m; sourceTree = "<group>"; };
+		E9BCD1382A147625002A794F /* MKMSecKeyHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKMSecKeyHelper.h; sourceTree = "<group>"; };
+		E9BCD1392A147625002A794F /* MKMPlugins+Crypto.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "MKMPlugins+Crypto.mm"; sourceTree = "<group>"; };
+		E9BCD13A2A147625002A794F /* MKMPlugins.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKMPlugins.m; sourceTree = "<group>"; };
+		E9BCD13C2A147626002A794F /* uECC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = uECC.h; sourceTree = "<group>"; };
+		E9BCD13D2A147626002A794F /* uECC_vli.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = uECC_vli.h; sourceTree = "<group>"; };
+		E9BCD13E2A147626002A794F /* curve-specific.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = "curve-specific.inc"; sourceTree = "<group>"; };
+		E9BCD13F2A147626002A794F /* types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = types.h; sourceTree = "<group>"; };
+		E9BCD1402A147626002A794F /* platform-specific.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = "platform-specific.inc"; sourceTree = "<group>"; };
+		E9BCD1412A147626002A794F /* uECC.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = uECC.c; sourceTree = "<group>"; };
+		E9BCD1432A147626002A794F /* NSData+Crypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Crypto.h"; sourceTree = "<group>"; };
+		E9BCD1442A147626002A794F /* NSData+Crypto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Crypto.m"; sourceTree = "<group>"; };
+		E9BCD1462A147626002A794F /* DIMDataDigesters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMDataDigesters.h; sourceTree = "<group>"; };
+		E9BCD1472A147626002A794F /* DIMDataCoders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMDataCoders.h; sourceTree = "<group>"; };
+		E9BCD1482A147626002A794F /* DIMDataParsers.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DIMDataParsers.mm; sourceTree = "<group>"; };
+		E9BCD1492A147626002A794F /* DIMDataDigesters.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DIMDataDigesters.mm; sourceTree = "<group>"; };
+		E9BCD14A2A147626002A794F /* DIMDataParsers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMDataParsers.h; sourceTree = "<group>"; };
+		E9BCD14B2A147626002A794F /* DIMDataCoders.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DIMDataCoders.mm; sourceTree = "<group>"; };
+		E9BCD14E2A147626002A794F /* compiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = compiler.h; sourceTree = "<group>"; };
+		E9BCD14F2A147626002A794F /* sha3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sha3.h; sourceTree = "<group>"; };
+		E9BCD1502A147626002A794F /* sha3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sha3.c; sourceTree = "<group>"; };
+		E9BCD1542A147626002A794F /* ripemd160.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ripemd160.h; sourceTree = "<group>"; };
+		E9BCD1552A147626002A794F /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
+		E9BCD1562A147626002A794F /* ripemd160.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ripemd160.cpp; sourceTree = "<group>"; };
+		E9BCD1582A147626002A794F /* endian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = endian.h; sourceTree = "<group>"; };
+		E9BCD1592A147626002A794F /* byteswap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = byteswap.h; sourceTree = "<group>"; };
+		E9BCD15A2A147626002A794F /* base58.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = base58.cpp; sourceTree = "<group>"; };
+		E9BCD15B2A147626002A794F /* base58.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = base58.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		E9BCD0FB2A1473D6002A794F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E9BCD1032A1473D7002A794F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E9BCD1072A1473D7002A794F /* DIMPlugins.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		E9BCD0F42A1473D6002A794F = {
+			isa = PBXGroup;
+			children = (
+				E9BCD1162A1474B1002A794F /* Classes */,
+				E9BCD1002A1473D6002A794F /* DIMPlugins */,
+				E9BCD10A2A1473D7002A794F /* DIMPluginsTests */,
+				E9BCD0FF2A1473D6002A794F /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		E9BCD0FF2A1473D6002A794F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E9BCD0FE2A1473D6002A794F /* DIMPlugins.framework */,
+				E9BCD1062A1473D7002A794F /* DIMPluginsTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E9BCD1002A1473D6002A794F /* DIMPlugins */ = {
+			isa = PBXGroup;
+			children = (
+				E9BCD1012A1473D6002A794F /* DIMPlugins.h */,
+			);
+			path = DIMPlugins;
+			sourceTree = "<group>";
+		};
+		E9BCD10A2A1473D7002A794F /* DIMPluginsTests */ = {
+			isa = PBXGroup;
+			children = (
+				E9BCD10B2A1473D7002A794F /* DIMPluginsTests.m */,
+			);
+			path = DIMPluginsTests;
+			sourceTree = "<group>";
+		};
+		E9BCD1162A1474B1002A794F /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				E9BCD13B2A147626002A794F /* micro-ecc */,
+				E9BCD1512A147626002A794F /* bitcoin */,
+				E9BCD14C2A147626002A794F /* ethereum */,
+				E9BCD1422A147626002A794F /* extends */,
+				E9BCD1242A147625002A794F /* crypto */,
+				E9BCD1452A147626002A794F /* data */,
+				E9BCD1172A147625002A794F /* mkm */,
+				E9BCD1232A147625002A794F /* MKMPlugins.h */,
+				E9BCD13A2A147625002A794F /* MKMPlugins.m */,
+				E9BCD1392A147625002A794F /* MKMPlugins+Crypto.mm */,
+				E9BCD1222A147625002A794F /* MKMPlugins+EntityID.m */,
+			);
+			path = Classes;
+			sourceTree = "<group>";
+		};
+		E9BCD1172A147625002A794F /* mkm */ = {
+			isa = PBXGroup;
+			children = (
+				E9BCD1212A147625002A794F /* MKMAddressBTC.h */,
+				E9BCD11B2A147625002A794F /* MKMAddressBTC.m */,
+				E9BCD11A2A147625002A794F /* MKMAddressETH.h */,
+				E9BCD11E2A147625002A794F /* MKMAddressETH.m */,
+				E9BCD11D2A147625002A794F /* MKMMetaDefault.h */,
+				E9BCD1182A147625002A794F /* MKMMetaDefault.m */,
+				E9BCD1192A147625002A794F /* MKMMetaBTC.h */,
+				E9BCD11F2A147625002A794F /* MKMMetaBTC.m */,
+				E9BCD1202A147625002A794F /* MKMMetaETH.h */,
+				E9BCD11C2A147625002A794F /* MKMMetaETH.m */,
+			);
+			path = mkm;
+			sourceTree = "<group>";
+		};
+		E9BCD1242A147625002A794F /* crypto */ = {
+			isa = PBXGroup;
+			children = (
+				E9BCD1352A147625002A794F /* MKMBaseKey.h */,
+				E9BCD1282A147625002A794F /* MKMBaseKey.m */,
+				E9BCD1332A147625002A794F /* MKMSymmetricKey+Password.h */,
+				E9BCD12A2A147625002A794F /* MKMSymmetricKey+Password.m */,
+				E9BCD1312A147625002A794F /* MKMAESKey.h */,
+				E9BCD1272A147625002A794F /* MKMAESKey.m */,
+				E9BCD1382A147625002A794F /* MKMSecKeyHelper.h */,
+				E9BCD12C2A147625002A794F /* MKMSecKeyHelper.m */,
+				E9BCD1362A147625002A794F /* MKMECCPublicKey.h */,
+				E9BCD12E2A147625002A794F /* MKMECCPublicKey.m */,
+				E9BCD12F2A147625002A794F /* MKMECCPrivateKey.h */,
+				E9BCD1262A147625002A794F /* MKMECCPrivateKey.m */,
+				E9BCD12B2A147625002A794F /* MKMECCPrivateKey+Store.m */,
+				E9BCD12D2A147625002A794F /* MKMRSAPublicKey.h */,
+				E9BCD1372A147625002A794F /* MKMRSAPublicKey.m */,
+				E9BCD1252A147625002A794F /* MKMRSAPrivateKey.h */,
+				E9BCD1302A147625002A794F /* MKMRSAPrivateKey.m */,
+				E9BCD1322A147625002A794F /* MKMRSAPrivateKey+Store.m */,
+				E9BCD1342A147625002A794F /* MKMPrivateKey+Store.h */,
+				E9BCD1292A147625002A794F /* MKMPrivateKey+Store.m */,
+			);
+			path = crypto;
+			sourceTree = "<group>";
+		};
+		E9BCD13B2A147626002A794F /* micro-ecc */ = {
+			isa = PBXGroup;
+			children = (
+				E9BCD13E2A147626002A794F /* curve-specific.inc */,
+				E9BCD1402A147626002A794F /* platform-specific.inc */,
+				E9BCD13F2A147626002A794F /* types.h */,
+				E9BCD13D2A147626002A794F /* uECC_vli.h */,
+				E9BCD13C2A147626002A794F /* uECC.h */,
+				E9BCD1412A147626002A794F /* uECC.c */,
+			);
+			path = "micro-ecc";
+			sourceTree = "<group>";
+		};
+		E9BCD1422A147626002A794F /* extends */ = {
+			isa = PBXGroup;
+			children = (
+				E9BCD1432A147626002A794F /* NSData+Crypto.h */,
+				E9BCD1442A147626002A794F /* NSData+Crypto.m */,
+			);
+			path = extends;
+			sourceTree = "<group>";
+		};
+		E9BCD1452A147626002A794F /* data */ = {
+			isa = PBXGroup;
+			children = (
+				E9BCD1462A147626002A794F /* DIMDataDigesters.h */,
+				E9BCD1492A147626002A794F /* DIMDataDigesters.mm */,
+				E9BCD1472A147626002A794F /* DIMDataCoders.h */,
+				E9BCD14B2A147626002A794F /* DIMDataCoders.mm */,
+				E9BCD14A2A147626002A794F /* DIMDataParsers.h */,
+				E9BCD1482A147626002A794F /* DIMDataParsers.mm */,
+			);
+			path = data;
+			sourceTree = "<group>";
+		};
+		E9BCD14C2A147626002A794F /* ethereum */ = {
+			isa = PBXGroup;
+			children = (
+				E9BCD14D2A147626002A794F /* ethash */,
+			);
+			path = ethereum;
+			sourceTree = "<group>";
+		};
+		E9BCD14D2A147626002A794F /* ethash */ = {
+			isa = PBXGroup;
+			children = (
+				E9BCD14E2A147626002A794F /* compiler.h */,
+				E9BCD14F2A147626002A794F /* sha3.h */,
+				E9BCD1502A147626002A794F /* sha3.c */,
+			);
+			path = ethash;
+			sourceTree = "<group>";
+		};
+		E9BCD1512A147626002A794F /* bitcoin */ = {
+			isa = PBXGroup;
+			children = (
+				E9BCD1522A147626002A794F /* src */,
+			);
+			path = bitcoin;
+			sourceTree = "<group>";
+		};
+		E9BCD1522A147626002A794F /* src */ = {
+			isa = PBXGroup;
+			children = (
+				E9BCD1532A147626002A794F /* crypto */,
+				E9BCD1572A147626002A794F /* compat */,
+				E9BCD15B2A147626002A794F /* base58.h */,
+				E9BCD15A2A147626002A794F /* base58.cpp */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		E9BCD1532A147626002A794F /* crypto */ = {
+			isa = PBXGroup;
+			children = (
+				E9BCD1552A147626002A794F /* common.h */,
+				E9BCD1542A147626002A794F /* ripemd160.h */,
+				E9BCD1562A147626002A794F /* ripemd160.cpp */,
+			);
+			path = crypto;
+			sourceTree = "<group>";
+		};
+		E9BCD1572A147626002A794F /* compat */ = {
+			isa = PBXGroup;
+			children = (
+				E9BCD1582A147626002A794F /* endian.h */,
+				E9BCD1592A147626002A794F /* byteswap.h */,
+			);
+			path = compat;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		E9BCD0F92A1473D6002A794F /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E9BCD18D2A147627002A794F /* sha3.h in Headers */,
+				E9BCD17B2A147627002A794F /* MKMSecKeyHelper.h in Headers */,
+				E9BCD10D2A1473D7002A794F /* DIMPlugins.h in Headers */,
+				E9BCD1772A147627002A794F /* MKMPrivateKey+Store.h in Headers */,
+				E9BCD18C2A147627002A794F /* compiler.h in Headers */,
+				E9BCD1762A147627002A794F /* MKMSymmetricKey+Password.h in Headers */,
+				E9BCD1952A147627002A794F /* base58.h in Headers */,
+				E9BCD1842A147627002A794F /* NSData+Crypto.h in Headers */,
+				E9BCD1642A147627002A794F /* MKMMetaETH.h in Headers */,
+				E9BCD1792A147627002A794F /* MKMECCPublicKey.h in Headers */,
+				E9BCD1922A147627002A794F /* endian.h in Headers */,
+				E9BCD1722A147627002A794F /* MKMECCPrivateKey.h in Headers */,
+				E9BCD15D2A147627002A794F /* MKMMetaBTC.h in Headers */,
+				E9BCD17E2A147627002A794F /* uECC.h in Headers */,
+				E9BCD1742A147627002A794F /* MKMAESKey.h in Headers */,
+				E9BCD1932A147627002A794F /* byteswap.h in Headers */,
+				E9BCD18A2A147627002A794F /* DIMDataParsers.h in Headers */,
+				E9BCD1812A147627002A794F /* types.h in Headers */,
+				E9BCD1672A147627002A794F /* MKMPlugins.h in Headers */,
+				E9BCD15E2A147627002A794F /* MKMAddressETH.h in Headers */,
+				E9BCD1702A147627002A794F /* MKMRSAPublicKey.h in Headers */,
+				E9BCD1612A147627002A794F /* MKMMetaDefault.h in Headers */,
+				E9BCD1902A147627002A794F /* common.h in Headers */,
+				E9BCD1652A147627002A794F /* MKMAddressBTC.h in Headers */,
+				E9BCD1682A147627002A794F /* MKMRSAPrivateKey.h in Headers */,
+				E9BCD17F2A147627002A794F /* uECC_vli.h in Headers */,
+				E9BCD1782A147627002A794F /* MKMBaseKey.h in Headers */,
+				E9BCD1862A147627002A794F /* DIMDataDigesters.h in Headers */,
+				E9BCD1872A147627002A794F /* DIMDataCoders.h in Headers */,
+				E9BCD18F2A147627002A794F /* ripemd160.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		E9BCD0FD2A1473D6002A794F /* DIMPlugins */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E9BCD1102A1473D7002A794F /* Build configuration list for PBXNativeTarget "DIMPlugins" */;
+			buildPhases = (
+				E9BCD0F92A1473D6002A794F /* Headers */,
+				E9BCD0FA2A1473D6002A794F /* Sources */,
+				E9BCD0FB2A1473D6002A794F /* Frameworks */,
+				E9BCD0FC2A1473D6002A794F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DIMPlugins;
+			productName = DIMPlugins;
+			productReference = E9BCD0FE2A1473D6002A794F /* DIMPlugins.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		E9BCD1052A1473D7002A794F /* DIMPluginsTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E9BCD1132A1473D7002A794F /* Build configuration list for PBXNativeTarget "DIMPluginsTests" */;
+			buildPhases = (
+				E9BCD1022A1473D7002A794F /* Sources */,
+				E9BCD1032A1473D7002A794F /* Frameworks */,
+				E9BCD1042A1473D7002A794F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E9BCD1092A1473D7002A794F /* PBXTargetDependency */,
+			);
+			name = DIMPluginsTests;
+			productName = DIMPluginsTests;
+			productReference = E9BCD1062A1473D7002A794F /* DIMPluginsTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		E9BCD0F52A1473D6002A794F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1420;
+				TargetAttributes = {
+					E9BCD0FD2A1473D6002A794F = {
+						CreatedOnToolsVersion = 14.2;
+					};
+					E9BCD1052A1473D7002A794F = {
+						CreatedOnToolsVersion = 14.2;
+					};
+				};
+			};
+			buildConfigurationList = E9BCD0F82A1473D6002A794F /* Build configuration list for PBXProject "DIMPlugins" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = E9BCD0F42A1473D6002A794F;
+			productRefGroup = E9BCD0FF2A1473D6002A794F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				E9BCD0FD2A1473D6002A794F /* DIMPlugins */,
+				E9BCD1052A1473D7002A794F /* DIMPluginsTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		E9BCD0FC2A1473D6002A794F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E9BCD1042A1473D7002A794F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		E9BCD0FA2A1473D6002A794F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E9BCD1692A147627002A794F /* MKMECCPrivateKey.m in Sources */,
+				E9BCD1942A147627002A794F /* base58.cpp in Sources */,
+				E9BCD16C2A147627002A794F /* MKMPrivateKey+Store.m in Sources */,
+				E9BCD15F2A147627002A794F /* MKMAddressBTC.m in Sources */,
+				E9BCD1832A147627002A794F /* uECC.c in Sources */,
+				E9BCD18B2A147627002A794F /* DIMDataCoders.mm in Sources */,
+				E9BCD1632A147627002A794F /* MKMMetaBTC.m in Sources */,
+				E9BCD1882A147627002A794F /* DIMDataParsers.mm in Sources */,
+				E9BCD1602A147627002A794F /* MKMMetaETH.m in Sources */,
+				E9BCD1892A147627002A794F /* DIMDataDigesters.mm in Sources */,
+				E9BCD17A2A147627002A794F /* MKMRSAPublicKey.m in Sources */,
+				E9BCD1622A147627002A794F /* MKMAddressETH.m in Sources */,
+				E9BCD16D2A147627002A794F /* MKMSymmetricKey+Password.m in Sources */,
+				E9BCD16E2A147627002A794F /* MKMECCPrivateKey+Store.m in Sources */,
+				E9BCD18E2A147627002A794F /* sha3.c in Sources */,
+				E9BCD16F2A147627002A794F /* MKMSecKeyHelper.m in Sources */,
+				E9BCD16A2A147627002A794F /* MKMAESKey.m in Sources */,
+				E9BCD17C2A147627002A794F /* MKMPlugins+Crypto.mm in Sources */,
+				E9BCD1752A147627002A794F /* MKMRSAPrivateKey+Store.m in Sources */,
+				E9BCD1732A147627002A794F /* MKMRSAPrivateKey.m in Sources */,
+				E9BCD1662A147627002A794F /* MKMPlugins+EntityID.m in Sources */,
+				E9BCD1852A147627002A794F /* NSData+Crypto.m in Sources */,
+				E9BCD15C2A147627002A794F /* MKMMetaDefault.m in Sources */,
+				E9BCD1712A147627002A794F /* MKMECCPublicKey.m in Sources */,
+				E9BCD16B2A147627002A794F /* MKMBaseKey.m in Sources */,
+				E9BCD1912A147627002A794F /* ripemd160.cpp in Sources */,
+				E9BCD17D2A147627002A794F /* MKMPlugins.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E9BCD1022A1473D7002A794F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E9BCD10C2A1473D7002A794F /* DIMPluginsTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		E9BCD1092A1473D7002A794F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E9BCD0FD2A1473D6002A794F /* DIMPlugins */;
+			targetProxy = E9BCD1082A1473D7002A794F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		E9BCD10E2A1473D7002A794F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		E9BCD10F2A1473D7002A794F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		E9BCD1112A1473D7002A794F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 9CG5FJPAJ5;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = chat.dim.DIMPlugins;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		E9BCD1122A1473D7002A794F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 9CG5FJPAJ5;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = chat.dim.DIMPlugins;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		E9BCD1142A1473D7002A794F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9CG5FJPAJ5;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = chat.dim.DIMPluginsTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		E9BCD1152A1473D7002A794F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9CG5FJPAJ5;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = chat.dim.DIMPluginsTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		E9BCD0F82A1473D6002A794F /* Build configuration list for PBXProject "DIMPlugins" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E9BCD10E2A1473D7002A794F /* Debug */,
+				E9BCD10F2A1473D7002A794F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E9BCD1102A1473D7002A794F /* Build configuration list for PBXNativeTarget "DIMPlugins" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E9BCD1112A1473D7002A794F /* Debug */,
+				E9BCD1122A1473D7002A794F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E9BCD1132A1473D7002A794F /* Build configuration list for PBXNativeTarget "DIMPluginsTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E9BCD1142A1473D7002A794F /* Debug */,
+				E9BCD1152A1473D7002A794F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = E9BCD0F52A1473D6002A794F /* Project object */;
+}
