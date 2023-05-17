@@ -57,15 +57,6 @@ FOUNDATION_EXPORT const unsigned char DIMSDKVersionString[];
 #if !defined(__DIM_SDK__)
 #define __DIM_SDK__ 1
 
-// Plugins
-#import <DIMSDK/MKMBaseKey.h>
-#import <DIMSDK/MKMSymmetricKey+Password.h>
-#import <DIMSDK/MKMPrivateKey+Store.h>
-#import <DIMSDK/MKMAddressBTC.h>
-#import <DIMSDK/MKMAddressETH.h>
-
-#import <DIMSDK/MKMPlugins.h>
-
 // MingKeMing
 #import <DIMSDK/DIMServiceProvider.h>
 #import <DIMSDK/DIMStation.h>
