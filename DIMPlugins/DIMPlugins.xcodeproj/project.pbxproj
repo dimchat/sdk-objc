@@ -21,7 +21,7 @@
 		E9BCD1642A147627002A794F /* MKMMetaETH.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BCD1202A147625002A794F /* MKMMetaETH.h */; };
 		E9BCD1652A147627002A794F /* MKMAddressBTC.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BCD1212A147625002A794F /* MKMAddressBTC.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9BCD1662A147627002A794F /* MKMPlugins+EntityID.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BCD1222A147625002A794F /* MKMPlugins+EntityID.m */; };
-		E9BCD1672A147627002A794F /* MKMPlugins.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BCD1232A147625002A794F /* MKMPlugins.h */; };
+		E9BCD1672A147627002A794F /* MKMPlugins.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BCD1232A147625002A794F /* MKMPlugins.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9BCD1682A147627002A794F /* MKMRSAPrivateKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BCD1252A147625002A794F /* MKMRSAPrivateKey.h */; };
 		E9BCD1692A147627002A794F /* MKMECCPrivateKey.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BCD1262A147625002A794F /* MKMECCPrivateKey.m */; };
 		E9BCD16A2A147627002A794F /* MKMAESKey.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BCD1272A147625002A794F /* MKMAESKey.m */; };
@@ -80,7 +80,7 @@
 
 /* Begin PBXFileReference section */
 		E9BCD0FE2A1473D6002A794F /* DIMPlugins.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DIMPlugins.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		E9BCD1012A1473D6002A794F /* DIMPlugins.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMPlugins.h; sourceTree = "<group>"; };
+		E9BCD1012A1473D6002A794F /* DIMPlugins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMPlugins.h; sourceTree = "<group>"; };
 		E9BCD1062A1473D7002A794F /* DIMPluginsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DIMPluginsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E9BCD10B2A1473D7002A794F /* DIMPluginsTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMPluginsTests.m; sourceTree = "<group>"; };
 		E9BCD1182A147625002A794F /* MKMMetaDefault.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKMMetaDefault.m; sourceTree = "<group>"; };
