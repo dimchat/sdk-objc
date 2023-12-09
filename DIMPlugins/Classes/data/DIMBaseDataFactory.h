@@ -2,12 +2,12 @@
 //
 //  Ming-Ke-Ming : Decentralized User Identity Authentication
 //
-//                               Written in 2020 by Moky <albert.moky@gmail.com>
+//                               Written in 2023 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2020 Albert Moky
+// Copyright (c) 2023 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,62 +28,18 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  MKMPlugins.h
+//  DIMBaseDataFactory.h
 //  DIMPlugins
 //
-//  Created by Albert Moky on 2020/12/12.
-//  Copyright © 2020 Albert Moky. All rights reserved.
+//  Created by Albert Moky on 2023/12/9.
+//  Copyright © 2023 DIM Group. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-#define MKMAlgorithmPlain @"PLAIN"
-
-@interface MKMPlugins : NSObject
-
-+ (void)registerAddressFactory;
-+ (void)registerMetaFactory;
-+ (void)registerDocumentFactory;
-
-@end
-
-@interface MKMPlugins (EntityID)
-
-+ (void)registerIDFactory;
-
-@end
-
-@interface MKMPlugins (Crypto)
-
-+ (void)registerKeyFactories;
-
-@end
-
-@interface MKMPlugins (DataCoder)
-
-+ (void)registerDataCoders;
-
-@end
-
-@interface MKMPlugins (Digest)
-
-+ (void)registerDigesters;
-
-@end
-
-@interface MKMPlugins (Prepare)
-
-+ (void)loadPlugins;
-
-@end
-
-@interface DIMDocumentFactory : NSObject <MKMDocumentFactory>
-
-@property (readonly, strong, nonatomic) NSString *type;
-
-- (instancetype)initWithType:(NSString *)type;
+@interface DIMBaseDataFactory : NSObject
 
 @end
 

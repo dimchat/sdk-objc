@@ -2,12 +2,12 @@
 //
 //  Ming-Ke-Ming : Decentralized User Identity Authentication
 //
-//                               Written in 2020 by Moky <albert.moky@gmail.com>
+//                               Written in 2022 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2020 Albert Moky
+// Copyright (c) 2022 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,62 +28,39 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  MKMPlugins.h
-//  DIMPlugins
+//  DIMIDFactory.h
+//  DIMCore
 //
 //  Created by Albert Moky on 2020/12/12.
 //  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <MingKeMing/MingKeMing.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-#define MKMAlgorithmPlain @"PLAIN"
+/**
+ *  General ID Factory
+ */
+@interface DIMIDFactory : NSObject <MKMIDFactory>
 
-@interface MKMPlugins : NSObject
+// protected, override for customized ID
+- (id<MKMID>)newID:(NSString *)identifier name:(nullable NSString *)seed address:(id<MKMAddress>)main terminal:(nullable NSString *)loc;
 
-+ (void)registerAddressFactory;
-+ (void)registerMetaFactory;
-+ (void)registerDocumentFactory;
-
-@end
-
-@interface MKMPlugins (EntityID)
-
-+ (void)registerIDFactory;
+// protected
+- (nullable id<MKMID>)parse:(NSString *)identifier;
 
 @end
 
-@interface MKMPlugins (Crypto)
+@interface DIMIDFactory (Thanos)
 
-+ (void)registerKeyFactories;
-
-@end
-
-@interface MKMPlugins (DataCoder)
-
-+ (void)registerDataCoders;
-
-@end
-
-@interface MKMPlugins (Digest)
-
-+ (void)registerDigesters;
-
-@end
-
-@interface MKMPlugins (Prepare)
-
-+ (void)loadPlugins;
-
-@end
-
-@interface DIMDocumentFactory : NSObject <MKMDocumentFactory>
-
-@property (readonly, strong, nonatomic) NSString *type;
-
-- (instancetype)initWithType:(NSString *)type;
+/**
+ * Call it when received 'UIApplicationDidReceiveMemoryWarningNotification',
+ * this will remove 50% of cached objects
+ *
+ * @return number of survivors
+ */
+- (NSUInteger)reduceMemory;
 
 @end
 

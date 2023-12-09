@@ -28,34 +28,18 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  MKMBaseKey.h
+//  DIMDocumentFactory.h
 //  DIMPlugins
 //
-//  Created by Albert Moky on 2023/2/2.
-//  Copyright © 2023 Albert Moky. All rights reserved.
+//  Created by Albert Moky on 2023/12/9.
+//  Copyright © 2023 DIM Group. All rights reserved.
 //
 
-#import <MingKeMing/MingKeMing.h>
+#import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MKMCryptographyKey : MKMDictionary <MKMCryptographyKey>
-
-@end
-
-@interface MKMSymmetricKey : MKMDictionary <MKMSymmetricKey>
-
-@end
-
-@interface MKMAsymmetricKey : MKMDictionary <MKMAsymmetricKey>
-
-@end
-
-@interface MKMPrivateKey : MKMDictionary <MKMPrivateKey>
-
-@end
-
-@interface MKMPublicKey : MKMAsymmetricKey <MKMPublicKey>
+@interface DIMDocumentFactory : NSObject
 
 @end
 

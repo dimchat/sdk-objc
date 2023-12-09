@@ -214,3 +214,71 @@
 }
 
 @end
+
+#pragma mark -
+
+static inline NSString *doc_type(NSString *docType, id<MKMID> ID) {
+    if ([docType isEqualToString:@"*"]) {
+        if (MKMIDIsGroup(ID)) {
+            return MKMDocument_Bulletin;
+        } else if (MKMIDIsUser(ID)) {
+            return MKMDocument_Visa;
+        }
+        return MKMDocument_Profile;
+    }
+    return docType;
+}
+
+@implementation DIMDocumentFactory
+
+- (instancetype)initWithType:(NSString *)type {
+    if (self = [super init]) {
+        _type = type;
+    }
+    return self;
+}
+
+- (id<MKMDocument>)createDocument:(id<MKMID>)ID data:(NSString *)json signature:(NSString *)sig {
+    NSString *type = doc_type(_type, ID);
+    if ([type isEqualToString:MKMDocument_Visa]) {
+        return [[DIMVisa alloc] initWithID:ID data:json signature:sig];
+    }
+    if ([type isEqualToString:MKMDocument_Bulletin]) {
+        return [[DIMBulletin alloc] initWithID:ID data:json signature:sig];
+    }
+    return [[DIMDocument alloc] initWithID:ID data:json signature:sig];
+}
+
+// create a new empty document with entity ID
+- (id<MKMDocument>)createDocument:(id<MKMID>)ID {
+    NSString *type = doc_type(_type, ID);
+    if ([type isEqualToString:MKMDocument_Visa]) {
+        return [[DIMVisa alloc] initWithID:ID];
+    }
+    if ([type isEqualToString:MKMDocument_Bulletin]) {
+        return [[DIMBulletin alloc] initWithID:ID];
+    }
+    return [[DIMDocument alloc] initWithID:ID type:type];
+}
+
+- (nullable id<MKMDocument>)parseDocument:(NSDictionary *)doc {
+    id<MKMID> ID = MKMIDParse([doc objectForKey:@"ID"]);
+    if (!ID) {
+        NSAssert(false, @"document ID not found: %@", doc);
+        return nil;
+    }
+    MKMFactoryManager *man = [MKMFactoryManager sharedManager];
+    NSString *type = [man.generalFactory documentType:doc];
+    if (type.length == 0) {
+        type = doc_type(@"*", ID);
+    }
+    if ([type isEqualToString:MKMDocument_Visa]) {
+        return [[DIMVisa alloc] initWithDictionary:doc];
+    }
+    if ([type isEqualToString:MKMDocument_Bulletin]) {
+        return [[DIMBulletin alloc] initWithDictionary:doc];
+    }
+    return [[DIMDocument alloc] initWithDictionary:doc];
+}
+
+@end

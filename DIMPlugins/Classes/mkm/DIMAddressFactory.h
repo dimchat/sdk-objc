@@ -28,63 +28,45 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  MKMPlugins.h
-//  DIMPlugins
+//  DIMAddressFactory.h
+//  DIMCore
 //
 //  Created by Albert Moky on 2020/12/12.
 //  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <MingKeMing/MingKeMing.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-#define MKMAlgorithmPlain @"PLAIN"
-
-@interface MKMPlugins : NSObject
-
-+ (void)registerAddressFactory;
-+ (void)registerMetaFactory;
-+ (void)registerDocumentFactory;
+/**
+ *  Base Address Factory
+ */
+@interface DIMAddressFactory : NSObject <MKMAddressFactory>
 
 @end
 
-@interface MKMPlugins (EntityID)
+@interface DIMAddressFactory (Thanos)
 
-+ (void)registerIDFactory;
-
-@end
-
-@interface MKMPlugins (Crypto)
-
-+ (void)registerKeyFactories;
-
-@end
-
-@interface MKMPlugins (DataCoder)
-
-+ (void)registerDataCoders;
+/**
+ * Call it when received 'UIApplicationDidReceiveMemoryWarningNotification',
+ * this will remove 50% of cached objects
+ *
+ * @return number of survivors
+ */
+- (NSUInteger)reduceMemory;
 
 @end
 
-@interface MKMPlugins (Digest)
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-+ (void)registerDigesters;
+// Thanos can kill half lives of a world with a snap of the finger
+NSUInteger DIMThanos(NSMutableDictionary *planet, NSUInteger finger);
 
-@end
-
-@interface MKMPlugins (Prepare)
-
-+ (void)loadPlugins;
-
-@end
-
-@interface DIMDocumentFactory : NSObject <MKMDocumentFactory>
-
-@property (readonly, strong, nonatomic) NSString *type;
-
-- (instancetype)initWithType:(NSString *)type;
-
-@end
+#ifdef __cplusplus
+} /* end of extern "C" */
+#endif
 
 NS_ASSUME_NONNULL_END

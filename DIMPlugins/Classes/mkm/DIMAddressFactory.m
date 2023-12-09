@@ -28,63 +28,77 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  MKMPlugins.h
-//  DIMPlugins
+//  DIMAddressFactory.m
+//  DIMCore
 //
 //  Created by Albert Moky on 2020/12/12.
 //  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import "DIMAddressFactory.h"
 
-NS_ASSUME_NONNULL_BEGIN
-
-#define MKMAlgorithmPlain @"PLAIN"
-
-@interface MKMPlugins : NSObject
-
-+ (void)registerAddressFactory;
-+ (void)registerMetaFactory;
-+ (void)registerDocumentFactory;
+@interface DIMAddressFactory () {
+    
+    NSMutableDictionary<NSString *, id<MKMAddress>> *_addresses;
+}
 
 @end
 
-@interface MKMPlugins (EntityID)
+@implementation DIMAddressFactory
 
-+ (void)registerIDFactory;
+- (instancetype)init {
+    if (self = [super init]) {
+        _addresses = [[NSMutableDictionary alloc] init];
+    }
+    return self;
+}
 
-@end
+- (id<MKMAddress>)generateAddressWithMeta:(id<MKMMeta>)meta
+                                     type:(MKMEntityType)network {
+    id<MKMAddress> address = [meta generateAddress:network];
+    NSAssert(address, @"failed to generate address: %@", meta);
+    [_addresses setObject:address forKey:address.string];
+    return address;
+}
 
-@interface MKMPlugins (Crypto)
+- (nullable id<MKMAddress>)parseAddress:(NSString *)address {
+    id<MKMAddress> addr = [_addresses objectForKey:address];
+    if (!addr) {
+        addr = MKMAddressCreate(address);
+        if (addr) {
+            [_addresses setObject:addr forKey:address];
+        }
+    }
+    return addr;
+}
 
-+ (void)registerKeyFactories;
-
-@end
-
-@interface MKMPlugins (DataCoder)
-
-+ (void)registerDataCoders;
-
-@end
-
-@interface MKMPlugins (Digest)
-
-+ (void)registerDigesters;
-
-@end
-
-@interface MKMPlugins (Prepare)
-
-+ (void)loadPlugins;
-
-@end
-
-@interface DIMDocumentFactory : NSObject <MKMDocumentFactory>
-
-@property (readonly, strong, nonatomic) NSString *type;
-
-- (instancetype)initWithType:(NSString *)type;
+- (nullable id<MKMAddress>)createAddress:(NSString *)address {
+    NSAssert(false, @"implement me!");
+    return nil;
+}
 
 @end
 
-NS_ASSUME_NONNULL_END
+@implementation DIMAddressFactory (Thanos)
+
+- (NSUInteger)reduceMemory {
+    NSUInteger snap = 0;
+    snap = DIMThanos(_addresses, snap);
+    return snap;
+}
+
+@end
+
+NSUInteger DIMThanos(NSMutableDictionary *planet, NSUInteger finger) {
+    NSArray *people = [planet allKeys];
+    // if ++finger is odd, remove it,
+    // else, let it go
+    for (id key in people) {
+        if ((++finger & 1) == 1) {
+            // kill it
+            [planet removeObjectForKey:key];
+        }
+        // let it go
+    }
+    return finger;
+}
