@@ -40,6 +40,8 @@
 #import "DIMDataDigesters.h"
 #import "DIMDataCoders.h"
 #import "DIMDataParsers.h"
+#import "DIMBaseDataFactory.h"
+#import "DIMBaseFileFactory.h"
 
 #import "MKMAESKey.h"
 #import "MKMRSAPublicKey.h"
@@ -229,6 +231,15 @@ static PlainKey *s_sharedPlainKey = nil;
 + (void)registerDataCoders {
     DIMRegisterDataCoders();
     DIMRegisterDataParsers();
+    
+    // PNF
+    MKMPortableNetworkFileSetFactory([[DIMBaseFileFactory alloc] init]);
+    
+    // TED
+    DIMBase64DataFactory *b64Factory = [[DIMBase64DataFactory alloc] init];
+    MKMTransportableDataSetFactory(MKMAlgorithmBase64, b64Factory);
+    //MKMTransportableDataSetFactory(MKMAlgorithmTransportableDefault, b64Factory);
+    MKMTransportableDataSetFactory(@"*", b64Factory);
 }
 
 @end

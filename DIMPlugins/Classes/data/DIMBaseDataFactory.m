@@ -35,8 +35,88 @@
 //  Copyright © 2023 DIM Group. All rights reserved.
 //
 
+#import <DIMCore/DIMCore.h>
+
 #import "DIMBaseDataFactory.h"
 
-@implementation DIMBaseDataFactory
+@interface Base64Data : MKMDictionary <MKMTransportableData> {
+    
+    DIMBaseDataWrapper *_wrapper;
+}
+
+- (instancetype)initWithData:(NSData *)binary;
+
+- (NSString *)encode:(NSString *)mimeType;
+
+@end
+
+@implementation Base64Data
+
+/* designated initializer */
+- (instancetype)initWithDictionary:(NSDictionary *)dict {
+    if (self = [super initWithDictionary:dict]) {
+        _wrapper = [[DIMBaseDataWrapper alloc] initWithDictionary:self.dictionary];
+    }
+    return self;
+}
+
+/* designated initializer */
+- (instancetype)init {
+    if (self = [super init]) {
+        _wrapper = [[DIMBaseDataWrapper alloc] initWithDictionary:self.dictionary];
+    }
+    return self;
+}
+
+- (instancetype)initWithData:(NSData *)binary {
+    if (self = [self init]) {
+        // encode algorithm
+        _wrapper.algorithm = MKMAlgorithmBase64;
+        // binary data
+        if ([binary length] > 0) {
+            _wrapper.data = binary;
+        }
+    }
+    return self;
+}
+
+- (NSString *)algorithm {
+    return [_wrapper algorithm];
+}
+
+- (NSData *)data {
+    return [_wrapper data];
+}
+
+- (NSObject *)object {
+    return [self string];
+}
+
+- (NSString *)string {
+    // 0. "{BASE64_ENCODE}"
+    // 1. "base64,{BASE64_ENCODE}"
+    return [_wrapper encode];
+}
+
+- (NSString *)encode:(NSString *)mimeType {
+    // 2. "data:image/png;base64,{BASE64_ENCODE}"
+    return [_wrapper encode:mimeType];
+}
+
+@end
+
+#pragma mark -
+
+@implementation DIMBase64DataFactory
+
+- (id<MKMTransportableData>)createTransportableData:(NSData *)data {
+    return [[Base64Data alloc] initWithData:data];
+}
+
+- (nullable id<MKMTransportableData>)parseTransportableData:(NSDictionary *)ted {
+    // TODO: 1. check algorithm
+    //       2. check data format
+    return [[Base64Data alloc] initWithDictionary:ted];
+}
 
 @end
