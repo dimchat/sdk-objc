@@ -47,16 +47,13 @@ static inline NSData *random_data(NSUInteger size) {
     return [[NSData alloc] initWithBytesNoCopy:buf length:size freeWhenDone:YES];
 }
 
-@interface MKMAESKey () {
-    
-    NSData *_data;
-}
+@interface MKMAESKey ()
 
 @property (readonly, nonatomic) NSUInteger keySize;
 @property (readonly, nonatomic) NSUInteger blockSize;
 
-@property (strong, nonatomic) NSData *data; // Key Data
-@property (strong, nonatomic) NSData *iv;   // Initialization Vector
+@property (strong, nonatomic) id<MKMTransportableData> keyData;  // Key Data
+@property (strong, nonatomic) id<MKMTransportableData> ivData;   // Initialization Vector
 
 @end
 
@@ -65,19 +62,53 @@ static inline NSData *random_data(NSUInteger size) {
 /* designated initializer */
 - (instancetype)initWithDictionary:(NSDictionary *)keyInfo {
     if (self = [super initWithDictionary:keyInfo]) {
-        // lazy
-        _data = nil;
-        _iv = nil;
+        if ([self objectForKey:@"data"]) {
+            // lazy
+            _keyData = nil;
+            _ivData = nil;
+        } else {
+            // TODO: check algorithm parameters
+            // 1. check mode = 'CBC'
+            // 2. check padding = 'PKCS7Padding'
+            [self _generate];
+        }
     }
     
     return self;
 }
 
+- (void)_generate {
+    id<MKMTransportableData> ted;
+    
+    //
+    // key data empty? generate new key info
+    //
+    
+    // random password
+    NSUInteger keySize = [self keySize];
+    NSData *pw = random_data(keySize);
+    ted = MKMTransportableDataCreate(pw, nil);
+    [self setObject:ted.object forKey:@"data"];
+    _keyData = ted;
+    
+    // random initialization vector
+    NSUInteger blockSize = [self blockSize];
+    NSData *iv = random_data(blockSize);
+    ted = MKMTransportableDataCreate(iv, nil);
+    [self setObject:ted.object forKey:@"iv"];
+    _ivData = ted;
+    
+    // other parameters
+    //[self setObject:@"CBC" forKey:@"mode"];
+    //[self setObject:@"PKCS7" forKey:@"padding"];
+    
+}
+
 - (id)copyWithZone:(nullable NSZone *)zone {
     MKMAESKey *key = [super copyWithZone:zone];
     if (key) {
-        key.data = _data;
-        key.iv = _iv;
+        key.keyData = _keyData;
+        key.ivData = _ivData;
     }
     return key;
 }
@@ -108,92 +139,108 @@ static inline NSData *random_data(NSUInteger size) {
     }
 }
 
-- (void)setData:(NSData *)data {
-    _data = data;
+- (id<MKMTransportableData>)ivData {
+    id<MKMTransportableData> ted = _ivData;
+    if (!ted) {
+        id base64 = [self objectForKey:@"iv"];
+        if (base64) {
+            _ivData = ted = MKMTransportableDataParse(base64);
+            NSAssert(ted, @"iv data error: %@", base64);
+        } else {
+            // zero iv
+        }
+    }
+    return ted;
+}
+- (void)_setInitVector:(id)base64 {
+    // if new iv not exists, this will erase the decoded ivData,
+    // and cause reloading from dictionary again.
+    _ivData = MKMTransportableDataParse(base64);
+}
+
+- (id<MKMTransportableData>)keyData {
+    id<MKMTransportableData> ted = _keyData;
+    if (!ted) {
+        id base64 = [self objectForKey:@"data"];
+        if (base64) {
+            _keyData = ted = MKMTransportableDataParse(base64);
+            NSAssert(ted, @"key data error: %@", base64);
+        } else {
+            NSAssert(false, @"key data not found: %@", self);
+        }
+    }
+    return ted;
+}
+
+- (NSString *)_ivString {
+    id<MKMTransportableData> ted = [self ivData];
+    NSString *base64 = [ted string];
+    // TODO: trim base64 string
+    return base64;
+}
+
+- (NSString *)_keyString {
+    id<MKMTransportableData> ted = [self keyData];
+    NSString *base64 = [ted string];
+    // TODO: trim base64 string
+    return base64;
 }
 
 - (NSData *)data {
-    while (!_data) {
-        NSString *PW;
-        
-        // data
-        PW = [self objectForKey:@"data"];
-        if (PW) {
-            _data = MKMBase64Decode(PW);
-            break;
-        }
-        
-        //
-        // key data empty? generate new key info
-        //
-        
-        // random password
-        NSUInteger keySize = [self keySize];
-        _data = random_data(keySize);
-        PW = MKMBase64Encode(_data);
-        [self setObject:PW forKey:@"data"];
-        
-        // random initialization vector
-        NSUInteger blockSize = [self blockSize];
-        _iv = random_data(blockSize);
-        NSString *IV = MKMBase64Encode(_iv);
-        [self setObject:IV forKey:@"iv"];
-        
-        // other parameters
-        //[self setObject:@"CBC" forKey:@"mode"];
-        //[self setObject:@"PKCS7" forKey:@"padding"];
-        
-        break;
-    }
-    return _data;
+    id<MKMTransportableData> ted = [self keyData];
+    return [ted data];
 }
 
 - (NSData *)iv {
-    if (!_iv) {
-        NSString *iv = [self objectForKey:@"iv"];
-        _iv = MKMBase64Decode(iv);
-    }
-    return _iv;
+    id<MKMTransportableData> ted = [self ivData];
+    return [ted data];
 }
 
 #pragma mark - Protocol
 
-- (NSData *)encrypt:(NSData *)plaintext {
-    NSData *ciphertext = nil;
+- (NSData *)encrypt:(NSData *)plaintext params:(nullable NSMutableDictionary<NSString *,id> *)extra {
     NSAssert(self.keySize == kCCKeySizeAES256, @"only support AES-256 now");
-    
+    // 0. TODO: random new 'IV'
+    NSString *base64 = [self _ivString];
+    [extra setObject:base64 forKey:@"IV"];
+    // 1. get key data & initial vector
+    NSData *key = [self data];
+    NSData *iv = [self iv];
+    // 2. try to encrypt
+    NSData *ciphertext = nil;
     @try {
-        // AES encrypt algorithm
-        if (self.keySize == kCCKeySizeAES256) {
-            ciphertext = [plaintext AES256EncryptWithKey:self.data
-                                    initializationVector:self.iv];
-        }
+        ciphertext = [plaintext AES256EncryptWithKey:key
+                                initializationVector:iv];
     } @catch (NSException *exception) {
         NSLog(@"[AES] failed to encrypt: %@", exception);
     } @finally {
         //
     }
-    
     NSAssert(ciphertext, @"AES encrypt failed");
     return ciphertext;
 }
 
-- (nullable NSData *)decrypt:(NSData *)ciphertext {
-    NSData *plaintext = nil;
+- (nullable NSData *)decrypt:(NSData *)ciphertext params:(nullable NSDictionary<NSString *,id> *)extra {
     NSAssert(self.keySize == kCCKeySizeAES256, @"only support AES-256 now");
-    
+    // 0. get 'IV' from extra params
+    id base64 = [extra objectForKey:@"IV"];
+    if (base64) {
+        [self _setInitVector:base64];
+    }
+    // 1. get key data & initial vector
+    NSData *key = [self data];
+    NSData *iv = [self iv];
+    // 2. try to decrypt
+    NSData *plaintext = nil;
     @try {
         // AES decrypt algorithm
-        if (self.keySize == kCCKeySizeAES256) {
-            plaintext = [ciphertext AES256DecryptWithKey:self.data
-                                    initializationVector:self.iv];
-        }
+        plaintext = [ciphertext AES256DecryptWithKey:key
+                                initializationVector:iv];
     } @catch (NSException *exception) {
         NSLog(@"[AES] failed to decrypt: %@", exception);
     } @finally {
         //
     }
-    
     //NSAssert(plaintext, @"AES decrypt failed");
     return plaintext;
 }

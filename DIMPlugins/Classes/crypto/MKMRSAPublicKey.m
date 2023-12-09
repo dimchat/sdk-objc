@@ -147,7 +147,7 @@
 
 #pragma mark - Protocol
 
-- (NSData *)encrypt:(NSData *)plaintext {
+- (NSData *)encrypt:(NSData *)plaintext params:(nullable NSMutableDictionary *)extra {
     NSAssert(plaintext.length > 0, @"[RSA] data cannot be empty");
     NSAssert(plaintext.length <= (self.keySize - 11), @"[RSA] data too long: %lu", plaintext.length);
     NSData *ciphertext = nil;

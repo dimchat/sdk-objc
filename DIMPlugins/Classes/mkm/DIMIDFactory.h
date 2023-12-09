@@ -40,12 +40,16 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- *  General ID Factory
+ *  General ID factory
+ *  ~~~~~~~~~~~~~~~~~~
  */
 @interface DIMIDFactory : NSObject <MKMIDFactory>
 
 // protected, override for customized ID
-- (id<MKMID>)newID:(NSString *)identifier name:(nullable NSString *)seed address:(id<MKMAddress>)main terminal:(nullable NSString *)loc;
+- (id<MKMID>)newID:(NSString *)identifier
+              name:(nullable NSString *)seed
+           address:(id<MKMAddress>)main
+          terminal:(nullable NSString *)loc;
 
 // protected
 - (nullable id<MKMID>)parse:(NSString *)identifier;
@@ -63,5 +67,15 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSUInteger)reduceMemory;
 
 @end
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void DIMRegisterIDFactory(void);
+
+#ifdef __cplusplus
+} /* end of extern "C" */
+#endif
 
 NS_ASSUME_NONNULL_END

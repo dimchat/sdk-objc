@@ -35,6 +35,8 @@
 //  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
+#import <DIMCore/DIMCore.h>
+
 #import "DIMDataDigesters.h"
 #import "DIMDataCoders.h"
 #import "DIMDataParsers.h"
@@ -56,7 +58,7 @@
  *          data     : ""       // empty data
  *      }
  */
-@interface PlainKey : MKMSymmetricKey
+@interface PlainKey : DIMSymmetricKey
 
 + (instancetype)sharedInstance;
 

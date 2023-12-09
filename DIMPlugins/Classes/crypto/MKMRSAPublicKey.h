@@ -35,7 +35,7 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import <DIMPlugins/MKMBaseKey.h>
+#import <DIMCore/DIMCore.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -47,7 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
  *          data: "..."       // base64
  *      }
  */
-@interface MKMRSAPublicKey : MKMPublicKey <MKMEncryptKey>
+@interface MKMRSAPublicKey : DIMPublicKey <MKMEncryptKey>
 
 @end
 

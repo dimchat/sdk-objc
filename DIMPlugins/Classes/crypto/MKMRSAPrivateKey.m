@@ -98,11 +98,6 @@
     return key;
 }
 
-- (BOOL)isMatch:(id<MKMEncryptKey>)pKey {
-    MKMKeyFactoryManager *man = [MKMKeyFactoryManager sharedManager];
-    return [man.generalFactory isEncryptKey:pKey matchDecryptKey:self];
-}
-
 - (void)setData:(NSData *)data {
     _data = data;
 }
@@ -215,7 +210,7 @@
 
 #pragma mark - Protocol
 
-- (nullable NSData *)decrypt:(NSData *)ciphertext {
+- (nullable NSData *)decrypt:(NSData *)ciphertext params:(nullable NSDictionary *)extra {
     if (ciphertext.length != (self.keySize)) {
         NSLog(@"[RSA] ciphertext length not correct: %lu", ciphertext.length);
         return nil;
@@ -278,6 +273,10 @@
     
     NSAssert(signature, @"RSA sign failed");
     return signature;
+}
+
+- (BOOL)matchEncryptKey:(id<MKMEncryptKey>)pKey {
+    return DIMCryptoMatchEncryptKey(pKey, self);
 }
 
 @end

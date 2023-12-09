@@ -35,11 +35,15 @@
 //  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
+#import <DIMCore/DIMCore.h>
+
 #import "DIMAddressFactory.h"
 
 #import "DIMIDFactory.h"
 
-static inline NSString *concat(NSString *name, id<MKMAddress> address, NSString *terminal) {
+static inline NSString *concat(NSString *name,
+                               id<MKMAddress> address,
+                               NSString *terminal) {
     NSUInteger len1 = [name length];
     NSUInteger len2 = [terminal length];
     if (len1 > 0) {
@@ -71,17 +75,17 @@ static inline NSString *concat(NSString *name, id<MKMAddress> address, NSString 
     return self;
 }
 
-- (id<MKMID>)generateIDWithMeta:(id<MKMMeta>)meta
-                           type:(MKMEntityType)network
-                       terminal:(nullable NSString *)location {
+- (id<MKMID>)generateIdentifierWithMeta:(id<MKMMeta>)meta
+                                   type:(MKMEntityType)network
+                               terminal:(nullable NSString *)location {
     id<MKMAddress> address = MKMAddressGenerate(network, meta);
     NSAssert(address, @"failed to generate address with meta: %@", meta);
     return MKMIDCreate(meta.seed, address, location);
 }
 
-- (id<MKMID>)createID:(nullable NSString *)name
-              address:(id<MKMAddress>)address
-             terminal:(nullable NSString *)location {
+- (id<MKMID>)createIdentifier:(nullable NSString *)name
+                      address:(id<MKMAddress>)address
+                     terminal:(nullable NSString *)location {
     NSString *string = concat(name, address, location);
     id<MKMID> ID = [_identifiers objectForKey:string];
     if (!ID) {
@@ -91,7 +95,7 @@ static inline NSString *concat(NSString *name, id<MKMAddress> address, NSString 
     return ID;
 }
 
-- (nullable id<MKMID>)parseID:(NSString *)identifier {
+- (nullable id<MKMID>)parseIdentifier:(NSString *)identifier {
     id<MKMID> ID = [_identifiers objectForKey:identifier];
     if (!ID) {
         ID = [self parse:identifier];
@@ -102,9 +106,15 @@ static inline NSString *concat(NSString *name, id<MKMAddress> address, NSString 
     return ID;
 }
 
-- (id<MKMID>)newID:(NSString *)identifier name:(nullable NSString *)seed address:(id<MKMAddress>)main terminal:(nullable NSString *)loc {
+- (id<MKMID>)newID:(NSString *)identifier
+              name:(nullable NSString *)seed
+           address:(id<MKMAddress>)main
+          terminal:(nullable NSString *)loc {
     // override for customized ID
-    return [[MKMID alloc] initWithString:identifier name:seed address:main terminal:loc];
+    return [[MKMID alloc] initWithString:identifier
+                                    name:seed
+                                 address:main
+                                terminal:loc];
 }
 
 // protected
@@ -156,3 +166,8 @@ static inline NSString *concat(NSString *name, id<MKMAddress> address, NSString 
 }
 
 @end
+
+void DIMRegisterIDFactory(void) {
+    DIMIDFactory *factory = [[DIMIDFactory alloc] init];
+    MKMIDSetFactory(factory);
+}

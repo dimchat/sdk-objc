@@ -35,8 +35,99 @@
 //  Copyright © 2023 DIM Group. All rights reserved.
 //
 
+#import "MKMMetaDefault.h"
+#import "MKMMetaBTC.h"
+#import "MKMMetaETH.h"
+
 #import "DIMMetaFactory.h"
 
 @implementation DIMMetaFactory
 
+- (instancetype)initWithType:(MKMMetaType)version {
+    if (self = [super init]) {
+        _type = version;
+    }
+    return self;
+}
+
+- (id<MKMMeta>)createMetaWithKey:(id<MKMVerifyKey>)PK
+                            seed:(nullable NSString *)name
+                     fingerprint:(nullable id<MKMTransportableData>)CT {
+    id<MKMMeta> meta;
+    switch (_type) {
+        case MKMMetaType_MKM:
+            meta = [[MKMMetaDefault alloc] initWithType:_type key:PK seed:name fingerprint:CT];
+            break;
+            
+        case MKMMetaType_BTC:
+        case MKMMetaType_ExBTC:
+            meta = [[MKMMetaBTC alloc] initWithType:_type key:PK seed:name fingerprint:CT];
+            break;
+                
+        case MKMMetaType_ETH:
+        case MKMMetaType_ExETH:
+            meta = [[MKMMetaETH alloc] initWithType:_type key:PK seed:name fingerprint:CT];
+            break;
+
+        default:
+            NSAssert(false, @"meta type not supported: %d", _type);
+            meta = nil;
+            break;
+    }
+    return meta;
+}
+
+- (id<MKMMeta>)generateMetaWithKey:(id<MKMSignKey>)SK
+                              seed:(nullable NSString *)name {
+    id<MKMTransportableData> CT;
+    if (name.length > 0) {
+        NSData *sig = [SK sign:MKMUTF8Encode(name)];
+        CT = MKMTransportableDataCreate(sig, nil);
+    } else {
+        CT = nil;
+    }
+    id<MKMPublicKey> PK = [(id<MKMPrivateKey>)SK publicKey];
+    return [self createMetaWithKey:PK seed:name fingerprint:CT];
+}
+
+- (nullable id<MKMMeta>)parseMeta:(NSDictionary *)info {
+    id<MKMMeta> meta = nil;
+    MKMFactoryManager *man = [MKMFactoryManager sharedManager];
+    MKMMetaType version = [man.generalFactory metaType:info
+                                          defaultValue:0];
+    switch (version) {
+        case MKMMetaType_MKM:
+            meta = [[MKMMetaDefault alloc] initWithDictionary:info];
+            break;
+            
+        case MKMMetaType_BTC:
+        case MKMMetaType_ExBTC:
+            meta = [[MKMMetaBTC alloc] initWithDictionary:info];
+            break;
+            
+        case MKMMetaType_ETH:
+        case MKMMetaType_ExETH:
+            meta = [[MKMMetaETH alloc] initWithDictionary:info];
+            break;
+            
+        default:
+            NSAssert(false, @"meta type not supported: %d", version);
+            break;
+    }
+    return [meta isValid] ? meta : nil;
+}
+
 @end
+
+void DIMRegisterMetaFactory(void) {
+    MKMMetaSetFactory(MKMMetaType_MKM,
+                      [[DIMMetaFactory alloc] initWithType:MKMMetaType_MKM]);
+    MKMMetaSetFactory(MKMMetaType_BTC,
+                      [[DIMMetaFactory alloc] initWithType:MKMMetaType_BTC]);
+    MKMMetaSetFactory(MKMMetaType_ExBTC,
+                      [[DIMMetaFactory alloc] initWithType:MKMMetaType_ExBTC]);
+    MKMMetaSetFactory(MKMMetaType_ETH,
+                      [[DIMMetaFactory alloc] initWithType:MKMMetaType_ETH]);
+    MKMMetaSetFactory(MKMMetaType_ExETH,
+                      [[DIMMetaFactory alloc] initWithType:MKMMetaType_ExETH]);
+}

@@ -56,11 +56,14 @@ FOUNDATION_EXPORT const unsigned char DIMPluginsVersionString[];
 #if !defined(__DIM_SDK__)
 #define __DIM_SDK__ 1
 
-#import <DIMPlugins/MKMBaseKey.h>
-#import <DIMPlugins/MKMSymmetricKey+Password.h>
 #import <DIMPlugins/MKMPrivateKey+Store.h>
 #import <DIMPlugins/MKMAddressBTC.h>
 #import <DIMPlugins/MKMAddressETH.h>
+
+#import <DIMPlugins/DIMAddressFactory.h>
+#import <DIMPlugins/DIMIDFactory.h>
+#import <DIMPlugins/DIMMetaFactory.h>
+#import <DIMPlugins/DIMDocumentFactory.h>
 
 #import <DIMPlugins/MKMPlugins.h>
 

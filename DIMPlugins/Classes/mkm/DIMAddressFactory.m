@@ -35,6 +35,11 @@
 //  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
+#import <DIMCore/DIMCore.h>
+
+#import "MKMAddressBTC.h"
+#import "MKMAddressETH.h"
+
 #import "DIMAddressFactory.h"
 
 @interface DIMAddressFactory () {
@@ -89,16 +94,45 @@
 
 @end
 
-NSUInteger DIMThanos(NSMutableDictionary *planet, NSUInteger finger) {
-    NSArray *people = [planet allKeys];
-    // if ++finger is odd, remove it,
-    // else, let it go
-    for (id key in people) {
-        if ((++finger & 1) == 1) {
-            // kill it
-            [planet removeObjectForKey:key];
+#pragma mark -
+
+@interface AddressFactory : DIMAddressFactory
+
+@end
+
+@implementation AddressFactory
+
+- (nullable id<MKMAddress>)createAddress:(NSString *)address {
+    NSComparisonResult res;
+    NSUInteger len = [address length];
+    if (len == 8) {
+        // "anywhere"
+        res = [MKMAnywhere().string caseInsensitiveCompare:address];
+        if (res == NSOrderedSame) {
+            return MKMAnywhere();
         }
-        // let it go
+    } else if (len == 10) {
+        // "everywhere"
+        res = [MKMEverywhere().string caseInsensitiveCompare:address];
+        if (res == NSOrderedSame) {
+            return MKMEverywhere();
+        }
     }
-    return finger;
+    id<MKMAddress> addr;
+    if (len == 42) {
+        // ETH address
+        addr = [MKMAddressETH parse:address];
+    } else if (26 <= len && len <= 35) {
+        // try BTC address
+        addr = [MKMAddressBTC parse:address];
+    }
+    NSAssert(addr, @"invalid address: %@", address);
+    return addr;
+}
+
+@end
+
+void DIMRegisterAddressFactory(void) {
+    AddressFactory *factory = [[AddressFactory alloc] init];
+    MKMAddressSetFactory(factory);
 }

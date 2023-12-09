@@ -43,15 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MKMPlugins : NSObject
 
-+ (void)registerAddressFactory;
-+ (void)registerMetaFactory;
-+ (void)registerDocumentFactory;
-
-@end
-
-@interface MKMPlugins (EntityID)
-
-+ (void)registerIDFactory;
++ (void)loadPlugins;
 
 @end
 
@@ -70,20 +62,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface MKMPlugins (Digest)
 
 + (void)registerDigesters;
-
-@end
-
-@interface MKMPlugins (Prepare)
-
-+ (void)loadPlugins;
-
-@end
-
-@interface DIMDocumentFactory : NSObject <MKMDocumentFactory>
-
-@property (readonly, strong, nonatomic) NSString *type;
-
-- (instancetype)initWithType:(NSString *)type;
 
 @end
 

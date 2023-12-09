@@ -61,11 +61,11 @@
 - (instancetype)initWithType:(MKMMetaType)version
                          key:(id<MKMVerifyKey>)publicKey
                         seed:(NSString *)seed
-                 fingerprint:(NSData *)fingerprint {
+                 fingerprint:(id<MKMTransportableData>)CT {
     if (self = [super initWithType:version
                                key:publicKey
                               seed:seed
-                       fingerprint:fingerprint]) {
+                       fingerprint:CT]) {
         _cachedAddresses = [[NSMutableDictionary alloc] init];
     }
     return self;

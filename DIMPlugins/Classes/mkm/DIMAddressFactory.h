@@ -41,6 +41,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  Base Address Factory
+ *  ~~~~~~~~~~~~~~~~~~~~
  */
 @interface DIMAddressFactory : NSObject <MKMAddressFactory>
 
@@ -62,8 +63,7 @@ NS_ASSUME_NONNULL_BEGIN
 extern "C" {
 #endif
 
-// Thanos can kill half lives of a world with a snap of the finger
-NSUInteger DIMThanos(NSMutableDictionary *planet, NSUInteger finger);
+void DIMRegisterAddressFactory(void);
 
 #ifdef __cplusplus
 } /* end of extern "C" */

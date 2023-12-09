@@ -35,8 +35,84 @@
 //  Copyright © 2023 DIM Group. All rights reserved.
 //
 
+#import <DIMCore/DIMCore.h>
+
 #import "DIMDocumentFactory.h"
+
+static inline NSString *doc_type(NSString *docType, id<MKMID> ID) {
+    if ([docType isEqualToString:@"*"]) {
+        if (MKMIDIsGroup(ID)) {
+            return MKMDocumentTypeBulletin;
+        } else if (MKMIDIsUser(ID)) {
+            return MKMDocumentTypeVisa;
+        }
+        return MKMDocumentTypeProfile;
+    }
+    return docType;
+}
 
 @implementation DIMDocumentFactory
 
+- (instancetype)initWithType:(NSString *)type {
+    if (self = [super init]) {
+        _type = type;
+    }
+    return self;
+}
+
+- (id<MKMDocument>)createDocument:(id<MKMID>)ID
+                             data:(nullable NSString *)json
+                        signature:(nullable id<MKMTransportableData>)CT {
+    NSString *type = doc_type(_type, ID);
+    if (json && CT) {
+        if ([type isEqualToString:MKMDocumentTypeVisa]) {
+            return [[DIMVisa alloc] initWithID:ID data:json signature:CT];
+        }
+        if ([type isEqualToString:MKMDocumentTypeBulletin]) {
+            return [[DIMBulletin alloc] initWithID:ID data:json signature:CT];
+        }
+        return [[DIMDocument alloc] initWithID:ID data:json signature:CT];
+    } else {
+        // create a new empty document with entity ID
+        if ([type isEqualToString:MKMDocumentTypeVisa]) {
+            return [[DIMVisa alloc] initWithID:ID];
+        }
+        if ([type isEqualToString:MKMDocumentTypeBulletin]) {
+            return [[DIMBulletin alloc] initWithID:ID];
+        }
+        return [[DIMDocument alloc] initWithID:ID type:type];
+    }
+}
+
+- (nullable id<MKMDocument>)parseDocument:(NSDictionary *)doc {
+    id<MKMID> ID = MKMIDParse([doc objectForKey:@"ID"]);
+    if (!ID) {
+        NSAssert(false, @"document ID not found: %@", doc);
+        return nil;
+    }
+    MKMFactoryManager *man = [MKMFactoryManager sharedManager];
+    NSString *type = [man.generalFactory documentType:doc defaultValue:nil];
+    if (!type) {
+        type = doc_type(@"*", ID);
+    }
+    if ([type isEqualToString:MKMDocumentTypeVisa]) {
+        return [[DIMVisa alloc] initWithDictionary:doc];
+    }
+    if ([type isEqualToString:MKMDocumentTypeBulletin]) {
+        return [[DIMBulletin alloc] initWithDictionary:doc];
+    }
+    return [[DIMDocument alloc] initWithDictionary:doc];
+}
+
 @end
+
+void DIMRegisterDocumentFactory(void) {
+    MKMDocumentSetFactory(@"*",
+                          [[DIMDocumentFactory alloc] initWithType:@"*"]);
+    MKMDocumentSetFactory(MKMDocumentTypeVisa,
+                          [[DIMDocumentFactory alloc] initWithType:MKMDocumentTypeVisa]);
+    MKMDocumentSetFactory(MKMDocumentTypeProfile,
+                          [[DIMDocumentFactory alloc] initWithType:MKMDocumentTypeProfile]);
+    MKMDocumentSetFactory(MKMDocumentTypeBulletin,
+                          [[DIMDocumentFactory alloc] initWithType:MKMDocumentTypeBulletin]);
+}

@@ -35,12 +35,30 @@
 //  Copyright © 2023 DIM Group. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <MingKeMing/MingKeMing.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMMetaFactory : NSObject
+/**
+ *  General Meta factory
+ *  ~~~~~~~~~~~~~~~~~~~~
+ */
+@interface DIMMetaFactory : NSObject <MKMMetaFactory>
+
+@property (readonly, nonatomic) MKMMetaType type;
+
+- (instancetype)initWithType:(MKMMetaType)version;
 
 @end
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void DIMRegisterMetaFactory(void);
+
+#ifdef __cplusplus
+} /* end of extern "C" */
+#endif
 
 NS_ASSUME_NONNULL_END

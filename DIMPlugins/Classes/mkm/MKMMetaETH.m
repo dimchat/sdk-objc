@@ -61,11 +61,11 @@
 - (instancetype)initWithType:(MKMMetaType)version
                          key:(id<MKMVerifyKey>)publicKey
                         seed:(NSString *)seed
-                 fingerprint:(NSData *)fingerprint {
+                 fingerprint:(id<MKMTransportableData>)CT {
     if (self = [super initWithType:version
                                key:publicKey
                               seed:seed
-                       fingerprint:fingerprint]) {
+                       fingerprint:CT]) {
         _cachedAddress = nil;
     }
     return self;
@@ -77,7 +77,7 @@
     NSAssert(network == MKMEntityType_User, @"ETH address type error: %d", network);
     if (!_cachedAddress) {
         // generate and cache it
-        NSData *data = [self.key data];
+        NSData *data = [self.publicKey data];
         _cachedAddress = [MKMAddressETH generate:data];
     }
     return _cachedAddress;
