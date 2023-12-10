@@ -35,11 +35,9 @@
 //  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
-#import <DIMCore/DIMCore.h>
+#import <DIMSDK/DIMContentProcessor.h>
 
 NS_ASSUME_NONNULL_BEGIN
-
-#define DIM_CONTENT_NOT_SUPPORT_FMT @"Content (type: %d) not support yet!"
 
 /*
  *  Base Content Processor
@@ -47,12 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface DIMContentProcessor : DIMTwinsHelper <DIMContentProcessor>
 
-- (NSArray<id<DKDContent>> *)respondText:(NSString *)text withGroup:(nullable id<MKMID>)group;
-- (NSArray<id<DKDContent>> *)respondContent:(nullable id<DKDContent>)res;
-
 @end
-
-#define DIM_CMD_NOT_SUPPORT @"Command (name: %@) not support yet!"
 
 /*
  *  Base Command Processor

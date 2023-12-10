@@ -48,8 +48,12 @@
     return self;
 }
 
+- (id<MKMDocument>)profile {
+    return [self visa];
+}
+
 - (id<MKMID>)provider {
-    id<MKMDocument> doc = [self documentWithType:@"*"];
+    id<MKMDocument> doc = [self profile];
     if (doc) {
         id ICP = [doc propertyForKey:@"ICP"];
         return MKMIDParse(ICP);

@@ -39,25 +39,22 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-id<MKMID> MKMAnyStation(void);
-id<MKMID> MKMEveryStations(void);
-
-#ifdef __cplusplus
-} /* end of extern "C" */
-#endif
-
+/**
+ *  DIM Server
+ *  ~~~~~~~~~~
+ */
 @protocol MKMStation <MKMUser>
 
-@property (nonatomic, copy) id<MKMID> ID;
+@property (strong, nonatomic) id<MKMID> ID;
 
-@property (nonatomic, readonly) NSString *host; // Domain/IP
-@property (nonatomic, readonly) UInt16    port; // default: 9394
+// Station Document
+@property (readonly, strong, nonatomic, nullable) id<MKMDocument> profile;
 
-@property (nonatomic, readonly) id<MKMID> provider;  // SPID: station group
+@property (readonly, strong, nonatomic) NSString *host;  // Domain/IP
+@property (readonly, nonatomic) UInt16 port;             // default: 9394
+
+// Provider: ISP (Station group)
+@property (readonly, nonatomic) id<MKMID> provider;
 
 @end
 
@@ -73,5 +70,18 @@ NS_DESIGNATED_INITIALIZER;
 - (instancetype)initWithHost:(NSString *)IP port:(UInt16)port;
 
 @end
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+// Broadcast IDs
+
+id<MKMID> MKMAnyStation(void);
+id<MKMID> MKMEveryStations(void);
+
+#ifdef __cplusplus
+} /* end of extern "C" */
+#endif
 
 NS_ASSUME_NONNULL_END

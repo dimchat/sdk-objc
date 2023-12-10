@@ -35,10 +35,7 @@
 //  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
-#import "DIMFacebook.h"
-#import "DIMMessenger.h"
-
-#import "DIMContentProcessor.h"
+#import "DIMBaseProcessor.h"
 
 @implementation DIMContentProcessor
 
@@ -47,24 +44,17 @@
 //
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
-    NSString *text = [NSString stringWithFormat:DIM_CONTENT_NOT_SUPPORT_FMT, content.type];
-    return [self respondText:text withGroup:content.group];
-}
-
-- (NSArray<id<DKDContent>> *)respondText:(NSString *)text withGroup:(nullable id<MKMID>)group {
-    DIMTextContent *res = [[DIMTextContent alloc] initWithText:text];
-    if (group) {
-        res.group = group;
-    }
-    return @[res];
-}
-
-- (NSArray<id<DKDContent>> *)respondContent:(nullable id<DKDContent>)res {
-    if (!res) {
-        return nil;
-    } else {
-        return @[res];
-    }
+    NSString *text = @"Content not support.";
+    NSDictionary *info = @{
+        @"template": @"Content (type: ${type}) not support yet!",
+        @"replacements": @{
+            @"type": @(content.type),
+        },
+    };
+    return [self respondReceipt:text
+                       envelope:rMsg.envelope
+                        content:content
+                          extra:info];
 }
 
 @end
@@ -75,8 +65,17 @@
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content conformsToProtocol:@protocol(DKDCommand)], @"command error: %@", content);
     id<DKDCommand> command = (id<DKDCommand>)content;
-    NSString *text = [NSString stringWithFormat:DIM_CMD_NOT_SUPPORT, command.cmd];
-    return [self respondText:text withGroup:command.group];
+    NSString *text = @"Command not support.";
+    NSDictionary *info = @{
+        @"template": @"Command (name: ${name}) not support yet!",
+        @"replacements": @{
+            @"command": command.cmd,
+        },
+    };
+    return [self respondReceipt:text
+                       envelope:rMsg.envelope
+                        content:content
+                          extra:info];
 }
 
 @end

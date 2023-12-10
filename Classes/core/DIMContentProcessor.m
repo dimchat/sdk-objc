@@ -36,7 +36,7 @@
 //  Copyright © 2022 Albert Moky. All rights reserved.
 //
 
-#import "DIMFactory.h"
+#import "DIMContentProcessor.h"
 
 @interface DIMContentProcessorFactory () {
     
@@ -50,16 +50,16 @@
 
 @implementation DIMContentProcessorFactory
 
-- (instancetype)initWithFacebook:(DIMFacebook *)barrack
-                       messenger:(DIMMessenger *)transceiver {
+- (instancetype)initWithFacebook:(DIMBarrack *)barrack
+                       messenger:(DIMTransceiver *)transceiver {
     NSAssert(false, @"don't call me!");
     id<DIMContentProcessorCreator> cpc = nil;
     return [self initWithFacebook:barrack messenger:transceiver creator:cpc];
 }
 
 /* designated initializer */
-- (instancetype)initWithFacebook:(DIMFacebook *)barrack
-                       messenger:(DIMMessenger *)transceiver
+- (instancetype)initWithFacebook:(DIMBarrack *)barrack
+                       messenger:(DIMTransceiver *)transceiver
                          creator:(id<DIMContentProcessorCreator>)cpc {
     if (self = [super initWithFacebook:barrack messenger:transceiver]) {
         _creator = cpc;
@@ -74,12 +74,13 @@
     DKDContentType msgType = content.type;
     if ([content conformsToProtocol:@protocol(DKDCommand)]) {
         NSString *cmd = [(id<DKDCommand>)content cmd];
-        // command processor
+        //NSAssert([cmd length] > 0, @"command name error: %@", cmd);
         cpu = [self getCommandProcessor:cmd type:msgType];
         if (cpu) {
             return cpu;
-        } else if ([content conformsToProtocol:@protocol(DKDGroupCommand)]) {
-            // group command processor
+        } else if ([content conformsToProtocol:@protocol(DKDGroupCommand)]
+                   /*|| [content objectForKey:@"group"]*/) {
+            //NSAssert(![cmd isEqualToString:@"group"], @"command name error: %@", content);
             cpu = [self getCommandProcessor:@"group" type:msgType];
             if (cpu) {
                 return cpu;
@@ -101,7 +102,8 @@
     return cpu;
 }
 
-- (id<DIMContentProcessor>)getCommandProcessor:(NSString *)name type:(DKDContentType)msgType {
+- (id<DIMContentProcessor>)getCommandProcessor:(NSString *)name
+                                          type:(DKDContentType)msgType {
     id<DIMContentProcessor> cpu = [_commandProcessors objectForKey:name];
     if (!cpu) {
         cpu = [_creator createCommandProcessor:name type:msgType];

@@ -39,21 +39,64 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMReliableMessage : DIMSecureMessage <DKDReliableMessage>
+@interface DIMReliableMessagePacker : NSObject
 
-- (instancetype)initWithDictionary:(NSDictionary *)dict
+@property (readonly, weak, nonatomic) id<DKDReliableMessageDelegate> delegate;
+
+- (instancetype)initWithDelegate:(id<DKDReliableMessageDelegate>)delegate
 NS_DESIGNATED_INITIALIZER;
 
 @end
 
-NS_ASSUME_NONNULL_END
+/*
+ *  Verify the Reliable Message to Secure Message
+ *
+ *    +----------+      +----------+
+ *    | sender   |      | sender   |
+ *    | receiver |      | receiver |
+ *    | time     |  ->  | time     |
+ *    |          |      |          |
+ *    | data     |      | data     |  1. verify(data, signature, sender.PK)
+ *    | key/keys |      | key/keys |
+ *    | signature|      +----------+
+ *    +----------+
+ */
+@interface DIMReliableMessagePacker (Verification)
 
-NS_ASSUME_NONNULL_BEGIN
-
-@interface DIMReliableMessagePacker : NSObject
+/**
+ *  Verify 'data' and 'signature' field with sender's public key
+ *
+ * @param rMsg - received message
+ * @return SecureMessage object
+ */
+- (nullable id<DKDSecureMessage>)verifyMessage:(id<DKDReliableMessage>)rMsg;
 
 @end
 
-// TODO: MessageHelper
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#pragma mark MessageHelper
+
+/**
+ *  Sender's Meta
+ *  ~~~~~~~~~~~~~
+ *  Extends for the first message package of 'Handshake' protocol.
+ */
+id<MKMMeta> DIMMessageGetMeta(id<DKDReliableMessage> rMsg);
+void DIMMessageSetMeta(id<MKMMeta> meta, id<DKDReliableMessage> rMsg);
+
+/**
+ *  Sender's Visa
+ *  ~~~~~~~~~~~~~
+ *  Extends for the first message package of 'Handshake' protocol.
+ */
+id<MKMVisa> DIMMessageGetVisa(id<DKDReliableMessage> rMsg);
+void DIMMessageSetVisa(id<MKMVisa> visa, id<DKDReliableMessage> rMsg);
+
+#ifdef __cplusplus
+} /* end of extern "C" */
+#endif
 
 NS_ASSUME_NONNULL_END

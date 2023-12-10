@@ -52,6 +52,26 @@ NS_DESIGNATED_INITIALIZER;
 
 @interface DIMTwinsHelper (Convenience)
 
+// protected
+- (NSArray<id<DKDReceiptCommand>> *)respondReceipt:(NSString *)text
+                                          envelope:(id<DKDEnvelope>)head
+                                           content:(nullable id<DKDContent>)body
+                                             extra:(nullable NSDictionary *)info;
+
+/**
+ *  Create receipt command with text, original envelope, serial number & group
+ *
+ * @param text     - text message
+ * @param head     - original envelope
+ * @param body     - original content
+ * @param info     - extra info
+ * @return receipt command
+ */
++ (id<DKDReceiptCommand>)createReceipt:(NSString *)text
+                              envelope:(id<DKDEnvelope>)head
+                               content:(nullable id<DKDContent>)body
+                                 extra:(nullable NSDictionary *)info;
+
 @end
 
 NS_ASSUME_NONNULL_END

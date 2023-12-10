@@ -72,13 +72,13 @@
 // Override
 - (nullable id<DKDContent>)parseContent:(NSDictionary *)content {
     DIMCommandFactoryManager *man = [DIMCommandFactoryManager sharedManager];
-    NSString *cmd = [man.generalFactory getCmd:content];
     // get factory by command name
-    id<DKDCommandFactory> factory;
-    factory = cmd.length == 0 ? nil : [man.generalFactory commandFactoryForName:cmd];
+    NSString *cmd = [man.generalFactory getCmd:content defaultValue:@"*"];
+    id<DKDCommandFactory> factory = [man.generalFactory commandFactoryForName:cmd];
     if (!factory) {
         // check for group commands
-        if ([content objectForKey:@"group"] && ![cmd isEqualToString:@"group"]) {
+        if ([content objectForKey:@"group"]
+            /*&& ![cmd isEqualToString:@"group"]*/) {
             factory = [man.generalFactory commandFactoryForName:@"group"];
         }
         if (!factory) {
@@ -109,10 +109,9 @@
 // Override
 - (nullable id<DKDContent>)parseContent:(NSDictionary *)content {
     DIMCommandFactoryManager *man = [DIMCommandFactoryManager sharedManager];
-    NSString *cmd = [man.generalFactory getCmd:content];
     // get factory by command name
-    id<DKDCommandFactory> factory;
-    factory = cmd.length == 0 ? nil : [man.generalFactory commandFactoryForName:cmd];
+    NSString *cmd = [man.generalFactory getCmd:content defaultValue:@"*"];
+    id<DKDCommandFactory> factory = [man.generalFactory commandFactoryForName:cmd];
     if (!factory) {
         factory = self;
     }
@@ -133,13 +132,19 @@ void DIMRegisterCommandFactories(void) {
 
     // Document Command
     DIMCommandRegisterClass(DIMCommand_Document, DIMDocumentCommand);
+    
+    // Receipt Command
+    DIMCommandRegisterClass(DIMCommand_Receipt, DIMReceiptCommand);
 
     // Group Commands
     DIMCommandRegister(@"group", [[DIMGroupCommandFactory alloc] init]);
     DIMCommandRegisterClass(DIMGroupCommand_Invite, DIMInviteGroupCommand);
+    // 'expel' is deprecated (use 'reset' instead)
     DIMCommandRegisterClass(DIMGroupCommand_Expel, DIMExpelGroupCommand);
     DIMCommandRegisterClass(DIMGroupCommand_Join, DIMJoinGroupCommand);
     DIMCommandRegisterClass(DIMGroupCommand_Quit, DIMQuitGroupCommand);
     DIMCommandRegisterClass(DIMGroupCommand_Query, DIMQueryGroupCommand);
     DIMCommandRegisterClass(DIMGroupCommand_Reset, DIMResetGroupCommand);
+    // Group Admin Commands
+    // TODO:
 }

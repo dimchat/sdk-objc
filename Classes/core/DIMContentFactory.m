@@ -86,6 +86,9 @@ void DIMRegisterContentFactories(void) {
     // Web Page
     DIMContentRegisterClass(DKDContentType_Page, DIMPageContent);
     
+    // Name Card
+    DIMContentRegisterClass(DKDContentType_NameCard, DIMNameCard);
+    
     // Money
     DIMContentRegisterClass(DKDContentType_Money, DIMMoneyContent);
     DIMContentRegisterClass(DKDContentType_Transfer, DIMTransferContent);
@@ -98,14 +101,14 @@ void DIMRegisterContentFactories(void) {
     id<DKDContentFactory> hisParser = [[DIMHistoryCommandFactory alloc] init];
     DIMContentRegister(DKDContentType_History, hisParser);
     
-    // Content Array
-    DIMContentRegisterClass(DKDContentType_Array, DIMArrayContent);
-    
     /*
     // Application Customized
     DIMContentRegisterClass(DKDContentType_Customized, DIMCustomizedContent);
     DIMContentRegisterClass(DKDContentType_Application, DIMCustomizedContent);
      */
+    
+    // Content Array
+    DIMContentRegisterClass(DKDContentType_Array, DIMArrayContent);
 
     // Top-Secret
     DIMContentRegisterClass(DKDContentType_Forward, DIMForwardContent);

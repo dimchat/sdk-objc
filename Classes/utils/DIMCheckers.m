@@ -37,6 +37,116 @@
 
 #import "DIMCheckers.h"
 
-@implementation DIMCheckers
+@interface DIMFrequencyChecker () {
+    
+    NSMutableDictionary<NSString *, NSNumber *> *_records;
+    NSTimeInterval _expires;
+}
+
+@end
+
+@implementation DIMFrequencyChecker
+
+- (instancetype)init {
+    return [self initWithDuration:3600];
+}
+
+/* designated initializer */
+- (instancetype)initWithDuration:(NSTimeInterval)lifeSpan {
+    if (self = [super init]) {
+        _records = [[NSMutableDictionary alloc] init];
+        _expires = lifeSpan;
+    }
+    return self;
+}
+
+// private
+- (BOOL)_forceExpired:(NSString *)key timestamp:(NSTimeInterval)now {
+    [_records setObject:@(now) forKey:key];
+    return YES;
+}
+
+// private
+- (BOOL)_checkExpired:(NSString *)key timestamp:(NSTimeInterval)now {
+    NSNumber *expired = [_records objectForKey:key];
+    if (/*expired && */[expired doubleValue] > now) {
+        // record exists and not expired yet
+        return NO;
+    }
+    [_records setObject:@(now) forKey:key];
+    return YES;
+}
+
+- (BOOL)isExpired:(NSString *)key time:(NSDate *)current force:(BOOL)update {
+    if (!current) {
+        current = [[NSDate alloc] init];
+    }
+    // if force == true:
+    //     ignore last updated time, force to update now
+    // else:
+    //     check last update time
+    if (update) {
+        return [self _forceExpired:key timestamp:current.timeIntervalSince1970];
+    } else {
+        return [self _checkExpired:key timestamp:current.timeIntervalSince1970];
+    }
+}
+
+- (BOOL)isExpired:(NSString *)key time:(NSDate *)current {
+    return [self isExpired:key time:current force:NO];
+}
+
+@end
+
+#pragma mark -
+
+@interface DIMRecentTimeChecker () {
+    
+    NSMutableDictionary<NSString *, NSNumber *> *_times;
+}
+
+@end
+
+@implementation DIMRecentTimeChecker
+
+- (instancetype)init {
+    if (self = [super init]) {
+        _times = [[NSMutableDictionary alloc] init];
+    }
+    return self;
+}
+
+- (BOOL)setLastTime:(NSDate *)time forKey:(NSString *)key {
+    if (!time) {
+        NSAssert(false, @"recent time empty: %@", key);
+        return NO;
+    }
+    return [self _setLastTime:time.timeIntervalSince1970 forKey:key];
+}
+
+// private
+- (BOOL)_setLastTime:(NSTimeInterval)now forKey:(NSString *)key {
+    NSNumber *last = [_times objectForKey:key];
+    if (/* !last || */[last doubleValue] < now) {
+        [_times setObject:@(now) forKey:key];
+        return YES;
+    } else {
+        return NO;
+    }
+}
+
+- (BOOL)isExpired:(NSDate *)time forKey:(NSString *)key {
+    if (!time) {
+        NSAssert(false, @"recent time empty: %@", key);
+        return YES;
+    }
+    return [self _isExpired:time.timeIntervalSince1970 forKey:key];
+}
+
+// private
+- (BOOL)_isExpired:(NSTimeInterval)now forKey:(NSString *)key {
+    NSNumber *last = [_times objectForKey:key];
+    return /*last && */[last doubleValue] > now;
+}
 
 @end

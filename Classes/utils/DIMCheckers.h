@@ -39,7 +39,27 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMCheckers : NSObject
+/**
+ *  Frequency checker for duplicated queries
+ */
+@interface DIMFrequencyChecker <K> : NSObject
+
+- (instancetype)initWithDuration:(NSTimeInterval)lifeSpan
+NS_DESIGNATED_INITIALIZER;
+
+- (BOOL)isExpired:(K)key time:(nullable NSDate *)current force:(BOOL)update;
+- (BOOL)isExpired:(K)key time:(nullable NSDate *)current;
+
+@end
+
+/**
+ *  Recent time checker for querying
+ */
+@interface DIMRecentTimeChecker <K> : NSObject
+
+- (BOOL)setLastTime:(NSDate *)time forKey:(K)key;
+
+- (BOOL)isExpired:(NSDate *)time forKey:(K)key;
 
 @end
 

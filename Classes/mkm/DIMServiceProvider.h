@@ -39,14 +39,33 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ *  DIM Station Owner
+ *  ~~~~~~~~~~~~~~~~~
+ */
 @protocol MKMServiceProvider <MKMGroup>
 
-@property (readonly, copy, nonatomic) NSArray<id<MKMID>> *stations;
+// Provider Document
+@property (readonly, strong, nonatomic, nullable) id<MKMDocument> profile;
+
+@property (readonly, copy, nonatomic) NSArray<id> *stations;
 
 @end
 
 @interface DIMServiceProvider : DIMGroup <MKMServiceProvider>
 
 @end
+
+@protocol MKMStation;
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+BOOL DIMSameStation(id<MKMStation> a, id<MKMStation> b);
+
+#ifdef __cplusplus
+} /* end of extern "C" */
+#endif
 
 NS_ASSUME_NONNULL_END

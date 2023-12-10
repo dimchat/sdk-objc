@@ -39,18 +39,63 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMSecureMessage : DIMMessage <DKDSecureMessage>
+@interface DIMSecureMessagePacker : NSObject
 
-- (instancetype)initWithDictionary:(NSDictionary *)dict
+@property (readonly, weak, nonatomic) id<DKDSecureMessageDelegate> delegate;
+
+- (instancetype)initWithDelegate:(id<DKDSecureMessageDelegate>)delegate
 NS_DESIGNATED_INITIALIZER;
 
 @end
 
-NS_ASSUME_NONNULL_END
+/*
+ *  Decrypt the Secure Message to Instant Message
+ *
+ *    +----------+      +----------+
+ *    | sender   |      | sender   |
+ *    | receiver |      | receiver |
+ *    | time     |  ->  | time     |
+ *    |          |      |          |  1. PW      = decrypt(key, receiver.SK)
+ *    | data     |      | content  |  2. content = decrypt(data, PW)
+ *    | key/keys |      +----------+
+ *    +----------+
+ */
+@interface DIMSecureMessagePacker (Decryption)
 
-NS_ASSUME_NONNULL_BEGIN
+/**
+ *  Decrypt message, replace encrypted 'data' with 'content' field
+ *
+ * @param sMsg     - encrypted message
+ * @param receiver - actual receiver (local user)
+ * @return InstantMessage object
+ */
+- (nullable id<DKDInstantMessage>)decryptMessage:(id<DKDSecureMessage>)sMsg
+                                     forReceiver:(id<MKMID>)receiver;
 
-@interface DIMSecureMessagePacker : NSObject
+@end
+
+/*
+ *  Sign the Secure Message to Reliable Message
+ *
+ *    +----------+      +----------+
+ *    | sender   |      | sender   |
+ *    | receiver |      | receiver |
+ *    | time     |  ->  | time     |
+ *    |          |      |          |
+ *    | data     |      | data     |
+ *    | key/keys |      | key/keys |
+ *    +----------+      | signature|  1. signature = sign(data, sender.SK)
+ *                      +----------+
+ */
+@interface DIMSecureMessagePacker (Signature)
+
+/**
+ *  Sign message.data, add 'signature' field
+ *
+ * @param sMsg - encrypted message
+ * @return ReliableMessage object
+ */
+- (id<DKDReliableMessage>)signMessage:(id<DKDSecureMessage>)sMsg;
 
 @end
 

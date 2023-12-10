@@ -164,6 +164,8 @@
 
 @end
 
+#pragma mark Register
+
 void DIMRegisterMessageFactories(void) {
     // Envelope factory
     DKDEnvelopeSetFactory([[DIMEnvelopeFactory alloc] init]);

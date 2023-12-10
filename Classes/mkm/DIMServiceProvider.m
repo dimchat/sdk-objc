@@ -35,6 +35,8 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
+#import "DIMStation.h"
+
 #import "DIMServiceProvider.h"
 
 @implementation DIMServiceProvider
@@ -48,13 +50,57 @@
     return self;
 }
 
-#pragma mark Station
+- (id<MKMDocument>)profile {
+    NSArray<id<MKMDocument>> *docs = [self documents];
+    return [DIMDocumentHelper lastDocument:docs forType:@"*"];
+}
 
-- (NSArray<id<MKMID>> *)stations {
-    id<MKMGroupDataSource> delegate = (id<MKMGroupDataSource>)[self dataSource];
-    NSAssert(delegate, @"data source not set yet");
-    NSArray *list = [delegate membersOfGroup:self.ID];
-    return [list mutableCopy];
+- (NSArray<id> *)stations {
+    id<MKMDocument> doc = [self profile];
+    if (doc) {
+        id stations = [doc propertyForKey:@"stations"];
+        if ([stations isKindOfClass:[NSArray class]]) {
+            return stations;
+        }
+    }
+    // TODO: load from local storage
+    return nil;
 }
 
 @end
+
+#pragma mark Comparison
+
+static inline BOOL checkIdentifiers(id<MKMID> a, id<MKMID> b) {
+    if (a == b) {
+        // same object
+        return YES;
+    } else if ([a isBroadcast] || [b isBroadcast]) {
+        return YES;
+    }
+    return [a isEqual:b];
+}
+
+static inline BOOL checkHosts(NSString *a, NSString *b) {
+    if ([a length] == 0 || [b length] == 0) {
+        return YES;
+    }
+    return [a isEqual:b];
+}
+
+static inline BOOL checkPorts(unsigned short a, unsigned short b) {
+    if (a == 0 || b == 0) {
+        return YES;
+    }
+    return a == b;
+}
+
+BOOL DIMSameStation(id<MKMStation> a, id<MKMStation> b) {
+    if (a == b) {
+        // same object
+        return YES;
+    }
+    return checkIdentifiers([a ID], [b ID])
+        && checkHosts([a host], [b host])
+        && checkPorts([a port], [b port]);
+}

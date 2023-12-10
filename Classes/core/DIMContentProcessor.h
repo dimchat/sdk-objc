@@ -35,7 +35,7 @@
 //  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
-#import <DIMCore/DIMCore.h>
+#import <DIMSDK/DIMTwinsHelper.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -104,10 +104,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+/**
+ *  General ContentProcessor Factory
+ *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ */
 @interface DIMContentProcessorFactory : DIMTwinsHelper <DIMContentProcessorFactory>
 
-- (instancetype)initWithFacebook:(DIMFacebook *)barrack
-                       messenger:(DIMMessenger *)transceiver
+- (instancetype)initWithFacebook:(DIMBarrack *)barrack
+                       messenger:(DIMTransceiver *)transceiver
                          creator:(id<DIMContentProcessorCreator>)cpc
 NS_DESIGNATED_INITIALIZER;
 

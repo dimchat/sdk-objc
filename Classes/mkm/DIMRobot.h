@@ -41,7 +41,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol MKMBot <MKMUser>
 
-@property (nonatomic, readonly) id<MKMID> provider;  // CPID: bot group
+// Bot Document
+@property (readonly, strong, nonatomic, nullable) id<MKMDocument> profile;
+
+// Provider: ICP (Bot group)
+@property (nonatomic, readonly) id<MKMID> provider;
 
 @end
 

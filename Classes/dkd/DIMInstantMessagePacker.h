@@ -39,22 +39,50 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMInstantMessage : DIMMessage <DKDInstantMessage>
+@interface DIMInstantMessagePacker : NSObject
 
-- (instancetype)initWithDictionary:(NSDictionary *)dict
-NS_DESIGNATED_INITIALIZER;
+@property (readonly, weak, nonatomic) id<DKDInstantMessageDelegate> delegate;
 
-- (instancetype)initWithEnvelope:(id<DKDEnvelope>)env
-                         content:(id<DKDContent>)content
+- (instancetype)initWithDelegate:(id<DKDInstantMessageDelegate>)delegate
 NS_DESIGNATED_INITIALIZER;
 
 @end
 
-NS_ASSUME_NONNULL_END
+/*
+ *  Encrypt the Instant Message to Secure Message
+ *
+ *    +----------+      +----------+
+ *    | sender   |      | sender   |
+ *    | receiver |      | receiver |
+ *    | time     |  ->  | time     |
+ *    |          |      |          |
+ *    | content  |      | data     |  1. data = encrypt(content, PW)
+ *    +----------+      | key/keys |  2. key  = encrypt(PW, receiver.PK)
+ *                      +----------+
+ */
+@interface DIMInstantMessagePacker (Encryption)
 
-NS_ASSUME_NONNULL_BEGIN
+/**
+ *  1. Encrypt personal message, replace 'content' field with encrypted 'data'
+ *
+ * @param iMsg     - plain message
+ * @param password - symmetric key
+ * @return SecureMessage object, null on visa not found
+ */
+- (nullable id<DKDSecureMessage>)encryptMessage:(id<DKDInstantMessage>)iMsg
+                                        withKey:(id<MKMSymmetricKey>)password;
 
-@interface DIMInstantMessagePacker : NSObject
+/**
+ *  2. Encrypt group message, replace 'content' field with encrypted 'data'
+ *
+ * @param iMsg     - plain message
+ * @param password - symmetric key
+ * @param members  - group members for group message
+ * @return SecureMessage object, null on visa not found
+ */
+- (nullable id<DKDSecureMessage>)encryptMessage:(id<DKDInstantMessage>)iMsg
+                                        withKey:(id<MKMSymmetricKey>)password
+                                     forMembers:(NSArray<id<MKMID>> *)members;
 
 @end
 
