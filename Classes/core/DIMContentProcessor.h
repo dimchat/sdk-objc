@@ -2,12 +2,12 @@
 //
 //  DIM-SDK : Decentralized Instant Messaging Software Development Kit
 //
-//                               Written in 2022 by Moky <albert.moky@gmail.com>
+//                               Written in 2019 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2022 Albert Moky
+// Copyright (c) 2019 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -31,13 +31,31 @@
 //  DIMContentProcessor.h
 //  DIMSDK
 //
-//  Created by Albert Moky on 2022/04/10.
-//  Copyright © 2022 Albert Moky. All rights reserved.
+//  Created by Albert Moky on 2019/11/29.
+//  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
-#import <DIMSDK/DIMContentProcessor.h>
+#import <DIMCore/DIMCore.h>
 
 NS_ASSUME_NONNULL_BEGIN
+
+/*
+ *  CPU: Content Processing Unit
+ *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ */
+@protocol DIMContentProcessor <NSObject>
+
+/**
+ *  Process message content
+ *
+ * @param content - message content
+ * @param rMsg - message with envelope
+ * @return content to respond
+ */
+- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
+                                withMessage:(id<DKDReliableMessage>)rMsg;
+
+@end
 
 /*
  *  CPU Creator
@@ -60,7 +78,8 @@ NS_ASSUME_NONNULL_BEGIN
  *  @param msgType - content type
  *  @return CommandProcessor
  */
-- (id<DIMContentProcessor>)createCommandProcessor:(NSString *)name type:(DKDContentType)msgType;
+- (id<DIMContentProcessor>)createCommandProcessor:(NSString *)name
+                                             type:(DKDContentType)msgType;
 
 @end
 
@@ -80,13 +99,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (id<DIMContentProcessor>)getContentProcessor:(DKDContentType)msgType;
 
-- (id<DIMContentProcessor>)getCommandProcessor:(NSString *)name type:(DKDContentType)msgType;
-
-@end
-
-#pragma mark -
-
-@interface DIMContentProcessorCreator : DIMTwinsHelper <DIMContentProcessorCreator>
+- (id<DIMContentProcessor>)getCommandProcessor:(NSString *)name
+                                          type:(DKDContentType)msgType;
 
 @end
 

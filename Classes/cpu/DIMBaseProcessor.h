@@ -2,12 +2,12 @@
 //
 //  DIM-SDK : Decentralized Instant Messaging Software Development Kit
 //
-//                               Written in 2023 by Moky <albert.moky@gmail.com>
+//                               Written in 2019 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2023 Albert Moky
+// Copyright (c) 2019 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,49 +28,38 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMMessageFactory.h
+//  DIMContentProcessor.h
 //  DIMSDK
 //
-//  Created by Albert Moky on 2023/2/2.
-//  Copyright © 2023 Albert Moky. All rights reserved.
+//  Created by Albert Moky on 2019/11/29.
+//  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
 #import <DIMCore/DIMCore.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMEnvelopeFactory : NSObject <DKDEnvelopeFactory>
+#define DIM_CONTENT_NOT_SUPPORT_FMT @"Content (type: %d) not support yet!"
 
-@end
-
-@interface DIMInstantMessageFactory : NSObject <DKDInstantMessageFactory>
-
-@end
-
-@interface DIMSecureMessageFactory : NSObject <DKDSecureMessageFactory>
-
-@end
-
-@interface DIMReliableMessageFactory : NSObject <DKDReliableMessageFactory>
-
-@end
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-/**
- *  Register Core Message Factories
+/*
+ *  Base Content Processor
+ *  ~~~~~~~~~~~~~~~~~~~~~~
  */
-void DIMRegisterMessageFactories(void);
+@interface DIMContentProcessor : DIMTwinsHelper <DIMContentProcessor>
 
-/**
- *  Register All Factories (messages, contents & commands)
+- (NSArray<id<DKDContent>> *)respondText:(NSString *)text withGroup:(nullable id<MKMID>)group;
+- (NSArray<id<DKDContent>> *)respondContent:(nullable id<DKDContent>)res;
+
+@end
+
+#define DIM_CMD_NOT_SUPPORT @"Command (name: %@) not support yet!"
+
+/*
+ *  Base Command Processor
+ *  ~~~~~~~~~~~~~~~~~~~~~~
  */
-void DIMRegisterAllFactories(void);
+@interface DIMCommandProcessor : DIMContentProcessor
 
-#ifdef __cplusplus
-} /* end of extern "C" */
-#endif
+@end
 
 NS_ASSUME_NONNULL_END

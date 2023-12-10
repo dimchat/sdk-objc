@@ -2,12 +2,12 @@
 //
 //  DIM-SDK : Decentralized Instant Messaging Software Development Kit
 //
-//                               Written in 2023 by Moky <albert.moky@gmail.com>
+//                               Written in 2019 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2023 Albert Moky
+// Copyright (c) 2019 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,10 +28,10 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMMessageFactory.h
+//  DIMTwinsHelper.h
 //  DIMSDK
 //
-//  Created by Albert Moky on 2023/2/2.
+//  Created by Albert Moky on 2023/12/10.
 //  Copyright © 2023 Albert Moky. All rights reserved.
 //
 
@@ -39,38 +39,19 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMEnvelopeFactory : NSObject <DKDEnvelopeFactory>
+@interface DIMTwinsHelper : NSObject
+
+@property (readonly, weak, nonatomic) __kindof DIMBarrack *facebook;
+@property (readonly, weak, nonatomic) __kindof DIMTransceiver *messenger;
+
+- (instancetype)initWithFacebook:(DIMBarrack *)barrack
+                       messenger:(DIMTransceiver *)transceiver
+NS_DESIGNATED_INITIALIZER;
 
 @end
 
-@interface DIMInstantMessageFactory : NSObject <DKDInstantMessageFactory>
+@interface DIMTwinsHelper (Convenience)
 
 @end
-
-@interface DIMSecureMessageFactory : NSObject <DKDSecureMessageFactory>
-
-@end
-
-@interface DIMReliableMessageFactory : NSObject <DKDReliableMessageFactory>
-
-@end
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-/**
- *  Register Core Message Factories
- */
-void DIMRegisterMessageFactories(void);
-
-/**
- *  Register All Factories (messages, contents & commands)
- */
-void DIMRegisterAllFactories(void);
-
-#ifdef __cplusplus
-} /* end of extern "C" */
-#endif
 
 NS_ASSUME_NONNULL_END

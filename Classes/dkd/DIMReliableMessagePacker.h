@@ -2,12 +2,12 @@
 //
 //  DIM-SDK : Decentralized Instant Messaging Software Development Kit
 //
-//                               Written in 2019 by Moky <albert.moky@gmail.com>
+//                               Written in 2018 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Albert Moky
+// Copyright (c) 2018 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,63 +28,32 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMContentProcessor.h
-//  DIMSDK
+//  DIMReliableMessagePacker.h
+//  DIMCore
 //
-//  Created by Albert Moky on 2019/11/29.
-//  Copyright © 2019 Albert Moky. All rights reserved.
+//  Created by Albert Moky on 2018/9/30.
+//  Copyright © 2018 DIM Group. All rights reserved.
 //
 
 #import <DIMCore/DIMCore.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-/*
- *  CPU: Content Processing Unit
- *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- */
-@protocol DIMContentProcessor <NSObject>
+@interface DIMReliableMessage : DIMSecureMessage <DKDReliableMessage>
 
-/**
- *  Process message content
- *
- * @param content - message content
- * @param rMsg - message with envelope
- * @return content to respond
- */
-- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content withMessage:(id<DKDReliableMessage>)rMsg;
-
-@end
-
-#pragma mark -
-
-@class DIMMessenger;
-@class DIMFacebook;
-
-@interface DIMTwinsHelper : NSObject
-
-@property (readonly, weak, nonatomic) __kindof DIMFacebook *facebook;
-@property (readonly, weak, nonatomic) __kindof DIMMessenger *messenger;
-
-- (instancetype)initWithFacebook:(DIMFacebook *)barrack
-                       messenger:(DIMMessenger *)transceiver
+- (instancetype)initWithDictionary:(NSDictionary *)dict
 NS_DESIGNATED_INITIALIZER;
 
 @end
 
-#pragma mark - Base CPU
+NS_ASSUME_NONNULL_END
 
-#define DIM_CONTENT_NOT_SUPPORT_FMT @"Content (type: %d) not support yet!"
+NS_ASSUME_NONNULL_BEGIN
 
-/*
- *  Base Content Processor
- *  ~~~~~~~~~~~~~~~~~~~~~~
- */
-@interface DIMContentProcessor : DIMTwinsHelper <DIMContentProcessor>
-
-- (NSArray<id<DKDContent>> *)respondText:(NSString *)text withGroup:(nullable id<MKMID>)group;
-- (NSArray<id<DKDContent>> *)respondContent:(nullable id<DKDContent>)res;
+@interface DIMReliableMessagePacker : NSObject
 
 @end
+
+// TODO: MessageHelper
 
 NS_ASSUME_NONNULL_END

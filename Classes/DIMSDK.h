@@ -65,22 +65,32 @@ FOUNDATION_EXPORT const unsigned char DIMSDKVersionString[];
 
 // DaoKeDao
 #import <DIMSDK/DIMMessageFactory.h>
+#import <DIMSDK/DIMInstantMessagePacker.h>
+#import <DIMSDK/DIMSecureMessagePacker.h>
+#import <DIMSDK/DIMReliableMessagePacker.h>
+
+// Core
 #import <DIMSDK/DIMContentFactory.h>
 #import <DIMSDK/DIMCommandFactory.h>
+#import <DIMSDK/DIMTwinsHelper.h>
+#import <DIMSDK/DIMCOntentProcessor.h>
 
 // CPUs
-#import <DIMSDK/DIMContentProcessor.h>
-#import <DIMSDK/DIMFactory.h>
+#import <DIMSDK/DIMBaseProcessor.h>
+#import <DIMSDK/DIMContentProcessorCreator.h>
+// contents
 #import <DIMSDK/DIMForwardContentProcessor.h>
 #import <DIMSDK/DIMArrayContentProcessor.h>
 #import <DIMSDK/DIMCustomizedContentProcessor.h>
-
-#import <DIMSDK/DIMCommandProcessor.h>
+// commands
 #import <DIMSDK/DIMMetaCommandProcessor.h>
 #import <DIMSDK/DIMDocumentCommandProcessor.h>
 
-// Core
+// Utils
+#import <DIMSDK/DIMCheckers.h>
+
 #import <DIMSDK/DIMAddressNameService.h>
+#import <DIMSDK/DIMArchivist.h>
 #import <DIMSDK/DIMFacebook.h>
 #import <DIMSDK/DIMMessenger.h>
 #import <DIMSDK/DIMMessagePacker.h>

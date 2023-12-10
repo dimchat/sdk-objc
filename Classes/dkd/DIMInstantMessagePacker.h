@@ -2,12 +2,12 @@
 //
 //  DIM-SDK : Decentralized Instant Messaging Software Development Kit
 //
-//                               Written in 2023 by Moky <albert.moky@gmail.com>
+//                               Written in 2018 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2023 Albert Moky
+// Copyright (c) 2018 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,49 +28,34 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMMessageFactory.h
-//  DIMSDK
+//  DIMInstantMessagePacker.h
+//  DIMCore
 //
-//  Created by Albert Moky on 2023/2/2.
-//  Copyright © 2023 Albert Moky. All rights reserved.
+//  Created by Albert Moky on 2018/9/30.
+//  Copyright © 2018 DIM Group. All rights reserved.
 //
 
 #import <DIMCore/DIMCore.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMEnvelopeFactory : NSObject <DKDEnvelopeFactory>
+@interface DIMInstantMessage : DIMMessage <DKDInstantMessage>
+
+- (instancetype)initWithDictionary:(NSDictionary *)dict
+NS_DESIGNATED_INITIALIZER;
+
+- (instancetype)initWithEnvelope:(id<DKDEnvelope>)env
+                         content:(id<DKDContent>)content
+NS_DESIGNATED_INITIALIZER;
 
 @end
 
-@interface DIMInstantMessageFactory : NSObject <DKDInstantMessageFactory>
+NS_ASSUME_NONNULL_END
+
+NS_ASSUME_NONNULL_BEGIN
+
+@interface DIMInstantMessagePacker : NSObject
 
 @end
-
-@interface DIMSecureMessageFactory : NSObject <DKDSecureMessageFactory>
-
-@end
-
-@interface DIMReliableMessageFactory : NSObject <DKDReliableMessageFactory>
-
-@end
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-/**
- *  Register Core Message Factories
- */
-void DIMRegisterMessageFactories(void);
-
-/**
- *  Register All Factories (messages, contents & commands)
- */
-void DIMRegisterAllFactories(void);
-
-#ifdef __cplusplus
-} /* end of extern "C" */
-#endif
 
 NS_ASSUME_NONNULL_END

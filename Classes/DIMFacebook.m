@@ -41,37 +41,11 @@
 
 #import "DIMFacebook.h"
 
-@interface DIMFacebook () {
-    
-    NSMutableDictionary<id<MKMID>, id<MKMUser>> *_userTable;
-    NSMutableDictionary<id<MKMID>, id<MKMGroup>> *_groupTable;
-}
+@interface DIMFacebook ()
 
 @end
 
 @implementation DIMFacebook
-
-- (instancetype)init {
-    if (self = [super init]) {
-        _userTable = [[NSMutableDictionary alloc] init];
-        _groupTable = [[NSMutableDictionary alloc] init];
-    }
-    return self;
-}
-
-- (void)cacheUser:(id<MKMUser>)user {
-    if (user.dataSource == nil) {
-        user.dataSource = self;
-    }
-    [_userTable setObject:user forKey:user.ID];
-}
-
-- (void)cacheGroup:(id<MKMGroup>)group {
-    if (group.dataSource == nil) {
-        group.dataSource = self;
-    }
-    [_groupTable setObject:group forKey:group.ID];
-}
 
 - (BOOL)saveMeta:(id<MKMMeta>)meta forID:(id<MKMID>)ID {
     NSAssert(false, @"implement me!");
@@ -183,43 +157,8 @@
     return nil;
 }
 
-#pragma mark - MKMEntityDelegate
-
-- (nullable id<MKMUser>)userWithID:(id<MKMID>)ID {
-    // 1. get from user cache
-    id<MKMUser> user = [_userTable objectForKey:ID];
-    if (!user) {
-        // 2. create user and cache it
-        user = [self createUser:ID];
-        if (user) {
-            [self cacheUser:user];
-        }
-    }
-    return user;
-}
-
-- (nullable id<MKMGroup>)groupWithID:(id<MKMID>)ID {
-    // 1. get from group cache
-    id<MKMGroup> group = [_groupTable objectForKey:ID];
-    if (!group) {
-        // 2. create group and cache it
-        group = [self createGroup:ID];
-        if (group) {
-            [self cacheGroup:group];
-        }
-    }
-    return group;
-}
-
 @end
 
 @implementation DIMFacebook (Thanos)
-
-- (NSInteger)reduceMemory {
-    NSUInteger snap = 0;
-    snap = DIMThanos(_userTable, snap);
-    snap = DIMThanos(_groupTable, snap);
-    return snap;
-}
 
 @end

@@ -2,12 +2,12 @@
 //
 //  DIM-SDK : Decentralized Instant Messaging Software Development Kit
 //
-//                               Written in 2019 by Moky <albert.moky@gmail.com>
+//                               Written in 2023 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Albert Moky
+// Copyright (c) 2023 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,25 +28,15 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMCommandProcessor.h
+//  DIMCheckers.m
 //  DIMSDK
 //
-//  Created by Albert Moky on 2019/11/29.
-//  Copyright © 2019 Albert Moky. All rights reserved.
+//  Created by Albert Moky on 2023/12/10.
+//  Copyright © 2023 Albert Moky. All rights reserved.
 //
 
-#import <DIMSDK/DIMContentProcessor.h>
+#import "DIMCheckers.h"
 
-NS_ASSUME_NONNULL_BEGIN
-
-#define DIM_CMD_NOT_SUPPORT @"Command (name: %@) not support yet!"
-
-/*
- *  Base Command Processor
- *  ~~~~~~~~~~~~~~~~~~~~~~
- */
-@interface DIMCommandProcessor : DIMContentProcessor
+@implementation DIMCheckers
 
 @end
-
-NS_ASSUME_NONNULL_END

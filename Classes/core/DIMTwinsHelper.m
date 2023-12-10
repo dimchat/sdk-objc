@@ -28,22 +28,19 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMContentProcessor.m
+//  DIMTwinsHelper.m
 //  DIMSDK
 //
-//  Created by Albert Moky on 2019/11/29.
-//  Copyright © 2019 Albert Moky. All rights reserved.
+//  Created by Albert Moky on 2023/12/10.
+//  Copyright © 2023 Albert Moky. All rights reserved.
 //
 
-#import "DIMFacebook.h"
-#import "DIMMessenger.h"
-
-#import "DIMContentProcessor.h"
+#import "DIMTwinsHelper.h"
 
 @interface DIMTwinsHelper ()
 
-@property (weak, nonatomic) DIMFacebook *facebook;
-@property (weak, nonatomic) DIMMessenger *messenger;
+@property (weak, nonatomic) DIMBarrack *facebook;
+@property (weak, nonatomic) DIMTransceiver *messenger;
 
 @end
 
@@ -51,48 +48,19 @@
 
 - (instancetype)init {
     NSAssert(false, @"don't call me!");
-    DIMFacebook *barrack = nil;
-    DIMMessenger *transceiver = nil;
+    DIMBarrack *barrack = nil;
+    DIMTransceiver *transceiver = nil;
     return [self initWithFacebook:barrack messenger:transceiver];
 }
 
 /* designated initializer */
-- (instancetype)initWithFacebook:(DIMFacebook *)barrack
-                       messenger:(DIMMessenger *)transceiver {
+- (instancetype)initWithFacebook:(DIMBarrack *)barrack
+                       messenger:(DIMTransceiver *)transceiver {
     if (self = [super init]) {
         self.facebook = barrack;
         self.messenger = transceiver;
     }
     return self;
-}
-
-@end
-
-@implementation DIMContentProcessor
-
-//
-//  Main
-//
-- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
-                                withMessage:(id<DKDReliableMessage>)rMsg {
-    NSString *text = [NSString stringWithFormat:DIM_CONTENT_NOT_SUPPORT_FMT, content.type];
-    return [self respondText:text withGroup:content.group];
-}
-
-- (NSArray<id<DKDContent>> *)respondText:(NSString *)text withGroup:(nullable id<MKMID>)group {
-    DIMTextContent *res = [[DIMTextContent alloc] initWithText:text];
-    if (group) {
-        res.group = group;
-    }
-    return @[res];
-}
-
-- (NSArray<id<DKDContent>> *)respondContent:(nullable id<DKDContent>)res {
-    if (!res) {
-        return nil;
-    } else {
-        return @[res];
-    }
 }
 
 @end
