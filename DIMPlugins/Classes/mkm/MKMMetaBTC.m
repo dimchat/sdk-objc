@@ -74,13 +74,14 @@
 - (id<MKMAddress>)generateAddress:(MKMEntityType)network {
     NSAssert(self.type == MKMMetaType_BTC || self.type == MKMMetaType_ExBTC,
              @"meta version error: %d", self.type);
-    NSAssert(network == MKMNetwork_BTCMain, @"BTC address type error: %d", network);
-    if (!_cachedAddress) {
-        // generate and cache it
+    MKMAddressBTC *address = _cachedAddress;
+    if (!address || [address type] != network) {
+        // TODO: compress public key?
         NSData *data = [self.publicKey data];
-        _cachedAddress = [MKMAddressBTC generate:data type:MKMNetwork_BTCMain];
+        // generate and cache it
+        _cachedAddress = address = [MKMAddressBTC generate:data type:network];
     }
-    return _cachedAddress;
+    return address;
 }
 
 @end

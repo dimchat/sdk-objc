@@ -96,7 +96,7 @@
 - (NSData *)data {
     if (!_data) {
         NSString *pem = [self objectForKey:@"data"];
-        _data = [MKMSecKeyHelper publicKeyDataFromContent:pem algorithm:MKMAlgorithmRSA];
+        _data = [MKMSecKeyHelper publicKeyDataFromContent:pem algorithm:MKMAlgorithm_RSA];
     }
     return _data;
 }
@@ -135,7 +135,7 @@
 - (SecKeyRef)publicKeyRef {
     if (!_publicKeyRef) {
         @try {
-            _publicKeyRef = [MKMSecKeyHelper publicKeyFromData:self.data algorithm:MKMAlgorithmRSA];
+            _publicKeyRef = [MKMSecKeyHelper publicKeyFromData:self.data algorithm:MKMAlgorithm_RSA];
         } @catch (NSException *exception) {
             NSLog(@"[RSA] public key error: %@", exception);
         } @finally {

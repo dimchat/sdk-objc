@@ -110,11 +110,11 @@
     [_wrapper setFilename:filename];
 }
 
-- (NSURL *)url {
+- (NSURL *)URL {
     return [_wrapper URL];;
 }
 
-- (void)setUrl:(NSURL *)url {
+- (void)setURL:(NSURL *)url {
     [_wrapper setURL:url];
 }
 

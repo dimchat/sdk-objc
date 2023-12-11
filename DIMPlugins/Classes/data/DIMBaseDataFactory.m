@@ -71,7 +71,7 @@
 - (instancetype)initWithData:(NSData *)binary {
     if (self = [self init]) {
         // encode algorithm
-        _wrapper.algorithm = MKMAlgorithmBase64;
+        _wrapper.algorithm = MKMAlgorithm_Base64;
         // binary data
         if ([binary length] > 0) {
             _wrapper.data = binary;

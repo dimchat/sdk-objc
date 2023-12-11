@@ -39,7 +39,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#define MKMAlgorithmPlain @"PLAIN"
+#define MKMAlgorithm_Plain @"PLAIN"
 
 @interface MKMPlugins : NSObject
 

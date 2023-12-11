@@ -183,7 +183,7 @@ static inline int ecc_sig_to_der(const uint8_t *sig, uint8_t *der)
             _data = MKMHexDecode(pem);
         } else if (len > 0) {
             // PEM
-            _data = [MKMSecKeyHelper privateKeyDataFromContent:pem algorithm:MKMAlgorithmECC];
+            _data = [MKMSecKeyHelper privateKeyDataFromContent:pem algorithm:MKMAlgorithm_ECC];
         } else {
             // generate it
             // TODO: check key size?
@@ -238,7 +238,7 @@ static inline int ecc_sig_to_der(const uint8_t *sig, uint8_t *der)
         
         NSData *data = [[NSData alloc] initWithBytes:pubkey length:len];
         NSString *hex = MKMHexEncode(data);
-        NSDictionary *dict = @{@"algorithm":MKMAlgorithmECC,
+        NSDictionary *dict = @{@"algorithm":MKMAlgorithm_ECC,
                                @"data"     :hex,
                                @"curve"    :@"secp256k1",
                                @"digest"   :@"SHA256",

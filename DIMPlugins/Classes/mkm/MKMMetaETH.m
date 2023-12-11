@@ -75,12 +75,14 @@
     NSAssert(self.type == MKMMetaType_ETH || self.type == MKMMetaType_ExETH,
              @"meta version error: %d", self.type);
     NSAssert(network == MKMEntityType_User, @"ETH address type error: %d", network);
-    if (!_cachedAddress) {
-        // generate and cache it
+    MKMAddressETH *address = _cachedAddress;
+    if (!address/* || [address type] != network*/) {
+        // 64 bytes key data without prefix 0x04
         NSData *data = [self.publicKey data];
-        _cachedAddress = [MKMAddressETH generate:data];
+        // generate and cache it
+        _cachedAddress = address = [MKMAddressETH generate:data];
     }
-    return _cachedAddress;
+    return address;
 }
 
 @end

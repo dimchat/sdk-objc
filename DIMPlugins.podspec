@@ -27,7 +27,7 @@ Pod::Spec.new do |s|
     s.frameworks            = 'Security'
     # s.requires_arc        = true
 
-    s.dependency 'DIMCore', '~> 0.7.0'
-    s.dependency 'DaoKeDao', '~> 0.7.0'
-    s.dependency 'MingKeMing', '~> 0.7.0'
+    s.dependency 'DIMCore', '~> 0.7.1'
+    s.dependency 'DaoKeDao', '~> 0.7.1'
+    s.dependency 'MingKeMing', '~> 0.7.1'
 end

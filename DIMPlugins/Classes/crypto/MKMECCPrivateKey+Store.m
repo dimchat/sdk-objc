@@ -79,7 +79,7 @@ static NSString *s_application_tag = @"chat.dim.ecc.private";
             content = MKMBase64Encode(privateKeyData);
             content = NSStringFromKeyContent(content, @"EC PRIVATE");
         }
-        NSString *algorithm = MKMAlgorithmECC;
+        NSString *algorithm = MKMAlgorithm_ECC;
         NSDictionary *keyInfo = @{@"algorithm":algorithm,
                                   @"data"     :content,
                                   };

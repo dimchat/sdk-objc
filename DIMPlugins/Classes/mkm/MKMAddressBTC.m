@@ -37,32 +37,6 @@
 
 #import "MKMAddressBTC.h"
 
-MKMEntityType MKMEntityTypeFromNetworkID(MKMNetworkType network) {
-    // compatible with MKM 0.9.*
-    switch (network) {
-        case MKMNetwork_Main:
-            return MKMEntityType_User;
-            
-        case MKMNetwork_Group:
-            return MKMEntityType_Group;
-            
-        case MKMNetwork_Chatroom:
-            return MKMEntityType_Group | MKMNetwork_Chatroom;
-            
-        case MKMNetwork_Station:
-            return MKMEntityType_Station;
-            
-        case MKMNetwork_Provider:
-            return MKMEntityType_ISP;
-            
-        case MKMNetwork_Bot:
-            return MKMEntityType_Bot;
-            
-        default:
-            return network;
-    }
-}
-
 @interface MKMAddressBTC () {
     
     MKMEntityType _network;
@@ -124,13 +98,11 @@ MKMEntityType MKMEntityTypeFromNetworkID(MKMNetworkType network) {
 }
 
 - (BOOL)isUser {
-    MKMEntityType type = MKMEntityTypeFromNetworkID(_network);
-    return MKMEntity_IsUser(type);
+    return MKMEntityTypeIsUser(_network);
 }
 
 - (BOOL)isGroup {
-    MKMEntityType type = MKMEntityTypeFromNetworkID(_network);
-    return MKMEntity_IsGroup(type);
+    return MKMEntityTypeIsGroup(_network);
 }
 
 #pragma mark Coding

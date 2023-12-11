@@ -39,8 +39,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#pragma mark Command Factory
-
 typedef id<DKDCommand>_Nullable(^DIMCommandParserBlock)(NSDictionary *content);
 
 /**

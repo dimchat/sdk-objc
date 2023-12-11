@@ -39,8 +39,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#pragma mark -
-
 @interface DIMContentProcessorCreator : DIMTwinsHelper <DIMContentProcessorCreator>
 
 @end

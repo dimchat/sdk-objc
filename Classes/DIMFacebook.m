@@ -54,10 +54,10 @@
     if ([users count] == 0) {
         NSAssert(false, @"local users should not be empty");
         return nil;
-    } else if (MKMIDIsBroadcast(receiver)) {
+    } else if ([receiver isBroadcast]) {
         // broadcast message can decrypt by anyone, so just return current user
         return [users firstObject];
-    } else if (MKMIDIsUser(receiver)) {
+    } else if ([receiver isUser]) {
         // 1. personal message
         // 2. split group message
         for (id<MKMUser> item in users) {
@@ -70,7 +70,7 @@
         return nil;
     }
     // group message (recipient not designated)
-    NSAssert(MKMIDIsGroup(receiver), @"receiver error: %@", receiver);
+    NSAssert([receiver isGroup], @"receiver error: %@", receiver);
     // the messenger will check group info before decrypting message,
     // so we can trust that the group's meta & members MUST exist here.
     NSArray<id<MKMID>> *members = [self membersOfGroup:receiver];
@@ -147,9 +147,9 @@
 }
 
 - (nullable id<MKMUser>)createUser:(id<MKMID>)ID {
-    NSAssert(MKMIDIsUser(ID), @"user ID error: %@", ID);
+    NSAssert([ID isUser], @"user ID error: %@", ID);
     // check visa key
-    if (!MKMIDIsBroadcast(ID)) {
+    if (![ID isBroadcast]) {
         if (![self publicKeyForEncryption:ID]) {
             NSAssert(false, @"visa.key not found: %@", ID);
             return nil;
@@ -168,9 +168,9 @@
 }
 
 - (nullable id<MKMGroup>)createGroup:(id<MKMID>)ID {
-    NSAssert(MKMIDIsGroup(ID), @"group ID error: %@", ID);
+    NSAssert([ID isGroup], @"group ID error: %@", ID);
     // check members
-    if (!MKMIDIsBroadcast(ID)) {
+    if (![ID isBroadcast]) {
         NSArray<id<MKMID>> *members = [self membersOfGroup:ID];
         if ([members count] == 0) {
             NSAssert(false, @"group members not found: %@", ID);

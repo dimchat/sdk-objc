@@ -56,14 +56,32 @@ FOUNDATION_EXPORT const unsigned char DIMPluginsVersionString[];
 #if !defined(__DIM_SDK__)
 #define __DIM_SDK__ 1
 
+// Crypto
+#import <DIMPlugins/MKMAESKey.h>
+#import <DIMPlugins/MKMSecKeyHelper.h>
+#import <DIMPlugins/MKMECCPublicKey.h>
+#import <DIMPlugins/MKMECCPrivateKey.h>
+#import <DIMPlugins/MKMRSAPublicKey.h>
+#import <DIMPlugins/MKMRSAPrivateKey.h>
 #import <DIMPlugins/MKMPrivateKey+Store.h>
-#import <DIMPlugins/MKMAddressBTC.h>
-#import <DIMPlugins/MKMAddressETH.h>
 
+// Data
+#import <DIMPlugins/DIMDataDigesters.h>
+#import <DIMPlugins/DIMDataCoders.h>
+#import <DIMPlugins/DIMDataParsers.h>
+#import <DIMPlugins/DIMBaseDataFactory.h>
+#import <DIMPlugins/DIMBaseFileFactory.h>
+
+// MingKeMing
 #import <DIMPlugins/DIMAddressFactory.h>
 #import <DIMPlugins/DIMIDFactory.h>
 #import <DIMPlugins/DIMMetaFactory.h>
 #import <DIMPlugins/DIMDocumentFactory.h>
+#import <DIMPlugins/MKMAddressBTC.h>
+#import <DIMPlugins/MKMAddressETH.h>
+#import <DIMPlugins/MKMMetaDefault.h>
+#import <DIMPlugins/MKMMetaBTC.h>
+#import <DIMPlugins/MKMMetaETH.h>
 
 #import <DIMPlugins/MKMPlugins.h>
 

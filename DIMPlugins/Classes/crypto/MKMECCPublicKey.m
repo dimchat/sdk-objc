@@ -224,7 +224,7 @@ static inline int ecc_der_to_sig(const uint8_t *der, int der_len, uint8_t *sig_6
             _data = MKMHexDecode(pem);
         } else if (len > 0) {
             // PEM
-            _data = [MKMSecKeyHelper publicKeyDataFromContent:pem algorithm:MKMAlgorithmECC];
+            _data = [MKMSecKeyHelper publicKeyDataFromContent:pem algorithm:MKMAlgorithm_ECC];
             
             if (_data.length > 65) {
                 // FIXME: X.509 -> Uncompressed Point

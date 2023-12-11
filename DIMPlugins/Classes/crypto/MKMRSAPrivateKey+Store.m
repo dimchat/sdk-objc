@@ -74,13 +74,13 @@ static NSString *s_application_tag = @"chat.dim.rsa.private";
     if (status == errSecSuccess) { // noErr
         // private key
         SecKeyRef privateKeyRef = (SecKeyRef)result;
-        NSString *skc = [MKMSecKeyHelper serializePrivateKey:privateKeyRef algorithm:MKMAlgorithmRSA];
+        NSString *skc = [MKMSecKeyHelper serializePrivateKey:privateKeyRef algorithm:MKMAlgorithm_RSA];
         // public key
         SecKeyRef publicKeyRef = SecKeyCopyPublicKey(privateKeyRef);
-        NSString *pkc = [MKMSecKeyHelper serializePublicKey:publicKeyRef algorithm:MKMAlgorithmRSA];
+        NSString *pkc = [MKMSecKeyHelper serializePublicKey:publicKeyRef algorithm:MKMAlgorithm_RSA];
         // key content
         NSString *content = [NSString stringWithFormat:@"%@%@", pkc, skc];
-        NSString *algorithm = MKMAlgorithmRSA;
+        NSString *algorithm = MKMAlgorithm_RSA;
         NSDictionary *keyInfo = @{@"algorithm":algorithm,
                                   @"data"     :content,
                                   };
