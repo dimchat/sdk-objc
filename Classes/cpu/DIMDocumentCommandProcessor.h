@@ -43,4 +43,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+// protected
+@interface DIMDocumentCommandProcessor (Storage)
+
+- (nullable NSArray<id<DKDContent>> *)saveDocument:(id<MKMDocument>)doc
+                                             forID:(id<MKMID>)ID
+                                          withMeta:(id<MKMMeta>)meta
+                                           content:(id<DKDMetaCommand>)command
+                                          envelope:(id<DKDEnvelope>)head;
+
+- (BOOL)checkDocument:(id<MKMDocument>)doc withMeta:(id<MKMMeta>)meta;
+
+@end
+
 NS_ASSUME_NONNULL_END

@@ -35,11 +35,32 @@
 //  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
-#import <DIMSDK/DIMContentProcessor.h>
+#import <DIMSDK/DIMTwinsHelper.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMMessagePacker : DIMTwinsHelper <DIMPacker>
+
+@end
+
+@class DIMInstantMessagePacker;
+@class DIMSecureMessagePacker;
+@class DIMReliableMessagePacker;
+
+// protected
+@interface DIMMessagePacker (Attachments)
+
+@property (readonly, strong, nonatomic) DIMInstantMessagePacker *instantPacker;
+@property (readonly, strong, nonatomic) DIMSecureMessagePacker *securePacker;
+@property (readonly, strong, nonatomic) DIMReliableMessagePacker *reliablePacker;
+
+/**
+ *  Check meta & visa
+ *
+ * @param rMsg - received message
+ * @return false on error
+ */
+- (BOOL)checkAttachments:(id<DKDReliableMessage>)rMsg;
 
 @end
 

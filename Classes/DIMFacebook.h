@@ -39,7 +39,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class DIMArchivist;
+
 @interface DIMFacebook : DIMBarrack
+
+@property (readonly, strong, nonatomic) __kindof DIMArchivist *archivist;
 
 /**
  *  Get all local users (for decrypting received message)
@@ -47,11 +51,6 @@ NS_ASSUME_NONNULL_BEGIN
  * @return users with private key
  */
 @property (readonly, strong, nonatomic, nullable) NSArray<id<MKMUser>> *localUsers;
-
-// override to create user
-- (nullable id<MKMUser>)createUser:(id<MKMID>)ID;
-// override to create group
-- (nullable id<MKMGroup>)createGroup:(id<MKMID>)ID;
 
 /**
  *  Select local user for receiver
@@ -77,26 +76,6 @@ NS_ASSUME_NONNULL_BEGIN
  * @return true on success
  */
 - (BOOL)saveDocument:(id<MKMDocument>)doc;
-
-/**
- *  Document checking
- *
- * @param doc - entity document
- * @return true on accepted
- */
-- (BOOL)checkDocument:(id<MKMDocument>)doc;
-
-@end
-
-@interface DIMFacebook (Thanos)
-
-/**
- * Call it when received 'UIApplicationDidReceiveMemoryWarningNotification',
- * this will remove 50% of cached objects
- *
- * @return number of survivors
- */
-- (NSInteger)reduceMemory;
 
 @end
 

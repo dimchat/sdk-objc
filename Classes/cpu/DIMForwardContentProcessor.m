@@ -48,18 +48,18 @@
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content conformsToProtocol:@protocol(DKDForwardContent)],
              @"forward content error: %@", content);
-    // get secret messages
-    NSArray<id<DKDReliableMessage>> *secrets = [(id<DKDForwardContent>)content secrets];
+    id<DKDForwardContent> forward = (id<DKDForwardContent>)content;
+    NSArray<id<DKDReliableMessage>> *secrets = [forward secrets];
     // call messenger to process it
-    DIMMessenger *messenger = self.messenger;
+    DIMMessenger *messenger = [self messenger];
     NSMutableArray *responses = [[NSMutableArray alloc] initWithCapacity:[secrets count]];
     id<DKDContent> res;
     NSArray *results;
     for (id<DKDReliableMessage> item in secrets) {
-        results = [messenger processMessage:item];
-        if (!results) {
+        results = [messenger processReliableMessage:item];
+        /*if (!results) {
             res = [[DIMForwardContent alloc] initWithMessages:@[]];
-        } else if ([results count] == 1) {
+        } else */if ([results count] == 1) {
             res = [[DIMForwardContent alloc] initWithMessage:[results firstObject]];
         } else {
             res = [[DIMForwardContent alloc] initWithMessages:results];

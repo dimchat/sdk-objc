@@ -35,11 +35,23 @@
 //  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
-#import <DIMSDK/DIMCommandProcessor.h>
+#import <DIMSDK/DIMBaseProcessor.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMMetaCommandProcessor : DIMCommandProcessor
+
+@end
+
+// protected
+@interface DIMMetaCommandProcessor (Storage)
+
+- (nullable NSArray<id<DKDContent>> *)saveMeta:(id<MKMMeta>)meta
+                                         forID:(id<MKMID>)ID
+                                       content:(id<DKDMetaCommand>)command
+                                      envelope:(id<DKDEnvelope>)head;
+
+- (BOOL)checkMeta:(id<MKMMeta>)meta forID:(id<MKMID>)ID;
 
 @end
 

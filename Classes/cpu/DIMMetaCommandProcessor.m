@@ -36,34 +36,14 @@
 //
 
 #import "DIMFacebook.h"
-#import "DIMMessenger.h"
 
 #import "DIMMetaCommandProcessor.h"
 
 @implementation DIMMetaCommandProcessor
 
-- (NSArray<id<DKDContent>> *)getMetaForID:(id<MKMID>)ID {
-    id<MKMMeta> meta = [self.facebook metaForID:ID];
-    if (meta) {
-        id<DKDContent> content = [[DIMMetaCommand alloc] initWithID:ID meta:meta];
-        return [self respondContent:content];
-    } else {
-        NSString *text = [NSString stringWithFormat:@"Sorry, meta not found for ID: %@", ID];
-        return [self respondText:text withGroup:nil];
-    }
-}
-
-- (NSArray<id<DKDContent>> *)putMeta:(id<MKMMeta>)meta forID:(id<MKMID>)ID {
-    NSString *text;
-    if ([self.facebook saveMeta:meta forID:ID]) {
-        text = [NSString stringWithFormat:@"Meta received %@", ID];
-        return [self respondText:text withGroup:nil];
-    } else {
-        text = [NSString stringWithFormat:@"Meta not accepted: %@", ID];
-        return [self respondText:text withGroup:nil];
-    }
-}
-
+//
+//  Main
+//
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content conformsToProtocol:@protocol(DKDMetaCommand)],
@@ -72,15 +52,117 @@
     id<MKMID> ID = command.ID;
     id<MKMMeta> meta = command.meta;
     if (!ID) {
-        // error
-        return [self respondText:@"Meta command error." withGroup:nil];
+        NSAssert(false, @"meta ID cannot be empty: %@", command);
+        return [self respondReceipt:@"Meta command error."
+                           envelope:rMsg.envelope
+                            content:content
+                              extra:nil];
     } else if (meta) {
         // received a meta for ID
-        return [self putMeta:meta forID:ID];
+        return [self putMeta:meta
+                       forID:ID
+                 withContent:command
+                 andEnvelope:rMsg.envelope];
     } else {
         // query meta for ID
-        return [self getMetaForID:ID];
+        return [self getMetaForID:ID
+                      withContent:command
+                      andEnvelope:rMsg.envelope];
     }
+}
+
+// private
+- (NSArray<id<DKDContent>> *)getMetaForID:(id<MKMID>)ID
+                              withContent:(id<DKDMetaCommand>)command
+                              andEnvelope:(id<DKDEnvelope>)head {
+    id<MKMMeta> meta = [self.facebook metaForID:ID];
+    if (!meta) {
+        // extra info for receipt
+        NSDictionary *info = @{
+            @"template": @"Meta not found: ${ID}.",
+            @"replacements": @{
+                @"ID": ID.string,
+            },
+        };
+        return [self respondReceipt:@"Meta not found."
+                           envelope:head
+                            content:command
+                              extra:info];
+    }
+    // meta got
+    return @[
+        DIMMetaCommandResponse(ID, meta)
+    ];
+}
+
+- (NSArray<id<DKDContent>> *)putMeta:(id<MKMMeta>)meta
+                               forID:(id<MKMID>)ID
+                         withContent:(id<DKDMetaCommand>)command
+                         andEnvelope:(id<DKDEnvelope>)head {
+    NSArray<id<DKDContent>> *errors;
+    // 1. try to save meta
+    errors = [self saveMeta:meta
+                      forID:ID
+                    content:command
+                   envelope:head];
+    if (errors) {
+        // failed
+        return errors;
+    }
+    // 2. success
+    NSDictionary *info = @{
+        @"template": @"Meta received: ${ID}.",
+        @"replacements": @{
+            @"ID": ID.string,
+        },
+    };
+    return [self respondReceipt:@"Meta received."
+                       envelope:head
+                        content:command
+                          extra:info];
+}
+
+@end
+
+@implementation DIMMetaCommandProcessor (Storage)
+
+- (nullable NSArray<id<DKDContent>> *)saveMeta:(id<MKMMeta>)meta
+                                         forID:(id<MKMID>)ID
+                                       content:(id<DKDMetaCommand>)command
+                                      envelope:(id<DKDEnvelope>)head {
+    DIMFacebook *facebook = [self facebook];
+    // check meta
+    if (![self checkMeta:meta forID:ID]) {
+        // extra info for receipt
+        NSDictionary *info = @{
+            @"template": @"Meta not valid: ${ID}.",
+            @"replacements": @{
+                @"ID": ID.string,
+            },
+        };
+        return [self respondReceipt:@"Meta not valid."
+                           envelope:head
+                            content:command
+                              extra:info];
+    } else if (![facebook saveMeta:meta forID:ID]) {
+        // DB error?
+        NSDictionary *info = @{
+            @"template": @"Meta not accepted: ${ID}.",
+            @"replacements": @{
+                @"ID": ID.string,
+            },
+        };
+        return [self respondReceipt:@"Meta not accepted."
+                           envelope:head
+                            content:command
+                              extra:info];
+    }
+    // meta saved, return no error
+    return nil;
+}
+
+- (BOOL)checkMeta:(id<MKMMeta>)meta forID:(id<MKMID>)ID {
+    return [meta isValid] && [meta matchIdentifier:ID];
 }
 
 @end

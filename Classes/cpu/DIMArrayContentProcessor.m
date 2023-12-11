@@ -56,10 +56,11 @@
     id<DKDContent> res;
     NSArray *results;
     for (id<DKDContent> item in array) {
-        results = [messenger processContent:item withMessage:rMsg];
-        if (!results) {
+        results = [messenger processContent:item
+                 withReliableMessageMessage:rMsg];
+        /*if (!results) {
             res = [[DIMArrayContent alloc] initWithContents:@[]];
-        } else if ([results count] == 1) {
+        } else */if ([results count] == 1) {
             res = [results firstObject];
         } else {
             res = [[DIMArrayContent alloc] initWithContents:results];

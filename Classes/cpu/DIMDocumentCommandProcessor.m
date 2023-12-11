@@ -41,61 +41,210 @@
 
 @implementation DIMDocumentCommandProcessor
 
-- (NSArray<id<DKDContent>> *)getDocumentForID:(id<MKMID>)ID withType:(NSString *)type {
-    DIMFacebook *facebook = self.facebook;
-    // query document for ID
-    id<MKMDocument> doc = [facebook documentForID:ID type:type];
-    if (doc) {
-        id<DKDContent> content = [[DIMDocumentCommand alloc] initWithID:ID document:doc];
-        return [self respondContent:content];
-    } else {
-        NSString *text = [NSString stringWithFormat:@"Sorry, document not found for ID: %@", ID];
-        return [self respondText:text withGroup:nil];
-    }
-}
-
-- (NSArray<id<DKDContent>> *)putDocument:(id<MKMDocument>)doc meta:(nullable id<MKMMeta>)meta forID:(id<MKMID>)ID {
-    DIMFacebook *facebook = self.facebook;
-    NSString *text;
-    if (meta) {
-        // received a meta for ID
-        if (![facebook saveMeta:meta forID:ID]) {
-            text = [NSString stringWithFormat:@"Meta not accepted: %@", ID];
-            return [self respondText:text withGroup:nil];
-        }
-    }
-    // received a document for ID
-    if ([facebook saveDocument:doc]) {
-        text = [NSString stringWithFormat:@"Document received %@", ID];
-        return [self respondText:text withGroup:nil];
-    } else {
-        text = [NSString stringWithFormat:@"Document not accepted: %@", ID];
-        return [self respondText:text withGroup:nil];
-    }
-}
-
+//
+//  Main
+//
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content conformsToProtocol:@protocol(DKDDocumentCommand)],
              @"document command error: %@", content);
     id<DKDDocumentCommand> command = (id<DKDDocumentCommand>)content;
     id<MKMID> ID = command.ID;
-    if (ID) {
-        id<MKMDocument> doc = command.document;
-        if (!doc) {
-            // query entity document for ID
-            NSString *type = [command objectForKey:@"doc_type"];
-            if ([type length] == 0) {
-                type = @"*";  // ANY
-            }
-            return [self getDocumentForID:ID withType:type];
-        } else if ([ID isEqual:doc.ID]) {
-            // received a new document for ID
-            return [self putDocument:doc meta:command.meta forID:ID];
+    id<MKMDocument> doc = command.document;
+    if (!ID) {
+        NSAssert(false, @"document ID cannot be empty: %@", command);
+        return [self respondReceipt:@"Document command error."
+                           envelope:rMsg.envelope
+                            content:content
+                              extra:nil];
+    } else if (![ID isEqual:doc.ID]) {
+        NSAssert(false, @"document ID not match: %@", command);
+        // extra info for receipt
+        NSDictionary *info = @{
+            @"template": @"Document ID not match: ${ID}.",
+            @"replacements": @{
+                @"ID": ID.string,
+            },
+        };
+        return [self respondReceipt:@"Document ID not match."
+                           envelope:rMsg.envelope
+                            content:content
+                              extra:info];
+    } else if (doc) {
+        // reveived a document for ID
+        return [self putDocument:doc
+                           forID:ID
+                     withContent:command
+                     andEnvelope:rMsg.envelope];
+    } else {
+        // query documents for ID
+        return [self getDocumentsForID:ID
+                           withContent:command
+                           andEnvelope:rMsg.envelope];
+    }
+    
+}
+
+- (NSArray<id<DKDContent>> *)getDocumentsForID:(id<MKMID>)ID
+                                   withContent:(id<DKDDocumentCommand>)command
+                                   andEnvelope:(id<DKDEnvelope>)head {
+    NSArray<id<MKMDocument>> *docs = [self.facebook documentsForID:ID];
+    if ([docs count] == 0) {
+        // extra info for receipt
+        NSDictionary *info = @{
+            @"template": @"Document not found: ${ID}.",
+            @"replacements": @{
+                @"ID": ID.string,
+            },
+        };
+        return [self respondReceipt:@"Document not found."
+                           envelope:head
+                            content:command
+                              extra:info];
+    }
+    // documents got
+    NSDate *queryTime = [command lastTime];
+    if (queryTime) {
+        // check last document time
+        id<MKMDocument> last = [DIMDocumentHelper lastDocument:docs forType:@"*"];
+        NSAssert(last, @"should not happen");
+        NSDate *lastTime = [last time];
+        NSTimeInterval lt = [lastTime timeIntervalSince1970];
+        if (lt < 1) {
+            NSAssert(false, @"document error: %@", last);
+        } else if (lt <= [queryTime timeIntervalSince1970]) {
+            // document not updated
+            NSDictionary *info = @{
+                @"template": @"Document not updated: ${ID}, last time: ${time}.",
+                @"replacements": @{
+                    @"ID": ID.string,
+                    @"time": @(lt),
+                },
+            };
+            return [self respondReceipt:@"Document not updated."
+                               envelope:head
+                                content:command
+                                  extra:info];
         }
     }
-    // error
-    return [self respondText:@"Document command error." withGroup:nil];
+    id<MKMMeta> meta = [self.facebook metaForID:ID];
+    NSMutableArray *responses = [[NSMutableArray alloc] initWithCapacity:docs.count];
+    // respond first document with meta
+    id<DKDDocumentCommand> dc = DIMDocumentCommandResponse(ID,
+                                                           meta,
+                                                           docs.firstObject);
+    [responses addObject:dc];
+    for (NSUInteger i = 1; i < docs.count; ++i) {
+        // respond other documents
+        dc = DIMDocumentCommandResponse(ID, nil, [docs objectAtIndex:i]);
+        [responses addObject:dc];
+    }
+    return responses;;
+}
+
+- (NSArray<id<DKDContent>> *)putDocument:(id<MKMDocument>)doc
+                                   forID:(id<MKMID>)ID
+                             withContent:(id<DKDDocumentCommand>)command
+                             andEnvelope:(id<DKDEnvelope>)head  {
+    NSArray<id<DKDContent>> *errors;
+    id<MKMMeta> meta = [command meta];
+    // 0. check meta
+    if (!meta) {
+        meta = [self.facebook metaForID:ID];
+        if (!meta) {
+            // extra info for receipt
+            NSDictionary *info = @{
+                @"template": @"Meta not found: ${ID}.",
+                @"replacements": @{
+                    @"ID": ID.string,
+                },
+            };
+            return [self respondReceipt:@"Meta not found."
+                               envelope:head
+                                content:command
+                                  extra:info];
+        }
+    } else {
+        // 1. try to save meta
+        errors = [self saveMeta:meta forID:ID content:command envelope:head];
+        if (errors) {
+            // failed
+            return errors;
+        }
+    }
+    // 2. try to save document
+    errors = [self saveDocument:doc
+                          forID:ID
+                       withMeta:meta
+                        content:command
+                       envelope:head];
+    if (errors) {
+        // failed
+        return errors;
+    }
+    // 3. success
+    NSDictionary *info = @{
+        @"template": @"Document received: ${ID}.",
+        @"replacements": @{
+            @"ID": ID.string,
+        },
+    };
+    return [self respondReceipt:@"Document received."
+                       envelope:head
+                        content:command
+                          extra:info];
+}
+
+@end
+
+@implementation DIMDocumentCommandProcessor (Storage)
+
+- (nullable NSArray<id<DKDContent>> *)saveDocument:(id<MKMDocument>)doc
+                                             forID:(id<MKMID>)ID
+                                          withMeta:(id<MKMMeta>)meta
+                                           content:(id<DKDMetaCommand>)command
+                                          envelope:(id<DKDEnvelope>)head {
+    DIMFacebook *facebook = [self facebook];
+    // check document
+    if (![self checkDocument:doc withMeta:meta]) {
+        // document error
+        NSDictionary *info = @{
+            @"template": @"Document not accepted: ${ID}.",
+            @"replacements": @{
+                @"ID": ID.string,
+            },
+        };
+        return [self respondReceipt:@"Document not accepted."
+                           envelope:head
+                            content:command
+                              extra:info];
+    } else if (![facebook saveDocument:doc]) {
+        // document expired
+        NSDictionary *info = @{
+            @"template": @"Document not changed: ${ID}.",
+            @"replacements": @{
+                @"ID": ID.string,
+            },
+        };
+        return [self respondReceipt:@"Document not changed."
+                           envelope:head
+                            content:command
+                              extra:info];
+    }
+    // document saved, return no error
+    return nil;
+}
+
+- (BOOL)checkDocument:(id<MKMDocument>)doc withMeta:(id<MKMMeta>)meta {
+    if ([doc isValid]) {
+        return YES;
+    }
+    // NOTICE: if this is a bulletin document for group,
+    //             verify it with the group owner's meta.key
+    //         else (this is a visa document for user)
+    //             verify it with the user's meta.key
+    return [doc verify:meta.publicKey];
+    // TODO: check for group document
 }
 
 @end

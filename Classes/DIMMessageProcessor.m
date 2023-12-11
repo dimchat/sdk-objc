@@ -35,6 +35,7 @@
 //  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
+#import "DIMContentProcessorCreator.h"
 #import "DIMFacebook.h"
 #import "DIMMessenger.h"
 
@@ -50,8 +51,8 @@
 @implementation DIMMessageProcessor
 
 /* designated initializer */
-- (instancetype)initWithFacebook:(DIMFacebook *)barrack
-                       messenger:(DIMMessenger *)transceiver {
+- (instancetype)initWithFacebook:(DIMBarrack *)barrack
+                       messenger:(DIMTransceiver *)transceiver {
     if (self = [super initWithFacebook:barrack messenger:transceiver]) {
         _factory = [self createContentProcessorFactory];
     }
@@ -59,6 +60,7 @@
 }
 
 - (id<DIMContentProcessorCreator>)createContentProcessorCreator {
+    NSAssert(false, @"implement me!");
     return [[DIMContentProcessorCreator alloc] initWithFacebook:self.facebook
                                                       messenger:self.messenger];
 }
@@ -70,7 +72,7 @@
                                                         creator:creator];
 }
 
-- (NSArray<NSData *> *)processData:(NSData *)data {
+- (NSArray<NSData *> *)processPackage:(NSData *)data {
     DIMMessenger *transceiver = self.messenger;
     // 1. deserialize message
     id<DKDReliableMessage> rMsg = [transceiver deserializeMessage:data];
@@ -79,13 +81,13 @@
         return nil;
     }
     // 2. process message
-    NSArray<id<DKDReliableMessage>> *responses = [transceiver processMessage:rMsg];
+    NSArray<id<DKDReliableMessage>> *responses = [transceiver processReliableMessage:rMsg];
     if ([responses count] == 0) {
         // nothing to response
         return nil;
     }
     // 3. serialize messages
-    NSMutableArray<NSData *> *packages = [[NSMutableArray alloc] initWithCapacity:[responses count]];
+    NSMutableArray *packages = [[NSMutableArray alloc] initWithCapacity:responses.count];
     NSData * pack;
     for (id<DKDReliableMessage> res in responses) {
         pack = [transceiver serializeMessage:res];
@@ -98,7 +100,7 @@
     return packages;
 }
 
-- (NSArray<id<DKDReliableMessage>> *)processMessage:(id<DKDReliableMessage>)rMsg {
+- (NSArray<id<DKDReliableMessage>> *)processReliableMessage:(id<DKDReliableMessage>)rMsg {
     // TODO: override to check broadcast message before calling it
     DIMMessenger *transceiver = self.messenger;
     // 1. verify message
@@ -108,13 +110,14 @@
         return nil;
     }
     // 2. process message
-    NSArray<id<DKDSecureMessage>> *responses = [transceiver processSecure:sMsg withMessage:rMsg];
+    NSArray<id<DKDSecureMessage>> *responses = [transceiver processSecureMessage:sMsg
+                                                      withReliableMessageMessage:rMsg];
     if ([responses count] == 0) {
         // nothing to respond
         return nil;
     }
     // 3. sign messages
-    NSMutableArray<id<DKDReliableMessage>> *messages = [[NSMutableArray alloc] initWithCapacity:[responses count]];
+    NSMutableArray *messages = [[NSMutableArray alloc] initWithCapacity:responses.count];
     id<DKDReliableMessage> msg;
     for (id<DKDSecureMessage> res in responses) {
         msg = [transceiver signMessage:res];
@@ -127,8 +130,8 @@
     return messages;
 }
 
-- (NSArray<id<DKDSecureMessage>> *)processSecure:(id<DKDSecureMessage>)sMsg
-                                     withMessage:(id<DKDReliableMessage>)rMsg {
+- (NSArray<id<DKDSecureMessage>> *)processSecureMessage:(id<DKDSecureMessage>)sMsg
+                             withReliableMessageMessage:(id<DKDReliableMessage>)rMsg {
     DIMMessenger *transceiver = self.messenger;
     // 1. decrypt message
     id<DKDInstantMessage> iMsg = [transceiver decryptMessage:sMsg];
@@ -138,7 +141,8 @@
         return nil;
     }
     // 2. process message
-    NSArray<id<DKDInstantMessage>> *responses = [transceiver processInstant:iMsg withMessage:rMsg];
+    NSArray<id<DKDInstantMessage>> *responses = [transceiver processInstantMessage:iMsg
+                                                        withReliableMessageMessage:rMsg];
     if ([responses count] == 0) {
         // nothing to respond
         return nil;
@@ -157,12 +161,14 @@
     return messages;
 }
 
-- (NSArray<id<DKDInstantMessage>> *)processInstant:(id<DKDInstantMessage>)iMsg
-                                       withMessage:(id<DKDReliableMessage>)rMsg {
+- (NSArray<id<DKDInstantMessage>> *)processInstantMessage:(id<DKDInstantMessage>)iMsg
+                               withReliableMessageMessage:(id<DKDReliableMessage>)rMsg {
+    DIMFacebook *barrack = self.facebook;
     DIMMessenger *transceiver = self.messenger;
     // 1. process content
     id<DKDContent> content = iMsg.content;
-    NSArray<id<DKDContent>> * responses = [transceiver processContent:content withMessage:rMsg];
+    NSArray<id<DKDContent>> * responses = [transceiver processContent:content
+                                           withReliableMessageMessage:rMsg];
     if ([responses count] == 0) {
         // nothing to respond
         return nil;
@@ -171,7 +177,7 @@
     // 2. select a local user to build message
     id<MKMID> sender = iMsg.sender;
     id<MKMID> receiver = iMsg.receiver;
-    id<MKMUser> user = [self.facebook selectLocalUserWithID:receiver];
+    id<MKMUser> user = [barrack selectLocalUserWithID:receiver];
     NSAssert(user, @"receiver error: %@", receiver);
     
     // 3. pack messages
@@ -195,7 +201,7 @@
 }
 
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
-                                withMessage:(id<DKDReliableMessage>)rMsg {
+                 withReliableMessageMessage:(id<DKDReliableMessage>)rMsg {
     // TODO: override to check group before calling this
     id<DIMContentProcessor> cpu = [self processorForContent:content];
     if (!cpu) {

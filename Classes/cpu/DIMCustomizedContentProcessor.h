@@ -35,7 +35,7 @@
 //  Copyright © 2022 Albert Moky. All rights reserved.
 //
 
-#import <DIMSDK/DIMContentProcessor.h>
+#import <DIMSDK/DIMBaseProcessor.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -47,6 +47,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  Do your job
+ *
+ * @param act        - action
+ * @param uid        - user ID
+ * @param customized - customized content
+ * @param rMsg       - network message
+ * @return responses
  */
 - (NSArray<id<DKDContent>> *)handleAction:(NSString *)act
                                    sender:(id<MKMID>)uid

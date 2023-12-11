@@ -22,7 +22,7 @@ Pod::Spec.new do |s|
 
     s.source_files          = 'Classes', 'Classes/**/*.{h,m}'
     # s.exclude_files       = 'Classes/Exclude'
-    s.public_header_files   = 'Classes/*.h', 'Classes/mkm/*.h', 'Classes/dkd/*.h', 'Classes/cpu/*.h'
+    s.public_header_files   = 'Classes/**/*.h'
 
     # s.frameworks          = 'Security'
     # s.requires_arc        = true

@@ -44,14 +44,14 @@
 //
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
-    NSString *text = @"Content not support.";
+    // extra info for receipt
     NSDictionary *info = @{
         @"template": @"Content (type: ${type}) not support yet!",
         @"replacements": @{
             @"type": @(content.type),
         },
     };
-    return [self respondReceipt:text
+    return [self respondReceipt:@"Content not support."
                        envelope:rMsg.envelope
                         content:content
                           extra:info];
@@ -61,18 +61,21 @@
 
 @implementation DIMCommandProcessor
 
+//
+//  Main
+//
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content conformsToProtocol:@protocol(DKDCommand)], @"command error: %@", content);
     id<DKDCommand> command = (id<DKDCommand>)content;
-    NSString *text = @"Command not support.";
+    // extra info for receipt
     NSDictionary *info = @{
         @"template": @"Command (name: ${name}) not support yet!",
         @"replacements": @{
             @"command": command.cmd,
         },
     };
-    return [self respondReceipt:text
+    return [self respondReceipt:@"Command not support."
                        envelope:rMsg.envelope
                         content:content
                           extra:info];

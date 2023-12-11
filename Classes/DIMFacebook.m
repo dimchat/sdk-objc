@@ -38,81 +38,11 @@
 #import "DIMServiceProvider.h"
 #import "DIMStation.h"
 #import "DIMRobot.h"
+#import "DIMArchivist.h"
 
 #import "DIMFacebook.h"
 
-@interface DIMFacebook ()
-
-@end
-
 @implementation DIMFacebook
-
-- (BOOL)saveMeta:(id<MKMMeta>)meta forID:(id<MKMID>)ID {
-    NSAssert(false, @"implement me!");
-    return NO;
-}
-
-- (BOOL)saveDocument:(id<MKMDocument>)doc {
-    NSAssert(false, @"implement me!");
-    return NO;
-}
-
-- (BOOL)checkDocument:(id<MKMDocument>)doc {
-    id<MKMID> ID = doc.ID;
-    NSAssert(ID, @"ID error: %@", doc);
-    // NOTICE: if this is a bulletin document for group,
-    //             verify it with the group owner's meta.key
-    //         else (this is a visa document for user)
-    //             verify it with the user's meta.key
-    id<MKMMeta> meta;
-    if (MKMIDIsGroup(ID)) {
-        id<MKMID> owner = [self ownerOfGroup:ID];
-        if (owner) {
-            // check by owner's meta.key
-            meta = [self metaForID:owner];
-        } else if (ID.type == MKMEntityType_Group) {
-            // NOTICE: if this is a polylogue document
-            //             verify it with the founder's meta.key
-            //             (which equals to the group's meta.key)
-            meta = [self metaForID:ID];
-        } else {
-            // FIXME: owner not found for this group
-            return NO;
-        }
-    } else {
-        NSAssert(MKMIDIsUser(ID), @"document ID error: %@", ID);
-        meta = [self metaForID:ID];
-    }
-    return meta && [doc verify:meta.key];
-}
-
-- (nullable id<MKMUser>)createUser:(id<MKMID>)ID {
-    // TODO: make sure visa key exists before calling this
-    NSAssert(MKMIDIsBroadcast(ID) || [self publicKeyForEncryption:ID],
-             @"visa key not found for user: %@", ID);
-    MKMEntityType type = ID.type;
-    // check user type
-    if (type == MKMEntityType_Station) {
-        return [[DIMStation alloc] initWithID:ID];
-    } else if (type == MKMEntityType_Bot) {
-        return [[DIMBot alloc] initWithID:ID];
-    }
-    // general user, or 'anyone@anywhere'
-    return [[DIMUser alloc] initWithID:ID];
-}
-
-- (nullable id<MKMGroup>)createGroup:(id<MKMID>)ID {
-    // TODO: make group meta exists before calling this
-    NSAssert(MKMIDIsBroadcast(ID) || [self metaForID:ID],
-             @"failed to get meta for group: %@", ID);
-    MKMEntityType type = ID.type;
-    // check group type
-    if (type == MKMEntityType_ISP) {
-        return [[DIMServiceProvider alloc] initWithID:ID];
-    }
-    // general group, or 'everyone@everywhere'
-    return [[DIMGroup alloc] initWithID:ID];
-}
 
 - (nullable NSArray<id<MKMUser>> *)localUsers {
     NSAssert(false, @"implement me!");
@@ -143,9 +73,7 @@
     NSAssert(MKMIDIsGroup(receiver), @"receiver error: %@", receiver);
     // the messenger will check group info before decrypting message,
     // so we can trust that the group's meta & members MUST exist here.
-    id<MKMGroup> grp = [self groupWithID:receiver];
-    NSAssert(grp, @"group not ready: %@", receiver);
-    NSArray<id<MKMID>> *members = [grp members];
+    NSArray<id<MKMID>> *members = [self membersOfGroup:receiver];
     NSAssert([members count] > 0, @"members not found: %@", receiver);
     for (id<MKMUser> item in users) {
         if ([members containsObject:item.ID]) {
@@ -157,8 +85,107 @@
     return nil;
 }
 
-@end
+- (BOOL)saveMeta:(id<MKMMeta>)meta forID:(id<MKMID>)ID {
+    if ([meta isValid] && [meta matchIdentifier:ID]) {
+        // meta OK
+    } else {
+        NSAssert(false, @"meta not valid: %@", ID);
+        return NO;
+    }
+    // check old meta
+    id<MKMMeta> old = [self metaForID:ID];
+    if (old) {
+        //NSAssert([meta isEqual:old], @"meta should not changed");
+        return YES;
+    }
+    // meta not exists yet, save it
+    return [self.archivist saveMeta:meta forID:ID];
+}
 
-@implementation DIMFacebook (Thanos)
+- (BOOL)saveDocument:(id<MKMDocument>)document {
+    id<MKMID> ID = [document ID];
+    if (![document isValid]) {
+        // try to verify
+        id<MKMMeta> meta = [self metaForID:ID];
+        if (!meta) {
+            NSAssert(false, @"meta not found: %@", ID);
+            return NO;
+        } else if (![document verify:meta.publicKey]) {
+            NSAssert(false, @"failed to verify document: %@", ID);
+            return NO;
+        }
+    }
+    NSString *type = [document type];
+    // check old documents with type
+    NSArray<id<MKMDocument>> *docs = [self documentsForID:ID];
+    id<MKMDocument> old = [DIMDocumentHelper lastDocument:docs forType:type];
+    if (old && [DIMDocumentHelper isExpired:document compareTo:old]) {
+        NSAssert(false, @"drop expired document: %@", ID);
+        return NO;
+    }
+    return [self.archivist saveDocument:document];
+}
+
+- (nullable id<MKMMeta>)metaForID:(id<MKMID>)ID {
+    //if ([ID isBroadcast]) {
+    //    // broadcast ID has no meta
+    //    return nil;
+    //}
+    id<MKMMeta> meta = [self.archivist metaForID:ID];
+    [self.archivist checkMeta:meta forID:ID];
+    return meta;
+}
+
+- (NSArray<id<MKMDocument>> *)documentsForID:(id<MKMID>)ID {
+    //if ([ID isBroadcast]) {
+    //    // broadcast ID has no documents
+    //    return nil;
+    //}
+    NSArray<id<MKMDocument>> *docs = [self.archivist documentsForID:ID];
+    [self.archivist checkDocuments:docs forID:ID];
+    return docs;
+}
+
+- (nullable id<MKMUser>)createUser:(id<MKMID>)ID {
+    NSAssert(MKMIDIsUser(ID), @"user ID error: %@", ID);
+    // check visa key
+    if (!MKMIDIsBroadcast(ID)) {
+        if (![self publicKeyForEncryption:ID]) {
+            NSAssert(false, @"visa.key not found: %@", ID);
+            return nil;
+        }
+        // NOTICE: if visa.key exists, then visa & meta must exist too.
+    }
+    UInt8 network = [ID type];
+    // check user type
+    if (network == MKMEntityType_Station) {
+        return [[DIMStation alloc] initWithID:ID];
+    } else if (network == MKMEntityType_Bot) {
+        return [[DIMBot alloc] initWithID:ID];
+    }
+    // general user, or 'anyone@anywhere'
+    return [[DIMUser alloc] initWithID:ID];
+}
+
+- (nullable id<MKMGroup>)createGroup:(id<MKMID>)ID {
+    NSAssert(MKMIDIsGroup(ID), @"group ID error: %@", ID);
+    // check members
+    if (!MKMIDIsBroadcast(ID)) {
+        NSArray<id<MKMID>> *members = [self membersOfGroup:ID];
+        if ([members count] == 0) {
+            NSAssert(false, @"group members not found: %@", ID);
+            return nil;
+        }
+        // NOTICE: if members exist, then owner (founder) must exist,
+        //         and bulletin & meta must exist too.
+    }
+    UInt8 network = [ID type];
+    // check group type
+    if (network == MKMEntityType_ISP) {
+        return [[DIMServiceProvider alloc] initWithID:ID];
+    }
+    // general group, or 'everyone@everywhere'
+    return [[DIMGroup alloc] initWithID:ID];
+}
 
 @end
