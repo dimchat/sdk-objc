@@ -62,7 +62,7 @@
 
 // private
 - (BOOL)_forceExpired:(NSString *)key timestamp:(NSTimeInterval)now {
-    [_records setObject:@(now) forKey:key];
+    [_records setObject:@(now + _expires) forKey:key];
     return YES;
 }
 
@@ -73,7 +73,7 @@
         // record exists and not expired yet
         return NO;
     }
-    [_records setObject:@(now) forKey:key];
+    [_records setObject:@(now + _expires) forKey:key];
     return YES;
 }
 
