@@ -83,9 +83,9 @@ static inline NSString *concat(NSString *name,
     return MKMIDCreate(meta.seed, address, location);
 }
 
-- (id<MKMID>)createIdentifier:(nullable NSString *)name
-                      address:(id<MKMAddress>)address
-                     terminal:(nullable NSString *)location {
+- (id<MKMID>)createIdentifierWithName:(NSString *)name
+                              address:(id<MKMAddress>)address
+                             terminal:(NSString *)location {
     NSString *string = concat(name, address, location);
     id<MKMID> ID = [_identifiers objectForKey:string];
     if (!ID) {

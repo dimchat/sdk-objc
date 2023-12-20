@@ -57,7 +57,7 @@
 
 @property (nonatomic) SecKeyRef privateKeyRef;
 
-@property (strong, atomic, nullable) MKMRSAPublicKey *publicKey;
+@property (strong, nonatomic, nullable) MKMRSAPublicKey *publicKey;
 
 @end
 

@@ -92,11 +92,13 @@ static PlainKey *s_sharedPlainKey = nil;
     return nil;
 }
 
-- (NSData *)encrypt:(NSData *)plaintext {
+- (NSData *)encrypt:(NSData *)plaintext
+             params:(nullable NSMutableDictionary *)extra {
     return plaintext;
 }
 
-- (nullable NSData *)decrypt:(NSData *)ciphertext {
+- (nullable NSData *)decrypt:(NSData *)ciphertext
+                      params:(nullable NSDictionary *)extra {
     return ciphertext;
 }
 

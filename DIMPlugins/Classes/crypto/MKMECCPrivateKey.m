@@ -127,7 +127,7 @@ static inline int ecc_sig_to_der(const uint8_t *sig, uint8_t *der)
 
 @property (nonatomic) const uint8_t *prikey;
 
-@property (strong, atomic, nullable) MKMECCPublicKey *publicKey;
+@property (strong, nonatomic, nullable) MKMECCPublicKey *publicKey;
 
 @end
 
