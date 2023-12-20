@@ -84,16 +84,16 @@ extern "C" {
  *  ~~~~~~~~~~~~~
  *  Extends for the first message package of 'Handshake' protocol.
  */
-id<MKMMeta> DIMMessageGetMeta(id<DKDReliableMessage> rMsg);
-void DIMMessageSetMeta(id<MKMMeta> meta, id<DKDReliableMessage> rMsg);
+id<MKMMeta> DIMMessageGetMeta(id<DKDMessage> msg);
+void DIMMessageSetMeta(id<MKMMeta> meta, id<DKDMessage> msg);
 
 /**
  *  Sender's Visa
  *  ~~~~~~~~~~~~~
  *  Extends for the first message package of 'Handshake' protocol.
  */
-id<MKMVisa> DIMMessageGetVisa(id<DKDReliableMessage> rMsg);
-void DIMMessageSetVisa(id<MKMVisa> visa, id<DKDReliableMessage> rMsg);
+id<MKMVisa> DIMMessageGetVisa(id<DKDMessage> msg);
+void DIMMessageSetVisa(id<MKMVisa> visa, id<DKDMessage> msg);
 
 #ifdef __cplusplus
 } /* end of extern "C" */

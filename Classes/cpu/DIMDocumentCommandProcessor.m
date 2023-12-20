@@ -44,11 +44,11 @@
 //
 //  Main
 //
-- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
+- (NSArray<id<DKDContent>> *)processContent:(__kindof id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content conformsToProtocol:@protocol(DKDDocumentCommand)],
              @"document command error: %@", content);
-    id<DKDDocumentCommand> command = (id<DKDDocumentCommand>)content;
+    id<DKDDocumentCommand> command = content;
     id<MKMID> ID = command.ID;
     id<MKMDocument> doc = command.document;
     if (!ID) {

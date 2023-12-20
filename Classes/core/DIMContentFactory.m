@@ -62,7 +62,6 @@
     return self;
 }
 
-// Override
 - (nullable id<DKDContent>)parseContent:(NSDictionary *)content {
     return _block(content);
 }

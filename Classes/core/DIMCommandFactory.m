@@ -60,7 +60,6 @@
     return self;
 }
 
-// Override
 - (nullable id<DKDCommand>)parseCommand:(NSDictionary *)content {
     return _block(content);
 }
@@ -69,7 +68,6 @@
 
 @implementation DIMBaseCommandFactory
 
-// Override
 - (nullable id<DKDContent>)parseContent:(NSDictionary *)content {
     DIMCommandFactoryManager *man = [DIMCommandFactoryManager sharedManager];
     // get factory by command name
@@ -88,7 +86,6 @@
     return [factory parseCommand:content];
 }
 
-// Override
 - (nullable id<DKDCommand>)parseCommand:(NSDictionary *)content {
     return [[DIMCommand alloc] initWithDictionary:content];
 }
@@ -97,7 +94,6 @@
 
 @implementation DIMHistoryCommandFactory
 
-// Override
 - (nullable id<DKDCommand>)parseCommand:(NSDictionary *)content {
     return [[DIMHistoryCommand alloc] initWithDictionary:content];
 }
@@ -106,7 +102,6 @@
 
 @implementation DIMGroupCommandFactory
 
-// Override
 - (nullable id<DKDContent>)parseContent:(NSDictionary *)content {
     DIMCommandFactoryManager *man = [DIMCommandFactoryManager sharedManager];
     // get factory by command name
@@ -118,7 +113,6 @@
     return [factory parseCommand:content];
 }
 
-// Override
 - (nullable id<DKDCommand>)parseCommand:(NSDictionary *)content {
     return [[DIMGroupCommand alloc] initWithDictionary:content];
 }

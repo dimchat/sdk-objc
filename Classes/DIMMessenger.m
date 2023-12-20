@@ -39,16 +39,16 @@
 
 @implementation DIMCipherKeyDelegate
 
-- (nullable id<MKMSymmetricKey>)cipherKeyFrom:(id<MKMID>)sender
-                                           to:(id<MKMID>)receiver
-                                     generate:(BOOL)create {
+- (nullable id<MKMSymmetricKey>)cipherKeyWithSender:(id<MKMID>)from
+                                           receiver:(id<MKMID>)to
+                                           generate:(BOOL)create {
     NSAssert(false, @"implement me!");
     return nil;
 }
 
 - (void)cacheCipherKey:(id<MKMSymmetricKey>)key
-                  from:(id<MKMID>)sender
-                    to:(id<MKMID>)receiver {
+            withSender:(id<MKMID>)from
+              receiver:(id<MKMID>)to {
     NSAssert(false, @"implement me!");
 }
 
@@ -160,7 +160,7 @@
     return [self.processor processInstantMessage:iMsg withReliableMessageMessage:rMsg];
 }
 
-- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
+- (NSArray<id<DKDContent>> *)processContent:(__kindof id<DKDContent>)content
                  withReliableMessageMessage:(id<DKDReliableMessage>)rMsg {
     return [self.processor processContent:content withReliableMessageMessage:rMsg];
 }
@@ -206,19 +206,19 @@
 - (nullable id<MKMSymmetricKey>)encryptKeyForMessage:(id<DKDInstantMessage>)iMsg {
     id<MKMID> sender = [iMsg sender];
     id<MKMID> target = [DIMCipherKeyDelegate destinationOfMessage:iMsg];
-    return [self.keyCache cipherKeyFrom:sender to:target generate:YES];
+    return [self.keyCache cipherKeyWithSender:sender receiver:target generate:YES];
 }
 
 - (nullable id<MKMSymmetricKey>)decryptKeyForMessage:(id<DKDSecureMessage>)sMsg {
     id<MKMID> sender = [sMsg sender];
     id<MKMID> target = [DIMCipherKeyDelegate destinationOfMessage:sMsg];
-    return [self.keyCache cipherKeyFrom:sender to:target generate:NO];
+    return [self.keyCache cipherKeyWithSender:sender receiver:target generate:NO];
 }
 
 - (void)cacheDecryptKey:(id<MKMSymmetricKey>)password forMessage:(id<DKDSecureMessage>)sMsg {
     id<MKMID> sender = [sMsg sender];
     id<MKMID> target = [DIMCipherKeyDelegate destinationOfMessage:sMsg];
-    [self.keyCache cacheCipherKey:password from:sender to:target];
+    [self.keyCache cacheCipherKey:password withSender:sender receiver:target];
 }
 
 @end

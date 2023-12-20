@@ -48,7 +48,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (strong, nonatomic) id<MKMID> ID;
 
 // Station Document
-@property (readonly, strong, nonatomic, nullable) id<MKMDocument> profile;
+@property (readonly, strong, nonatomic, nullable) __kindof id<MKMDocument> profile;
 
 @property (readonly, strong, nonatomic) NSString *host;  // Domain/IP
 @property (readonly, nonatomic) UInt16 port;             // default: 9394

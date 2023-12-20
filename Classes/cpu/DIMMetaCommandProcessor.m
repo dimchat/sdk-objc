@@ -44,11 +44,11 @@
 //
 //  Main
 //
-- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
+- (NSArray<id<DKDContent>> *)processContent:(__kindof id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content conformsToProtocol:@protocol(DKDMetaCommand)],
              @"meta command error: %@", content);
-    id<DKDMetaCommand> command = (id<DKDMetaCommand>)content;
+    id<DKDMetaCommand> command = content;
     id<MKMID> ID = command.ID;
     id<MKMMeta> meta = command.meta;
     if (!ID) {

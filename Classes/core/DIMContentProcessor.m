@@ -68,11 +68,11 @@
     return self;
 }
 
-- (id<DIMContentProcessor>)getProcessor:(id<DKDContent>)content {
+- (id<DIMContentProcessor>)getProcessor:(__kindof id<DKDContent>)content {
     id<DIMContentProcessor> cpu;
     DKDContentType msgType = content.type;
     if ([content conformsToProtocol:@protocol(DKDCommand)]) {
-        NSString *cmd = [(id<DKDCommand>)content cmd];
+        NSString *cmd = [content cmd];
         //NSAssert([cmd length] > 0, @"command name error: %@", cmd);
         cpu = [self getCommandProcessor:cmd type:msgType];
         if (cpu) {

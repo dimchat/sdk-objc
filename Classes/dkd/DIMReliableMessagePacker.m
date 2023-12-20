@@ -105,17 +105,17 @@
 
 #pragma mark - MessageHelper
 
-id<MKMMeta> DIMMessageGetMeta(id<DKDReliableMessage> rMsg) {
-    id meta = [rMsg objectForKey:@"meta"];
+id<MKMMeta> DIMMessageGetMeta(id<DKDMessage> msg) {
+    id meta = [msg objectForKey:@"meta"];
     return MKMMetaParse(meta);
 }
 
-void DIMMessageSetMeta(id<MKMMeta> meta, id<DKDReliableMessage> rMsg) {
-    [rMsg setDictionary:meta forKey:@"meta"];
+void DIMMessageSetMeta(id<MKMMeta> meta, id<DKDMessage> msg) {
+    [msg setDictionary:meta forKey:@"meta"];
 }
 
-id<MKMVisa> DIMMessageGetVisa(id<DKDReliableMessage> rMsg) {
-    id visa = [rMsg objectForKey:@"visa"];
+id<MKMVisa> DIMMessageGetVisa(id<DKDMessage> msg) {
+    id visa = [msg objectForKey:@"visa"];
     id doc = MKMDocumentParse(visa);
     if ([doc conformsToProtocol:@protocol(MKMVisa)]) {
         return doc;
@@ -124,6 +124,6 @@ id<MKMVisa> DIMMessageGetVisa(id<DKDReliableMessage> rMsg) {
     return nil;
 }
 
-void DIMMessageSetVisa(id<MKMVisa> visa, id<DKDReliableMessage> rMsg) {
-    [rMsg setDictionary:visa forKey:@"visa"];
+void DIMMessageSetVisa(id<MKMVisa> visa, id<DKDMessage> msg) {
+    [msg setDictionary:visa forKey:@"visa"];
 }

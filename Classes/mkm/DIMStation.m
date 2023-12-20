@@ -43,6 +43,9 @@
 
 @property (nonatomic, strong) id<MKMUser> user;
 
+@property (strong, nonatomic) NSString *host;  // Domain/IP
+@property (nonatomic) UInt16 port;             // default: 9394
+
 @end
 
 @implementation DIMStation
@@ -60,6 +63,8 @@
     NSAssert(ID.type == MKMEntityType_Station || ID.type == MKMEntityType_Any, @"station ID error: %@", ID);
     if (self = [super init]) {
         self.user = [[DIMUser alloc] initWithID:ID];
+        self.host = IP;
+        self.port = port;
     }
     return self;
 }
@@ -77,6 +82,8 @@
     DIMStation *server = [[self class] allocWithZone:zone];
     if (server) {
         server.user = _user;
+        server.host = _host;
+        server.port = _port;
     }
     return server;
 }
@@ -106,21 +113,23 @@
 }
 
 - (NSString *)host {
-    id<MKMDocument> doc = [self profile];
-    if (doc) {
-        id host = [doc propertyForKey:@"host"];
-        return MKMConverterGetString(host, nil);
+    NSString *IP = _host;
+    if (!IP) {
+        id<MKMDocument> doc = [self profile];
+        id str = [doc propertyForKey:@"host"];
+        _host = IP = MKMConverterGetString(str, nil);
     }
-    return nil;
+    return IP;
 }
 
 - (UInt16)port {
-    id<MKMDocument> doc = [self profile];
-    if (doc) {
-        id port = [doc propertyForKey:@"port"];
-        return MKMConverterGetUnsignedShort(port, 0);
+    UInt16 po = _port;
+    if (po == 0) {
+        id<MKMDocument> doc = [self profile];
+        id num = [doc propertyForKey:@"port"];
+        _port = po = MKMConverterGetUnsignedShort(num, 0);
     }
-    return 0;
+    return po;
 }
 
 - (id<MKMID>)provider {

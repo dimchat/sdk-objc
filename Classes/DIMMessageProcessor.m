@@ -166,8 +166,7 @@
     DIMFacebook *barrack = self.facebook;
     DIMMessenger *transceiver = self.messenger;
     // 1. process content
-    id<DKDContent> content = iMsg.content;
-    NSArray<id<DKDContent>> * responses = [transceiver processContent:content
+    NSArray<id<DKDContent>> * responses = [transceiver processContent:iMsg.content
                                            withReliableMessageMessage:rMsg];
     if ([responses count] == 0) {
         // nothing to respond
@@ -200,7 +199,7 @@
     return messages;
 }
 
-- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
+- (NSArray<id<DKDContent>> *)processContent:(__kindof id<DKDContent>)content
                  withReliableMessageMessage:(id<DKDReliableMessage>)rMsg {
     // TODO: override to check group before calling this
     id<DIMContentProcessor> cpu = [self processorForContent:content];
@@ -217,7 +216,7 @@
 
 @implementation DIMMessageProcessor (CPU)
 
-- (id<DIMContentProcessor> )processorForContent:(id<DKDContent>)content {
+- (id<DIMContentProcessor> )processorForContent:(__kindof id<DKDContent>)content {
     return [_factory getProcessor:content];
 }
 

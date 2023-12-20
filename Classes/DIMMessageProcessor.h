@@ -55,7 +55,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  Get content/command processor
  */
-- (nullable id<DIMContentProcessor>)processorForContent:(id<DKDContent>)content;
+- (nullable id<DIMContentProcessor>)processorForContent:(__kindof id<DKDContent>)content;
 
 /**
  *  Get content processor

@@ -44,25 +44,25 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  Get cipher key for encrypt message from 'sender' to 'receiver'
  *
- * @param sender   - from where (user or contact ID)
- * @param receiver - to where (contact or user/group ID)
- * @param create   - generate when key not exists
+ * @param from   - from where (user or contact ID)
+ * @param to     - to where (contact or user/group ID)
+ * @param create - generate when key not exists
  * @return cipher key
  */
-- (nullable id<MKMSymmetricKey>)cipherKeyFrom:(id<MKMID>)sender
-                                           to:(id<MKMID>)receiver
-                                     generate:(BOOL)create;
+- (nullable id<MKMSymmetricKey>)cipherKeyWithSender:(id<MKMID>)from
+                                           receiver:(id<MKMID>)to
+                                           generate:(BOOL)create;
 
 /**
  *  Cache cipher key for reusing, with the direction (from 'sender' to 'receiver')
  *
- * @param sender   - from where (user or contact ID)
- * @param receiver - to where (contact or user/group ID)
- * @param key      - cipher key
+ * @param from - from where (user or contact ID)
+ * @param to   - to where (contact or user/group ID)
+ * @param key  - cipher key
  */
 - (void)cacheCipherKey:(id<MKMSymmetricKey>)key
-                  from:(id<MKMID>)sender
-                    to:(id<MKMID>)receiver;
+            withSender:(id<MKMID>)from
+              receiver:(id<MKMID>)to;
 
 @end
 
@@ -117,17 +117,17 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  Delegate for getting message key
  */
-@property(nonatomic, readonly) id<DIMCipherKeyDelegate> keyCache;
+@property(nonatomic, readonly) __kindof id<DIMCipherKeyDelegate> keyCache;
 
 /**
  *  Delegate for parsing message
  */
-@property(nonatomic, readonly) id<DIMPacker> packer;
+@property(nonatomic, readonly) __kindof id<DIMPacker> packer;
 
 /**
  *  Delegate for processing message
  */
-@property(nonatomic, readonly) id<DIMProcessor> processor;
+@property(nonatomic, readonly) __kindof id<DIMProcessor> processor;
 
 @end
 

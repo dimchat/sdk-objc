@@ -42,11 +42,11 @@
 //
 //  Main
 //
-- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
+- (NSArray<id<DKDContent>> *)processContent:(__kindof id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content conformsToProtocol:@protocol(DKDCustomizedContent)],
              @"customized content error: %@", content);
-    id<DKDCustomizedContent> customized = (id<DKDCustomizedContent>)content;
+    id<DKDCustomizedContent> customized = content;
     // 1. check app id
     NSString *app = [customized application];
     NSArray *res = [self filterApplication:app

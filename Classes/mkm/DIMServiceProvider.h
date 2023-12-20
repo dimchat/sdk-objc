@@ -46,7 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol MKMServiceProvider <MKMGroup>
 
 // Provider Document
-@property (readonly, strong, nonatomic, nullable) id<MKMDocument> profile;
+@property (readonly, strong, nonatomic, nullable) __kindof id<MKMDocument> profile;
 
 @property (readonly, copy, nonatomic) NSArray<id> *stations;
 

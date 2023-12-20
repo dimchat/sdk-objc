@@ -44,12 +44,12 @@
 //
 //  Main
 //
-- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
+- (NSArray<id<DKDContent>> *)processContent:(__kindof id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content conformsToProtocol:@protocol(DKDArrayContent)],
              @"array content error: %@", content);
     // get content array
-    NSArray<id<DKDContent>> *array = [(id<DKDArrayContent>)content contents];
+    NSArray<id<DKDContent>> *array = [content contents];
     // call messenger to process it
     DIMMessenger *messenger = self.messenger;
     NSMutableArray *responses = [[NSMutableArray alloc] initWithCapacity:[array count]];

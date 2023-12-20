@@ -52,7 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param rMsg - message with envelope
  * @return content to respond
  */
-- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
+- (NSArray<id<DKDContent>> *)processContent:(__kindof id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg;
 
 @end
@@ -95,7 +95,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  @param content - content/command
  *  @return ContentProcessor
  */
-- (id<DIMContentProcessor>)getProcessor:(id<DKDContent>)content;
+- (id<DIMContentProcessor>)getProcessor:(__kindof id<DKDContent>)content;
 
 - (id<DIMContentProcessor>)getContentProcessor:(DKDContentType)msgType;
 
