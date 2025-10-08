@@ -1,5 +1,0 @@
-platform :ios, '11.0'
-
-target 'DIMPlugins' do
-    pod 'DIMCore', '~> 0.7.2'
-end
