@@ -28,80 +28,95 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMServiceProvider.m
+//  DIMEntity.m
 //  DIMCore
 //
-//  Created by Albert Moky on 2018/10/13.
+//  Created by Albert Moky on 2018/9/26.
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "DIMAccountUtils.h"
-#import "DIMStation.h"
+#import "DIMEntity.h"
 
-#import "DIMServiceProvider.h"
-
-@implementation DIMServiceProvider
-
-/* designated initializer */
-- (instancetype)initWithID:(id<MKMID>)ID {
-    NSAssert(ID.type == MKMEntityType_ISP, @"SP ID error: %@", ID);
-    if (self = [super initWithID:ID]) {
-        //
-    }
-    return self;
-}
-
-- (id<MKMDocument>)profile {
-    NSArray<id<MKMDocument>> *docs = [self documents];
-    return [DIMDocumentUtils lastDocument:docs forType:@"*"];
-}
-
-- (NSArray<id> *)stations {
-    id<MKMDocument> doc = [self profile];
-    if (doc) {
-        id stations = [doc propertyForKey:@"stations"];
-        if ([stations isKindOfClass:[NSArray class]]) {
-            return stations;
-        }
-    }
-    // TODO: load from local storage
-    return nil;
+@interface DIMEntity () {
+    
+    id<MKMID> _ID;
+    __weak id<MKMEntityDataSource> _dataSource;
 }
 
 @end
 
-#pragma mark Comparison
+@implementation DIMEntity
 
-static inline BOOL checkIdentifiers(id<MKMID> a, id<MKMID> b) {
-    if (a == b) {
-        // same object
-        return YES;
-    } else if ([a isBroadcast] || [b isBroadcast]) {
-        return YES;
-    }
-    return [a isEqual:b];
+- (instancetype)init {
+    NSAssert(false, @"DON'T call me");
+    id<MKMID> ID = nil;
+    return [self initWithID:ID];
 }
 
-static inline BOOL checkHosts(NSString *a, NSString *b) {
-    if ([a length] == 0 || [b length] == 0) {
-        return YES;
+/* designated initializer */
+- (instancetype)initWithID:(id<MKMID>)ID {
+    if (self = [super init]) {
+        _ID = ID;
+        _dataSource = nil;
     }
-    return [a isEqual:b];
+    
+    return self;
 }
 
-static inline BOOL checkPorts(unsigned short a, unsigned short b) {
-    if (a == 0 || b == 0) {
-        return YES;
+- (id)copyWithZone:(nullable NSZone *)zone {
+    DIMEntity *entity = [[self class] allocWithZone:zone];
+    entity = [entity initWithID:_ID];
+    if (entity) {
+        entity.dataSource = _dataSource;
     }
-    return a == b;
+    return entity;
 }
 
-BOOL DIMSameStation(id<MKMStation> a, id<MKMStation> b) {
-    if (a == b) {
-        // same object
-        return YES;
+- (BOOL)isEqual:(id)object {
+    if ([object conformsToProtocol:@protocol(MKMEntity)]) {
+        if (self == object) {
+            // same object
+            return YES;
+        }
+        // check with ID
+        object = [(id<MKMEntity>)object identifier];
     }
-    return checkIdentifiers([a ID], [b ID])
-        && checkHosts([a host], [b host])
-        && checkPorts([a port], [b port]);
+    return [_ID isEqual:object];
 }
+
+- (NSString *)description {
+    return [NSString stringWithFormat:@"<%@: %p | 0x%02X %@>",
+            [self class], self, _ID.type, _ID];
+}
+
+- (NSString *)debugDescription {
+    return [self description];
+}
+
+- (id<MKMID>)identifier {
+    return _ID;
+}
+
+- (MKMEntityType)type {
+    return _ID.type;
+}
+
+- (id<MKMEntityDataSource>)dataSource {
+    return _dataSource;
+}
+
+- (void)setDataSource:(id<MKMEntityDataSource>)dataSource {
+    _dataSource = dataSource;
+}
+
+- (id<MKMMeta>)meta {
+    NSAssert(_dataSource, @"entity data source not set yet");
+    return [_dataSource getMeta:_ID];
+}
+
+- (NSArray<id<MKMDocument>> *)documents {
+    NSAssert(_dataSource, @"entity data source not set yet");
+    return [_dataSource getDocuments:_ID];
+}
+
+@end

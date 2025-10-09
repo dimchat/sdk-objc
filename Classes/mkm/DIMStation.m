@@ -35,16 +35,49 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
+#import "DIMAccountUtils.h"
 #import "DIMServiceProvider.h"
 
 #import "DIMStation.h"
 
-@interface DIMStation ()
+id<MKMID> MKMAnyStation    = nil;
+id<MKMID> MKMEveryStations = nil;
 
-@property (nonatomic, strong) id<MKMUser> user;
+#define BroadcastIDCreate(N, A)                                                \
+                [[MKMID alloc] initWithString:MKMIDConcat(N, A, nil)           \
+                                         name:(N)                              \
+                                      address:(A)                              \
+                                     terminal:nil]                             \
+                                             /* EOF 'BroadcastIDCreate(N, A)' */
 
-@property (strong, nonatomic) NSString *host;  // Domain/IP
-@property (nonatomic) UInt16 port;             // default: 9394
+void MKMInitializeBroadcastStationIdentifiers(void) {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        
+        MKMAnyStation    = BroadcastIDCreate(@"station",  MKMAnywhere);
+        MKMEveryStations = BroadcastIDCreate(@"stations", MKMEverywhere);
+
+    });
+}
+
+__attribute__((constructor))
+static void autoInitializeStationIdentifiers(void) {
+    MKMInitializeBroadcastStationIdentifiers();
+}
+
+@interface DIMStation () {
+    
+    NSString *_host;
+    UInt16 _port;
+}
+
+// protected
+@property (nonatomic, strong, nullable) id<MKMUser> user;
+
+@property (strong, nonatomic, nullable) NSString *host;  // Domain/IP
+@property (nonatomic) UInt16 port;                       // default: 9394
+
+@property (strong, nonatomic, nullable) id<MKMID> provider;
 
 @end
 
@@ -52,7 +85,7 @@
 
 - (instancetype)init {
     NSAssert(false, @"DON'T call me");
-    id<MKMID> ID = MKMAnyStation();
+    id<MKMID> ID = MKMAnyStation;
     return [self initWithID:ID];
 }
 
@@ -65,6 +98,7 @@
         self.user = [[DIMUser alloc] initWithID:ID];
         self.host = IP;
         self.port = port;
+        self.provider = nil;
     }
     return self;
 }
@@ -75,7 +109,7 @@
 }
 
 - (instancetype)initWithHost:(NSString *)IP port:(UInt16)port {
-    return [self initWithID:MKMAnyStation() host:IP port:port];
+    return [self initWithID:MKMAnyStation host:IP port:port];
 }
 
 - (id)copyWithZone:(nullable NSZone *)zone {
@@ -84,12 +118,13 @@
         server.user = _user;
         server.host = _host;
         server.port = _port;
+        server.provider = _provider;
     }
     return server;
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"<%@ ID=\"%@\" host=\"%@\" port=%u />", [self class], [self ID], [self host], [self port]];
+    return [NSString stringWithFormat:@"<%@ ID=\"%@\" host=\"%@\" port=%u />", [self class], [self identifier], [self host], [self port]];
 }
 
 - (NSString *)debugDescription {
@@ -102,14 +137,14 @@
     } else if ([other conformsToProtocol:@protocol(MKMUser)]) {
         return [_user isEqual:other];
     } else if ([other conformsToProtocol:@protocol(MKMID)]) {
-        return [_user.ID isEqual:other];
+        return [_user.identifier isEqual:other];
     }
     return NO;
 }
 
 - (id<MKMDocument>)profile {
     NSArray<id<MKMDocument>> *docs = [self documents];
-    return [DIMDocumentHelper lastDocument:docs forType:@"*"];
+    return [DIMDocumentUtils lastDocument:docs forType:@"*"];
 }
 
 - (NSString *)host {
@@ -117,7 +152,7 @@
     if (!IP) {
         id<MKMDocument> doc = [self profile];
         id str = [doc propertyForKey:@"host"];
-        _host = IP = MKMConverterGetString(str, nil);
+        _host = IP = MKConvertString(str, nil);
     }
     return IP;
 }
@@ -127,7 +162,7 @@
     if (po == 0) {
         id<MKMDocument> doc = [self profile];
         id num = [doc propertyForKey:@"port"];
-        _port = po = MKMConverterGetUnsignedShort(num, 0);
+        _port = po = MKConvertUInt16(num, 0);
     }
     return po;
 }
@@ -135,13 +170,13 @@
 - (id<MKMID>)provider {
     id<MKMDocument> doc = [self profile];
     if (doc) {
-        id ISP = [doc propertyForKey:@"ISP"];
+        id ISP = [doc propertyForKey:@"provider"];
         return MKMIDParse(ISP);
     }
     return nil;
 }
 
-- (void)setID:(id<MKMID>)ID {
+- (void)setIdentifier:(id<MKMID>)ID {
     id<MKMEntityDataSource> delegate = [self dataSource];
     id<MKMUser> inner = [[DIMUser alloc] initWithID:ID];
     [inner setDataSource:delegate];
@@ -150,24 +185,24 @@
 
 #pragma mark Entity
 
-- (id<MKMID>)ID {
-    return _user.ID;
+- (id<MKMID>)identifier {
+    return [_user identifier];
 }
 
 - (MKMEntityType)type {
-    return _user.type;
+    return [_user type];
 }
 
 - (id<MKMEntityDataSource>)dataSource {
-    return _user.dataSource;
+    return [_user dataSource];
 }
 
 - (void)setDataSource:(id<MKMEntityDataSource>)dataSource {
-    _user.dataSource = dataSource;
+    [_user setDataSource:dataSource];
 }
 
 - (id<MKMMeta>)meta {
-    return _user.meta;
+    return [_user meta];
 }
 
 - (NSArray<id<MKMDocument>> *)documents {
@@ -177,7 +212,7 @@
 #pragma mark User
 
 - (nullable id<MKMVisa>)visa {
-    return _user.visa;
+    return [_user visa];
 }
 
 - (BOOL)verifyVisa:(id<MKMVisa>)visa {
@@ -195,7 +230,7 @@
 #pragma mark Local User
 
 - (NSArray<id<MKMID>> *)contacts {
-    return _user.contacts;
+    return [_user contacts];
 }
 
 - (nullable id<MKMVisa>)signVisa:(id<MKMVisa>)visa {
@@ -211,30 +246,3 @@
 }
 
 @end
-
-#pragma mark - Broadcast IDs
-
-static id<MKMID> s_any_station = nil;
-static id<MKMID> s_every_stations = nil;
-
-id<MKMID> MKMAnyStation(void) {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        s_any_station = [[MKMID alloc] initWithString:@"station@anywhere"
-                                                 name:@"station"
-                                              address:MKMAnywhere()
-                                             terminal:nil];
-    });
-    return s_any_station;
-}
-
-id<MKMID> MKMEveryStations(void) {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        s_every_stations = [[MKMID alloc] initWithString:@"stations@everywhere"
-                                                    name:@"stations"
-                                                 address:MKMEverywhere()
-                                                terminal:nil];
-    });
-    return s_every_stations;
-}

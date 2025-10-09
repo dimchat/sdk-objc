@@ -31,7 +31,6 @@
 		E964A10E298B772000AC76F1 /* DIMRobot.h in Headers */ = {isa = PBXBuildFile; fileRef = E964A106298B771F00AC76F1 /* DIMRobot.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E964A10F298B772000AC76F1 /* DIMServiceProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = E964A107298B771F00AC76F1 /* DIMServiceProvider.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E964A110298B772000AC76F1 /* DIMStation.m in Sources */ = {isa = PBXBuildFile; fileRef = E964A108298B771F00AC76F1 /* DIMStation.m */; };
-		E964A111298B772000AC76F1 /* DIMChatroom.h in Headers */ = {isa = PBXBuildFile; fileRef = E964A109298B771F00AC76F1 /* DIMChatroom.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E964A135298BF59300AC76F1 /* DIMMessageFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = E964A133298BF59300AC76F1 /* DIMMessageFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E964A136298BF59300AC76F1 /* DIMMessageFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = E964A134298BF59300AC76F1 /* DIMMessageFactory.m */; };
 		E988C94C23F54BBE00BA5D66 /* DIMForwardContentProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = E988C94A23F54BBE00BA5D66 /* DIMForwardContentProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -60,6 +59,14 @@
 		E9BB894B2B258F26009491B0 /* DIMContentProcessorCreator.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BB89472B258F26009491B0 /* DIMContentProcessorCreator.m */; };
 		E9BB894E2B258F32009491B0 /* DIMArchivist.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BB894C2B258F32009491B0 /* DIMArchivist.m */; };
 		E9BB894F2B258F32009491B0 /* DIMArchivist.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BB894D2B258F32009491B0 /* DIMArchivist.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E9E2F6B12E982BF70060886C /* DIMGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = E9E2F6AC2E982BF70060886C /* DIMGroup.m */; };
+		E9E2F6B22E982BF70060886C /* DIMAccountUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = E9E2F6AE2E982BF70060886C /* DIMAccountUtils.m */; };
+		E9E2F6B32E982BF70060886C /* DIMUser.m in Sources */ = {isa = PBXBuildFile; fileRef = E9E2F6B02E982BF70060886C /* DIMUser.m */; };
+		E9E2F6B42E982BF70060886C /* DIMEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = E9E2F6AA2E982BF70060886C /* DIMEntity.m */; };
+		E9E2F6B52E982BF70060886C /* DIMAccountUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = E9E2F6AD2E982BF70060886C /* DIMAccountUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E9E2F6B62E982BF70060886C /* DIMEntity.h in Headers */ = {isa = PBXBuildFile; fileRef = E9E2F6A92E982BF70060886C /* DIMEntity.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E9E2F6B72E982BF70060886C /* DIMGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = E9E2F6AB2E982BF70060886C /* DIMGroup.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E9E2F6B82E982BF70060886C /* DIMUser.h in Headers */ = {isa = PBXBuildFile; fileRef = E9E2F6AF2E982BF70060886C /* DIMUser.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -113,7 +120,6 @@
 		E964A106298B771F00AC76F1 /* DIMRobot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMRobot.h; sourceTree = "<group>"; };
 		E964A107298B771F00AC76F1 /* DIMServiceProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMServiceProvider.h; sourceTree = "<group>"; };
 		E964A108298B771F00AC76F1 /* DIMStation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMStation.m; sourceTree = "<group>"; };
-		E964A109298B771F00AC76F1 /* DIMChatroom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMChatroom.h; sourceTree = "<group>"; };
 		E964A133298BF59300AC76F1 /* DIMMessageFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMMessageFactory.h; sourceTree = "<group>"; };
 		E964A134298BF59300AC76F1 /* DIMMessageFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMMessageFactory.m; sourceTree = "<group>"; };
 		E988C94A23F54BBE00BA5D66 /* DIMForwardContentProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMForwardContentProcessor.h; sourceTree = "<group>"; };
@@ -142,6 +148,14 @@
 		E9BB89472B258F26009491B0 /* DIMContentProcessorCreator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMContentProcessorCreator.m; sourceTree = "<group>"; };
 		E9BB894C2B258F32009491B0 /* DIMArchivist.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMArchivist.m; sourceTree = "<group>"; };
 		E9BB894D2B258F32009491B0 /* DIMArchivist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMArchivist.h; sourceTree = "<group>"; };
+		E9E2F6A92E982BF70060886C /* DIMEntity.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMEntity.h; sourceTree = "<group>"; };
+		E9E2F6AA2E982BF70060886C /* DIMEntity.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMEntity.m; sourceTree = "<group>"; };
+		E9E2F6AB2E982BF70060886C /* DIMGroup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMGroup.h; sourceTree = "<group>"; };
+		E9E2F6AC2E982BF70060886C /* DIMGroup.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMGroup.m; sourceTree = "<group>"; };
+		E9E2F6AD2E982BF70060886C /* DIMAccountUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMAccountUtils.h; sourceTree = "<group>"; };
+		E9E2F6AE2E982BF70060886C /* DIMAccountUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMAccountUtils.m; sourceTree = "<group>"; };
+		E9E2F6AF2E982BF70060886C /* DIMUser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMUser.h; sourceTree = "<group>"; };
+		E9E2F6B02E982BF70060886C /* DIMUser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMUser.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -271,13 +285,20 @@
 		E964A101298B771F00AC76F1 /* mkm */ = {
 			isa = PBXGroup;
 			children = (
+				E9E2F6A92E982BF70060886C /* DIMEntity.h */,
+				E9E2F6AA2E982BF70060886C /* DIMEntity.m */,
+				E9E2F6AF2E982BF70060886C /* DIMUser.h */,
+				E9E2F6B02E982BF70060886C /* DIMUser.m */,
+				E9E2F6AB2E982BF70060886C /* DIMGroup.h */,
+				E9E2F6AC2E982BF70060886C /* DIMGroup.m */,
 				E964A107298B771F00AC76F1 /* DIMServiceProvider.h */,
 				E964A102298B771F00AC76F1 /* DIMServiceProvider.m */,
 				E964A104298B771F00AC76F1 /* DIMStation.h */,
 				E964A108298B771F00AC76F1 /* DIMStation.m */,
 				E964A106298B771F00AC76F1 /* DIMRobot.h */,
 				E964A103298B771F00AC76F1 /* DIMRobot.m */,
-				E964A109298B771F00AC76F1 /* DIMChatroom.h */,
+				E9E2F6AD2E982BF70060886C /* DIMAccountUtils.h */,
+				E9E2F6AE2E982BF70060886C /* DIMAccountUtils.m */,
 			);
 			path = mkm;
 			sourceTree = "<group>";
@@ -319,12 +340,15 @@
 				E964A10F298B772000AC76F1 /* DIMServiceProvider.h in Headers */,
 				E964A10C298B772000AC76F1 /* DIMStation.h in Headers */,
 				E9BB89492B258F26009491B0 /* DIMContentProcessorCreator.h in Headers */,
+				E9E2F6B52E982BF70060886C /* DIMAccountUtils.h in Headers */,
+				E9E2F6B62E982BF70060886C /* DIMEntity.h in Headers */,
+				E9E2F6B72E982BF70060886C /* DIMGroup.h in Headers */,
+				E9E2F6B82E982BF70060886C /* DIMUser.h in Headers */,
 				E9BB892C2B258ED1009491B0 /* DIMTwinsHelper.h in Headers */,
 				E95965572391609600DAA870 /* DIMMetaCommandProcessor.h in Headers */,
 				E95D4A5E28A19AA200523488 /* DIMCustomizedContentProcessor.h in Headers */,
 				E9BB89362B258EE6009491B0 /* DIMCheckers.h in Headers */,
 				E9BB89432B258F0C009491B0 /* DIMInstantMessagePacker.h in Headers */,
-				E964A111298B772000AC76F1 /* DIMChatroom.h in Headers */,
 				E9B0CE4B259208FD0082BCFD /* DIMMessagePacker.h in Headers */,
 				E9BB89482B258F26009491B0 /* DIMBaseProcessor.h in Headers */,
 				E9BB894F2B258F32009491B0 /* DIMArchivist.h in Headers */,
@@ -459,6 +483,10 @@
 				E95D4A5F28A19AA200523488 /* DIMCustomizedContentProcessor.m in Sources */,
 				E959655C239160A400DAA870 /* DIMDocumentCommandProcessor.m in Sources */,
 				E919B0172390FAA1004F7FF9 /* DIMFacebook.m in Sources */,
+				E9E2F6B12E982BF70060886C /* DIMGroup.m in Sources */,
+				E9E2F6B22E982BF70060886C /* DIMAccountUtils.m in Sources */,
+				E9E2F6B32E982BF70060886C /* DIMUser.m in Sources */,
+				E9E2F6B42E982BF70060886C /* DIMEntity.m in Sources */,
 				E9BB89312B258ED1009491B0 /* DIMTwinsHelper.m in Sources */,
 				E988C94D23F54BBE00BA5D66 /* DIMForwardContentProcessor.m in Sources */,
 				E9BB89402B258F0C009491B0 /* DIMReliableMessagePacker.m in Sources */,
@@ -539,7 +567,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -595,7 +623,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -618,6 +646,7 @@
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = DIMSDK/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -643,6 +672,7 @@
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = DIMSDK/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

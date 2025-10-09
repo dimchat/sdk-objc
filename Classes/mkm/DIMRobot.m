@@ -55,7 +55,7 @@
 - (id<MKMID>)provider {
     id<MKMDocument> doc = [self profile];
     if (doc) {
-        id ICP = [doc propertyForKey:@"ICP"];
+        id ICP = [doc propertyForKey:@"provider"];
         return MKMIDParse(ICP);
     }
     return nil;

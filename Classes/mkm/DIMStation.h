@@ -35,9 +35,43 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import <DIMCore/DIMCore.h>
+#import <DIMSDK/DIMUser.h>
 
 NS_ASSUME_NONNULL_BEGIN
+
+//
+//  Broadcast IDs
+//
+
+FOUNDATION_EXPORT id<MKMID> MKMAnyStation;     // "station@anywhere"
+FOUNDATION_EXPORT id<MKMID> MKMEveryStations;  // "stations@everywhere"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/**
+ * @brief Initializes broadcast IDs.
+ *
+ * This function is designed to be automatically called before main()
+ * using the GCC/Clang `__attribute__((constructor))` extension.
+ *
+ * Internally, it employs `dispatch_once` to ensure that the actual
+ * initialization logic (creating NSString objects) is executed
+ * exactly once across the application's lifecycle, and in a thread-safe manner.
+ *
+ * Manual invocation of this function is generally NOT required,
+ * as it's automatically handled at program startup. It is primarily
+ * exposed for extreme edge cases where the automatic invocation might
+ * be circumvented (e.g., in highly specialized non-standard environments),
+ * or for specific debugging/testing scenarios if necessary.
+ * Multiple manual calls will still only result in a single initialization.
+ */
+void MKMInitializeBroadcastStationIdentifiers(void);
+
+#ifdef __cplusplus
+} /* end of extern "C" */
+#endif
 
 /**
  *  DIM Server
@@ -45,16 +79,16 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @protocol MKMStation <MKMUser>
 
-@property (strong, nonatomic) id<MKMID> ID;
-
 // Station Document
 @property (readonly, strong, nonatomic, nullable) __kindof id<MKMDocument> profile;
 
-@property (readonly, strong, nonatomic) NSString *host;  // Domain/IP
+@property (readonly, strong, nonatomic, nullable) NSString *host;  // Domain/IP
 @property (readonly, nonatomic) UInt16 port;             // default: 9394
 
 // Provider: ISP (Station group)
-@property (readonly, nonatomic) id<MKMID> provider;
+@property (readonly, strong, nonatomic, nullable) id<MKMID> provider;
+
+- (void)setIdentifier:(id<MKMID>)sid;
 
 @end
 
@@ -70,18 +104,5 @@ NS_DESIGNATED_INITIALIZER;
 - (instancetype)initWithHost:(NSString *)IP port:(UInt16)port;
 
 @end
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-// Broadcast IDs
-
-id<MKMID> MKMAnyStation(void);
-id<MKMID> MKMEveryStations(void);
-
-#ifdef __cplusplus
-} /* end of extern "C" */
-#endif
 
 NS_ASSUME_NONNULL_END
