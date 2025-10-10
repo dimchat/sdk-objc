@@ -52,9 +52,9 @@
 }
 
 /* designated initializer */
-- (instancetype)initWithDelegate:(id<DKDSecureMessageDelegate>)delegate {
+- (instancetype)initWithDelegate:(id<DKDSecureMessageDelegate>)messenger {
     if (self = [super init]) {
-        self.delegate = delegate;
+        self.delegate = messenger;
     }
     return self;
 }
@@ -66,7 +66,8 @@
 - (nullable id<DKDInstantMessage>)decryptMessage:(id<DKDSecureMessage>)sMsg
                                      forReceiver:(id<MKMID>)receiver {
     NSAssert([receiver isUser], @"receiver error: %@", receiver);
-    id<DKDSecureMessageDelegate> delegate = [self delegate];
+    id<DKDSecureMessageDelegate> transceiver = [self delegate];
+    NSAssert(transceiver, @"should not happen");
     
     //
     //  1. Decode 'message.key' to encrypted symmetric key data
@@ -78,9 +79,9 @@
         //
         //  2. Decrypt 'message.key' with receiver's private key
         //
-        keyData = [delegate message:sMsg
-                         decryptKey:encryptedKey
-                        forReceiver:receiver];
+        keyData = [transceiver message:sMsg
+                            decryptKey:encryptedKey
+                           forReceiver:receiver];
         if (!keyData) {
             // A: my visa updated but the sender doesn't got the new one;
             // B: key data error.
@@ -96,7 +97,7 @@
     //  3. Deserialize message key from data (JsON / ProtoBuf / ...)
     //     (if key is empty, means it should be reused, get it from key cache)
     //
-    id<MKMSymmetricKey> password = [delegate message:sMsg deserializeKey:keyData];
+    id<MKSymmetricKey> password = [transceiver message:sMsg deserializeKey:keyData];
     if (!password) {
         // A: key data is empty, and cipher key not found from local storage;
         // B: key data error.
@@ -118,9 +119,9 @@
     //
     //  5. Decrypt 'message.data' with symmetric key
     //
-    NSData *body = [delegate message:sMsg
-                      decryptContent:ciphertext
-                             withKey:password];
+    NSData *body = [transceiver message:sMsg
+                         decryptContent:ciphertext
+                                withKey:password];
     if (!body) {
         // A: password is a reused key loaded from local storage, but it's expired;
         // B: key error.
@@ -134,9 +135,9 @@
     //
     //  6. Deserialize message content from data (JsON / ProtoBuf / ...)
     //
-    id<DKDContent> content = [delegate message:sMsg
-                            deserializeContent:body
-                                       withKey:password];
+    id<DKDContent> content = [transceiver message:sMsg
+                               deserializeContent:body
+                                          withKey:password];
     if (!content) {
         NSAssert(false, @"failed to deserialize content: %lu byte(s), %@ => %@, %@", body.length, sMsg.sender, receiver, sMsg.group);
         return nil;
@@ -163,7 +164,8 @@
 @implementation DIMSecureMessagePacker (Signature)
 
 - (id<DKDReliableMessage>)signMessage:(id<DKDSecureMessage>)sMsg {
-    id<DKDSecureMessageDelegate> delegate = [self delegate];
+    id<DKDSecureMessageDelegate> transceiver = [self delegate];
+    NSAssert(transceiver, @"should not happen");
     
     //
     //  0. decode message data
@@ -174,13 +176,13 @@
     //
     //  1. Sign 'message.data' with sender's private key
     //
-    NSData *signature = [delegate message:sMsg signData:ciphertext];
+    NSData *signature = [transceiver message:sMsg signData:ciphertext];
     NSAssert([signature length] > 0, @"failed to sign message: %@ => %@, %@", sMsg.sender, sMsg.receiver, sMsg.group);
     
     //
     //  2. Encode 'message.signature' to String (Base64)
     //
-    NSObject *base64 = MKMTransportableDataEncode(signature);
+    NSObject *base64 = MKTransportableDataEncode(signature);
     //NSAssert([(NSString *)base64 length] > 0, @"failed to encode signature: %lu byte(s), %@ => %@, %@", signature.length, sMsg.sender, sMsg.receiver, sMsg.group);
     
     // OK, pack message

@@ -52,9 +52,9 @@
 }
 
 /* designated initializer */
-- (instancetype)initWithDelegate:(id<DKDInstantMessageDelegate>)delegate {
+- (instancetype)initWithDelegate:(id<DKDInstantMessageDelegate>)messenger {
     if (self = [super init]) {
-        self.delegate = delegate;
+        self.delegate = messenger;
     }
     return self;
 }
@@ -64,32 +64,33 @@
 @implementation DIMInstantMessagePacker (Encryption)
 
 - (nullable id<DKDSecureMessage>)encryptMessage:(id<DKDInstantMessage>)iMsg
-                                        withKey:(id<MKMSymmetricKey>)password {
+                                        withKey:(id<MKSymmetricKey>)password {
     NSArray *members = nil;
     return [self encryptMessage:iMsg withKey:password forMembers:members];
 }
 
 - (nullable id<DKDSecureMessage>)encryptMessage:(id<DKDInstantMessage>)iMsg
-                                        withKey:(id<MKMSymmetricKey>)password
+                                        withKey:(id<MKSymmetricKey>)password
                                      forMembers:(NSArray<id<MKMID>> *)members {
     // TODO: check attachment for File/Image/Audio/Video message content
     //      (do it by application)
-    id<DKDInstantMessageDelegate> delegate = [self delegate];
+    id<DKDInstantMessageDelegate> transceiver = [self delegate];
+    NSAssert(transceiver, @"should not happen");
 
     //
     //  1. Serialize 'message.content' to data (JsON / ProtoBuf / ...)
     //
-    NSData *body = [delegate message:iMsg
-                    serializeContent:iMsg.content
-                             withKey:password];
+    NSData *body = [transceiver message:iMsg
+                       serializeContent:iMsg.content
+                                withKey:password];
     NSAssert([body length] > 0, @"failed to serialize content: %@", iMsg.content);
     
     //
     //  2. Encrypt content data to 'message.data' with symmetric key
     //
-    NSData *ciphertext = [delegate message:iMsg
-                            encryptContent:body
-                                   withKey:password];
+    NSData *ciphertext = [transceiver message:iMsg
+                               encryptContent:body
+                                      withKey:password];
     NSAssert([ciphertext length] > 0, @"failed to encrypt content with key: %@", password);
 
     //
@@ -99,11 +100,11 @@
     if ([DIMMessage isBroadcast:iMsg]) {
         // broadcast message content will not be encrypted (just encoded to JsON),
         // so no need to encode to Base64 here
-        encodedData = MKMUTF8Decode(ciphertext);
+        encodedData = MKUTF8Decode(ciphertext);
     } else {
         // message content had been encrypted by a symmetric key,
         // so the data should be encoded here (with algorithm 'base64' as default).
-        encodedData = MKMTransportableDataEncode(ciphertext);
+        encodedData = MKTransportableDataEncode(ciphertext);
     }
     NSAssert(encodedData, @"failed to encode content data: %@", ciphertext);
     
@@ -115,7 +116,7 @@
     //
     //  4. Serialize message key to data (JsON / ProtoBuf / ...)
     //
-    NSData *pwd = [delegate message:iMsg serializeKey:password];
+    NSData *pwd = [transceiver message:iMsg serializeKey:password];
     if (!pwd) {
         // A) broadcast message has no key
         // B) reused key
@@ -131,7 +132,7 @@
         //
         //  5. Encrypt key data to 'message.key/keys' with receiver's public key
         //
-        encryptedKey = [delegate message:iMsg encryptKey:pwd forReceiver:receiver];
+        encryptedKey = [transceiver message:iMsg encryptKey:pwd forReceiver:receiver];
         if (!encryptedKey) {
             // public key for encryption not found
             // TODO: suspend this message for waiting receiver's visa
@@ -140,7 +141,7 @@
         //
         //  6. Encode message key to String (Base64)
         //
-        encodedKey = MKMTransportableDataEncode(encryptedKey);
+        encodedKey = MKTransportableDataEncode(encryptedKey);
         NSAssert(encodedKey, @"failed to encode key data: %@", encryptedKey);
         // insert as 'key'
         [info setObject:encodedKey forKey:@"key"];
@@ -152,7 +153,7 @@
             //
             //  5. Encrypt key data to 'message.key/keys' with receiver's public key
             //
-            encryptedKey = [delegate message:iMsg encryptKey:pwd forReceiver:receiver];
+            encryptedKey = [transceiver message:iMsg encryptKey:pwd forReceiver:receiver];
             if (!encryptedKey) {
                 // public key for member not found
                 // TODO: suspend this message for waiting member's visa
@@ -161,7 +162,7 @@
             //
             //  6. Encode message key to String (Base64)
             //
-            encodedKey = MKMTransportableDataEncode(encryptedKey);
+            encodedKey = MKTransportableDataEncode(encryptedKey);
             NSAssert(encodedKey, @"failed to encode key data: %@", encryptedKey);
             // insert to 'message.keys' with member ID
             [keys setObject:encodedKey forKey:receiver.string];

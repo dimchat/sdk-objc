@@ -28,74 +28,61 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMSecureMessagePacker.h
+//  DIMInstantMessagePacker.h
 //  DIMCore
 //
 //  Created by Albert Moky on 2018/9/30.
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import <DIMCore/DIMCore.h>
+#import "DKDMessageDelegates.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMSecureMessagePacker : NSObject
+@interface DIMInstantMessagePacker : NSObject
 
-@property (readonly, weak, nonatomic) id<DKDSecureMessageDelegate> delegate;
+@property (readonly, weak, nonatomic) id<DKDInstantMessageDelegate> delegate;
 
-- (instancetype)initWithDelegate:(id<DKDSecureMessageDelegate>)delegate
+- (instancetype)initWithDelegate:(id<DKDInstantMessageDelegate>)messenger
 NS_DESIGNATED_INITIALIZER;
 
 @end
 
 /*
- *  Decrypt the Secure Message to Instant Message
- *
- *    +----------+      +----------+
- *    | sender   |      | sender   |
- *    | receiver |      | receiver |
- *    | time     |  ->  | time     |
- *    |          |      |          |  1. PW      = decrypt(key, receiver.SK)
- *    | data     |      | content  |  2. content = decrypt(data, PW)
- *    | key/keys |      +----------+
- *    +----------+
- */
-@interface DIMSecureMessagePacker (Decryption)
-
-/**
- *  Decrypt message, replace encrypted 'data' with 'content' field
- *
- * @param sMsg     - encrypted message
- * @param receiver - actual receiver (local user)
- * @return InstantMessage object
- */
-- (nullable id<DKDInstantMessage>)decryptMessage:(id<DKDSecureMessage>)sMsg
-                                     forReceiver:(id<MKMID>)receiver;
-
-@end
-
-/*
- *  Sign the Secure Message to Reliable Message
+ *  Encrypt the Instant Message to Secure Message
  *
  *    +----------+      +----------+
  *    | sender   |      | sender   |
  *    | receiver |      | receiver |
  *    | time     |  ->  | time     |
  *    |          |      |          |
- *    | data     |      | data     |
- *    | key/keys |      | key/keys |
- *    +----------+      | signature|  1. signature = sign(data, sender.SK)
+ *    | content  |      | data     |  1. data = encrypt(content, PW)
+ *    +----------+      | key/keys |  2. key  = encrypt(PW, receiver.PK)
  *                      +----------+
  */
-@interface DIMSecureMessagePacker (Signature)
+@interface DIMInstantMessagePacker (Encryption)
 
 /**
- *  Sign message.data, add 'signature' field
+ *  1. Encrypt personal message, replace 'content' field with encrypted 'data'
  *
- * @param sMsg - encrypted message
- * @return ReliableMessage object
+ * @param iMsg     - plain message
+ * @param password - symmetric key
+ * @return SecureMessage object, null on visa not found
  */
-- (id<DKDReliableMessage>)signMessage:(id<DKDSecureMessage>)sMsg;
+- (nullable id<DKDSecureMessage>)encryptMessage:(id<DKDInstantMessage>)iMsg
+                                        withKey:(id<MKMSymmetricKey>)password;
+
+/**
+ *  2. Encrypt group message, replace 'content' field with encrypted 'data'
+ *
+ * @param iMsg     - plain message
+ * @param password - symmetric key
+ * @param members  - group members for group message
+ * @return SecureMessage object, null on visa not found
+ */
+- (nullable id<DKDSecureMessage>)encryptMessage:(id<DKDInstantMessage>)iMsg
+                                        withKey:(id<MKMSymmetricKey>)password
+                                     forMembers:(NSArray<id<MKMID>> *)members;
 
 @end
 

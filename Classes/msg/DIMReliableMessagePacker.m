@@ -52,9 +52,9 @@
 }
 
 /* designated initializer */
-- (instancetype)initWithDelegate:(id<DKDReliableMessageDelegate>)delegate {
+- (instancetype)initWithDelegate:(id<DKDReliableMessageDelegate>)messenger {
     if (self = [super init]) {
-        self.delegate = delegate;
+        self.delegate = messenger;
     }
     return self;
 }
@@ -64,7 +64,8 @@
 @implementation DIMReliableMessagePacker (Verification)
 
 - (nullable id<DKDSecureMessage>)verifyMessage:(id<DKDReliableMessage>)rMsg {
-    id<DKDReliableMessageDelegate> delegate = [self delegate];
+    id<DKDReliableMessageDelegate> transceiver = [self delegate];
+    NSAssert(transceiver, @"should not happen");
     
     //
     //  0. Decode 'message.data' to encrypted content data
@@ -87,9 +88,9 @@
     //
     //  2. Verify the message data and signature with sender's public key
     //
-    BOOL ok = [delegate message:rMsg
-                     verifyData:ciphertext
-                  withSignature:signature];
+    BOOL ok = [transceiver message:rMsg
+                        verifyData:ciphertext
+                     withSignature:signature];
     if (!ok) {
         NSAssert(false, @"message signature not match: %@ => %@, %@", rMsg.sender, rMsg.receiver, rMsg.group);
         return nil;
@@ -102,28 +103,3 @@
 }
 
 @end
-
-#pragma mark - MessageHelper
-
-id<MKMMeta> DIMMessageGetMeta(id<DKDMessage> msg) {
-    id meta = [msg objectForKey:@"meta"];
-    return MKMMetaParse(meta);
-}
-
-void DIMMessageSetMeta(id<MKMMeta> meta, id<DKDMessage> msg) {
-    [msg setDictionary:meta forKey:@"meta"];
-}
-
-id<MKMVisa> DIMMessageGetVisa(id<DKDMessage> msg) {
-    id visa = [msg objectForKey:@"visa"];
-    id doc = MKMDocumentParse(visa);
-    if ([doc conformsToProtocol:@protocol(MKMVisa)]) {
-        return doc;
-    }
-    assert(!doc);
-    return nil;
-}
-
-void DIMMessageSetVisa(id<MKMVisa> visa, id<DKDMessage> msg) {
-    [msg setDictionary:visa forKey:@"visa"];
-}

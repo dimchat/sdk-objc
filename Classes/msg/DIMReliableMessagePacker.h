@@ -28,61 +28,48 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMInstantMessagePacker.h
+//  DIMReliableMessagePacker.h
 //  DIMCore
 //
 //  Created by Albert Moky on 2018/9/30.
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import <DIMCore/DIMCore.h>
+#import "DKDMessageDelegates.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMInstantMessagePacker : NSObject
+@interface DIMReliableMessagePacker : NSObject
 
-@property (readonly, weak, nonatomic) id<DKDInstantMessageDelegate> delegate;
+@property (readonly, weak, nonatomic) id<DKDReliableMessageDelegate> delegate;
 
-- (instancetype)initWithDelegate:(id<DKDInstantMessageDelegate>)delegate
+- (instancetype)initWithDelegate:(id<DKDReliableMessageDelegate>)messenger
 NS_DESIGNATED_INITIALIZER;
 
 @end
 
 /*
- *  Encrypt the Instant Message to Secure Message
+ *  Verify the Reliable Message to Secure Message
  *
  *    +----------+      +----------+
  *    | sender   |      | sender   |
  *    | receiver |      | receiver |
  *    | time     |  ->  | time     |
  *    |          |      |          |
- *    | content  |      | data     |  1. data = encrypt(content, PW)
- *    +----------+      | key/keys |  2. key  = encrypt(PW, receiver.PK)
- *                      +----------+
+ *    | data     |      | data     |  1. verify(data, signature, sender.PK)
+ *    | key/keys |      | key/keys |
+ *    | signature|      +----------+
+ *    +----------+
  */
-@interface DIMInstantMessagePacker (Encryption)
+@interface DIMReliableMessagePacker (Verification)
 
 /**
- *  1. Encrypt personal message, replace 'content' field with encrypted 'data'
+ *  Verify 'data' and 'signature' field with sender's public key
  *
- * @param iMsg     - plain message
- * @param password - symmetric key
- * @return SecureMessage object, null on visa not found
+ * @param rMsg - received message
+ * @return SecureMessage object
  */
-- (nullable id<DKDSecureMessage>)encryptMessage:(id<DKDInstantMessage>)iMsg
-                                        withKey:(id<MKMSymmetricKey>)password;
-
-/**
- *  2. Encrypt group message, replace 'content' field with encrypted 'data'
- *
- * @param iMsg     - plain message
- * @param password - symmetric key
- * @param members  - group members for group message
- * @return SecureMessage object, null on visa not found
- */
-- (nullable id<DKDSecureMessage>)encryptMessage:(id<DKDInstantMessage>)iMsg
-                                        withKey:(id<MKMSymmetricKey>)password
-                                     forMembers:(NSArray<id<MKMID>> *)members;
+- (nullable id<DKDSecureMessage>)verifyMessage:(id<DKDReliableMessage>)rMsg;
 
 @end
 

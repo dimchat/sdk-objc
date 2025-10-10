@@ -28,75 +28,75 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMReliableMessagePacker.h
+//  DIMSecureMessagePacker.h
 //  DIMCore
 //
 //  Created by Albert Moky on 2018/9/30.
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import <DIMCore/DIMCore.h>
+#import "DKDMessageDelegates.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMReliableMessagePacker : NSObject
+@interface DIMSecureMessagePacker : NSObject
 
-@property (readonly, weak, nonatomic) id<DKDReliableMessageDelegate> delegate;
+@property (readonly, weak, nonatomic) id<DKDSecureMessageDelegate> delegate;
 
-- (instancetype)initWithDelegate:(id<DKDReliableMessageDelegate>)delegate
+- (instancetype)initWithDelegate:(id<DKDSecureMessageDelegate>)messenger
 NS_DESIGNATED_INITIALIZER;
 
 @end
 
 /*
- *  Verify the Reliable Message to Secure Message
+ *  Decrypt the Secure Message to Instant Message
+ *
+ *    +----------+      +----------+
+ *    | sender   |      | sender   |
+ *    | receiver |      | receiver |
+ *    | time     |  ->  | time     |
+ *    |          |      |          |  1. PW      = decrypt(key, receiver.SK)
+ *    | data     |      | content  |  2. content = decrypt(data, PW)
+ *    | key/keys |      +----------+
+ *    +----------+
+ */
+@interface DIMSecureMessagePacker (Decryption)
+
+/**
+ *  Decrypt message, replace encrypted 'data' with 'content' field
+ *
+ * @param sMsg     - encrypted message
+ * @param receiver - actual receiver (local user)
+ * @return InstantMessage object
+ */
+- (nullable id<DKDInstantMessage>)decryptMessage:(id<DKDSecureMessage>)sMsg
+                                     forReceiver:(id<MKMID>)receiver;
+
+@end
+
+/*
+ *  Sign the Secure Message to Reliable Message
  *
  *    +----------+      +----------+
  *    | sender   |      | sender   |
  *    | receiver |      | receiver |
  *    | time     |  ->  | time     |
  *    |          |      |          |
- *    | data     |      | data     |  1. verify(data, signature, sender.PK)
+ *    | data     |      | data     |
  *    | key/keys |      | key/keys |
- *    | signature|      +----------+
- *    +----------+
+ *    +----------+      | signature|  1. signature = sign(data, sender.SK)
+ *                      +----------+
  */
-@interface DIMReliableMessagePacker (Verification)
+@interface DIMSecureMessagePacker (Signature)
 
 /**
- *  Verify 'data' and 'signature' field with sender's public key
+ *  Sign message.data, add 'signature' field
  *
- * @param rMsg - received message
- * @return SecureMessage object
+ * @param sMsg - encrypted message
+ * @return ReliableMessage object
  */
-- (nullable id<DKDSecureMessage>)verifyMessage:(id<DKDReliableMessage>)rMsg;
+- (id<DKDReliableMessage>)signMessage:(id<DKDSecureMessage>)sMsg;
 
 @end
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#pragma mark MessageHelper
-
-/**
- *  Sender's Meta
- *  ~~~~~~~~~~~~~
- *  Extends for the first message package of 'Handshake' protocol.
- */
-id<MKMMeta> DIMMessageGetMeta(id<DKDMessage> msg);
-void DIMMessageSetMeta(id<MKMMeta> meta, id<DKDMessage> msg);
-
-/**
- *  Sender's Visa
- *  ~~~~~~~~~~~~~
- *  Extends for the first message package of 'Handshake' protocol.
- */
-id<MKMVisa> DIMMessageGetVisa(id<DKDMessage> msg);
-void DIMMessageSetVisa(id<MKMVisa> visa, id<DKDMessage> msg);
-
-#ifdef __cplusplus
-} /* end of extern "C" */
-#endif
 
 NS_ASSUME_NONNULL_END

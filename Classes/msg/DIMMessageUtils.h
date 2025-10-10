@@ -1,13 +1,13 @@
 // license: https://mit-license.org
 //
-//  DIM-SDK : Decentralized Instant Messaging Software Development Kit
+//  Dao-Ke-Dao: Universal Message Module
 //
-//                               Written in 2023 by Moky <albert.moky@gmail.com>
+//                               Written in 2025 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2023 Albert Moky
+// Copyright (c) 2025 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,49 +28,42 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMMessageFactory.h
+//  DIMMessageUtils.h
 //  DIMSDK
 //
-//  Created by Albert Moky on 2023/2/2.
-//  Copyright © 2023 Albert Moky. All rights reserved.
+//  Created by Albert Moky on 2025/10/11.
+//  Copyright © 2025 Albert Moky. All rights reserved.
 //
 
-#import <DIMCore/DIMCore.h>
+#import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMEnvelopeFactory : NSObject <DKDEnvelopeFactory>
+@protocol MKMMeta;
+@protocol MKMVisa;
+
+@protocol DKDMessage;
+
+/// 1. [Meta Protocol]
+/// 2. [Visa Protocol]
+@interface DIMMessageUtils : NSObject
+
+///  Sender's Meta
+///  ~~~~~~~~~~~~~
+///  Extends for the first message package of 'Handshake' protocol.
+
++ (nullable __kindof id<MKMMeta>)metaInMessage:(id<DKDMessage>)msg;
+
++ (void)message:(id<DKDMessage>)msg setMeta:(id<MKMMeta>)meta;
+
+///  Sender's Visa
+///  ~~~~~~~~~~~~~
+///  Extends for the first message package of 'Handshake' protocol.
+
++ (nullable __kindof id<MKMVisa>)visaInMessage:(id<DKDMessage>)msg;
+
++ (void)message:(id<DKDMessage>)msg setVisa:(id<MKMVisa>)visa;
 
 @end
-
-@interface DIMInstantMessageFactory : NSObject <DKDInstantMessageFactory>
-
-@end
-
-@interface DIMSecureMessageFactory : NSObject <DKDSecureMessageFactory>
-
-@end
-
-@interface DIMReliableMessageFactory : NSObject <DKDReliableMessageFactory>
-
-@end
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-/**
- *  Register Core Message Factories
- */
-void DIMRegisterMessageFactories(void);
-
-/**
- *  Register All Factories (messages, contents & commands)
- */
-void DIMRegisterAllFactories(void);
-
-#ifdef __cplusplus
-} /* end of extern "C" */
-#endif
 
 NS_ASSUME_NONNULL_END
