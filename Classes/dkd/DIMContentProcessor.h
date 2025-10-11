@@ -35,7 +35,7 @@
 //  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
-#import <DIMSDK/DIMTwinsHelper.h>
+#import <DIMCore/DIMCore.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -69,17 +69,17 @@ NS_ASSUME_NONNULL_BEGIN
  *  @param type - content type
  *  @return ContentProcessor
  */
-- (id<DIMContentProcessor>)createContentProcessor:(DKDContentType)type;
+- (nullable id<DIMContentProcessor>)createContentProcessor:(NSString *)type;
 
 /**
  *  Create command processor with name
  *
- *  @param name - command name
+ *  @param cmd - command name
  *  @param msgType - content type
  *  @return CommandProcessor
  */
-- (id<DIMContentProcessor>)createCommandProcessor:(NSString *)name
-                                             type:(DKDContentType)msgType;
+- (nullable id<DIMContentProcessor>)createCommandProcessor:(NSString *)cmd
+                                                  withType:(NSString *)msgType;
 
 @end
 
@@ -95,12 +95,9 @@ NS_ASSUME_NONNULL_BEGIN
  *  @param content - content/command
  *  @return ContentProcessor
  */
-- (id<DIMContentProcessor>)getProcessor:(__kindof id<DKDContent>)content;
+- (nullable id<DIMContentProcessor>)getContentProcessor:(id<DKDContent>)content;
 
-- (id<DIMContentProcessor>)getContentProcessor:(DKDContentType)msgType;
-
-- (id<DIMContentProcessor>)getCommandProcessor:(NSString *)name
-                                          type:(DKDContentType)msgType;
+- (id<DIMContentProcessor>)getContentProcessorForType:(NSString *)msgType;
 
 @end
 
@@ -108,11 +105,9 @@ NS_ASSUME_NONNULL_BEGIN
  *  General ContentProcessor Factory
  *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
-@interface DIMContentProcessorFactory : DIMTwinsHelper <DIMContentProcessorFactory>
+@interface DIMContentProcessorFactory : NSObject <DIMContentProcessorFactory>
 
-- (instancetype)initWithFacebook:(DIMBarrack *)barrack
-                       messenger:(DIMTransceiver *)transceiver
-                         creator:(id<DIMContentProcessorCreator>)cpc
+- (instancetype)initWithCreator:(id<DIMContentProcessorCreator>)cpc
 NS_DESIGNATED_INITIALIZER;
 
 @end

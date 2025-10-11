@@ -41,7 +41,7 @@
     
     id<DIMContentProcessorCreator> _creator;
     
-    NSMutableDictionary<NSNumber *, id<DIMContentProcessor>> *_contentProcessors;
+    NSMutableDictionary<NSString *, id<DIMContentProcessor>> *_contentProcessors;
     NSMutableDictionary<NSString *, id<DIMContentProcessor>> *_commandProcessors;
 }
 
@@ -49,18 +49,15 @@
 
 @implementation DIMContentProcessorFactory
 
-- (instancetype)initWithFacebook:(DIMBarrack *)barrack
-                       messenger:(DIMTransceiver *)transceiver {
-    NSAssert(false, @"don't call me!");
+- (instancetype)init {
+    NSAssert(false, @"DON'T call me");
     id<DIMContentProcessorCreator> cpc = nil;
-    return [self initWithFacebook:barrack messenger:transceiver creator:cpc];
+    return [self initWithCreator:cpc];
 }
 
 /* designated initializer */
-- (instancetype)initWithFacebook:(DIMBarrack *)barrack
-                       messenger:(DIMTransceiver *)transceiver
-                         creator:(id<DIMContentProcessorCreator>)cpc {
-    if (self = [super initWithFacebook:barrack messenger:transceiver]) {
+- (instancetype)initWithCreator:(id<DIMContentProcessorCreator>)cpc {
+    if (self = [super init]) {
         _creator = cpc;
         _contentProcessors = [[NSMutableDictionary alloc] init];
         _commandProcessors = [[NSMutableDictionary alloc] init];
@@ -68,11 +65,12 @@
     return self;
 }
 
-- (id<DIMContentProcessor>)getProcessor:(__kindof id<DKDContent>)content {
+// Override
+- (id<DIMContentProcessor>)getContentProcessor:(id<DKDContent>)content {
     id<DIMContentProcessor> cpu;
-    DKDContentType msgType = content.type;
+    NSString *msgType = [content type];
     if ([content conformsToProtocol:@protocol(DKDCommand)]) {
-        NSString *cmd = [content cmd];
+        NSString *cmd = [(id<DKDCommand>)content cmd];
         //NSAssert([cmd length] > 0, @"command name error: %@", cmd);
         cpu = [self getCommandProcessor:cmd type:msgType];
         if (cpu) {
@@ -87,27 +85,29 @@
         }
     }
     // content processor
-    return [self getContentProcessor:msgType];
+    return [self getContentProcessorForType:msgType];
 }
 
-- (id<DIMContentProcessor>)getContentProcessor:(DKDContentType)msgType {
-    id<DIMContentProcessor> cpu = [_contentProcessors objectForKey:@(msgType)];
+// Override
+- (id<DIMContentProcessor>)getContentProcessorForType:(NSString *)msgType {
+    id<DIMContentProcessor> cpu = [_contentProcessors objectForKey:msgType];
     if (!cpu) {
         cpu = [_creator createContentProcessor:msgType];
         if (cpu) {
-            [_contentProcessors setObject:cpu forKey:@(msgType)];
+            [_contentProcessors setObject:cpu forKey:msgType];
         }
     }
     return cpu;
 }
 
-- (id<DIMContentProcessor>)getCommandProcessor:(NSString *)name
-                                          type:(DKDContentType)msgType {
-    id<DIMContentProcessor> cpu = [_commandProcessors objectForKey:name];
+// private
+- (id<DIMContentProcessor>)getCommandProcessor:(NSString *)cmd
+                                          type:(NSString *)msgType {
+    id<DIMContentProcessor> cpu = [_commandProcessors objectForKey:cmd];
     if (!cpu) {
-        cpu = [_creator createCommandProcessor:name type:msgType];
+        cpu = [_creator createCommandProcessor:cmd withType:msgType];
         if (cpu) {
-            [_commandProcessors setObject:cpu forKey:name];
+            [_commandProcessors setObject:cpu forKey:cmd];
         }
     }
     return cpu;
