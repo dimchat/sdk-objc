@@ -62,6 +62,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+#pragma mark Conveniences
+
+#define DIMMetaMatchID(ID, meta) [DIMMetaUtils meta:(meta) matchIdentifier:(ID)]
+#define DIMMetaMatchPK(PK, meta) [DIMMetaUtils meta:(meta) matchPublicKey:(PK)]
+
+#pragma mark -
+
 @interface DIMDocumentUtils : NSObject
 
 + (nullable NSString *)getDocumentType:(id<MKMDocument>)document;

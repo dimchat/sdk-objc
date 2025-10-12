@@ -36,6 +36,7 @@
 //
 
 #import <DIMSDK/DIMContentProcessor.h>
+#import <DIMSDK/DIMTwinsHelper.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -46,6 +47,32 @@ NS_ASSUME_NONNULL_BEGIN
 @interface DIMContentProcessor : DIMTwinsHelper <DIMContentProcessor>
 
 @end
+
+@interface DIMContentProcessor (Convenience)
+
+// protected
+- (NSArray<id<DKDReceiptCommand>> *)respondReceipt:(NSString *)text
+                                          envelope:(id<DKDEnvelope>)head
+                                           content:(nullable id<DKDContent>)body
+                                             extra:(nullable NSDictionary *)info;
+
+/**
+ *  Create receipt command with text, original envelope, serial number & group
+ *
+ * @param text     - text message
+ * @param head     - original envelope
+ * @param body     - original content
+ * @param info     - extra info
+ * @return receipt command
+ */
++ (id<DKDReceiptCommand>)createReceipt:(NSString *)text
+                              envelope:(id<DKDEnvelope>)head
+                               content:(nullable id<DKDContent>)body
+                                 extra:(nullable NSDictionary *)info;
+
+@end
+
+#pragma mark -
 
 /*
  *  Base Command Processor

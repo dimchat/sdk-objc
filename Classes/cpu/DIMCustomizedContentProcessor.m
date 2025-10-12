@@ -37,67 +37,18 @@
 
 #import "DIMCustomizedContentProcessor.h"
 
-@implementation DIMCustomizedContentProcessor
+@implementation DIMCustomizedContentHandler
 
-//
-//  Main
-//
-- (NSArray<id<DKDContent>> *)processContent:(__kindof id<DKDContent>)content
-                                withMessage:(id<DKDReliableMessage>)rMsg {
-    NSAssert([content conformsToProtocol:@protocol(DKDCustomizedContent)],
-             @"customized content error: %@", content);
-    id<DKDCustomizedContent> customized = content;
-    // 1. check app id
-    NSString *app = [customized application];
-    NSArray *res = [self filterApplication:app
-                                   content:customized
-                                  messasge:rMsg];
-    if (res) {
-        // app id not found
-        return res;
-    }
-    // 2. get handler with module name
-    NSString *mod = [customized moduleName];
-    id<DIMCustomizedContentHandler> handler = [self fetchModule:mod
-                                                        content:customized
-                                                       messasge:rMsg];
-    if (!handler) {
-        // module not support
-        return nil;
-    }
-    // 3. do the job
-    NSString *act = [customized actionName];
-    id<MKMID> sender = [rMsg sender];
-    return [handler handleAction:act
-                          sender:sender
-                         content:customized
-                         message:rMsg];
-}
-
-// override for your application
-- (NSArray<id<DKDContent>> *)filterApplication:(NSString *)app
-                                       content:(id<DKDCustomizedContent>)customized
-                                      messasge:(id<DKDReliableMessage>)rMsg {
-    // extra info for receipt
-    NSDictionary *info = @{
-        @"template": @"Customized content (app: ${app}) not support yet!",
-        @"replacements": @{
-            @"app": app,
-        },
-    };
-    return [self respondReceipt:@"Content not support."
-                       envelope:rMsg.envelope
-                        content:customized
-                          extra:info];
-}
-
-// override for your module
-- (id<DIMCustomizedContentHandler>)fetchModule:(NSString *)mod
-                                       content:(id<DKDCustomizedContent>)customized
-                                      messasge:(id<DKDReliableMessage>)rMsg {
-    // if the application has too many modules, I suggest you to
-    // use different handler to do the jobs for each module.
-    return self;
+- (NSArray<id<DKDReceiptCommand>> *)respondReceipt:(NSString *)text
+                                   envelope:(id<DKDEnvelope>)head
+                                    content:(nullable id<DKDContent>)body
+                                      extra:(nullable NSDictionary *)info {
+    return @[
+        [DIMContentProcessor createReceipt:text
+                                  envelope:head
+                                   content:body
+                                     extra:info]
+    ];
 }
 
 // override for customized actions
@@ -120,6 +71,68 @@
                        envelope:rMsg.envelope
                         content:customized
                           extra:info];
+}
+
+@end
+
+#pragma mark -
+
+@interface DIMCustomizedContentProcessor ()
+
+@property (strong, nonatomic) __kindof id<DIMCustomizedContentHandler> defaultHandler;
+
+@end
+
+@implementation DIMCustomizedContentProcessor
+
+- (instancetype)initWithFacebook:(DIMFacebook *)facebook
+                       messenger:(DIMMessenger *)transceiver {
+    if (self = [super initWithFacebook:facebook messenger:transceiver]) {
+        self.defaultHandler = [self createDefaultHandler:facebook
+                                               messenger:transceiver];
+    }
+    return self;
+}
+
+- (id<DIMCustomizedContentHandler>)createDefaultHandler:(DIMFacebook *)facebook
+                                              messenger:(DIMMessenger *)transceiver {
+    return [[DIMCustomizedContentHandler alloc] initWithFacebook:facebook
+                                                       messenger:transceiver];
+}
+
+//
+//  Main
+//
+- (NSArray<id<DKDContent>> *)processContent:(__kindof id<DKDContent>)content
+                                withMessage:(id<DKDReliableMessage>)rMsg {
+    NSAssert([content conformsToProtocol:@protocol(DKDCustomizedContent)],
+             @"customized content error: %@", content);
+    id<DKDCustomizedContent> customized = content;
+    // get handler for 'app' & 'mod'
+    NSString *app = [customized application];
+    NSString *mod = [customized moduleName];
+    id<DIMCustomizedContentHandler> handler;
+    handler = [self filterApplication:app
+                           withModule:mod
+                              content:content
+                             messasge:rMsg];
+    // hand the action
+    NSString *act = [customized actionName];
+    id<MKMID> sender = [rMsg sender];
+    return [handler handleAction:act
+                          sender:sender
+                         content:customized
+                         message:rMsg];
+}
+
+// override for your module
+- (NSArray<id<DKDContent>> *)filterApplication:(NSString *)app
+                                    withModule:(NSString *)mod
+                                       content:(id<DKDCustomizedContent>)customized
+                                      messasge:(id<DKDReliableMessage>)rMsg {
+    // if the application has too many modules, I suggest you to
+    // use different handler to do the jobs for each module.
+    return [self defaultHandler];
 }
 
 @end

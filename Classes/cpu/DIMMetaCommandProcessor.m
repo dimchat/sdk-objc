@@ -35,11 +35,17 @@
 //  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
+#import "DIMAccountUtils.h"
 #import "DIMFacebook.h"
 
 #import "DIMMetaCommandProcessor.h"
 
 @implementation DIMMetaCommandProcessor
+
+- (nullable id<DIMArchivist>)archivist {
+    DIMFacebook *facebook = [self facebook];
+    return [facebook archivist];
+}
 
 //
 //  Main
@@ -48,13 +54,14 @@
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content conformsToProtocol:@protocol(DKDMetaCommand)],
              @"meta command error: %@", content);
+    id<DKDEnvelope> envelope = [rMsg envelope];
     id<DKDMetaCommand> command = content;
-    id<MKMID> ID = command.ID;
-    id<MKMMeta> meta = command.meta;
+    id<MKMID> ID = [command identifier];
+    id<MKMMeta> meta = [command meta];
     if (!ID) {
         NSAssert(false, @"meta ID cannot be empty: %@", command);
         return [self respondReceipt:@"Meta command error."
-                           envelope:rMsg.envelope
+                           envelope:envelope
                             content:content
                               extra:nil];
     } else if (meta) {
@@ -62,12 +69,12 @@
         return [self putMeta:meta
                        forID:ID
                  withContent:command
-                 andEnvelope:rMsg.envelope];
+                 andEnvelope:envelope];
     } else {
         // query meta for ID
         return [self getMetaForID:ID
                       withContent:command
-                      andEnvelope:rMsg.envelope];
+                      andEnvelope:envelope];
     }
 }
 
@@ -75,13 +82,14 @@
 - (NSArray<id<DKDContent>> *)getMetaForID:(id<MKMID>)ID
                               withContent:(id<DKDMetaCommand>)command
                               andEnvelope:(id<DKDEnvelope>)head {
-    id<MKMMeta> meta = [self.facebook metaForID:ID];
+    DIMFacebook *facebook = [self facebook];
+    id<MKMMeta> meta = [facebook getMeta:ID];
     if (!meta) {
         // extra info for receipt
         NSDictionary *info = @{
-            @"template": @"Meta not found: ${ID}.",
+            @"template": @"Meta not found: ${did}.",
             @"replacements": @{
-                @"ID": ID.string,
+                @"did": ID.string,
             },
         };
         return [self respondReceipt:@"Meta not found."
@@ -111,9 +119,9 @@
     }
     // 2. success
     NSDictionary *info = @{
-        @"template": @"Meta received: ${ID}.",
+        @"template": @"Meta received: ${did}.",
         @"replacements": @{
-            @"ID": ID.string,
+            @"did": ID.string,
         },
     };
     return [self respondReceipt:@"Meta received."
@@ -130,26 +138,30 @@
                                          forID:(id<MKMID>)ID
                                        content:(id<DKDMetaCommand>)command
                                       envelope:(id<DKDEnvelope>)head {
-    DIMFacebook *facebook = [self facebook];
+    id<DIMArchivist> archivist = [self archivist];
+    BOOL ok;
     // check meta
-    if (![self checkMeta:meta forID:ID]) {
+    ok = [self checkMeta:meta forID:ID];
+    if (!ok) {
         // extra info for receipt
         NSDictionary *info = @{
-            @"template": @"Meta not valid: ${ID}.",
+            @"template": @"Meta not valid: ${did}.",
             @"replacements": @{
-                @"ID": ID.string,
+                @"did": ID.string,
             },
         };
         return [self respondReceipt:@"Meta not valid."
                            envelope:head
                             content:command
                               extra:info];
-    } else if (![facebook saveMeta:meta forID:ID]) {
+    }
+    ok = [archivist saveMeta:meta withIdentifier:ID];
+    if (!ok) {
         // DB error?
         NSDictionary *info = @{
-            @"template": @"Meta not accepted: ${ID}.",
+            @"template": @"Meta not accepted: ${did}.",
             @"replacements": @{
-                @"ID": ID.string,
+                @"did": ID.string,
             },
         };
         return [self respondReceipt:@"Meta not accepted."
@@ -162,7 +174,7 @@
 }
 
 - (BOOL)checkMeta:(id<MKMMeta>)meta forID:(id<MKMID>)ID {
-    return [meta isValid] && [meta matchIdentifier:ID];
+    return [meta isValid] && DIMMetaMatchID(ID, meta);
 }
 
 @end

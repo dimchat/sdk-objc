@@ -70,7 +70,7 @@ NS_DESIGNATED_INITIALIZER;
  * @return SecureMessage object, null on visa not found
  */
 - (nullable id<DKDSecureMessage>)encryptMessage:(id<DKDInstantMessage>)iMsg
-                                        withKey:(id<MKMSymmetricKey>)password;
+                                        withKey:(id<MKSymmetricKey>)password;
 
 /**
  *  2. Encrypt group message, replace 'content' field with encrypted 'data'
@@ -81,7 +81,7 @@ NS_DESIGNATED_INITIALIZER;
  * @return SecureMessage object, null on visa not found
  */
 - (nullable id<DKDSecureMessage>)encryptMessage:(id<DKDInstantMessage>)iMsg
-                                        withKey:(id<MKMSymmetricKey>)password
+                                        withKey:(id<MKSymmetricKey>)password
                                      forMembers:(NSArray<id<MKMID>> *)members;
 
 @end

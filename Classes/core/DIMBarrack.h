@@ -39,6 +39,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@protocol MKMUser;
+@protocol MKMGroup;
+
 /**
  *  Entity Factory
  *  ~~~~~~~~~~~~~~

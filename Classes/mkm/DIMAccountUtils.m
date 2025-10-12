@@ -85,6 +85,8 @@
 
 @end
 
+#pragma mark -
+
 @implementation DIMDocumentUtils
 
 + (nullable NSString *)getDocumentType:(id<MKMDocument>)doc {

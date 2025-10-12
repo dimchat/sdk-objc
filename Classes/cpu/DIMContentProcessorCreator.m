@@ -51,45 +51,44 @@
 
 @implementation DIMContentProcessorCreator
 
-- (id<DIMContentProcessor>)createContentProcessor:(DKDContentType)type {
+- (id<DIMContentProcessor>)createContentProcessor:(NSString *)type {
     // forward content
-    if (type == DKDContentType_Forward) {
+    if ([type isEqualToString:DKDContentType_Forward]) {
         return CREATE_CPU(DIMForwardContentProcessor);
     }
     // array content
-    if (type == DKDContentType_Array) {
+    if ([type isEqualToString:DKDContentType_Array]) {
         return CREATE_CPU(DIMArrayContentProcessor);
     }
     /*
     // application customized
-    if (type == DKDContentType_Application) {
+    if ([type isEqualToString:DKDContentType_Application]) {
         return CREATE_CPU(DIMCustomizedContentProcessor);
-    } else if (type == DKDContentType_Customized) {
+    } else if ([type isEqualToString:DKDContentType_Customized]) {
         return CREATE_CPU(DIMCustomizedContentProcessor);
     }
      */
     // default commands
-    if (type == DKDContentType_Command) {
+    if ([type isEqualToString:DKDContentType_Command]) {
         return CREATE_CPU(DIMCommandProcessor);
     }
-    /*
     // default contents
-    if (type == 0) {
+    if ([type isEqualToString:DKDContentType_Any]) {
         // must return a default processor for type==0
         return CREATE_CPU(DIMContentProcessor);
     }
-     */
     // unknown
     return nil;
 }
 
-- (id<DIMContentProcessor>)createCommandProcessor:(NSString *)name type:(DKDContentType)msgType { 
+- (id<DIMContentProcessor>)createCommandProcessor:(NSString *)name
+                                         withType:(NSString *)msgType {
     // meta command
-    if ([name isEqualToString:DIMCommand_Meta]) {
+    if ([name isEqualToString:DKDCommand_Meta]) {
         return CREATE_CPU(DIMMetaCommandProcessor);
     }
     // document command
-    if ([name isEqualToString:DIMCommand_Document]) {
+    if ([name isEqualToString:DKDCommand_Documents]) {
         return CREATE_CPU(DIMDocumentCommandProcessor);
     }
     // unknown

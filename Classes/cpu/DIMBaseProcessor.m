@@ -48,7 +48,7 @@
     NSDictionary *info = @{
         @"template": @"Content (type: ${type}) not support yet!",
         @"replacements": @{
-            @"type": @(content.type),
+            @"type": content.type,
         },
     };
     return [self respondReceipt:@"Content not support."
@@ -58,6 +58,37 @@
 }
 
 @end
+
+@implementation DIMContentProcessor (Convenience)
+
+- (NSArray<id<DKDReceiptCommand>> *)respondReceipt:(NSString *)text
+                                   envelope:(id<DKDEnvelope>)head
+                                    content:(nullable id<DKDContent>)body
+                                      extra:(nullable NSDictionary *)info {
+    return @[
+        [DIMContentProcessor createReceipt:text
+                                  envelope:head
+                                   content:body
+                                     extra:info]
+    ];
+}
+
++ (id<DKDReceiptCommand>)createReceipt:(NSString *)text
+                              envelope:(id<DKDEnvelope>)head
+                               content:(nullable id<DKDContent>)body
+                                 extra:(nullable NSDictionary *)info {
+    // create base receipt command with text, original envelope, serial number & group ID
+    id<DKDReceiptCommand> receipt = DIMReceiptCommandCreate(text, head, body);
+    // add extra key-value
+    [info enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        [receipt setObject:obj forKey:key];
+    }];
+    return receipt;
+}
+
+@end
+
+#pragma mark -
 
 @implementation DIMCommandProcessor
 

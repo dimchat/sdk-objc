@@ -36,6 +36,7 @@
 //
 
 #import <DIMSDK/DIMContentProcessor.h>
+#import <DIMSDK/DIMTwinsHelper.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

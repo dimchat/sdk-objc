@@ -48,30 +48,51 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  Do your job
  *
- * @param act        - action
- * @param uid        - user ID
- * @param customized - customized content
- * @param rMsg       - network message
+ * @param act  - action
+ * @param uid  - user ID
+ * @param body - customized content
+ * @param rMsg - network message
  * @return responses
  */
 - (NSArray<id<DKDContent>> *)handleAction:(NSString *)act
                                    sender:(id<MKMID>)uid
-                                  content:(id<DKDCustomizedContent>)customized
+                                  content:(id<DKDCustomizedContent>)body
                                   message:(id<DKDReliableMessage>)rMsg;
 
 @end
 
-@interface DIMCustomizedContentProcessor : DIMContentProcessor <DIMCustomizedContentHandler>
+/**
+ *  Default Handler
+ *  ~~~~~~~~~~~~~~~
+ *  Base Customized Handler
+ */
+@interface DIMCustomizedContentHandler : DIMTwinsHelper <DIMCustomizedContentHandler>
 
-// override for your application
-- (NSArray<id<DKDContent>> *)filterApplication:(NSString *)app
-                                       content:(id<DKDCustomizedContent>)customized
-                                      messasge:(id<DKDReliableMessage>)rMsg;
+// protected
+- (NSArray<id<DKDReceiptCommand>> *)respondReceipt:(NSString *)text
+                                          envelope:(id<DKDEnvelope>)head
+                                           content:(nullable id<DKDContent>)body
+                                             extra:(nullable NSDictionary *)info;
 
-// override for your module
-- (id<DIMCustomizedContentHandler>)fetchModule:(NSString *)mod
-                                       content:(id<DKDCustomizedContent>)customized
-                                      messasge:(id<DKDReliableMessage>)rMsg;
+@end
+
+#pragma mark -
+
+@interface DIMCustomizedContentProcessor : DIMContentProcessor
+
+// protected
+@property (readonly, strong, nonatomic) __kindof id<DIMCustomizedContentHandler> defaultHandler;
+
+// protected
+- (id<DIMCustomizedContentHandler>)createDefaultHandler:(DIMFacebook *)facebook
+                                              messenger:(DIMMessenger *)transceiver;
+
+/// override for your application
+// protected
+- (id<DIMCustomizedContentHandler>)filterApplication:(NSString *)app
+                                          withModule:(NSString *)mod
+                                             content:(id<DKDCustomizedContent>)body
+                                            messasge:(id<DKDReliableMessage>)rMsg;
 
 @end
 
