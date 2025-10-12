@@ -66,4 +66,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+#pragma mark - Conveniences
+
+#define DIMMessageGetMeta(msg)          [DIMMessageUtils metaInMessage:(msg)]
+#define DIMMessageSetMeta(meta, msg)    [DIMMessageUtils message:(msg) setMeta:(meta)]
+
+#define DIMMessageGetVisa(msg)          [DIMMessageUtils visaInMessage:(msg)]
+#define DIMMessageSetVisa(visa, msg)    [DIMMessageUtils message:(msg) setVisa:(visa)]
+
 NS_ASSUME_NONNULL_END

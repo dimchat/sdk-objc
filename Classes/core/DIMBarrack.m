@@ -37,7 +37,7 @@
 
 #import "DIMUser.h"
 #import "DIMGroup.h"
-#import "DIMRobot.h"
+#import "DIMBot.h"
 #import "DIMStation.h"
 #import "DIMServiceProvider.h"
 

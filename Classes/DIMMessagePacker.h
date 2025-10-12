@@ -39,20 +39,33 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMMessagePacker : DIMTwinsHelper <DIMPacker>
-
-@end
+@protocol DKDInstantMessageDelegate;
+@protocol DKDSecureMessageDelegate;
+@protocol DKDReliableMessageDelegate;
 
 @class DIMInstantMessagePacker;
 @class DIMSecureMessagePacker;
 @class DIMReliableMessagePacker;
 
-// protected
-@interface DIMMessagePacker (Attachments)
+@interface DIMMessagePacker : DIMTwinsHelper <DIMPacker>
 
+// protected
 @property (readonly, strong, nonatomic) DIMInstantMessagePacker *instantPacker;
 @property (readonly, strong, nonatomic) DIMSecureMessagePacker *securePacker;
 @property (readonly, strong, nonatomic) DIMReliableMessagePacker *reliablePacker;
+
+// protected
+- (DIMInstantMessagePacker *)createInstantMessagePacker:(id<DKDInstantMessageDelegate>)delegate;
+- (DIMSecureMessagePacker *)createSecureMessagePacker:(id<DKDSecureMessageDelegate>)delegate;
+- (DIMReliableMessagePacker *)createReliableMessagePacker:(id<DKDReliableMessageDelegate>)delegate;
+
+// protected
+@property (readonly, strong, nonatomic, nullable) __kindof id<DIMArchivist> archivist;
+
+@end
+
+// protected
+@interface DIMMessagePacker (Attachments)
 
 /**
  *  Check meta & visa

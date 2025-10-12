@@ -39,30 +39,16 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol DIMContentProcessor;
-@protocol DIMContentProcessorCreator;
 @protocol DIMContentProcessorFactory;
 
 @interface DIMMessageProcessor : DIMTwinsHelper <DIMProcessor>
 
-- (id<DIMContentProcessorCreator>)createContentProcessorCreator;
-- (id<DIMContentProcessorFactory>)createContentProcessorFactory;
+// private
+@property (readonly, strong, nonatomic) id<DIMContentProcessorFactory> factory;
 
-@end
-
-@interface DIMMessageProcessor (CPU)
-
-/**
- *  Get content/command processor
- */
-- (nullable id<DIMContentProcessor>)processorForContent:(__kindof id<DKDContent>)content;
-
-/**
- *  Get content processor
- */
-- (nullable id<DIMContentProcessor>)processorForType:(DKDContentType)type;
-
-- (nullable id<DIMContentProcessor>)processorForName:(NSString *)cmd type:(DKDContentType)type;
+// protected
+- (id<DIMContentProcessorFactory>)createFactoryWithFacebook:(DIMFacebook *)facebook
+                                                  messenger:(DIMMessenger *)transceiver;
 
 @end
 

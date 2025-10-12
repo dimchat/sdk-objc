@@ -35,82 +35,10 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import <DIMCore/DIMCore.h>
+#import <DIMSDK/DIMMessageHelpers.h>
+#import <DIMSDK/DIMTransceiver.h>
 
 NS_ASSUME_NONNULL_BEGIN
-
-@protocol DIMCipherKeyDelegate <NSObject>
-
-/**
- *  Get cipher key for encrypt message from 'sender' to 'receiver'
- *
- * @param from   - from where (user or contact ID)
- * @param to     - to where (contact or user/group ID)
- * @param create - generate when key not exists
- * @return cipher key
- */
-- (nullable id<MKMSymmetricKey>)cipherKeyWithSender:(id<MKMID>)from
-                                           receiver:(id<MKMID>)to
-                                           generate:(BOOL)create;
-
-/**
- *  Cache cipher key for reusing, with the direction (from 'sender' to 'receiver')
- *
- * @param from - from where (user or contact ID)
- * @param to   - to where (contact or user/group ID)
- * @param key  - cipher key
- */
-- (void)cacheCipherKey:(id<MKMSymmetricKey>)key
-            withSender:(id<MKMID>)from
-              receiver:(id<MKMID>)to;
-
-@end
-
-@interface DIMCipherKeyDelegate : NSObject <DIMCipherKeyDelegate>
-
-/*  Situations:
-                  +-------------+-------------+-------------+-------------+
-                  |  receiver   |  receiver   |  receiver   |  receiver   |
-                  |     is      |     is      |     is      |     is      |
-                  |             |             |  broadcast  |  broadcast  |
-                  |    user     |    group    |    user     |    group    |
-    +-------------+-------------+-------------+-------------+-------------+
-    |             |      A      |             |             |             |
-    |             +-------------+-------------+-------------+-------------+
-    |    group    |             |      B      |             |             |
-    |     is      |-------------+-------------+-------------+-------------+
-    |    null     |             |             |      C      |             |
-    |             +-------------+-------------+-------------+-------------+
-    |             |             |             |             |      D      |
-    +-------------+-------------+-------------+-------------+-------------+
-    |             |      E      |             |             |             |
-    |             +-------------+-------------+-------------+-------------+
-    |    group    |             |             |             |             |
-    |     is      |-------------+-------------+-------------+-------------+
-    |  broadcast  |             |             |      F      |             |
-    |             +-------------+-------------+-------------+-------------+
-    |             |             |             |             |      G      |
-    +-------------+-------------+-------------+-------------+-------------+
-    |             |      H      |             |             |             |
-    |             +-------------+-------------+-------------+-------------+
-    |    group    |             |      J      |             |             |
-    |     is      |-------------+-------------+-------------+-------------+
-    |    normal   |             |             |      K      |             |
-    |             +-------------+-------------+-------------+-------------+
-    |             |             |             |             |             |
-    +-------------+-------------+-------------+-------------+-------------+
- */
-
-/**
- *  get destination for cipher key vector: (sender, dest)
- */
-+ (id<MKMID>)destinationOfMessage:(id<DKDMessage>)msg;
-
-+ (id<MKMID>)destinationToReceiver:(id<MKMID>)receiver orGroup:(nullable id<MKMID>)group;
-
-@end
-
-#pragma mark -
 
 @interface DIMMessenger : DIMTransceiver <DIMPacker, DIMProcessor>
 
@@ -133,11 +61,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMMessenger (CipherKey)
 
-- (nullable id<MKMSymmetricKey>)encryptKeyForMessage:(id<DKDInstantMessage>)iMsg;
+- (nullable id<MKSymmetricKey>)encryptKeyForMessage:(id<DKDInstantMessage>)iMsg;
 
-- (nullable id<MKMSymmetricKey>)decryptKeyForMessage:(id<DKDSecureMessage>)sMsg;
+- (nullable id<MKSymmetricKey>)decryptKeyForMessage:(id<DKDSecureMessage>)sMsg;
 
-- (void)cacheDecryptKey:(id<MKMSymmetricKey>)password forMessage:(id<DKDSecureMessage>)sMsg;
+- (void)cacheDecryptKey:(id<MKSymmetricKey>)password
+             forMessage:(id<DKDSecureMessage>)sMsg;
 
 @end
 

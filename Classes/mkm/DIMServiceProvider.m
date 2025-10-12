@@ -101,7 +101,7 @@ BOOL DIMSameStation(id<MKMStation> a, id<MKMStation> b) {
         // same object
         return YES;
     }
-    return checkIdentifiers([a ID], [b ID])
+    return checkIdentifiers([a identifier], [b identifier])
         && checkHosts([a host], [b host])
         && checkPorts([a port], [b port]);
 }

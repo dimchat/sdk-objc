@@ -35,12 +35,15 @@
 //  Copyright © 2023 Albert Moky. All rights reserved.
 //
 
+#import <DIMSDK/DIMFacebook.h>
+#import <DIMSDK/DIMMessenger.h>
+
 #import "DIMTwinsHelper.h"
 
 @interface DIMTwinsHelper ()
 
-@property (weak, nonatomic) DIMBarrack *facebook;
-@property (weak, nonatomic) DIMTransceiver *messenger;
+@property (weak, nonatomic) DIMFacebook *facebook;
+@property (weak, nonatomic) DIMMessenger *messenger;
 
 @end
 
@@ -48,16 +51,16 @@
 
 - (instancetype)init {
     NSAssert(false, @"don't call me!");
-    DIMBarrack *barrack = nil;
-    DIMTransceiver *transceiver = nil;
-    return [self initWithFacebook:barrack messenger:transceiver];
+    DIMFacebook *facebook = nil;
+    DIMMessenger *transceiver = nil;
+    return [self initWithFacebook:facebook messenger:transceiver];
 }
 
 /* designated initializer */
-- (instancetype)initWithFacebook:(DIMBarrack *)barrack
-                       messenger:(DIMTransceiver *)transceiver {
+- (instancetype)initWithFacebook:(DIMFacebook *)facebook
+                       messenger:(DIMMessenger *)transceiver {
     if (self = [super init]) {
-        self.facebook = barrack;
+        self.facebook = facebook;
         self.messenger = transceiver;
     }
     return self;

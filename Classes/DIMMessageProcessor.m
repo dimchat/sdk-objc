@@ -41,43 +41,42 @@
 
 #import "DIMMessageProcessor.h"
 
-@interface DIMMessageProcessor () {
-    
-    id<DIMContentProcessorFactory> _factory;
-}
+@interface DIMMessageProcessor ()
+
+@property (strong, nonatomic) id<DIMContentProcessorFactory> factory;
 
 @end
 
 @implementation DIMMessageProcessor
 
 /* designated initializer */
-- (instancetype)initWithFacebook:(DIMBarrack *)barrack
-                       messenger:(DIMTransceiver *)transceiver {
-    if (self = [super initWithFacebook:barrack messenger:transceiver]) {
-        _factory = [self createContentProcessorFactory];
+- (instancetype)initWithFacebook:(DIMFacebook *)facebook
+                       messenger:(DIMMessenger *)transceiver {
+    if (self = [super initWithFacebook:facebook messenger:transceiver]) {
+        self.factory = [self createFactoryWithFacebook:facebook
+                                             messenger:transceiver];
     }
     return self;
 }
 
-- (id<DIMContentProcessorCreator>)createContentProcessorCreator {
+- (id<DIMContentProcessorFactory>)createFactoryWithFacebook:(DIMFacebook *)facebook
+                                                  messenger:(DIMMessenger *)transceiver {
     NSAssert(false, @"implement me!");
-    return [[DIMContentProcessorCreator alloc] initWithFacebook:self.facebook
-                                                      messenger:self.messenger];
+    return nil;
 }
 
-- (id<DIMContentProcessorFactory>)createContentProcessorFactory {
-    id<DIMContentProcessorCreator> creator = [self createContentProcessorCreator];
-    return [[DIMContentProcessorFactory alloc] initWithFacebook:self.facebook
-                                                      messenger:self.messenger
-                                                        creator:creator];
-}
+//
+//  Processing Message
+//
 
+// Override
 - (NSArray<NSData *> *)processPackage:(NSData *)data {
-    DIMMessenger *transceiver = self.messenger;
+    DIMMessenger *transceiver = [self messenger];
+    NSAssert(transceiver, @"messenger not ready");
     // 1. deserialize message
     id<DKDReliableMessage> rMsg = [transceiver deserializeMessage:data];
     if (!rMsg) {
-        // no message received
+        // no valid message received
         return nil;
     }
     // 2. process message
@@ -100,9 +99,11 @@
     return packages;
 }
 
+// Override
 - (NSArray<id<DKDReliableMessage>> *)processReliableMessage:(id<DKDReliableMessage>)rMsg {
     // TODO: override to check broadcast message before calling it
-    DIMMessenger *transceiver = self.messenger;
+    DIMMessenger *transceiver = [self messenger];
+    NSAssert(transceiver, @"messenger not ready");
     // 1. verify message
     id<DKDSecureMessage> sMsg = [transceiver verifyMessage:rMsg];
     if (!sMsg) {
@@ -130,9 +131,11 @@
     return messages;
 }
 
+// Override
 - (NSArray<id<DKDSecureMessage>> *)processSecureMessage:(id<DKDSecureMessage>)sMsg
                              withReliableMessageMessage:(id<DKDReliableMessage>)rMsg {
-    DIMMessenger *transceiver = self.messenger;
+    DIMMessenger *transceiver = [self messenger];
+    NSAssert(transceiver, @"messenger not ready");
     // 1. decrypt message
     id<DKDInstantMessage> iMsg = [transceiver decryptMessage:sMsg];
     if (!iMsg) {
@@ -161,10 +164,12 @@
     return messages;
 }
 
+// Override
 - (NSArray<id<DKDInstantMessage>> *)processInstantMessage:(id<DKDInstantMessage>)iMsg
                                withReliableMessageMessage:(id<DKDReliableMessage>)rMsg {
-    DIMFacebook *barrack = self.facebook;
-    DIMMessenger *transceiver = self.messenger;
+    DIMFacebook *facebook = [self facebook];
+    DIMMessenger *transceiver = [self messenger];
+    NSAssert(facebook && transceiver, @"twins not ready");
     // 1. process content
     NSArray<id<DKDContent>> * responses = [transceiver processContent:iMsg.content
                                            withReliableMessageMessage:rMsg];
@@ -176,8 +181,11 @@
     // 2. select a local user to build message
     id<MKMID> sender = iMsg.sender;
     id<MKMID> receiver = iMsg.receiver;
-    id<MKMUser> user = [barrack selectLocalUserWithID:receiver];
-    NSAssert(user, @"receiver error: %@", receiver);
+    id<MKMID> me = [facebook selectLocalUser:receiver];
+    if (!me) {
+        NSAssert(false, @"receiver error: %@", receiver);
+        return nil;
+    }
     
     // 3. pack messages
     NSMutableArray<id<DKDInstantMessage>> *messages = [[NSMutableArray alloc] initWithCapacity:[responses count]];
@@ -188,7 +196,7 @@
             // should not happen
             continue;
         }
-        env = DKDEnvelopeCreate(user.ID, sender, nil);
+        env = DKDEnvelopeCreate(me, sender, nil);
         msg = DKDInstantMessageCreate(env, res);
         if (!msg) {
             // should not happen
@@ -199,33 +207,19 @@
     return messages;
 }
 
+// Override
 - (NSArray<id<DKDContent>> *)processContent:(__kindof id<DKDContent>)content
                  withReliableMessageMessage:(id<DKDReliableMessage>)rMsg {
     // TODO: override to check group before calling this
-    id<DIMContentProcessor> cpu = [self processorForContent:content];
+    id<DIMContentProcessorFactory> factory = [self factory];
+    id<DIMContentProcessor> cpu = [factory getContentProcessor:content];
     if (!cpu) {
         // default content processor
-        cpu = [self processorForType:0];
+        cpu = [factory getContentProcessorForType:DKDContentType_Any];
         NSAssert(cpu, @"failed to get default CPU");
     }
     return [cpu processContent:content withMessage:rMsg];
     // TODO: override to filter the response after called this
-}
-
-@end
-
-@implementation DIMMessageProcessor (CPU)
-
-- (id<DIMContentProcessor> )processorForContent:(__kindof id<DKDContent>)content {
-    return [_factory getProcessor:content];
-}
-
-- (id<DIMContentProcessor> )processorForType:(DKDContentType)type {
-    return [_factory getContentProcessor:type];
-}
-
-- (id<DIMContentProcessor> )processorForName:(NSString *)cmd type:(DKDContentType)type {
-    return [_factory getCommandProcessor:cmd type:type];
 }
 
 @end

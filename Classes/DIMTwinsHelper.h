@@ -35,17 +35,20 @@
 //  Copyright © 2023 Albert Moky. All rights reserved.
 //
 
-#import <DIMCore/DIMCore.h>
+#import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class DIMFacebook;
+@class DIMMessenger;
+
 @interface DIMTwinsHelper : NSObject
 
-@property (readonly, weak, nonatomic) __kindof DIMBarrack *facebook;
-@property (readonly, weak, nonatomic) __kindof DIMTransceiver *messenger;
+@property (readonly, weak, nonatomic) __kindof DIMFacebook *facebook;
+@property (readonly, weak, nonatomic) __kindof DIMMessenger *messenger;
 
-- (instancetype)initWithFacebook:(DIMBarrack *)barrack
-                       messenger:(DIMTransceiver *)transceiver
+- (instancetype)initWithFacebook:(DIMFacebook *)facebook
+                       messenger:(DIMMessenger *)transceiver
 NS_DESIGNATED_INITIALIZER;
 
 @end

@@ -35,9 +35,13 @@
 //  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
+#import "DIMMessageUtils.h"
+#import "DIMMessageHelpers.h"
+
 #import "DIMInstantMessagePacker.h"
 #import "DIMSecureMessagePacker.h"
 #import "DIMReliableMessagePacker.h"
+
 #import "DIMFacebook.h"
 #import "DIMMessenger.h"
 
@@ -53,22 +57,45 @@
 
 @implementation DIMMessagePacker
 
-- (instancetype)initWithFacebook:(DIMBarrack *)barrack
-                       messenger:(DIMTransceiver *)transceiver {
-    if (self = [super initWithFacebook:barrack messenger:transceiver]) {
-        self.instantPacker = [[DIMInstantMessagePacker alloc] initWithDelegate:transceiver];
-        self.securePacker = [[DIMSecureMessagePacker alloc] initWithDelegate:transceiver];
-        self.reliablePacker = [[DIMReliableMessagePacker alloc] initWithDelegate:transceiver];
+- (instancetype)initWithFacebook:(DIMFacebook *)facebook
+                       messenger:(DIMMessenger *)transceiver {
+    if (self = [super initWithFacebook:facebook messenger:transceiver]) {
+        self.instantPacker  = [self createInstantMessagePacker:transceiver];
+        self.securePacker   = [self createSecureMessagePacker:transceiver];
+        self.reliablePacker = [self createReliableMessagePacker:transceiver];
     }
     return self;
 }
 
+- (DIMInstantMessagePacker *)createInstantMessagePacker:(id<DKDInstantMessageDelegate>)delegate {
+    return [[DIMInstantMessagePacker alloc] initWithDelegate:delegate];
+}
+
+- (DIMSecureMessagePacker *)createSecureMessagePacker:(id<DKDSecureMessageDelegate>)delegate {
+    return [[DIMSecureMessagePacker alloc] initWithDelegate:delegate];
+}
+
+- (DIMReliableMessagePacker *)createReliableMessagePacker:(id<DKDReliableMessageDelegate>)delegate {
+    return [[DIMReliableMessagePacker alloc] initWithDelegate:delegate];
+}
+
+- (nullable id<DIMArchivist>)archivist {
+    DIMFacebook *facebook = [self facebook];
+    return [facebook archivist];
+}
+
+//
+//  InstantMessage -> SecureMessage -> ReliableMessage -> Data
+//
+
+// Override
 - (nullable id<DKDSecureMessage>)encryptMessage:(id<DKDInstantMessage>)iMsg {
     // TODO: check receiver before calling this, make sure the visa.key exists;
     //       otherwise, suspend this message for waiting receiver's visa/meta;
     //       if receiver is a group, query all members' visa too!
     DIMFacebook *facebook = [self facebook];
     DIMMessenger *messenger = [self messenger];
+    NSAssert(facebook && messenger, @"twins not ready");
 
     id<DKDSecureMessage> sMsg;
     // NOTICE: before sending group message, you can decide whether expose the group ID
@@ -87,7 +114,7 @@
     //
     //  1. get message key with direction (sender -> receiver) or (sender -> group)
     //
-    id<MKMSymmetricKey> password = [messenger encryptKeyForMessage:iMsg];
+    id<MKSymmetricKey> password = [messenger encryptKeyForMessage:iMsg];
     NSAssert(password, @"failed to get msg key: %@ => %@, %@", iMsg.sender, receiver, [iMsg objectForKey:@"group"]);
     
     //
@@ -95,7 +122,7 @@
     //
     if ([receiver isGroup]) {
         // group message
-        NSArray<id<MKMID>> *members = [facebook membersOfGroup:receiver];
+        NSArray<id<MKMID>> *members = [facebook getMembers:receiver];
         NSAssert([members count] > 0, @"group not ready: %@", receiver);
         // a station will never send group message, so here must be a client;
         // the client messenger should check the group's meta & members before encrypting,
@@ -120,38 +147,37 @@
     return sMsg;
 }
 
+// Override
 - (nullable id<DKDReliableMessage>)signMessage:(id<DKDSecureMessage>)sMsg {
     NSAssert([sMsg.data length] > 0, @"message data cannot be empty: %@ => %@, %@", sMsg.sender, sMsg.receiver, [sMsg objectForKey:@"group"]);
     // sign 'data' by sender
     return [_securePacker signMessage:sMsg];
 }
 
-- (nullable NSData *)serializeMessage:(id<DKDReliableMessage>)rMsg {
-    return MKMUTF8Encode(MKMJSONEncode(rMsg.dictionary));
-}
+//// Override
+//- (nullable NSData *)serializeMessage:(id<DKDReliableMessage>)rMsg {
+//    NSDictionary *info = [rMsg dictionary];
+//    id<DIMCompressor> compressor = [self compressor];
+//    return [compressor compressReliableMessage:info];
+//}
 
-- (nullable id<DKDReliableMessage>)deserializeMessage:(NSData *)data {
-    NSAssert([data length] > 0, @"message data should not be empty");
-    id dict = MKMJSONDecode(MKMUTF8Decode(data));
-    // TODO: translate short keys
-    //       'S' -> 'sender'
-    //       'R' -> 'receiver'
-    //       'W' -> 'time'
-    //       'T' -> 'type'
-    //       'G' -> 'group'
-    //       ------------------
-    //       'D' -> 'data'
-    //       'V' -> 'signature'
-    //       'K' -> 'key', 'keys'
-    //       ------------------
-    //       'M' -> 'meta'
-    //       'P' -> 'visa'
-    return DKDReliableMessageParse(dict);
-}
+//
+//  Data -> ReliableMessage -> SecureMessage -> InstantMessage
+//
 
+//// Override
+//- (nullable id<DKDReliableMessage>)deserializeMessage:(NSData *)data {
+//    id<DIMCompressor> compressor = [self compressor];
+//    NSDictionary *dict = [compressor extractReliableMessage:data];
+//    return DKDReliableMessageParse(dict);
+//}
+
+// Override
 - (id<DKDSecureMessage>)verifyMessage:(id<DKDReliableMessage>)rMsg {
     // make sure sender's meta exists before verifying message
-    if (![self checkAttachments:rMsg]) {
+    if ([self checkAttachments:rMsg]) {
+        // meta/visa ok
+    } else {
         return nil;
     }
     
@@ -160,20 +186,21 @@
     return [_reliablePacker verifyMessage:rMsg];
 }
 
+// Override
 - (id<DKDInstantMessage>)decryptMessage:(id<DKDSecureMessage>)sMsg {
     // TODO: check receiver before calling this, make sure you are the receiver,
     //       or you are a member of the group when this is a group message,
     //       so that you will have a private key (decrypt key) to decrypt it.
-    id<MKMID> receiver = sMsg.receiver;
-    id<MKMUser> user = [self.facebook selectLocalUserWithID:receiver];
-    if (!user) {
+    id<MKMID> receiver = [sMsg receiver];
+    id<MKMID> me = [self.facebook selectLocalUser:receiver];
+    if (!me) {
         // not for you?
         NSAssert(false, @"receiver error: %@", receiver);
         return nil;
     }
     NSAssert(sMsg.data, @"message data cannot be empty: %@ => %@, %@", sMsg.sender, sMsg.receiver, [sMsg objectForKey:@"group"]);
     // decrypt 'data' to 'content'
-    return [_securePacker decryptMessage:sMsg forReceiver:user.ID];
+    return [_securePacker decryptMessage:sMsg forReceiver:me];
     
     // TODO: check top-secret message
     //       (do it by application)
@@ -184,17 +211,18 @@
 @implementation DIMMessagePacker (Attachments)
 
 - (BOOL)checkAttachments:(id<DKDReliableMessage>)rMsg {
+    id<DIMArchivist> archivist = [self archivist];
+    NSAssert(archivist, @"archivist not ready");
     id<MKMID> sender = [rMsg sender];
-    DIMFacebook *facebook = [self facebook];
     // [Meta Protocol]
     id<MKMMeta> meta = DIMMessageGetMeta(rMsg);
     if (meta) {
-        [facebook saveMeta:meta forID:sender];
+        [archivist saveMeta:meta withIdentifier:sender];
     }
     // [Visa Protocol]
     id<MKMVisa> visa = DIMMessageGetVisa(rMsg);
     if (visa) {
-        [facebook saveDocument:visa];
+        [archivist saveDocument:visa];
     }
     //
     //  TODO: check [Visa Protocol] before calling this

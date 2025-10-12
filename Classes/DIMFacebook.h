@@ -35,47 +35,27 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import <DIMCore/DIMCore.h>
+#import <DIMSDK/DIMUser.h>
+#import <DIMSDK/DIMGroup.h>
+#import <DIMSDK/DIMBarrack.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 @class DIMArchivist;
 
-@interface DIMFacebook : DIMBarrack
+@interface DIMFacebook : NSObject <MKMEntityDelegate,
+                                   MKMUserDataSource,
+                                   MKMGroupDataSource>
 
-@property (readonly, strong, nonatomic) __kindof DIMArchivist *archivist;
+// protected
+@property (readonly, strong, nonatomic, nullable) __kindof DIMBarrack *barrack;
 
-/**
- *  Get all local users (for decrypting received message)
- *
- * @return users with private key
- */
-@property (readonly, strong, nonatomic, nullable) NSArray<id<MKMUser>> *localUsers;
+@property (readonly, strong, nonatomic, nullable) __kindof id<DIMArchivist> archivist;
 
 /**
  *  Select local user for receiver
- *
- * @param receiver - user/group ID
- * @return local user
  */
-- (nullable id<MKMUser>)selectLocalUserWithID:(id<MKMID>)receiver;
-
-/**
- *  Save meta for entity ID (must verify first)
- *
- * @param meta - entity meta
- * @param ID - entity ID
- * @return true on success
- */
-- (BOOL)saveMeta:(id<MKMMeta>)meta forID:(id<MKMID>)ID;
-
-/**
- *  Save document with entity ID (must verify first)
- *
- * @param doc - entity document
- * @return true on success
- */
-- (BOOL)saveDocument:(id<MKMDocument>)doc;
+- (nullable id<MKMID>)selectLocalUser:(id<MKMID>)receiver;
 
 @end
 
