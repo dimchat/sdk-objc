@@ -65,7 +65,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @return serialized content data
  */
 - (NSData *)message:(id<DKDInstantMessage>)iMsg
-   serializeContent:(__kindof id<DKDContent>)content
+   serializeContent:(id<DKDContent>)content
             withKey:(id<MKSymmetricKey>)password;
 
 /**

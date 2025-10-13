@@ -38,7 +38,6 @@
 #import "DIMServiceProvider.h"
 #import "DIMStation.h"
 #import "DIMBot.h"
-#import "DIMArchivist.h"
 
 #import "DIMFacebook.h"
 

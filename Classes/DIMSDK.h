@@ -58,21 +58,27 @@ FOUNDATION_EXPORT const unsigned char DIMSDKVersionString[];
 #define __DIM_SDK__ 1
 
 // MingKeMing
+#import <DIMSDK/DIMEntity.h>
+#import <DIMSDK/DIMUser.h>
+#import <DIMSDK/DIMGroup.h>
 #import <DIMSDK/DIMServiceProvider.h>
 #import <DIMSDK/DIMStation.h>
-#import <DIMSDK/DIMRobot.h>
-#import <DIMSDK/DIMChatroom.h>
+#import <DIMSDK/DIMBot.h>
+#import <DIMSDK/DIMAccountUtils.h>
 
 // DaoKeDao
-#import <DIMSDK/DIMMessageFactory.h>
+#import <DIMSDK/DKDMessageDelegates.h>
 #import <DIMSDK/DIMInstantMessagePacker.h>
 #import <DIMSDK/DIMSecureMessagePacker.h>
 #import <DIMSDK/DIMReliableMessagePacker.h>
+#import <DIMSDK/DIMMessageUtils.h>
 
 // Core
-#import <DIMSDK/DIMContentFactory.h>
-#import <DIMSDK/DIMCommandFactory.h>
-#import <DIMSDK/DIMTwinsHelper.h>
+#import <DIMSDK/DIMBarrack.h>
+#import <DIMSDK/DIMTransceiver.h>
+#import <DIMSDK/DIMMessageHelpers.h>
+#import <DIMSDK/DIMMessageCompressor.h>
+#import <DIMSDK/DIMMessageShortener.h>
 #import <DIMSDK/DIMContentProcessor.h>
 
 // CPUs
@@ -87,12 +93,9 @@ FOUNDATION_EXPORT const unsigned char DIMSDKVersionString[];
 #import <DIMSDK/DIMDocumentCommandProcessor.h>
 
 // Utils
-#import <DIMSDK/DIMCheckers.h>
-
-#import <DIMSDK/DIMAddressNameService.h>
-#import <DIMSDK/DIMArchivist.h>
 #import <DIMSDK/DIMFacebook.h>
 #import <DIMSDK/DIMMessenger.h>
+#import <DIMSDK/DIMTwinsHelper.h>
 #import <DIMSDK/DIMMessagePacker.h>
 #import <DIMSDK/DIMMessageProcessor.h>
 

@@ -119,10 +119,15 @@
 - (nullable id<MKMVisa>)signVisa:(id<MKMVisa>)visa {
     id<MKMUserDataSource> facebook = [self dataSource];
     NSAssert(facebook, @"user data source not set yet");
-    id<MKMID> ID = [self identifier];
     // check document ID
+    id<MKMID> ID = [self identifier];
     id<MKMID> did = [visa identifier];
-    NSAssert([ID isEqual:did], @"visa ID not match:%@, %@", ID, did);
+    if ([ID isEqual:did]) {
+        // OK
+    } else {
+        NSAssert(false, @"visa ID not match:%@, %@", ID, did);
+        //return nil;
+    }
     // NOTICE: only sign visa with the private key paired with your meta.key
     id<MKSignKey> SK = [facebook getPrivateKeyForVisaSignature:did];
     NSAssert(SK, @"failed to get visa sign key for user: %@", did);

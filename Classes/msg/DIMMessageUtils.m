@@ -52,7 +52,7 @@
 
 + (id<MKMVisa>)visaInMessage:(id<DKDMessage>)msg {
     id visa = [msg objectForKey:@"visa"];
-    __kindof id<MKMDocument> doc = MKMDocumentParse(visa);
+    id doc = MKMDocumentParse(visa);
     if ([doc conformsToProtocol:@protocol(MKMVisa)]) {
         return doc;
     }

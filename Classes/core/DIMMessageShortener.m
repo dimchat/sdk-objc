@@ -86,35 +86,35 @@ static inline NSMutableDictionary *_mutable_dictionary(__kindof NSDictionary *di
     return mDict;
 }
 
-- (NSMutableDictionary *)extractContent:(__kindof NSDictionary *)content {
+- (NSMutableDictionary *)extractContent:(NSDictionary *)content {
     NSMutableDictionary *mDict = _mutable_dictionary(content);
     NSArray *keys = [self contentShortKeys];
     [self dictionary:mDict restoreKeys:keys];
     return mDict;
 }
 
-- (NSMutableDictionary *)compressSymmetricKey:(__kindof NSDictionary *)info {
+- (NSMutableDictionary *)compressSymmetricKey:(NSDictionary *)info {
     NSMutableDictionary *mDict = _mutable_dictionary(info);
     NSArray *keys = [self cryptoShortKeys];
     [self dictionary:mDict shortenKeys:keys];
     return mDict;
 }
 
-- (NSMutableDictionary *)extractSymmetricKey:(__kindof NSDictionary *)info {
+- (NSMutableDictionary *)extractSymmetricKey:(NSDictionary *)info {
     NSMutableDictionary *mDict = _mutable_dictionary(info);
     NSArray *keys = [self cryptoShortKeys];
     [self dictionary:mDict restoreKeys:keys];
     return mDict;
 }
 
-- (NSMutableDictionary *)compressReliableMessage:(__kindof NSDictionary *)msg {
+- (NSMutableDictionary *)compressReliableMessage:(NSDictionary *)msg {
     NSMutableDictionary *mDict = _mutable_dictionary(msg);
     NSArray *keys = [self messageShortKeys];
     [self dictionary:mDict shortenKeys:keys];
     return mDict;
 }
 
-- (NSMutableDictionary *)extractReliableMessage:(__kindof NSDictionary *)msg {
+- (NSMutableDictionary *)extractReliableMessage:(NSDictionary *)msg {
     NSMutableDictionary *mDict = _mutable_dictionary(msg);
     NSArray *keys = [self messageShortKeys];
     [self dictionary:mDict restoreKeys:keys];

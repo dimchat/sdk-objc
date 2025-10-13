@@ -143,7 +143,7 @@
 }
 
 // Override
-- (NSArray<id<DKDContent>> *)processContent:(__kindof id<DKDContent>)content
+- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                  withReliableMessageMessage:(id<DKDReliableMessage>)rMsg {
     id<DIMProcessor> processor = [self processor];
     return [processor processContent:content withReliableMessageMessage:rMsg];
