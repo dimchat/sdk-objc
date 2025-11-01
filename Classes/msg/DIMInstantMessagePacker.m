@@ -109,7 +109,7 @@
     NSAssert(encodedData, @"failed to encode content data: %@", ciphertext);
     
     // replace 'content' with encrypted 'data'
-    NSMutableDictionary *info = [iMsg dictionary:NO];
+    NSMutableDictionary *info = [iMsg copyDictionary:NO];
     [info removeObjectForKey:@"content"];
     [info setObject:encodedData forKey:@"data"];
     

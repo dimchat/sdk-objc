@@ -28,75 +28,24 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMSDK.h
+//  DaoKeDao.h
 //  DIMSDK
 //
 //  Created by Albert Moky on 2019/11/29.
 //  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-
-//! Project version number for DIMSDK.
-FOUNDATION_EXPORT double DIMSDKVersionNumber;
-
-//! Project version string for DIMSDK.
-FOUNDATION_EXPORT const unsigned char DIMSDKVersionString[];
-
-// In this header, you should import all the public headers of your framework using statements like #import <DIMSDK/PublicHeader.h>
-
-// MKM
-//#import <MingKeMing/MingKeMing.h>
-
-// DKD
-//#import <DaoKeDao/DaoKeDao.h>
-
-// Core
-//#import <DIMCore/DIMCore.h>
-
-#if !defined(__DIM_SDK__)
-#define __DIM_SDK__ 1
-
-// MingKeMing
-#import <DIMSDK/DIMEntity.h>
-#import <DIMSDK/DIMUser.h>
-#import <DIMSDK/DIMGroup.h>
-#import <DIMSDK/DIMServiceProvider.h>
-#import <DIMSDK/DIMStation.h>
-#import <DIMSDK/DIMBot.h>
-#import <DIMSDK/DIMAccountUtils.h>
-
 // DaoKeDao
+#import <DIMCore/DaoKeDao.h>
+
+#if !defined(__SDK_DKD__)
+#define __SDK_DKD__ 1
+
+// Message
 #import <DIMSDK/DKDMessageDelegates.h>
 #import <DIMSDK/DIMInstantMessagePacker.h>
 #import <DIMSDK/DIMSecureMessagePacker.h>
 #import <DIMSDK/DIMReliableMessagePacker.h>
 #import <DIMSDK/DIMMessageUtils.h>
 
-// Core
-#import <DIMSDK/DIMBarrack.h>
-#import <DIMSDK/DIMTransceiver.h>
-#import <DIMSDK/DIMMessageHelpers.h>
-#import <DIMSDK/DIMMessageCompressor.h>
-#import <DIMSDK/DIMMessageShortener.h>
-#import <DIMSDK/DIMContentProcessor.h>
-
-// CPUs
-#import <DIMSDK/DIMBaseProcessor.h>
-#import <DIMSDK/DIMContentProcessorCreator.h>
-// contents
-#import <DIMSDK/DIMForwardContentProcessor.h>
-#import <DIMSDK/DIMArrayContentProcessor.h>
-#import <DIMSDK/DIMCustomizedContentProcessor.h>
-// commands
-#import <DIMSDK/DIMMetaCommandProcessor.h>
-#import <DIMSDK/DIMDocumentCommandProcessor.h>
-
-// Utils
-#import <DIMSDK/DIMFacebook.h>
-#import <DIMSDK/DIMMessenger.h>
-#import <DIMSDK/DIMTwinsHelper.h>
-#import <DIMSDK/DIMMessagePacker.h>
-#import <DIMSDK/DIMMessageProcessor.h>
-
-#endif /* ! __DIM_SDK__== */
+#endif /* ! __SDK_DKD__ */

@@ -36,6 +36,7 @@
 //
 
 #import <DIMCore/DIMCore.h>
+#import <DIMCore/Ext.h>
 
 #import "DIMAccountUtils.h"
 

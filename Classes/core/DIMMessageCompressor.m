@@ -35,7 +35,7 @@
 //  Copyright © 2025 Albert Moky. All rights reserved.
 //
 
-#import <MingKeMing/MingKeMing.h>
+#import <DIMCore/DIMCore.h>
 
 #import "DIMMessageShortener.h"
 

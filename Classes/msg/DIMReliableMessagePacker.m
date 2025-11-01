@@ -97,7 +97,7 @@
     }
     
     // OK, pack message
-    NSMutableDictionary *info = [rMsg dictionary:NO];
+    NSMutableDictionary *info = [rMsg copyDictionary:NO];
     [info removeObjectForKey:@"signature"];
     return DKDSecureMessageParse(info);
 }

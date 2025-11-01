@@ -151,7 +151,7 @@
     //      (do it by application)
 
     // OK, pack message
-    NSMutableDictionary *info = [sMsg dictionary:NO];
+    NSMutableDictionary *info = [sMsg copyDictionary:NO];
     [info removeObjectForKey:@"key"];
     [info removeObjectForKey:@"keys"];
     [info removeObjectForKey:@"data"];
@@ -186,7 +186,7 @@
     //NSAssert([(NSString *)base64 length] > 0, @"failed to encode signature: %lu byte(s), %@ => %@, %@", signature.length, sMsg.sender, sMsg.receiver, sMsg.group);
     
     // OK, pack message
-    NSMutableDictionary *info = [sMsg dictionary:NO];
+    NSMutableDictionary *info = [sMsg copyDictionary:NO];
     [info setObject:base64 forKey:@"signature"];
     return DKDReliableMessageParse(info);
 }
