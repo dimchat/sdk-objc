@@ -70,7 +70,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param user - user ID
  * @return contacts list (ID)
  */
-- (NSArray<id<MKMID>> *)getContacts:(id<MKMID>)user;
+- (NSArray<id<MKMID>> *)contacts:(id<MKMID>)user;
 
 /**
  *  Get user's public key for encryption
@@ -79,7 +79,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param user - user ID
  * @return visa.key or meta.key
  */
-- (nullable id<MKEncryptKey>)getPublicKeyForEncryption:(id<MKMID>)user;
+- (nullable id<MKEncryptKey>)publicKeyForEncryption:(id<MKMID>)user;
 
 /**
  *  Get user's public keys for verification
@@ -88,7 +88,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param user - user ID
  * @return public keys
  */
-- (NSArray<id<MKVerifyKey>> *)getPublicKeysForVerification:(id<MKMID>)user;
+- (NSArray<id<MKVerifyKey>> *)publicKeysForVerification:(id<MKMID>)user;
 
 /**
  *  Get user's private keys for decryption
@@ -97,7 +97,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param user - user ID
  * @return private keys
  */
-- (NSArray<id<MKDecryptKey>> *)getPrivateKeysForDecryption:(id<MKMID>)user;
+- (NSArray<id<MKDecryptKey>> *)privateKeysForDecryption:(id<MKMID>)user;
 
 /**
  *  Get user's private key for signature
@@ -106,7 +106,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param user - user ID
  * @return private key
  */
-- (nullable id<MKSignKey>)getPrivateKeyForSignature:(id<MKMID>)user;
+- (nullable id<MKSignKey>)privateKeyForSignature:(id<MKMID>)user;
 
 /**
  *  Get user's private key for signing visa
@@ -114,7 +114,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param user - user ID
  * @return private key
  */
-- (nullable id<MKSignKey>)getPrivateKeyForVisaSignature:(id<MKMID>)user;
+- (nullable id<MKSignKey>)privateKeyForVisaSignature:(id<MKMID>)user;
 
 @end
 

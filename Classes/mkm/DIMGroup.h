@@ -55,7 +55,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param group - group ID
  * @return fonder ID
  */
-- (nullable id<MKMID>)getFounder:(id<MKMID>)group;
+- (nullable id<MKMID>)founder:(id<MKMID>)group;
 
 /**
  *  Get group owner
@@ -63,7 +63,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param group - group ID
  * @return owner ID
  */
-- (nullable id<MKMID>)getOwner:(id<MKMID>)group;
+- (nullable id<MKMID>)owner:(id<MKMID>)group;
 
 /**
  *  Get group members list
@@ -71,7 +71,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param group - group ID
  * @return members list (ID)
  */
-- (NSArray<id<MKMID>> *)getMembers:(id<MKMID>)group;
+- (NSArray<id<MKMID>> *)members:(id<MKMID>)group;
 
 /**
  *  Get assistants for this group
@@ -79,7 +79,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param group - group ID
  * @return bot ID list
  */
-- (NSArray<id<MKMID>> *)getAssistants:(id<MKMID>)group;
+- (NSArray<id<MKMID>> *)assistants:(id<MKMID>)group;
 
 @end
 

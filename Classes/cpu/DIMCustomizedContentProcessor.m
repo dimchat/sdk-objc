@@ -126,10 +126,10 @@
 }
 
 // override for your module
-- (NSArray<id<DKDContent>> *)filterApplication:(NSString *)app
-                                    withModule:(NSString *)mod
-                                       content:(id<DKDCustomizedContent>)customized
-                                      messasge:(id<DKDReliableMessage>)rMsg {
+- (id<DIMCustomizedContentHandler>)filterApplication:(NSString *)app
+                                          withModule:(NSString *)mod
+                                             content:(id<DKDCustomizedContent>)body
+                                            messasge:(id<DKDReliableMessage>)rMsg {
     // if the application has too many modules, I suggest you to
     // use different handler to do the jobs for each module.
     return [self defaultHandler];

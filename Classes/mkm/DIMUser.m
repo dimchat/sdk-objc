@@ -43,7 +43,7 @@
 
 - (nullable id<MKMVisa>)visa {
     NSArray<id<MKMDocument>> *docs = [self documents];
-    return [DIMDocumentUtils lastVisa:docs];
+    return DIMDocumentGetVisa(docs);
 }
 
 - (BOOL)verifyVisa:(id<MKMVisa>)visa {
@@ -70,7 +70,7 @@
     id<MKMUserDataSource> facebook = [self dataSource];
     NSAssert(facebook, @"user data source not set yet");
     id<MKMID> ID = [self identifier];
-    NSArray<id<MKVerifyKey>> *keys = [facebook getPublicKeysForVerification:ID];
+    NSArray<id<MKVerifyKey>> *keys = [facebook publicKeysForVerification:ID];
     NSAssert([keys count] > 0, @"failed to get verify keys: %@", ID);
     for (id<MKVerifyKey> PK in keys) {
         if ([PK verify:data withSignature:signature]) {
@@ -89,7 +89,7 @@
     id<MKMID> ID = [self identifier];
     // NOTICE: meta.key will never changed, so use visa.key to encrypt message
     //         is a better way
-    id<MKEncryptKey> PK = [facebook getPublicKeyForEncryption:ID];
+    id<MKEncryptKey> PK = [facebook publicKeyForEncryption:ID];
     NSAssert(PK, @"failed to get encrypt key for user: %@", ID);
     return [PK encrypt:plaintext extra:nil];
 }
@@ -113,7 +113,7 @@
     id<MKMUserDataSource> facebook = [self dataSource];
     NSAssert(facebook, @"user data source not set yet");
     id<MKMID> ID = [self identifier];
-    return [facebook getContacts:ID];
+    return [facebook contacts:ID];
 }
 
 - (nullable id<MKMVisa>)signVisa:(id<MKMVisa>)visa {
@@ -129,7 +129,7 @@
         //return nil;
     }
     // NOTICE: only sign visa with the private key paired with your meta.key
-    id<MKSignKey> SK = [facebook getPrivateKeyForVisaSignature:did];
+    id<MKSignKey> SK = [facebook privateKeyForVisaSignature:did];
     NSAssert(SK, @"failed to get visa sign key for user: %@", did);
     NSData *sig = [visa sign:SK];
     if ([sig length] == 0) {
@@ -143,7 +143,7 @@
     id<MKMUserDataSource> facebook = [self dataSource];
     NSAssert(facebook, @"user data source not set yet");
     id<MKMID> ID = [self identifier];
-    id<MKSignKey> SK = [facebook getPrivateKeyForSignature:ID];
+    id<MKSignKey> SK = [facebook privateKeyForSignature:ID];
     NSAssert(SK, @"failed to get sign key for user: %@", ID);
     return [SK sign:data];
 }
@@ -154,7 +154,7 @@
     id<MKMID> ID = [self identifier];
     // NOTICE: if you provide a public key in visa for encryption
     //         here you should return the private key paired with visa.key
-    NSArray<id<MKDecryptKey>> *keys = [facebook getPrivateKeysForDecryption:ID];
+    NSArray<id<MKDecryptKey>> *keys = [facebook privateKeysForDecryption:ID];
     NSAssert([keys count] > 0, @"failed to get decrypt keys for user: %@", ID);
     NSData *plaintext = nil;
     for (id<MKDecryptKey> SK in keys) {

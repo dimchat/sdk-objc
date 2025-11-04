@@ -57,7 +57,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param ID - entity ID
  * @return Meta
  */
-- (nullable id<MKMMeta>)getMeta:(id<MKMID>)ID;
+- (nullable id<MKMMeta>)meta:(id<MKMID>)ID;
 
 /**
  *  Get documents for entity ID
@@ -65,7 +65,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param ID - entity ID
  * @return Document List
  */
-- (NSArray<id<MKMDocument>> *)getDocuments:(id<MKMID>)ID;
+- (NSArray<id<MKMDocument>> *)documents:(id<MKMID>)ID;
 
 @end
 
@@ -80,7 +80,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param ID - user ID
  * @return user
  */
-- (nullable __kindof id<MKMUser>)getUser:(id<MKMID>)ID;
+- (nullable __kindof id<MKMUser>)user:(id<MKMID>)ID;
 
 /**
  *  Create group with ID
@@ -88,7 +88,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param ID - group ID
  * @return group
  */
-- (nullable __kindof id<MKMGroup>)getGroup:(id<MKMID>)ID;
+- (nullable __kindof id<MKMGroup>)group:(id<MKMID>)ID;
 
 @end
 

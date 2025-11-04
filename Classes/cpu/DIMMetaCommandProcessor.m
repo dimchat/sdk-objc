@@ -72,18 +72,16 @@
                  andEnvelope:envelope];
     } else {
         // query meta for ID
-        return [self getMetaForID:ID
-                      withContent:command
-                      andEnvelope:envelope];
+        return [self metaForID:ID withContent:command andEnvelope:envelope];
     }
 }
 
 // private
-- (NSArray<id<DKDContent>> *)getMetaForID:(id<MKMID>)ID
-                              withContent:(id<DKDMetaCommand>)command
-                              andEnvelope:(id<DKDEnvelope>)head {
+- (NSArray<id<DKDContent>> *)metaForID:(id<MKMID>)ID
+                           withContent:(id<DKDMetaCommand>)command
+                           andEnvelope:(id<DKDEnvelope>)head {
     DIMFacebook *facebook = [self facebook];
-    id<MKMMeta> meta = [facebook getMeta:ID];
+    id<MKMMeta> meta = [facebook meta:ID];
     if (!meta) {
         // extra info for receipt
         NSDictionary *info = @{

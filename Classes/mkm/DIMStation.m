@@ -144,7 +144,7 @@ static void autoInitializeStationIdentifiers(void) {
 
 - (id<MKMDocument>)profile {
     NSArray<id<MKMDocument>> *docs = [self documents];
-    return [DIMDocumentUtils lastDocument:docs forType:@"*"];
+    return DIMDocumentGetLast(docs, @"*");
 }
 
 - (NSString *)host {

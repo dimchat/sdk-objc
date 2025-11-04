@@ -35,8 +35,8 @@
 //  Copyright © 2023 Albert Moky. All rights reserved.
 //
 
-#import <DIMSDK/DIMFacebook.h>
-#import <DIMSDK/DIMMessenger.h>
+#import "DIMFacebook.h"
+#import "DIMMessenger.h"
 
 #import "DIMTwinsHelper.h"
 

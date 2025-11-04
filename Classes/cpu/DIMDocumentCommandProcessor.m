@@ -61,9 +61,7 @@
                               extra:nil];
     } else if ([documents count] == 0) {
         // query documents for ID
-        return [self getDocumentsForID:ID
-                           withContent:command
-                           andEnvelope:envelope];
+        return [self documentsForID:ID withContent:command andEnvelope:envelope];
     }
     // check document ID
     BOOL ok;
@@ -92,11 +90,12 @@
                   andEnvelope:envelope];
 }
 
-- (NSArray<id<DKDContent>> *)getDocumentsForID:(id<MKMID>)ID
-                                   withContent:(id<DKDDocumentCommand>)command
-                                   andEnvelope:(id<DKDEnvelope>)head {
+// protected
+- (NSArray<id<DKDContent>> *)documentsForID:(id<MKMID>)ID
+                                withContent:(id<DKDDocumentCommand>)command
+                                andEnvelope:(id<DKDEnvelope>)head {
     DIMFacebook *facebook = [self facebook];
-    NSArray<id<MKMDocument>> *docs = [facebook getDocuments:ID];
+    NSArray<id<MKMDocument>> *docs = [facebook documents:ID];
     if ([docs count] == 0) {
         // extra info for receipt
         NSDictionary *info = @{
@@ -114,7 +113,7 @@
     NSDate *queryTime = [command lastTime];
     if (queryTime) {
         // check last document time
-        id<MKMDocument> last = [DIMDocumentUtils lastDocument:docs forType:@"*"];
+        id<MKMDocument> last = DIMDocumentGetLast(docs, @"*");
         NSAssert(last, @"should not happen");
         NSDate *lastTime = [last time];
         NSTimeInterval lt = [lastTime timeIntervalSince1970];
@@ -135,7 +134,7 @@
                                   extra:info];
         }
     }
-    id<MKMMeta> meta = [facebook getMeta:ID];
+    id<MKMMeta> meta = [facebook meta:ID];
     return @[
         DIMDocumentCommandResponse(ID, meta, docs)
     ];
@@ -150,7 +149,7 @@
     // 0. check meta
     if (!meta) {
         DIMFacebook *facebook = [self facebook];
-        meta = [facebook getMeta:ID];
+        meta = [facebook meta:ID];
         if (!meta) {
             // extra info for receipt
             NSDictionary *info = @{

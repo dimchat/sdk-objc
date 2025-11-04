@@ -84,7 +84,7 @@
         //
         // the messenger will check group info before decrypting message,
         // so we can trust that the group's meta & members MUST exist here.
-        NSArray<id<MKMID>> *members = [self getMembers:receiver];
+        NSArray<id<MKMID>> *members = [self members:receiver];
         if ([members count] == 0) {
             NSAssert(false, @"members not found: %@", receiver);
             return nil;
@@ -107,14 +107,14 @@
 //
 
 // Override
-- (nullable id<MKMUser>)getUser:(id<MKMID>)ID {
+- (nullable id<MKMUser>)user:(id<MKMID>)ID {
     NSAssert([ID isUser], @"user ID error: %@", ID);
     DIMBarrack *barrack = [self barrack];
     NSAssert(barrack, @"barrack not ready");
     //
     //  1. get from user cache
     //
-    id<MKMUser> user = [barrack getUser:ID];
+    id<MKMUser> user = [barrack user:ID];
     if (user) {
         return user;
     }
@@ -124,7 +124,7 @@
     if ([ID isBroadcast]) {
         // no need to check visa key for broadcast user
     } else {
-        id<MKEncryptKey> visaKey = [self getPublicKeyForEncryption:ID];
+        id<MKEncryptKey> visaKey = [self publicKeyForEncryption:ID];
         if (!visaKey) {
             NSAssert(false, @"visa.key not found: %@", ID);
             return nil;
@@ -142,14 +142,14 @@
 }
 
 // Override
-- (nullable id<MKMGroup>)getGroup:(id<MKMID>)ID {
+- (nullable id<MKMGroup>)group:(id<MKMID>)ID {
     NSAssert([ID isGroup], @"user ID error: %@", ID);
     DIMBarrack *barrack = [self barrack];
     NSAssert(barrack, @"barrack not ready");
     //
     //  1. get from group cache
     //
-    id<MKMGroup> group = [barrack getGroup:ID];
+    id<MKMGroup> group = [barrack group:ID];
     if (group) {
         return group;
     }
@@ -159,7 +159,7 @@
     if ([ID isBroadcast]) {
         // no need to check members for broadcast group
     } else {
-        NSArray<id<MKMID>> *members = [self getMembers:ID];
+        NSArray<id<MKMID>> *members = [self members:ID];
         if ([members count] == 0) {
             NSAssert(false, @"group members not found: %@", ID);
             return nil;
@@ -182,13 +182,13 @@
 //
 
 // Override
-- (nullable id<MKMMeta>)getMeta:(id<MKMID>)ID {
+- (nullable id<MKMMeta>)meta:(id<MKMID>)ID {
     NSAssert(false, @"implement me!");
     return nil;
 }
 
 // Override
-- (NSArray<id<MKMDocument>> *)getDocuments:(id<MKMID>)ID {
+- (NSArray<id<MKMDocument>> *)documents:(id<MKMID>)ID {
     NSAssert(false, @"implement me!");
     return nil;
 }
@@ -198,20 +198,20 @@
 //
 
 // Override
-- (NSArray<id<MKMID>> *)getContacts:(id<MKMID>)user {
+- (NSArray<id<MKMID>> *)contacts:(id<MKMID>)user {
     NSAssert(false, @"implement me!");
     return nil;
 }
 
 // Override
-- (nullable id<MKEncryptKey>)getPublicKeyForEncryption:(id<MKMID>)user {
+- (nullable id<MKEncryptKey>)publicKeyForEncryption:(id<MKMID>)user {
     NSAssert([user isUser], @"user ID error: %@", user);
     id<DIMArchivist> archivist = [self archivist];
     NSAssert(archivist, @"archivist not ready");
     //
     //  1. get public key from visa
     //
-    id<MKEncryptKey> visaKey = [archivist getVisaKey:user];
+    id<MKEncryptKey> visaKey = [archivist visaKey:user];
     if (visaKey) {
         // if visa.key exists, use it for encryption
         return visaKey;
@@ -219,7 +219,7 @@
     //
     //  2. get key from meta
     //
-    __kindof id<MKVerifyKey> metaKey = [archivist getMetaKey:user];
+    __kindof id<MKVerifyKey> metaKey = [archivist metaKey:user];
     if ([metaKey conformsToProtocol:@protocol(MKEncryptKey)]) {
         // if visa.key not exists and meta.key is encrypt key,
         // use it for encryption
@@ -230,7 +230,7 @@
 }
 
 // Override
-- (NSArray<id<MKVerifyKey>> *)getPublicKeysForVerification:(id<MKMID>)user {
+- (NSArray<id<MKVerifyKey>> *)publicKeysForVerification:(id<MKMID>)user {
     NSAssert([user isUser], @"user ID error: %@", user);
     id<DIMArchivist> archivist = [self archivist];
     NSAssert(archivist, @"archivist not ready");
@@ -238,7 +238,7 @@
     //
     //  1. get pubic key from visa
     //
-    __kindof id<MKEncryptKey> visaKey = [archivist getVisaKey:user];
+    __kindof id<MKEncryptKey> visaKey = [archivist visaKey:user];
     if ([visaKey conformsToProtocol:@protocol(MKVerifyKey)]) {
         // the sender may use communication key to sign message.data,
         // so try to verify it with visa.key first
@@ -247,7 +247,7 @@
     //
     //  2. get key from meta
     //
-    id<MKVerifyKey> metaKey = [archivist getMetaKey:user];
+    id<MKVerifyKey> metaKey = [archivist metaKey:user];
     if (metaKey) {
         // the sender may use identity key to sign message.data,
         // try to verify it with meta.key too
@@ -258,19 +258,19 @@
 }
 
 // Override
-- (NSArray<id<MKDecryptKey>> *)getPrivateKeysForDecryption:(id<MKMID>)user {
+- (NSArray<id<MKDecryptKey>> *)privateKeysForDecryption:(id<MKMID>)user {
     NSAssert(false, @"implement me!");
     return nil;
 }
 
 // Override
-- (nullable id<MKSignKey>)getPrivateKeyForSignature:(id<MKMID>)user {
+- (nullable id<MKSignKey>)privateKeyForSignature:(id<MKMID>)user {
     NSAssert(false, @"implement me!");
     return nil;
 }
 
 // Override
-- (nullable id<MKSignKey>)getPrivateKeyForVisaSignature:(id<MKMID>)user {
+- (nullable id<MKSignKey>)privateKeyForVisaSignature:(id<MKMID>)user {
     NSAssert(false, @"implement me!");
     return nil;
 }
@@ -280,25 +280,25 @@
 //
 
 // Override
-- (nullable id<MKMID>)getFounder:(id<MKMID>)group {
+- (nullable id<MKMID>)founder:(id<MKMID>)group {
     NSAssert(false, @"implement me!");
     return nil;
 }
 
 // Override
-- (nullable id<MKMID>)getOwner:(id<MKMID>)group {
+- (nullable id<MKMID>)owner:(id<MKMID>)group {
     NSAssert(false, @"implement me!");
     return nil;
 }
 
 // Override
-- (NSArray<id<MKMID>> *)getMembers:(id<MKMID>)group {
+- (NSArray<id<MKMID>> *)members:(id<MKMID>)group {
     NSAssert(false, @"implement me!");
     return nil;
 }
 
 // Override
-- (NSArray<id<MKMID>> *)getAssistants:(id<MKMID>)group {
+- (NSArray<id<MKMID>> *)assistants:(id<MKMID>)group {
     NSAssert(false, @"implement me!");
     return nil;
 }

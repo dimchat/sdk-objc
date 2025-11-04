@@ -115,7 +115,7 @@
                  forReceiver:(id<MKMID>)receiver {
     NSAssert(![DIMMessage isBroadcast:iMsg], @"broadcast message has no key: %@", iMsg);
     // TODO: make sure the receiver's public key exists
-    id<MKMUser> contact = [self.facebook getUser:receiver];
+    id<MKMUser> contact = [self.facebook user:receiver];
     NSAssert(contact, @"failed to get encrypt key for receiver: %@", receiver);
     // encrypt with receiver's public key
     return [contact encrypt:data];
@@ -142,7 +142,7 @@
     //         if it's a group message
     NSAssert(![DIMMessage isBroadcast:sMsg], @"broadcast message has no key: %@", sMsg);
     NSAssert([receiver isUser], @"receiver error: %@", receiver);
-    id<MKMUser> user = [self.facebook getUser:receiver];
+    id<MKMUser> user = [self.facebook user:receiver];
     NSAssert(user, @"failed to get decrypt keys: %@", receiver);
     // decrypt with private key of the receiver (or group member)
     return [user decrypt:key];
@@ -199,7 +199,7 @@
 - (NSData *)message:(id<DKDSecureMessage>)sMsg
            signData:(NSData *)data {
     id<MKMID> sender = [sMsg sender];
-    id<MKMUser> user = [self.facebook getUser:sender];
+    id<MKMUser> user = [self.facebook user:sender];
     NSAssert(user, @"failed to get sign key for sender: %@", sender);
     return [user sign:data];
 }
@@ -220,7 +220,7 @@
      verifyData:(NSData *)data
   withSignature:(NSData *)signature {
     id<MKMID> sender = rMsg.sender;
-    id<MKMUser> user = [self.facebook getUser:sender];
+    id<MKMUser> user = [self.facebook user:sender];
     NSAssert(user, @"failed to get verify key for sender: %@", sender);
     return [user verify:data withSignature:signature];
 }

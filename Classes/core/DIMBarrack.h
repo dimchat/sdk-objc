@@ -55,8 +55,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)cacheUser:(id<MKMUser>)user;
 - (void)cacheGroup:(id<MKMGroup>)group;
 
-- (nullable __kindof id<MKMUser>)getUser:(id<MKMID>)ID;
-- (nullable __kindof id<MKMGroup>)getGroup:(id<MKMID>)ID;
+- (nullable __kindof id<MKMUser>)user:(id<MKMID>)ID;
+- (nullable __kindof id<MKMGroup>)group:(id<MKMID>)ID;
 
 /**
  *  Create user when visa.key exists
@@ -105,7 +105,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param ID - entity ID
  * @return nil on not found
  */
-- (nullable __kindof id<MKVerifyKey>)getMetaKey:(id<MKMID>)ID;
+- (nullable __kindof id<MKVerifyKey>)metaKey:(id<MKMID>)ID;
 
 /**
  *  Get visa.key
@@ -113,7 +113,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param ID - entity ID
  * @return nil on not found
  */
-- (nullable __kindof id<MKEncryptKey>)getVisaKey:(id<MKMID>)ID;
+- (nullable __kindof id<MKEncryptKey>)visaKey:(id<MKMID>)ID;
 
 //
 //  Local Users

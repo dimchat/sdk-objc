@@ -95,9 +95,9 @@ NS_ASSUME_NONNULL_BEGIN
  *  @param content - content/command
  *  @return ContentProcessor
  */
-- (nullable id<DIMContentProcessor>)getContentProcessor:(id<DKDContent>)content;
+- (nullable id<DIMContentProcessor>)contentProcessor:(id<DKDContent>)content;
 
-- (id<DIMContentProcessor>)getContentProcessorForType:(NSString *)msgType;
+- (id<DIMContentProcessor>)contentProcessorForType:(NSString *)msgType;
 
 @end
 

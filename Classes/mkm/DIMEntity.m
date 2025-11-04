@@ -111,12 +111,12 @@
 
 - (id<MKMMeta>)meta {
     NSAssert(_dataSource, @"entity data source not set yet");
-    return [_dataSource getMeta:_ID];
+    return [_dataSource meta:_ID];
 }
 
 - (NSArray<id<MKMDocument>> *)documents {
     NSAssert(_dataSource, @"entity data source not set yet");
-    return [_dataSource getDocuments:_ID];
+    return [_dataSource documents:_ID];
 }
 
 @end

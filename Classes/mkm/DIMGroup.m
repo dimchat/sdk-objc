@@ -79,7 +79,7 @@
 
 - (nullable id<MKMBulletin>)bulletin {
     NSArray<id<MKMDocument>> *docs = [self documents];
-    return [DIMDocumentUtils lastBulletin:docs];
+    return DIMDocumentGetBulletin(docs);
 }
 
 - (id<MKMID>)founder {
@@ -87,7 +87,7 @@
         id<MKMGroupDataSource> facebook = [self dataSource];
         NSAssert(facebook, @"group data source not set yet");
         id<MKMID> ID = [self identifier];
-        _founder = [facebook getFounder:ID];
+        _founder = [facebook founder:ID];
     }
     return _founder;
 }
@@ -96,21 +96,21 @@
     id<MKMGroupDataSource> facebook = [self dataSource];
     NSAssert(facebook, @"group data source not set yet");
     id<MKMID> ID = [self identifier];
-    return [facebook getOwner:ID];
+    return [facebook owner:ID];
 }
 
 - (NSArray<id<MKMID>> *)members {
     id<MKMGroupDataSource> facebook = [self dataSource];
     NSAssert(facebook, @"group data source not set yet");
     id<MKMID> ID = [self identifier];
-    return [facebook getMembers:ID];
+    return [facebook members:ID];
 }
 
 - (NSArray<id<MKMID>> *)assistants {
     id<MKMGroupDataSource> facebook = [self dataSource];
     NSAssert(facebook, @"group data source not set yet");
     id<MKMID> ID = [self identifier];
-    return [facebook getAssistants:ID];
+    return [facebook assistants:ID];
 }
 
 @end

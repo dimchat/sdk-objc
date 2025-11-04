@@ -66,30 +66,30 @@
 }
 
 // Override
-- (id<DIMContentProcessor>)getContentProcessor:(id<DKDContent>)content {
+- (id<DIMContentProcessor>)contentProcessor:(id<DKDContent>)content {
     id<DIMContentProcessor> cpu;
     NSString *msgType = [content type];
     if ([content conformsToProtocol:@protocol(DKDCommand)]) {
         NSString *cmd = [(id<DKDCommand>)content cmd];
         //NSAssert([cmd length] > 0, @"command name error: %@", cmd);
-        cpu = [self getCommandProcessor:cmd type:msgType];
+        cpu = [self commandProcessor:cmd type:msgType];
         if (cpu) {
             return cpu;
         } else if ([content conformsToProtocol:@protocol(DKDGroupCommand)]
                    /*|| [content objectForKey:@"group"]*/) {
             //NSAssert(![cmd isEqualToString:@"group"], @"command name error: %@", content);
-            cpu = [self getCommandProcessor:@"group" type:msgType];
+            cpu = [self commandProcessor:@"group" type:msgType];
             if (cpu) {
                 return cpu;
             }
         }
     }
     // content processor
-    return [self getContentProcessorForType:msgType];
+    return [self contentProcessorForType:msgType];
 }
 
 // Override
-- (id<DIMContentProcessor>)getContentProcessorForType:(NSString *)msgType {
+- (id<DIMContentProcessor>)contentProcessorForType:(NSString *)msgType {
     id<DIMContentProcessor> cpu = [_contentProcessors objectForKey:msgType];
     if (!cpu) {
         cpu = [_creator createContentProcessor:msgType];
@@ -101,8 +101,7 @@
 }
 
 // private
-- (id<DIMContentProcessor>)getCommandProcessor:(NSString *)cmd
-                                          type:(NSString *)msgType {
+- (id<DIMContentProcessor>)commandProcessor:(NSString *)cmd type:(NSString *)msgType {
     id<DIMContentProcessor> cpu = [_commandProcessors objectForKey:cmd];
     if (!cpu) {
         cpu = [_creator createCommandProcessor:cmd withType:msgType];

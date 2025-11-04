@@ -212,10 +212,10 @@
                  withReliableMessageMessage:(id<DKDReliableMessage>)rMsg {
     // TODO: override to check group before calling this
     id<DIMContentProcessorFactory> factory = [self factory];
-    id<DIMContentProcessor> cpu = [factory getContentProcessor:content];
+    id<DIMContentProcessor> cpu = [factory contentProcessor:content];
     if (!cpu) {
         // default content processor
-        cpu = [factory getContentProcessorForType:DKDContentType_Any];
+        cpu = [factory contentProcessorForType:DKDContentType_Any];
         NSAssert(cpu, @"failed to get default CPU");
     }
     return [cpu processContent:content withMessage:rMsg];

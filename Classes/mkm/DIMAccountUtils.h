@@ -101,4 +101,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+#pragma mark Conveniences
+
+#define DIMDocumentGetType(doc)         [DIMDocumentUtils getDocumentType:(doc)]
+#define DIMDocumentGetLast(docs, T)     [DIMDocumentUtils lastDocument:(docs) forType:(T)]
+#define DIMDocumentGetVisa(docs)        [DIMDocumentUtils lastVisa:(docs)]
+#define DIMDocumentGetBulletin(docs)    [DIMDocumentUtils lastBulletin:(docs)]
+
 NS_ASSUME_NONNULL_END

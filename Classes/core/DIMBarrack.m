@@ -53,12 +53,12 @@
     NSAssert(false, @"implement me!");
 }
 
-- (nullable id<MKMUser>)getUser:(id<MKMID>)ID {
+- (nullable id<MKMUser>)user:(id<MKMID>)ID {
     NSAssert(false, @"implement me!");
     return nil;
 }
 
-- (nullable id<MKMGroup>)getGroup:(id<MKMID>)ID {
+- (nullable id<MKMGroup>)group:(id<MKMID>)ID {
     NSAssert(false, @"implement me!");
     return nil;
 }
