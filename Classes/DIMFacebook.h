@@ -41,8 +41,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class DIMArchivist;
-
 @interface DIMFacebook : NSObject <MKMEntityDelegate,
                                    MKMUserDataSource,
                                    MKMGroupDataSource>

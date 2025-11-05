@@ -36,6 +36,7 @@
 //
 
 #import "DIMUser.h"
+#import "DIMBarrack.h"
 #import "DIMMessageCompressor.h"
 
 #import "DIMTransceiver.h"

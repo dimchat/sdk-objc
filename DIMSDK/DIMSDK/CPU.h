@@ -38,6 +38,8 @@
 #if !defined(__SDK_CPU__)
 #define __SDK_CPU__ 1
 
+#import <DIMSDK/DIMContentProcessor.h>
+
 // CPUs
 #import <DIMSDK/DIMBaseProcessor.h>
 #import <DIMSDK/DIMContentProcessorCreator.h>

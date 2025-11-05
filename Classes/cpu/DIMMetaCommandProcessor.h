@@ -35,10 +35,11 @@
 //  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
-#import <DIMSDK/DIMBarrack.h>
 #import <DIMSDK/DIMBaseProcessor.h>
 
 NS_ASSUME_NONNULL_BEGIN
+
+@protocol DIMArchivist;
 
 @interface DIMMetaCommandProcessor : DIMCommandProcessor
 

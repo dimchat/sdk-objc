@@ -36,7 +36,6 @@
 //
 
 #import "DIMMessageUtils.h"
-#import "DIMMessageHelpers.h"
 
 #import "DIMInstantMessagePacker.h"
 #import "DIMSecureMessagePacker.h"

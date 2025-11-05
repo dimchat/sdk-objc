@@ -35,17 +35,9 @@
 //  Copyright © 2023 DIM Group. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <DIMCore/DIMCore.h>
 
 NS_ASSUME_NONNULL_BEGIN
-
-@protocol MKVerifyKey;
-
-@protocol MKMID;
-@protocol MKMMeta;
-@protocol MKMDocument;
-@protocol MKMVisa;
-@protocol MKMBulletin;
 
 @interface DIMMetaUtils : NSObject
 

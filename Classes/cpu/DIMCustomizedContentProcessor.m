@@ -35,6 +35,9 @@
 //  Copyright © 2022 Albert Moky. All rights reserved.
 //
 
+#import "DIMFacebook.h"
+#import "DIMMessenger.h"
+
 #import "DIMCustomizedContentProcessor.h"
 
 @implementation DIMCustomizedContentHandler

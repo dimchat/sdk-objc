@@ -35,8 +35,6 @@
 //  Copyright © 2025 Albert Moky. All rights reserved.
 //
 
-#import <DIMCore/DIMCore.h>
-
 #import "DIMMessageUtils.h"
 
 @implementation DIMMessageUtils

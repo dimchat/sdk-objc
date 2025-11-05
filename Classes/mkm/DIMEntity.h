@@ -69,29 +69,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@protocol MKMUser;
-@protocol MKMGroup;
-
-@protocol MKMEntityDelegate <NSObject>
-
-/**
- *  Create user with ID
- *
- * @param ID - user ID
- * @return user
- */
-- (nullable __kindof id<MKMUser>)user:(id<MKMID>)ID;
-
-/**
- *  Create group with ID
- *
- * @param ID - group ID
- * @return group
- */
-- (nullable __kindof id<MKMGroup>)group:(id<MKMID>)ID;
-
-@end
-
 /**
  *  Entity (User/Group)
  *  ~~~~~~~~~~~~~~~~~~~

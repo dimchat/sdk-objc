@@ -35,7 +35,6 @@
 //  Copyright © 2023 DIM Group. All rights reserved.
 //
 
-#import <DIMCore/DIMCore.h>
 #import <DIMCore/Ext.h>
 
 #import "DIMAccountUtils.h"

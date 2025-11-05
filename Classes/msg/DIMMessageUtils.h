@@ -35,14 +35,9 @@
 //  Copyright © 2025 Albert Moky. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <DIMCore/DIMCore.h>
 
 NS_ASSUME_NONNULL_BEGIN
-
-@protocol MKMMeta;
-@protocol MKMVisa;
-
-@protocol DKDMessage;
 
 /// 1. [Meta Protocol]
 /// 2. [Visa Protocol]
