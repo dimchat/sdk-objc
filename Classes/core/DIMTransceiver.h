@@ -58,9 +58,9 @@ NS_ASSUME_NONNULL_BEGIN
 // protected
 @property(readonly, weak, nonatomic) __kindof id<DIMCompressor> compressor;
 
-@end
-
-@interface DIMTransceiver (Packer)
+//@end
+//
+//@interface DIMTransceiver (Packer)
 
 /**
  *  Serialize network message

@@ -41,9 +41,7 @@
 
 @implementation DIMArrayContentProcessor
 
-//
-//  Main
-//
+// Override
 - (NSArray<id<DKDContent>> *)processContent:(__kindof id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content conformsToProtocol:@protocol(DKDArrayContent)],
@@ -51,7 +49,7 @@
     // get content array
     NSArray<id<DKDContent>> *array = [content contents];
     // call messenger to process it
-    DIMMessenger *messenger = self.messenger;
+    DIMMessenger *messenger = [self messenger];
     NSMutableArray *responses = [[NSMutableArray alloc] initWithCapacity:[array count]];
     id<DKDContent> res;
     NSArray *results;

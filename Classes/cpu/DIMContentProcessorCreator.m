@@ -51,6 +51,7 @@
 
 @implementation DIMContentProcessorCreator
 
+// Override
 - (id<DIMContentProcessor>)createContentProcessor:(NSString *)type {
     // forward content
     if ([type isEqualToString:DKDContentType_Forward]) {
@@ -81,6 +82,7 @@
     return nil;
 }
 
+// Override
 - (id<DIMContentProcessor>)createCommandProcessor:(NSString *)name
                                          withType:(NSString *)msgType {
     // meta command

@@ -62,6 +62,7 @@
     return self;
 }
 
+// Override
 - (NSData *)compressContent:(NSMutableDictionary *)content withKey:(NSDictionary *)pwd {
     id<DIMShortener> shortener = [self shortener];
     NSAssert(shortener, @"message shortener not set");
@@ -70,6 +71,7 @@
     return MKUTF8Encode(json);
 }
 
+// Override
 - (nullable NSDictionary *)extractContent:(NSData *)data withKey:(NSDictionary *)pwd {
     NSString *json = MKUTF8Decode(data);
     if ([json length] == 0) {
@@ -85,6 +87,7 @@
     return info;
 }
 
+// Override
 - (NSData *)compressSymmetricKey:(NSMutableDictionary *)key {
     id<DIMShortener> shortener = [self shortener];
     NSAssert(shortener, @"message shortener not set");
@@ -93,6 +96,7 @@
     return MKUTF8Encode(json);
 }
 
+// Override
 - (nullable NSDictionary *)extractSymmetricKey:(NSData *)data {
     NSString *json = MKUTF8Decode(data);
     if ([json length] == 0) {
@@ -108,6 +112,7 @@
     return info;
 }
 
+// Override
 - (NSData *)compressReliableMessage:(NSMutableDictionary *)msg {
     id<DIMShortener> shortener = [self shortener];
     NSAssert(shortener, @"message shortener not set");
@@ -116,6 +121,7 @@
     return MKUTF8Encode(json);
 }
 
+// Override
 - (nullable NSDictionary *)extractReliableMessage:(NSData *)data {
     NSString *json = MKUTF8Decode(data);
     if ([json length] == 0) {

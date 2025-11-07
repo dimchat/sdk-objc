@@ -69,6 +69,7 @@
 
 #pragma mark DKDInstantMessageDelegate
 
+// Override
 - (NSData *)message:(id<DKDInstantMessage>)iMsg
    serializeContent:(id<DKDContent>)content
             withKey:(id<MKSymmetricKey>)password {
@@ -80,6 +81,7 @@
     return [compressor compressContent:info withKey:key];
 }
 
+// Override
 - (NSData *)message:(id<DKDInstantMessage>)iMsg
      encryptContent:(NSData *)data
             withKey:(id<MKSymmetricKey>)password {
@@ -88,6 +90,7 @@
     return [password encrypt:data extra:params];
 }
 
+//// Override
 //- (NSObject *)message:(id<DKDInstantMessage>)iMsg
 //           encodeData:(NSData *)data {
 //    if ([DIMMessage isBroadcast:iMsg]) {
@@ -100,6 +103,7 @@
 //    return MKTransportableDataEncode(data);
 //}
 
+// Override
 - (nullable NSData *)message:(id<DKDInstantMessage>)iMsg
                 serializeKey:(id<MKSymmetricKey>)password {
     if ([DIMMessage isBroadcast:iMsg]) {
@@ -111,6 +115,7 @@
     return [compressor compressSymmetricKey:key];
 }
 
+// Override
 - (nullable NSData *)message:(id<DKDInstantMessage>)iMsg
                   encryptKey:(NSData *)data
                  forReceiver:(id<MKMID>)receiver {
@@ -122,6 +127,7 @@
     return [contact encrypt:data];
 }
 
+//// Override
 //- (NSObject *)message:(id<DKDInstantMessage>)iMsg
 //            encodeKey:(NSData *)data {
 //    NSAssert(![DIMMessage isBroadcast:iMsg], @"broadcast message has no key: %@", iMsg);
@@ -130,12 +136,14 @@
 
 #pragma mark DKDSecureMessageDelegate
 
+//// Override
 //- (nullable NSData *)message:(id<DKDSecureMessage>)sMsg
 //                   decodeKey:(NSObject *)dataString {
 //    NSAssert(![DIMMessage isBroadcast:sMsg], @"broadcast message has no key: %@", sMsg);
 //    return MKTransportableDataDecode(dataString);
 //}
 
+// Override
 - (nullable NSData *)message:(id<DKDSecureMessage>)sMsg
                   decryptKey:(NSData *)key
                  forReceiver:(id<MKMID>)receiver {
@@ -149,6 +157,7 @@
     return [user decrypt:key];
 }
 
+// Override
 - (nullable id<MKSymmetricKey>)message:(id<DKDSecureMessage>)sMsg
                         deserializeKey:(nullable NSData *)data {
     NSAssert(![DIMMessage isBroadcast:sMsg], @"broadcast message has no key: %@", sMsg);
@@ -162,6 +171,7 @@
     return MKSymmetricKeyParse(dict);
 }
 
+//// Override
 //- (nullable NSData *)message:(id<DKDSecureMessage>)sMsg
 //                  decodeData:(NSObject *)dataString {
 //    if ([DIMMessage isBroadcast:sMsg]) {
@@ -179,6 +189,7 @@
 //    return MKTransportableDataDecode(dataString);
 //}
 
+// Override
 - (nullable NSData *)message:(id<DKDSecureMessage>)sMsg
               decryptContent:(NSData *)data
                      withKey:(id<MKSymmetricKey>)password {
@@ -187,6 +198,7 @@
     return [password decrypt:data params:extra];
 }
 
+// Override
 - (nullable id<DKDContent>)message:(id<DKDSecureMessage>)sMsg
                 deserializeContent:(NSData *)data
                            withKey:(id<MKSymmetricKey>)password {
@@ -197,6 +209,7 @@
     return DKDContentParse(dict);
 }
 
+// Override
 - (NSData *)message:(id<DKDSecureMessage>)sMsg
            signData:(NSData *)data {
     id<MKMID> sender = [sMsg sender];
@@ -205,6 +218,7 @@
     return [user sign:data];
 }
 
+//// Override
 //- (NSObject *)message:(id<DKDSecureMessage>)sMsg
 //      encodeSignature:(NSData *)signature {
 //    return MKMTransportableDataEncode(signature);
@@ -212,11 +226,13 @@
 
 #pragma mark DKDReliableMessageDelegate
 
+//// Override
 //- (nullable NSData *)message:(id<DKDReliableMessage>)rMsg
 //             decodeSignature:(NSObject *)signatureString {
 //    return MKMTransportableDataDecode(signatureString);
 //}
 
+// Override
 - (BOOL)message:(id<DKDReliableMessage>)rMsg
      verifyData:(NSData *)data
   withSignature:(NSData *)signature {

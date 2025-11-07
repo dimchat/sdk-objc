@@ -142,11 +142,13 @@ static void autoInitializeStationIdentifiers(void) {
     return NO;
 }
 
+// Override
 - (id<MKMDocument>)profile {
     NSArray<id<MKMDocument>> *docs = [self documents];
     return DIMDocumentGetLast(docs, @"*");
 }
 
+// Override
 - (NSString *)host {
     NSString *IP = _host;
     if (!IP) {
@@ -157,6 +159,7 @@ static void autoInitializeStationIdentifiers(void) {
     return IP;
 }
 
+// Override
 - (UInt16)port {
     UInt16 po = _port;
     if (po == 0) {
@@ -167,6 +170,7 @@ static void autoInitializeStationIdentifiers(void) {
     return po;
 }
 
+// Override
 - (id<MKMID>)provider {
     id<MKMDocument> doc = [self profile];
     if (doc) {
@@ -176,6 +180,7 @@ static void autoInitializeStationIdentifiers(void) {
     return nil;
 }
 
+// Override
 - (void)setIdentifier:(id<MKMID>)ID {
     id<MKMEntityDataSource> delegate = [self dataSource];
     id<MKMUser> inner = [[DIMUser alloc] initWithID:ID];
@@ -185,62 +190,76 @@ static void autoInitializeStationIdentifiers(void) {
 
 #pragma mark Entity
 
+// Override
 - (id<MKMID>)identifier {
     return [_user identifier];
 }
 
+// Override
 - (MKMEntityType)type {
     return [_user type];
 }
 
+// Override
 - (id<MKMEntityDataSource>)dataSource {
     return [_user dataSource];
 }
 
+// Override
 - (void)setDataSource:(id<MKMEntityDataSource>)dataSource {
     [_user setDataSource:dataSource];
 }
 
+// Override
 - (id<MKMMeta>)meta {
     return [_user meta];
 }
 
+// Override
 - (NSArray<id<MKMDocument>> *)documents {
     return [_user documents];
 }
 
 #pragma mark User
 
+// Override
 - (nullable id<MKMVisa>)visa {
     return [_user visa];
 }
 
+// Override
 - (BOOL)verifyVisa:(id<MKMVisa>)visa {
     return [_user verifyVisa:visa];
 }
 
+// Override
 - (BOOL)verify:(NSData *)data withSignature:(NSData *)signature {
     return [_user verify:data withSignature:signature];
 }
 
+// Override
 - (NSData *)encrypt:(NSData *)plaintext {
     return [_user encrypt:plaintext];
 }
 
 #pragma mark Local User
 
+// Override
 - (NSArray<id<MKMID>> *)contacts {
     return [_user contacts];
 }
 
+// Override
 - (nullable id<MKMVisa>)signVisa:(id<MKMVisa>)visa {
     return [_user signVisa:visa];
 }
 
+// Override
 - (NSData *)sign:(NSData *)data {
     return [_user sign:data];
 }
 
+// Override
 - (nullable NSData *)decrypt:(NSData *)ciphertext {
     return [_user decrypt:ciphertext];
 }

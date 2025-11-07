@@ -79,6 +79,7 @@ static inline NSMutableDictionary *_mutable_dictionary(__kindof NSDictionary *di
     return self;
 }
 
+// Override
 - (NSMutableDictionary *)compressContent:(NSDictionary *)content {
     NSMutableDictionary *mDict = _mutable_dictionary(content);
     NSArray *keys = [self contentShortKeys];
@@ -86,6 +87,7 @@ static inline NSMutableDictionary *_mutable_dictionary(__kindof NSDictionary *di
     return mDict;
 }
 
+// Override
 - (NSMutableDictionary *)extractContent:(NSDictionary *)content {
     NSMutableDictionary *mDict = _mutable_dictionary(content);
     NSArray *keys = [self contentShortKeys];
@@ -93,6 +95,7 @@ static inline NSMutableDictionary *_mutable_dictionary(__kindof NSDictionary *di
     return mDict;
 }
 
+// Override
 - (NSMutableDictionary *)compressSymmetricKey:(NSDictionary *)info {
     NSMutableDictionary *mDict = _mutable_dictionary(info);
     NSArray *keys = [self cryptoShortKeys];
@@ -100,6 +103,7 @@ static inline NSMutableDictionary *_mutable_dictionary(__kindof NSDictionary *di
     return mDict;
 }
 
+// Override
 - (NSMutableDictionary *)extractSymmetricKey:(NSDictionary *)info {
     NSMutableDictionary *mDict = _mutable_dictionary(info);
     NSArray *keys = [self cryptoShortKeys];
@@ -107,6 +111,7 @@ static inline NSMutableDictionary *_mutable_dictionary(__kindof NSDictionary *di
     return mDict;
 }
 
+// Override
 - (NSMutableDictionary *)compressReliableMessage:(NSDictionary *)msg {
     NSMutableDictionary *mDict = _mutable_dictionary(msg);
     NSArray *keys = [self messageShortKeys];
@@ -114,6 +119,7 @@ static inline NSMutableDictionary *_mutable_dictionary(__kindof NSDictionary *di
     return mDict;
 }
 
+// Override
 - (NSMutableDictionary *)extractReliableMessage:(NSDictionary *)msg {
     NSMutableDictionary *mDict = _mutable_dictionary(msg);
     NSArray *keys = [self messageShortKeys];

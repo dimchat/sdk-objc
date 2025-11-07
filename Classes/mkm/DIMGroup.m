@@ -77,11 +77,13 @@
     return MKJsonEncode(info);
 }
 
+// Override
 - (nullable id<MKMBulletin>)bulletin {
     NSArray<id<MKMDocument>> *docs = [self documents];
     return DIMDocumentGetBulletin(docs);
 }
 
+// Override
 - (id<MKMID>)founder {
     if (!_founder) {
         id<MKMGroupDataSource> facebook = [self dataSource];
@@ -92,6 +94,7 @@
     return _founder;
 }
 
+// Override
 - (id<MKMID>)owner {
     id<MKMGroupDataSource> facebook = [self dataSource];
     NSAssert(facebook, @"group data source not set yet");
@@ -99,6 +102,7 @@
     return [facebook owner:ID];
 }
 
+// Override
 - (NSArray<id<MKMID>> *)members {
     id<MKMGroupDataSource> facebook = [self dataSource];
     NSAssert(facebook, @"group data source not set yet");
@@ -106,6 +110,7 @@
     return [facebook members:ID];
 }
 
+// Override
 - (NSArray<id<MKMID>> *)assistants {
     id<MKMGroupDataSource> facebook = [self dataSource];
     NSAssert(facebook, @"group data source not set yet");

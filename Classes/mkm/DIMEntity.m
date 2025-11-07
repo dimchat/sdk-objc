@@ -93,27 +93,33 @@
     return [self description];
 }
 
+// Override
 - (id<MKMID>)identifier {
     return _ID;
 }
 
+// Override
 - (MKMEntityType)type {
     return _ID.type;
 }
 
+// Override
 - (id<MKMEntityDataSource>)dataSource {
     return _dataSource;
 }
 
+// Override
 - (void)setDataSource:(id<MKMEntityDataSource>)dataSource {
     _dataSource = dataSource;
 }
 
+// Override
 - (id<MKMMeta>)meta {
     NSAssert(_dataSource, @"entity data source not set yet");
     return [_dataSource meta:_ID];
 }
 
+// Override
 - (NSArray<id<MKMDocument>> *)documents {
     NSAssert(_dataSource, @"entity data source not set yet");
     return [_dataSource documents:_ID];

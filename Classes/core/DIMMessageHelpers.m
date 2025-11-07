@@ -39,6 +39,7 @@
 
 @implementation DIMCipherKeyDelegate
 
+// Override
 - (nullable id<MKSymmetricKey>)cipherKeyWithSender:(id<MKMID>)from
                                           receiver:(id<MKMID>)to
                                           generate:(BOOL)create {
@@ -46,6 +47,7 @@
     return nil;
 }
 
+// Override
 - (void)cacheCipherKey:(id<MKSymmetricKey>)key
             withSender:(id<MKMID>)from
               receiver:(id<MKMID>)to {

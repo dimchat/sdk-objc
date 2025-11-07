@@ -39,9 +39,7 @@
 
 @implementation DIMContentProcessor
 
-//
-//  Main
-//
+// Override
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     // extra info for receipt
@@ -92,9 +90,7 @@
 
 @implementation DIMCommandProcessor
 
-//
-//  Main
-//
+// Override
 - (NSArray<id<DKDContent>> *)processContent:(__kindof id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content conformsToProtocol:@protocol(DKDCommand)], @"command error: %@", content);

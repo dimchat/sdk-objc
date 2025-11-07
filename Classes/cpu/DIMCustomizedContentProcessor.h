@@ -89,10 +89,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// override for your application
 // protected
-- (id<DIMCustomizedContentHandler>)filterApplication:(NSString *)app
-                                          withModule:(NSString *)mod
-                                             content:(id<DKDCustomizedContent>)body
-                                            messasge:(id<DKDReliableMessage>)rMsg;
+- (id<DIMCustomizedContentHandler>)filterForModule:(NSString *)mod
+                                     inApplication:(NSString *)app
+                                           content:(id<DKDCustomizedContent>)body
+                                          messasge:(id<DKDReliableMessage>)rMsg;
 
 @end
 

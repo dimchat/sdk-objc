@@ -43,9 +43,9 @@
 @implementation DIMCustomizedContentHandler
 
 - (NSArray<id<DKDReceiptCommand>> *)respondReceipt:(NSString *)text
-                                   envelope:(id<DKDEnvelope>)head
-                                    content:(nullable id<DKDContent>)body
-                                      extra:(nullable NSDictionary *)info {
+                                          envelope:(id<DKDEnvelope>)head
+                                           content:(nullable id<DKDContent>)body
+                                             extra:(nullable NSDictionary *)info {
     return @[
         [DIMContentProcessor createReceipt:text
                                   envelope:head
@@ -54,11 +54,12 @@
     ];
 }
 
-// override for customized actions
+// Override
 - (NSArray<id<DKDContent>> *)handleAction:(NSString *)act
                                    sender:(id<MKMID>)uid
                                   content:(id<DKDCustomizedContent>)customized
                                   message:(id<DKDReliableMessage>)rMsg {
+    // override for customized actions
     NSString *app = [customized application];
     NSString *mod = [customized moduleName];
     // extra info for receipt
@@ -103,9 +104,7 @@
                                                        messenger:transceiver];
 }
 
-//
-//  Main
-//
+// Override
 - (NSArray<id<DKDContent>> *)processContent:(__kindof id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content conformsToProtocol:@protocol(DKDCustomizedContent)],
@@ -115,24 +114,18 @@
     NSString *app = [customized application];
     NSString *mod = [customized moduleName];
     id<DIMCustomizedContentHandler> handler;
-    handler = [self filterApplication:app
-                           withModule:mod
-                              content:content
-                             messasge:rMsg];
+    handler = [self filterForModule:mod inApplication:app content:content messasge:rMsg];
     // hand the action
     NSString *act = [customized actionName];
     id<MKMID> sender = [rMsg sender];
-    return [handler handleAction:act
-                          sender:sender
-                         content:customized
-                         message:rMsg];
+    return [handler handleAction:act sender:sender content:customized message:rMsg];
 }
 
 // override for your module
-- (id<DIMCustomizedContentHandler>)filterApplication:(NSString *)app
-                                          withModule:(NSString *)mod
-                                             content:(id<DKDCustomizedContent>)body
-                                            messasge:(id<DKDReliableMessage>)rMsg {
+- (id<DIMCustomizedContentHandler>)filterForModule:(NSString *)mod
+                                     inApplication:(NSString *)app
+                                           content:(id<DKDCustomizedContent>)body
+                                          messasge:(id<DKDReliableMessage>)rMsg {
     // if the application has too many modules, I suggest you to
     // use different handler to do the jobs for each module.
     return [self defaultHandler];

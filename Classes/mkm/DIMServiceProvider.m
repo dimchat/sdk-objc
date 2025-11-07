@@ -51,11 +51,13 @@
     return self;
 }
 
+// Override
 - (id<MKMDocument>)profile {
     NSArray<id<MKMDocument>> *docs = [self documents];
     return DIMDocumentGetLast(docs, @"*");
 }
 
+// Override
 - (NSArray<id> *)stations {
     id<MKMDocument> doc = [self profile];
     if (doc) {

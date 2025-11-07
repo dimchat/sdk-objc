@@ -41,11 +41,13 @@
 
 @implementation DIMUser
 
+// Override
 - (nullable id<MKMVisa>)visa {
     NSArray<id<MKMDocument>> *docs = [self documents];
     return DIMDocumentGetVisa(docs);
 }
 
+// Override
 - (BOOL)verifyVisa:(id<MKMVisa>)visa {
     // NOTICE: only verify visa with meta.key
     //         (if meta not exists, user won't be created)
@@ -66,6 +68,7 @@
     return [visa verify:PK];
 }
 
+// Override
 - (BOOL)verify:(NSData *)data withSignature:(NSData *)signature {
     id<MKMUserDataSource> facebook = [self dataSource];
     NSAssert(facebook, @"user data source not set yet");
@@ -83,6 +86,7 @@
     return NO;
 }
 
+// Override
 - (NSData *)encrypt:(NSData *)plaintext {
     id<MKMUserDataSource> facebook = [self dataSource];
     NSAssert(facebook, @"user data source not set yet");
@@ -109,6 +113,7 @@
     return MKJsonEncode(info);
 }
 
+// Override
 - (NSArray<id<MKMID>> *)contacts {
     id<MKMUserDataSource> facebook = [self dataSource];
     NSAssert(facebook, @"user data source not set yet");
@@ -116,6 +121,7 @@
     return [facebook contacts:ID];
 }
 
+// Override
 - (nullable id<MKMVisa>)signVisa:(id<MKMVisa>)visa {
     id<MKMUserDataSource> facebook = [self dataSource];
     NSAssert(facebook, @"user data source not set yet");
@@ -139,6 +145,7 @@
     return visa;
 }
 
+// Override
 - (NSData *)sign:(NSData *)data {
     id<MKMUserDataSource> facebook = [self dataSource];
     NSAssert(facebook, @"user data source not set yet");
@@ -148,6 +155,7 @@
     return [SK sign:data];
 }
 
+// Override
 - (nullable NSData *)decrypt:(NSData *)ciphertext {
     id<MKMUserDataSource> facebook = [self dataSource];
     NSAssert(facebook, @"user data source not set yet");

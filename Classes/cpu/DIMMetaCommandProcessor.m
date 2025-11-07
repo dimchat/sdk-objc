@@ -47,9 +47,7 @@
     return [facebook archivist];
 }
 
-//
-//  Main
-//
+// Override
 - (NSArray<id<DKDContent>> *)processContent:(__kindof id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content conformsToProtocol:@protocol(DKDMetaCommand)],
