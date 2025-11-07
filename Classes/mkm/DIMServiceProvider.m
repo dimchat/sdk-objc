@@ -43,9 +43,9 @@
 @implementation DIMServiceProvider
 
 /* designated initializer */
-- (instancetype)initWithID:(id<MKMID>)ID {
+- (instancetype)initWithIdentifier:(id<MKMID>)ID {
     NSAssert(ID.type == MKMEntityType_ISP, @"SP ID error: %@", ID);
-    if (self = [super initWithID:ID]) {
+    if (self = [super initWithIdentifier:ID]) {
         //
     }
     return self;

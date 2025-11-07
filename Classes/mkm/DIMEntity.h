@@ -98,7 +98,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface DIMEntity : NSObject <MKMEntity, NSCopying>
 
-- (instancetype)initWithID:(id<MKMID>)ID NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithIdentifier:(id<MKMID>)ID NS_DESIGNATED_INITIALIZER;
 
 @end
 

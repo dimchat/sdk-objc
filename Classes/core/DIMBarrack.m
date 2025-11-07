@@ -69,12 +69,12 @@
     MKMEntityType network = [ID type];
     // check user type
     if (network == MKMEntityType_Station) {
-        return [[DIMStation alloc] initWithID:ID];
+        return [[DIMStation alloc] initWithIdentifier:ID];
     } else if (network == MKMEntityType_Bot) {
-        return [[DIMBot alloc] initWithID:ID];
+        return [[DIMBot alloc] initWithIdentifier:ID];
     }
     // general user, or 'anyone@anywhere'
-    return [[DIMUser alloc] initWithID:ID];
+    return [[DIMUser alloc] initWithIdentifier:ID];
 }
 
 // Override
@@ -83,10 +83,10 @@
     MKMEntityType network = [ID type];
     // check group type
     if (network == MKMEntityType_ISP) {
-        return [[DIMServiceProvider alloc] initWithID:ID];
+        return [[DIMServiceProvider alloc] initWithIdentifier:ID];
     }
     // general group, or 'everyone@everywhere'
-    return [[DIMGroup alloc] initWithID:ID];
+    return [[DIMGroup alloc] initWithIdentifier:ID];
 }
 
 @end

@@ -50,11 +50,11 @@
 - (instancetype)init {
     NSAssert(false, @"DON'T call me");
     id<MKMID> ID = nil;
-    return [self initWithID:ID];
+    return [self initWithIdentifier:ID];
 }
 
 /* designated initializer */
-- (instancetype)initWithID:(id<MKMID>)ID {
+- (instancetype)initWithIdentifier:(id<MKMID>)ID {
     if (self = [super init]) {
         _ID = ID;
         _dataSource = nil;
@@ -65,7 +65,7 @@
 
 - (id)copyWithZone:(nullable NSZone *)zone {
     DIMEntity *entity = [[self class] allocWithZone:zone];
-    entity = [entity initWithID:_ID];
+    entity = [entity initWithIdentifier:_ID];
     if (entity) {
         entity.dataSource = _dataSource;
     }

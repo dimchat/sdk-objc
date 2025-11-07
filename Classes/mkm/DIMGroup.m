@@ -49,8 +49,8 @@
 @implementation DIMGroup
 
 /* designated initializer */
-- (instancetype)initWithID:(id<MKMID>)ID {
-    if (self = [super initWithID:ID]) {
+- (instancetype)initWithIdentifier:(id<MKMID>)ID {
+    if (self = [super initWithIdentifier:ID]) {
         _founder = nil;
     }
     return self;

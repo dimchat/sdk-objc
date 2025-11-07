@@ -94,12 +94,12 @@ void MKMInitializeBroadcastStationIdentifiers(void);
 
 @interface DIMStation : NSObject <MKMStation, NSCopying>
 
-- (instancetype)initWithID:(id<MKMID>)ID
-                      host:(NSString *)IP
-                      port:(UInt16)port
+- (instancetype)initWithIdentifier:(id<MKMID>)ID
+                              host:(NSString *)IP
+                              port:(UInt16)port
 NS_DESIGNATED_INITIALIZER;
 
-- (instancetype)initWithID:(id<MKMID>)ID;
+- (instancetype)initWithIdentifier:(id<MKMID>)ID;
 
 - (instancetype)initWithHost:(NSString *)IP port:(UInt16)port;
 

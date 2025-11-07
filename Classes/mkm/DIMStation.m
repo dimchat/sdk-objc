@@ -86,16 +86,16 @@ static void autoInitializeStationIdentifiers(void) {
 - (instancetype)init {
     NSAssert(false, @"DON'T call me");
     id<MKMID> ID = MKMAnyStation;
-    return [self initWithID:ID];
+    return [self initWithIdentifier:ID];
 }
 
 /* designated initializer */
-- (instancetype)initWithID:(id<MKMID>)ID
-                      host:(NSString *)IP
-                      port:(UInt16)port {
+- (instancetype)initWithIdentifier:(id<MKMID>)ID
+                              host:(NSString *)IP
+                              port:(UInt16)port {
     NSAssert(ID.type == MKMEntityType_Station || ID.type == MKMEntityType_Any, @"station ID error: %@", ID);
     if (self = [super init]) {
-        self.user = [[DIMUser alloc] initWithID:ID];
+        self.user = [[DIMUser alloc] initWithIdentifier:ID];
         self.host = IP;
         self.port = port;
         self.provider = nil;
@@ -103,13 +103,13 @@ static void autoInitializeStationIdentifiers(void) {
     return self;
 }
 
-- (instancetype)initWithID:(id<MKMID>)ID {
+- (instancetype)initWithIdentifier:(id<MKMID>)ID {
     NSString *ip = nil;
-    return [self initWithID:ID host:ip port:0];
+    return [self initWithIdentifier:ID host:ip port:0];
 }
 
 - (instancetype)initWithHost:(NSString *)IP port:(UInt16)port {
-    return [self initWithID:MKMAnyStation host:IP port:port];
+    return [self initWithIdentifier:MKMAnyStation host:IP port:port];
 }
 
 - (id)copyWithZone:(nullable NSZone *)zone {
@@ -183,7 +183,7 @@ static void autoInitializeStationIdentifiers(void) {
 // Override
 - (void)setIdentifier:(id<MKMID>)ID {
     id<MKMEntityDataSource> delegate = [self dataSource];
-    id<MKMUser> inner = [[DIMUser alloc] initWithID:ID];
+    id<MKMUser> inner = [[DIMUser alloc] initWithIdentifier:ID];
     [inner setDataSource:delegate];
     _user = inner;
 }

@@ -40,9 +40,9 @@
 @implementation DIMBot
 
 /* designated initializer */
-- (instancetype)initWithID:(id<MKMID>)ID {
+- (instancetype)initWithIdentifier:(id<MKMID>)ID {
     NSAssert(ID.type == MKMEntityType_Bot, @"bot ID error: %@", ID);
-    if (self = [super initWithID:ID]) {
+    if (self = [super initWithIdentifier:ID]) {
         //
     }
     return self;
