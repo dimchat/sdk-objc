@@ -49,9 +49,9 @@
              @"document command error: %@", content);
     id<DKDEnvelope> envelope = [rMsg envelope];
     id<DKDDocumentCommand> command = content;
-    id<MKMID> ID = [command identifier];
+    id<MKMID> did = [command identifier];
     NSArray<id<MKMDocument>> *documents = [command documents];
-    if (!ID) {
+    if (!did) {
         NSAssert(false, @"document ID cannot be empty: %@", command);
         return [self respondReceipt:@"Document command error."
                            envelope:envelope
@@ -59,12 +59,12 @@
                               extra:nil];
     } else if ([documents count] == 0) {
         // query documents for ID
-        return [self documentsForID:ID withContent:command andEnvelope:envelope];
+        return [self documentsForID:did withContent:command andEnvelope:envelope];
     }
     // check document ID
     BOOL ok;
     for (id<MKMDocument> doc in documents) {
-        ok = [doc.identifier isEqual:ID];
+        ok = [doc.identifier isEqual:did];
         if (!ok) {
             // error
             NSAssert(false, @"document ID not match: %@", command);
@@ -72,7 +72,7 @@
             NSDictionary *info = @{
                 @"template": @"Document ID not match: ${did}.",
                 @"replacements": @{
-                    @"did": ID.string,
+                    @"did": did.string,
                 },
             };
             return [self respondReceipt:@"Document ID not match."
@@ -83,23 +83,23 @@
     }
     // reveived a document for ID
     return [self putDocuments:documents
-                        forID:ID
+                        forID:did
                   withContent:command
                   andEnvelope:envelope];
 }
 
 // protected
-- (NSArray<id<DKDContent>> *)documentsForID:(id<MKMID>)ID
+- (NSArray<id<DKDContent>> *)documentsForID:(id<MKMID>)did
                                 withContent:(id<DKDDocumentCommand>)command
                                 andEnvelope:(id<DKDEnvelope>)head {
     DIMFacebook *facebook = [self facebook];
-    NSArray<id<MKMDocument>> *docs = [facebook documents:ID];
+    NSArray<id<MKMDocument>> *docs = [facebook documents:did];
     if ([docs count] == 0) {
         // extra info for receipt
         NSDictionary *info = @{
             @"template": @"Document not found: ${did}.",
             @"replacements": @{
-                @"did": ID.string,
+                @"did": did.string,
             },
         };
         return [self respondReceipt:@"Document not found."
@@ -122,7 +122,7 @@
             NSDictionary *info = @{
                 @"template": @"Document not updated: ${did}, last time: ${time}.",
                 @"replacements": @{
-                    @"did": ID.string,
+                    @"did": did.string,
                     @"time": @(lt),
                 },
             };
@@ -132,14 +132,14 @@
                                   extra:info];
         }
     }
-    id<MKMMeta> meta = [facebook meta:ID];
+    id<MKMMeta> meta = [facebook meta:did];
     return @[
-        DIMDocumentCommandResponse(ID, meta, docs)
+        DIMDocumentCommandResponse(did, meta, docs)
     ];
 }
 
 - (NSArray<id<DKDContent>> *)putDocuments:(NSArray<id<MKMDocument>> *)documents
-                                    forID:(id<MKMID>)ID
+                                    forID:(id<MKMID>)did
                               withContent:(id<DKDDocumentCommand>)command
                               andEnvelope:(id<DKDEnvelope>)head  {
     NSArray<id<DKDContent>> *errors;
@@ -147,13 +147,13 @@
     // 0. check meta
     if (!meta) {
         DIMFacebook *facebook = [self facebook];
-        meta = [facebook meta:ID];
+        meta = [facebook meta:did];
         if (!meta) {
             // extra info for receipt
             NSDictionary *info = @{
                 @"template": @"Meta not found: ${did}.",
                 @"replacements": @{
-                    @"did": ID.string,
+                    @"did": did.string,
                 },
             };
             return [self respondReceipt:@"Meta not found."
@@ -163,7 +163,7 @@
         }
     } else {
         // 1. try to save meta
-        errors = [self saveMeta:meta forID:ID content:command envelope:head];
+        errors = [self saveMeta:meta forID:did content:command envelope:head];
         if (errors) {
             // failed
             return errors;
@@ -173,7 +173,7 @@
     NSMutableArray *mArray = [[NSMutableArray alloc] init];
     for (id<MKMDocument> doc in documents) {
         errors = [self saveDocument:doc
-                              forID:ID
+                              forID:did
                            withMeta:meta
                             content:command
                            envelope:head];
@@ -189,7 +189,7 @@
     NSDictionary *info = @{
         @"template": @"Document received: ${did}.",
         @"replacements": @{
-            @"did": ID.string,
+            @"did": did.string,
         },
     };
     return [self respondReceipt:@"Document received."
@@ -203,7 +203,7 @@
 @implementation DIMDocumentCommandProcessor (Storage)
 
 - (nullable NSArray<id<DKDContent>> *)saveDocument:(id<MKMDocument>)doc
-                                             forID:(id<MKMID>)ID
+                                             forID:(id<MKMID>)did
                                           withMeta:(id<MKMMeta>)meta
                                            content:(id<DKDMetaCommand>)command
                                           envelope:(id<DKDEnvelope>)head {
@@ -216,7 +216,7 @@
         NSDictionary *info = @{
             @"template": @"Document not accepted: ${did}.",
             @"replacements": @{
-                @"did": ID.string,
+                @"did": did.string,
             },
         };
         return [self respondReceipt:@"Document not accepted."
@@ -230,7 +230,7 @@
         NSDictionary *info = @{
             @"template": @"Document not changed: ${did}.",
             @"replacements": @{
-                @"did": ID.string,
+                @"did": did.string,
             },
         };
         return [self respondReceipt:@"Document not changed."

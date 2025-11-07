@@ -54,18 +54,18 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  Get meta for entity ID
  *
- * @param ID - entity ID
+ * @param did - entity ID
  * @return Meta
  */
-- (nullable id<MKMMeta>)meta:(id<MKMID>)ID;
+- (nullable id<MKMMeta>)meta:(id<MKMID>)did;
 
 /**
  *  Get documents for entity ID
  *
- * @param ID - entity ID
+ * @param did - entity ID
  * @return Document List
  */
-- (NSArray<id<MKMDocument>> *)documents:(id<MKMID>)ID;
+- (NSArray<id<MKMDocument>> *)documents:(id<MKMID>)did;
 
 @end
 
@@ -98,7 +98,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface DIMEntity : NSObject <MKMEntity, NSCopying>
 
-- (instancetype)initWithIdentifier:(id<MKMID>)ID NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithIdentifier:(id<MKMID>)did NS_DESIGNATED_INITIALIZER;
 
 @end
 

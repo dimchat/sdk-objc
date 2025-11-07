@@ -41,11 +41,11 @@
 
 @implementation DIMMetaUtils
 
-+ (BOOL)meta:(id<MKMMeta>)meta matchIdentifier:(id<MKMID>)ID {
++ (BOOL)meta:(id<MKMMeta>)meta matchIdentifier:(id<MKMID>)did {
     NSAssert([meta isValid], @"meta not valid: %@", meta);
     // check ID.name
     NSString *seed = [meta seed];
-    NSString *name = [ID name];
+    NSString *name = [did name];
     if ([name length] == 0) {
         if ([seed length] > 0) {
             return NO;
@@ -56,7 +56,7 @@
         return NO;
     }
     // check ID.address
-    id<MKMAddress> old = [ID address];
+    id<MKMAddress> old = [did address];
     id<MKMAddress> gen = MKMAddressGenerate([old network], meta);
     return [old isEqual:gen];
 }

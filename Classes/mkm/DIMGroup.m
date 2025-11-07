@@ -49,8 +49,8 @@
 @implementation DIMGroup
 
 /* designated initializer */
-- (instancetype)initWithIdentifier:(id<MKMID>)ID {
-    if (self = [super initWithIdentifier:ID]) {
+- (instancetype)initWithIdentifier:(id<MKMID>)gid {
+    if (self = [super initWithIdentifier:gid]) {
         _founder = nil;
     }
     return self;
@@ -88,8 +88,8 @@
     if (!_founder) {
         id<MKMGroupDataSource> facebook = [self dataSource];
         NSAssert(facebook, @"group data source not set yet");
-        id<MKMID> ID = [self identifier];
-        _founder = [facebook founder:ID];
+        id<MKMID> gid = [self identifier];
+        _founder = [facebook founder:gid];
     }
     return _founder;
 }
@@ -98,24 +98,24 @@
 - (id<MKMID>)owner {
     id<MKMGroupDataSource> facebook = [self dataSource];
     NSAssert(facebook, @"group data source not set yet");
-    id<MKMID> ID = [self identifier];
-    return [facebook owner:ID];
+    id<MKMID> gid = [self identifier];
+    return [facebook owner:gid];
 }
 
 // Override
 - (NSArray<id<MKMID>> *)members {
     id<MKMGroupDataSource> facebook = [self dataSource];
     NSAssert(facebook, @"group data source not set yet");
-    id<MKMID> ID = [self identifier];
-    return [facebook members:ID];
+    id<MKMID> gid = [self identifier];
+    return [facebook members:gid];
 }
 
 // Override
 - (NSArray<id<MKMID>> *)assistants {
     id<MKMGroupDataSource> facebook = [self dataSource];
     NSAssert(facebook, @"group data source not set yet");
-    id<MKMID> ID = [self identifier];
-    return [facebook assistants:ID];
+    id<MKMID> gid = [self identifier];
+    return [facebook assistants:gid];
 }
 
 @end

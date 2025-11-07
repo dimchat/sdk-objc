@@ -107,26 +107,26 @@
 //
 
 // Override
-- (nullable id<MKMUser>)user:(id<MKMID>)ID {
-    NSAssert([ID isUser], @"user ID error: %@", ID);
+- (nullable id<MKMUser>)user:(id<MKMID>)uid {
+    NSAssert([uid isUser], @"user ID error: %@", uid);
     DIMBarrack *barrack = [self barrack];
     NSAssert(barrack, @"barrack not ready");
     //
     //  1. get from user cache
     //
-    id<MKMUser> user = [barrack user:ID];
+    id<MKMUser> user = [barrack user:uid];
     if (user) {
         return user;
     }
     //
     //  2. check visa key
     //
-    if ([ID isBroadcast]) {
+    if ([uid isBroadcast]) {
         // no need to check visa key for broadcast user
     } else {
-        id<MKEncryptKey> visaKey = [self publicKeyForEncryption:ID];
+        id<MKEncryptKey> visaKey = [self publicKeyForEncryption:uid];
         if (!visaKey) {
-            NSAssert(false, @"visa.key not found: %@", ID);
+            NSAssert(false, @"visa.key not found: %@", uid);
             return nil;
         }
         // NOTICE: if visa.key exists, then visa & meta must exist too.
@@ -134,7 +134,7 @@
     //
     //  3. create user and cache it
     //
-    user = [barrack createUser:ID];
+    user = [barrack createUser:uid];
     if (user) {
         [barrack cacheUser:user];
     }
@@ -142,26 +142,26 @@
 }
 
 // Override
-- (nullable id<MKMGroup>)group:(id<MKMID>)ID {
-    NSAssert([ID isGroup], @"user ID error: %@", ID);
+- (nullable id<MKMGroup>)group:(id<MKMID>)gid {
+    NSAssert([gid isGroup], @"user ID error: %@", gid);
     DIMBarrack *barrack = [self barrack];
     NSAssert(barrack, @"barrack not ready");
     //
     //  1. get from group cache
     //
-    id<MKMGroup> group = [barrack group:ID];
+    id<MKMGroup> group = [barrack group:gid];
     if (group) {
         return group;
     }
     //
     //  2. check members
     //
-    if ([ID isBroadcast]) {
+    if ([gid isBroadcast]) {
         // no need to check members for broadcast group
     } else {
-        NSArray<id<MKMID>> *members = [self members:ID];
+        NSArray<id<MKMID>> *members = [self members:gid];
         if ([members count] == 0) {
-            NSAssert(false, @"group members not found: %@", ID);
+            NSAssert(false, @"group members not found: %@", gid);
             return nil;
         }
         // NOTICE: if members exist, then owner (founder) must exist,
@@ -170,7 +170,7 @@
     //
     //  3. create group and cache it
     //
-    group = [barrack createGroup:ID];
+    group = [barrack createGroup:gid];
     if (group) {
         [barrack cacheGroup:group];
     }
@@ -182,13 +182,13 @@
 //
 
 // Override
-- (nullable id<MKMMeta>)meta:(id<MKMID>)ID {
+- (nullable id<MKMMeta>)meta:(id<MKMID>)did {
     NSAssert(false, @"implement me!");
     return nil;
 }
 
 // Override
-- (NSArray<id<MKMDocument>> *)documents:(id<MKMID>)ID {
+- (NSArray<id<MKMDocument>> *)documents:(id<MKMID>)did {
     NSAssert(false, @"implement me!");
     return nil;
 }

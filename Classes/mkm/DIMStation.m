@@ -85,17 +85,17 @@ static void autoInitializeStationIdentifiers(void) {
 
 - (instancetype)init {
     NSAssert(false, @"DON'T call me");
-    id<MKMID> ID = MKMAnyStation;
-    return [self initWithIdentifier:ID];
+    id<MKMID> did = MKMAnyStation;
+    return [self initWithIdentifier:did];
 }
 
 /* designated initializer */
-- (instancetype)initWithIdentifier:(id<MKMID>)ID
+- (instancetype)initWithIdentifier:(id<MKMID>)did
                               host:(NSString *)IP
                               port:(UInt16)port {
-    NSAssert(ID.type == MKMEntityType_Station || ID.type == MKMEntityType_Any, @"station ID error: %@", ID);
+    NSAssert(did.type == MKMEntityType_Station || did.type == MKMEntityType_Any, @"station ID error: %@", did);
     if (self = [super init]) {
-        self.user = [[DIMUser alloc] initWithIdentifier:ID];
+        self.user = [[DIMUser alloc] initWithIdentifier:did];
         self.host = IP;
         self.port = port;
         self.provider = nil;
@@ -103,9 +103,9 @@ static void autoInitializeStationIdentifiers(void) {
     return self;
 }
 
-- (instancetype)initWithIdentifier:(id<MKMID>)ID {
+- (instancetype)initWithIdentifier:(id<MKMID>)did {
     NSString *ip = nil;
-    return [self initWithIdentifier:ID host:ip port:0];
+    return [self initWithIdentifier:did host:ip port:0];
 }
 
 - (instancetype)initWithHost:(NSString *)IP port:(UInt16)port {
@@ -181,9 +181,9 @@ static void autoInitializeStationIdentifiers(void) {
 }
 
 // Override
-- (void)setIdentifier:(id<MKMID>)ID {
+- (void)setIdentifier:(id<MKMID>)did {
     id<MKMEntityDataSource> delegate = [self dataSource];
-    id<MKMUser> inner = [[DIMUser alloc] initWithIdentifier:ID];
+    id<MKMUser> inner = [[DIMUser alloc] initWithIdentifier:did];
     [inner setDataSource:delegate];
     _user = inner;
 }

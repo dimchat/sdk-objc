@@ -47,18 +47,18 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  Create user with ID
  *
- * @param ID - user ID
+ * @param uid - user ID
  * @return user
  */
-- (nullable __kindof id<MKMUser>)user:(id<MKMID>)ID;
+- (nullable __kindof id<MKMUser>)user:(id<MKMID>)uid;
 
 /**
  *  Create group with ID
  *
- * @param ID - group ID
+ * @param gid - group ID
  * @return group
  */
-- (nullable __kindof id<MKMGroup>)group:(id<MKMID>)ID;
+- (nullable __kindof id<MKMGroup>)group:(id<MKMID>)gid;
 
 @end
 
@@ -75,24 +75,24 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)cacheUser:(id<MKMUser>)user;
 - (void)cacheGroup:(id<MKMGroup>)group;
 
-- (nullable __kindof id<MKMUser>)user:(id<MKMID>)ID;
-- (nullable __kindof id<MKMGroup>)group:(id<MKMID>)ID;
+- (nullable __kindof id<MKMUser>)user:(id<MKMID>)uid;
+- (nullable __kindof id<MKMGroup>)group:(id<MKMID>)gid;
 
 /**
  *  Create user when visa.key exists
  *
- * @param ID - user ID
+ * @param uid - user ID
  * @return user, null on not ready
  */
-- (nullable __kindof id<MKMUser>)createUser:(id<MKMID>)ID;
+- (nullable __kindof id<MKMUser>)createUser:(id<MKMID>)uid;
 
 /**
  *  Create group when members exist
  *
- * @param ID - group ID
+ * @param gid - group ID
  * @return group, null on not ready
  */
-- (nullable __kindof id<MKMGroup>)createGroup:(id<MKMID>)ID;
+- (nullable __kindof id<MKMGroup>)createGroup:(id<MKMID>)gid;
 
 @end
 
@@ -102,10 +102,10 @@ NS_ASSUME_NONNULL_BEGIN
  *  Save meta for entity ID (must verify first)
  *
  * @param meta - entity meta
- * @param ID - entity ID
+ * @param did - entity ID
  * @return YES on success
  */
-- (BOOL)saveMeta:(id<MKMMeta>)meta withIdentifier:(id<MKMID>)ID;
+- (BOOL)saveMeta:(id<MKMMeta>)meta withIdentifier:(id<MKMID>)did;
 
 /**
  *  Save entity document with ID (must verify first)
@@ -122,18 +122,18 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  Get meta.key
  *
- * @param ID - entity ID
+ * @param did - entity ID
  * @return nil on not found
  */
-- (nullable __kindof id<MKVerifyKey>)metaKey:(id<MKMID>)ID;
+- (nullable __kindof id<MKVerifyKey>)metaKey:(id<MKMID>)did;
 
 /**
  *  Get visa.key
  *
- * @param ID - entity ID
+ * @param did - entity ID
  * @return nil on not found
  */
-- (nullable __kindof id<MKEncryptKey>)visaKey:(id<MKMID>)ID;
+- (nullable __kindof id<MKEncryptKey>)visaKey:(id<MKMID>)did;
 
 //
 //  Local Users

@@ -39,7 +39,7 @@
 
 @interface DIMEntity () {
     
-    id<MKMID> _ID;
+    id<MKMID> _did;
     __weak id<MKMEntityDataSource> _dataSource;
 }
 
@@ -49,14 +49,14 @@
 
 - (instancetype)init {
     NSAssert(false, @"DON'T call me");
-    id<MKMID> ID = nil;
-    return [self initWithIdentifier:ID];
+    id<MKMID> did = nil;
+    return [self initWithIdentifier:did];
 }
 
 /* designated initializer */
-- (instancetype)initWithIdentifier:(id<MKMID>)ID {
+- (instancetype)initWithIdentifier:(id<MKMID>)did {
     if (self = [super init]) {
-        _ID = ID;
+        _did = did;
         _dataSource = nil;
     }
     
@@ -65,7 +65,7 @@
 
 - (id)copyWithZone:(nullable NSZone *)zone {
     DIMEntity *entity = [[self class] allocWithZone:zone];
-    entity = [entity initWithIdentifier:_ID];
+    entity = [entity initWithIdentifier:_did];
     if (entity) {
         entity.dataSource = _dataSource;
     }
@@ -81,12 +81,12 @@
         // check with ID
         object = [(id<MKMEntity>)object identifier];
     }
-    return [_ID isEqual:object];
+    return [_did isEqual:object];
 }
 
 - (NSString *)description {
     return [NSString stringWithFormat:@"<%@: %p | 0x%02X %@>",
-            [self class], self, _ID.type, _ID];
+            [self class], self, _did.type, _did];
 }
 
 - (NSString *)debugDescription {
@@ -95,12 +95,12 @@
 
 // Override
 - (id<MKMID>)identifier {
-    return _ID;
+    return _did;
 }
 
 // Override
 - (MKMEntityType)type {
-    return _ID.type;
+    return _did.type;
 }
 
 // Override
@@ -116,13 +116,13 @@
 // Override
 - (id<MKMMeta>)meta {
     NSAssert(_dataSource, @"entity data source not set yet");
-    return [_dataSource meta:_ID];
+    return [_dataSource meta:_did];
 }
 
 // Override
 - (NSArray<id<MKMDocument>> *)documents {
     NSAssert(_dataSource, @"entity data source not set yet");
-    return [_dataSource documents:_ID];
+    return [_dataSource documents:_did];
 }
 
 @end

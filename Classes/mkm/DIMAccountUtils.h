@@ -45,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  Check whether meta matches with entity ID
  *  (must call this when received a new meta from network)
  */
-+ (BOOL)meta:(id<MKMMeta>)info matchIdentifier:(id<MKMID>)ID;
++ (BOOL)meta:(id<MKMMeta>)info matchIdentifier:(id<MKMID>)did;
 
 /**
  *  Check whether meta matches with public key

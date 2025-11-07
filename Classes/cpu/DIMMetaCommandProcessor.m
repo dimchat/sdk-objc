@@ -54,9 +54,9 @@
              @"meta command error: %@", content);
     id<DKDEnvelope> envelope = [rMsg envelope];
     id<DKDMetaCommand> command = content;
-    id<MKMID> ID = [command identifier];
+    id<MKMID> did = [command identifier];
     id<MKMMeta> meta = [command meta];
-    if (!ID) {
+    if (!did) {
         NSAssert(false, @"meta ID cannot be empty: %@", command);
         return [self respondReceipt:@"Meta command error."
                            envelope:envelope
@@ -65,27 +65,27 @@
     } else if (meta) {
         // received a meta for ID
         return [self putMeta:meta
-                       forID:ID
+                       forID:did
                  withContent:command
                  andEnvelope:envelope];
     } else {
         // query meta for ID
-        return [self metaForID:ID withContent:command andEnvelope:envelope];
+        return [self metaForID:did withContent:command andEnvelope:envelope];
     }
 }
 
 // private
-- (NSArray<id<DKDContent>> *)metaForID:(id<MKMID>)ID
+- (NSArray<id<DKDContent>> *)metaForID:(id<MKMID>)did
                            withContent:(id<DKDMetaCommand>)command
                            andEnvelope:(id<DKDEnvelope>)head {
     DIMFacebook *facebook = [self facebook];
-    id<MKMMeta> meta = [facebook meta:ID];
+    id<MKMMeta> meta = [facebook meta:did];
     if (!meta) {
         // extra info for receipt
         NSDictionary *info = @{
             @"template": @"Meta not found: ${did}.",
             @"replacements": @{
-                @"did": ID.string,
+                @"did": did.string,
             },
         };
         return [self respondReceipt:@"Meta not found."
@@ -95,18 +95,18 @@
     }
     // meta got
     return @[
-        DIMMetaCommandResponse(ID, meta)
+        DIMMetaCommandResponse(did, meta)
     ];
 }
 
 - (NSArray<id<DKDContent>> *)putMeta:(id<MKMMeta>)meta
-                               forID:(id<MKMID>)ID
+                               forID:(id<MKMID>)did
                          withContent:(id<DKDMetaCommand>)command
                          andEnvelope:(id<DKDEnvelope>)head {
     NSArray<id<DKDContent>> *errors;
     // 1. try to save meta
     errors = [self saveMeta:meta
-                      forID:ID
+                      forID:did
                     content:command
                    envelope:head];
     if (errors) {
@@ -117,7 +117,7 @@
     NSDictionary *info = @{
         @"template": @"Meta received: ${did}.",
         @"replacements": @{
-            @"did": ID.string,
+            @"did": did.string,
         },
     };
     return [self respondReceipt:@"Meta received."
@@ -131,19 +131,19 @@
 @implementation DIMMetaCommandProcessor (Storage)
 
 - (nullable NSArray<id<DKDContent>> *)saveMeta:(id<MKMMeta>)meta
-                                         forID:(id<MKMID>)ID
+                                         forID:(id<MKMID>)did
                                        content:(id<DKDMetaCommand>)command
                                       envelope:(id<DKDEnvelope>)head {
     id<DIMArchivist> archivist = [self archivist];
     BOOL ok;
     // check meta
-    ok = [self checkMeta:meta forID:ID];
+    ok = [self checkMeta:meta forID:did];
     if (!ok) {
         // extra info for receipt
         NSDictionary *info = @{
             @"template": @"Meta not valid: ${did}.",
             @"replacements": @{
-                @"did": ID.string,
+                @"did": did.string,
             },
         };
         return [self respondReceipt:@"Meta not valid."
@@ -151,13 +151,13 @@
                             content:command
                               extra:info];
     }
-    ok = [archivist saveMeta:meta withIdentifier:ID];
+    ok = [archivist saveMeta:meta withIdentifier:did];
     if (!ok) {
         // DB error?
         NSDictionary *info = @{
             @"template": @"Meta not accepted: ${did}.",
             @"replacements": @{
-                @"did": ID.string,
+                @"did": did.string,
             },
         };
         return [self respondReceipt:@"Meta not accepted."
@@ -169,8 +169,8 @@
     return nil;
 }
 
-- (BOOL)checkMeta:(id<MKMMeta>)meta forID:(id<MKMID>)ID {
-    return [meta isValid] && DIMMetaMatchID(ID, meta);
+- (BOOL)checkMeta:(id<MKMMeta>)meta forID:(id<MKMID>)did {
+    return [meta isValid] && DIMMetaMatchID(did, meta);
 }
 
 @end

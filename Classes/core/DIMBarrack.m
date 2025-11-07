@@ -53,40 +53,40 @@
     NSAssert(false, @"implement me!");
 }
 
-- (nullable id<MKMUser>)user:(id<MKMID>)ID {
+- (nullable id<MKMUser>)user:(id<MKMID>)uid {
     NSAssert(false, @"implement me!");
     return nil;
 }
 
-- (nullable id<MKMGroup>)group:(id<MKMID>)ID {
+- (nullable id<MKMGroup>)group:(id<MKMID>)gid {
     NSAssert(false, @"implement me!");
     return nil;
 }
 
 // Override
-- (nullable id<MKMUser>)createUser:(nonnull id<MKMID>)ID {
-    NSAssert([ID isUser], @"user ID error: %@", ID);
-    MKMEntityType network = [ID type];
+- (nullable id<MKMUser>)createUser:(nonnull id<MKMID>)uid {
+    NSAssert([uid isUser], @"user ID error: %@", uid);
+    MKMEntityType network = [uid type];
     // check user type
     if (network == MKMEntityType_Station) {
-        return [[DIMStation alloc] initWithIdentifier:ID];
+        return [[DIMStation alloc] initWithIdentifier:uid];
     } else if (network == MKMEntityType_Bot) {
-        return [[DIMBot alloc] initWithIdentifier:ID];
+        return [[DIMBot alloc] initWithIdentifier:uid];
     }
     // general user, or 'anyone@anywhere'
-    return [[DIMUser alloc] initWithIdentifier:ID];
+    return [[DIMUser alloc] initWithIdentifier:uid];
 }
 
 // Override
-- (nullable id<MKMGroup>)createGroup:(nonnull id<MKMID>)ID {
-    NSAssert([ID isGroup], @"group ID error: %@", ID);
-    MKMEntityType network = [ID type];
+- (nullable id<MKMGroup>)createGroup:(nonnull id<MKMID>)gid {
+    NSAssert([gid isGroup], @"group ID error: %@", gid);
+    MKMEntityType network = [gid type];
     // check group type
     if (network == MKMEntityType_ISP) {
-        return [[DIMServiceProvider alloc] initWithIdentifier:ID];
+        return [[DIMServiceProvider alloc] initWithIdentifier:gid];
     }
     // general group, or 'everyone@everywhere'
-    return [[DIMGroup alloc] initWithIdentifier:ID];
+    return [[DIMGroup alloc] initWithIdentifier:gid];
 }
 
 @end
