@@ -64,20 +64,17 @@
                               extra:nil];
     } else if (meta) {
         // received a meta for ID
-        return [self putMeta:meta
-                       forID:did
-                 withContent:command
-                 andEnvelope:envelope];
+        return [self putMeta:meta forIdentifier:did content:command envelope:envelope];
     } else {
         // query meta for ID
-        return [self metaForID:did withContent:command andEnvelope:envelope];
+        return [self respondMeta:did content:command envelope:envelope];
     }
 }
 
 // private
-- (NSArray<id<DKDContent>> *)metaForID:(id<MKMID>)did
-                           withContent:(id<DKDMetaCommand>)command
-                           andEnvelope:(id<DKDEnvelope>)head {
+- (NSArray<id<DKDContent>> *)respondMeta:(id<MKMID>)did
+                                 content:(id<DKDMetaCommand>)command
+                                envelope:(id<DKDEnvelope>)head {
     DIMFacebook *facebook = [self facebook];
     id<MKMMeta> meta = [facebook meta:did];
     if (!meta) {
@@ -100,13 +97,13 @@
 }
 
 - (NSArray<id<DKDContent>> *)putMeta:(id<MKMMeta>)meta
-                               forID:(id<MKMID>)did
-                         withContent:(id<DKDMetaCommand>)command
-                         andEnvelope:(id<DKDEnvelope>)head {
+                       forIdentifier:(id<MKMID>)did
+                             content:(id<DKDMetaCommand>)command
+                            envelope:(id<DKDEnvelope>)head {
     NSArray<id<DKDContent>> *errors;
     // 1. try to save meta
     errors = [self saveMeta:meta
-                      forID:did
+              forIdentifier:did
                     content:command
                    envelope:head];
     if (errors) {
@@ -131,13 +128,13 @@
 @implementation DIMMetaCommandProcessor (Storage)
 
 - (nullable NSArray<id<DKDContent>> *)saveMeta:(id<MKMMeta>)meta
-                                         forID:(id<MKMID>)did
+                                 forIdentifier:(id<MKMID>)did
                                        content:(id<DKDMetaCommand>)command
                                       envelope:(id<DKDEnvelope>)head {
     id<DIMArchivist> archivist = [self archivist];
     BOOL ok;
     // check meta
-    ok = [self checkMeta:meta forID:did];
+    ok = [self checkMeta:meta forIdentifier:did];
     if (!ok) {
         // extra info for receipt
         NSDictionary *info = @{
@@ -169,7 +166,7 @@
     return nil;
 }
 
-- (BOOL)checkMeta:(id<MKMMeta>)meta forID:(id<MKMID>)did {
+- (BOOL)checkMeta:(id<MKMMeta>)meta forIdentifier:(id<MKMID>)did {
     return [meta isValid] && DIMMetaMatchID(did, meta);
 }
 

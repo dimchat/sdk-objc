@@ -1,5 +1,5 @@
 platform :ios, '12.0'
 
 target 'DIMSDK' do
-  pod 'DIMCore', '~> 1.0.8'
+  pod 'DIMCore', '~> 1.0.9'
 end

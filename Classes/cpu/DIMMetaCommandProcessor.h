@@ -52,11 +52,11 @@ NS_ASSUME_NONNULL_BEGIN
 @interface DIMMetaCommandProcessor (Storage)
 
 - (nullable NSArray<id<DKDContent>> *)saveMeta:(id<MKMMeta>)meta
-                                         forID:(id<MKMID>)did
+                                 forIdentifier:(id<MKMID>)did
                                        content:(id<DKDMetaCommand>)command
                                       envelope:(id<DKDEnvelope>)head;
 
-- (BOOL)checkMeta:(id<MKMMeta>)meta forID:(id<MKMID>)did;
+- (BOOL)checkMeta:(id<MKMMeta>)meta forIdentifier:(id<MKMID>)did;
 
 @end
 
