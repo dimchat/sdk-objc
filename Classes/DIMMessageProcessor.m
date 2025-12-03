@@ -181,7 +181,7 @@
     // 2. select a local user to build message
     id<MKMID> sender = iMsg.sender;
     id<MKMID> receiver = iMsg.receiver;
-    id<MKMID> me = [facebook selectLocalUser:receiver];
+    id<MKMID> me = [facebook selectLocalUserForID:receiver];
     if (!me) {
         NSAssert(false, @"receiver error: %@", receiver);
         return nil;

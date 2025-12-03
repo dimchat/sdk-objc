@@ -82,7 +82,7 @@
         }
     }
     // reveived a document for ID
-    return [self putDocuments:documents forIdentifier:did content:command envelope:envelope];
+    return [self putDocuments:documents forID:did content:command envelope:envelope];
 }
 
 // protected
@@ -136,7 +136,7 @@
 }
 
 - (NSArray<id<DKDContent>> *)putDocuments:(NSArray<id<MKMDocument>> *)documents
-                            forIdentifier:(id<MKMID>)did
+                                    forID:(id<MKMID>)did
                                   content:(id<DKDDocumentCommand>)command
                                  envelope:(id<DKDEnvelope>)head  {
     NSArray<id<DKDContent>> *errors;
@@ -160,7 +160,7 @@
         }
     } else {
         // 1. try to save meta
-        errors = [self saveMeta:meta forIdentifier:did content:command envelope:head];
+        errors = [self saveMeta:meta forID:did content:command envelope:head];
         if (errors) {
             // failed
             return errors;
@@ -170,7 +170,7 @@
     NSMutableArray *mArray = [[NSMutableArray alloc] init];
     for (id<MKMDocument> doc in documents) {
         errors = [self saveDocument:doc
-                      forIdentifier:did
+                              forID:did
                            withMeta:meta
                             content:command
                            envelope:head];
@@ -200,7 +200,7 @@
 @implementation DIMDocumentCommandProcessor (Storage)
 
 - (nullable NSArray<id<DKDContent>> *)saveDocument:(id<MKMDocument>)doc
-                                     forIdentifier:(id<MKMID>)did
+                                             forID:(id<MKMID>)did
                                           withMeta:(id<MKMMeta>)meta
                                            content:(id<DKDMetaCommand>)command
                                           envelope:(id<DKDEnvelope>)head {

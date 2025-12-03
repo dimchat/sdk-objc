@@ -44,13 +44,13 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface DIMAppCustomizedProcessor : DIMCustomizedContentProcessor
 
-- (void)setHandler:(id<DIMCustomizedContentHandler>)handler
-         forModule:(NSString *)mod
-     inApplication:(NSString *)app;
+- (void)setContentHandler:(id<DIMCustomizedContentHandler>)handler
+                forModule:(NSString *)mod
+            inApplication:(NSString *)app;
 
 // protected
-- (nullable id<DIMCustomizedContentHandler>)handlerForModule:(NSString *)mod
-                                               inApplication:(NSString *)app;
+- (nullable id<DIMCustomizedContentHandler>)contentHandlerForModule:(NSString *)mod
+                                                      inApplication:(NSString *)app;
 
 @end
 
@@ -103,14 +103,14 @@ static inline NSString *build_key(NSString *app, NSString *mod) {
     return self;
 }
 
-- (void)setHandler:(id<DIMCustomizedContentHandler>)handler
-         forModule:(NSString *)mod
-     inApplication:(NSString *)app {
+- (void)setContentHandler:(id<DIMCustomizedContentHandler>)handler
+                forModule:(NSString *)mod
+            inApplication:(NSString *)app {
     [_handlers setObject:handler forKey:build_key(app, mod)];
 }
 
-- (nullable id<DIMCustomizedContentHandler>)handlerForModule:(NSString *)mod
-                                               inApplication:(NSString *)app {
+- (nullable id<DIMCustomizedContentHandler>)contentHandlerForModule:(NSString *)mod
+                                                      inApplication:(NSString *)app {
     return [_handlers objectForKey:build_key(app, mod)];
 }
 
@@ -120,7 +120,7 @@ static inline NSString *build_key(NSString *app, NSString *mod) {
                                              content:(id<DKDCustomizedContent>)body
                                             messasge:(id<DKDReliableMessage>)rMsg {
     id<DIMCustomizedContentHandler> handler;
-    handler = [self handlerForModule:mod inApplication:app];
+    handler = [self contentHandlerForModule:mod inApplication:app];
     if (!handler) {
         // default handler
         handler = [super filterForModule:mod inApplication:app content:body messasge:rMsg];
@@ -211,13 +211,14 @@ NS_ASSUME_NONNULL_BEGIN
 
     DIMAppCustomizedProcessor *cpu = CREATE_CPU(DIMAppCustomizedProcessor);
     // 'chat.dim.group:history'
-    [cpu setHandler:CREATE_CPU(DIMGroupHistoryHandler)
-          forModule:DIMGroupHistory_Mod
-      inApplication:DIMGroupHistory_App];
+    [cpu setContentHandler:CREATE_CPU(DIMGroupHistoryHandler)
+                 forModule:DIMGroupHistory_Mod
+             inApplication:DIMGroupHistory_App];
     
     return cpu;
 }
 
+// Override
 - (id<DIMContentProcessor>)createContentProcessor:(NSString *)type {
     // application customized
     if ([type isEqualToString:DKDContentType_Application] ||
@@ -231,6 +232,7 @@ NS_ASSUME_NONNULL_BEGIN
     return [super createContentProcessor:type];
 }
 
+// Override
 - (id<DIMContentProcessor>)createCommandProcessor:(NSString *)name withType:(NSString *)msgType {
     // handshake
     if ([name isEqualToString:DKDCommand_Handshake]) {

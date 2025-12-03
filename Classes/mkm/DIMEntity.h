@@ -78,7 +78,7 @@ NS_ASSUME_NONNULL_BEGIN
  *      identifier - entity ID
  *      type       - entity type
  *      meta       - meta for generate ID
- *      document   - visa for user, or bulletin for group
+ *      documents  - visa for user, or bulletin for group
  */
 @protocol MKMEntity <NSObject>
 
@@ -98,7 +98,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface DIMEntity : NSObject <MKMEntity, NSCopying>
 
-- (instancetype)initWithIdentifier:(id<MKMID>)did NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithID:(id<MKMID>)did NS_DESIGNATED_INITIALIZER;
 
 @end
 

@@ -53,7 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  Select local user for receiver
  */
-- (nullable id<MKMID>)selectLocalUser:(id<MKMID>)receiver;
+- (nullable id<MKMID>)selectLocalUserForID:(id<MKMID>)receiver;
 
 @end
 

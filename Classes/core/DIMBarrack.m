@@ -64,29 +64,29 @@
 }
 
 // Override
-- (nullable id<MKMUser>)createUser:(nonnull id<MKMID>)uid {
+- (nullable id<MKMUser>)createUserForID:(nonnull id<MKMID>)uid {
     NSAssert([uid isUser], @"user ID error: %@", uid);
     MKMEntityType network = [uid type];
     // check user type
     if (network == MKMEntityType_Station) {
-        return [[DIMStation alloc] initWithIdentifier:uid];
+        return [[DIMStation alloc] initWithID:uid];
     } else if (network == MKMEntityType_Bot) {
-        return [[DIMBot alloc] initWithIdentifier:uid];
+        return [[DIMBot alloc] initWithID:uid];
     }
     // general user, or 'anyone@anywhere'
-    return [[DIMUser alloc] initWithIdentifier:uid];
+    return [[DIMUser alloc] initWithID:uid];
 }
 
 // Override
-- (nullable id<MKMGroup>)createGroup:(nonnull id<MKMID>)gid {
+- (nullable id<MKMGroup>)createGroupForID:(nonnull id<MKMID>)gid {
     NSAssert([gid isGroup], @"group ID error: %@", gid);
     MKMEntityType network = [gid type];
     // check group type
     if (network == MKMEntityType_ISP) {
-        return [[DIMServiceProvider alloc] initWithIdentifier:gid];
+        return [[DIMServiceProvider alloc] initWithID:gid];
     }
     // general group, or 'everyone@everywhere'
-    return [[DIMGroup alloc] initWithIdentifier:gid];
+    return [[DIMGroup alloc] initWithID:gid];
 }
 
 @end

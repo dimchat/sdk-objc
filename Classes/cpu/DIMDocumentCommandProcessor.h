@@ -47,7 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface DIMDocumentCommandProcessor (Storage)
 
 - (nullable NSArray<id<DKDContent>> *)saveDocument:(id<MKMDocument>)doc
-                                     forIdentifier:(id<MKMID>)did
+                                             forID:(id<MKMID>)did
                                           withMeta:(id<MKMMeta>)meta
                                            content:(id<DKDMetaCommand>)command
                                           envelope:(id<DKDEnvelope>)head;

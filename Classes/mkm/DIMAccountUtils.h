@@ -45,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  Check whether meta matches with entity ID
  *  (must call this when received a new meta from network)
  */
-+ (BOOL)meta:(id<MKMMeta>)info matchIdentifier:(id<MKMID>)did;
++ (BOOL)meta:(id<MKMMeta>)info matchID:(id<MKMID>)did;
 
 /**
  *  Check whether meta matches with public key
@@ -56,7 +56,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark Conveniences
 
-#define DIMMetaMatchID(ID, meta) [DIMMetaUtils meta:(meta) matchIdentifier:(ID)]
+#define DIMMetaMatchID(ID, meta) [DIMMetaUtils meta:(meta) matchID:(ID)]
 #define DIMMetaMatchPK(PK, meta) [DIMMetaUtils meta:(meta) matchPublicKey:(PK)]
 
 #pragma mark -

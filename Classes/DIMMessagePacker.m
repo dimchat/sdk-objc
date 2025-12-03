@@ -191,7 +191,7 @@
     //       or you are a member of the group when this is a group message,
     //       so that you will have a private key (decrypt key) to decrypt it.
     id<MKMID> receiver = [sMsg receiver];
-    id<MKMID> me = [self.facebook selectLocalUser:receiver];
+    id<MKMID> me = [self.facebook selectLocalUserForID:receiver];
     if (!me) {
         // not for you?
         NSAssert(false, @"receiver error: %@", receiver);
@@ -216,7 +216,7 @@
     // [Meta Protocol]
     id<MKMMeta> meta = DIMMessageGetMeta(rMsg);
     if (meta) {
-        [archivist saveMeta:meta withIdentifier:sender];
+        [archivist saveMeta:meta forID:sender];
     }
     // [Visa Protocol]
     id<MKMVisa> visa = DIMMessageGetVisa(rMsg);

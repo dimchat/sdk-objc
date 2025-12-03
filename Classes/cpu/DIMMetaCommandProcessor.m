@@ -64,7 +64,7 @@
                               extra:nil];
     } else if (meta) {
         // received a meta for ID
-        return [self putMeta:meta forIdentifier:did content:command envelope:envelope];
+        return [self putMeta:meta forID:did content:command envelope:envelope];
     } else {
         // query meta for ID
         return [self respondMeta:did content:command envelope:envelope];
@@ -97,15 +97,12 @@
 }
 
 - (NSArray<id<DKDContent>> *)putMeta:(id<MKMMeta>)meta
-                       forIdentifier:(id<MKMID>)did
+                               forID:(id<MKMID>)did
                              content:(id<DKDMetaCommand>)command
                             envelope:(id<DKDEnvelope>)head {
     NSArray<id<DKDContent>> *errors;
     // 1. try to save meta
-    errors = [self saveMeta:meta
-              forIdentifier:did
-                    content:command
-                   envelope:head];
+    errors = [self saveMeta:meta forID:did content:command envelope:head];
     if (errors) {
         // failed
         return errors;
@@ -128,13 +125,13 @@
 @implementation DIMMetaCommandProcessor (Storage)
 
 - (nullable NSArray<id<DKDContent>> *)saveMeta:(id<MKMMeta>)meta
-                                 forIdentifier:(id<MKMID>)did
+                                         forID:(id<MKMID>)did
                                        content:(id<DKDMetaCommand>)command
                                       envelope:(id<DKDEnvelope>)head {
     id<DIMArchivist> archivist = [self archivist];
     BOOL ok;
     // check meta
-    ok = [self checkMeta:meta forIdentifier:did];
+    ok = [self checkMeta:meta forID:did];
     if (!ok) {
         // extra info for receipt
         NSDictionary *info = @{
@@ -148,7 +145,7 @@
                             content:command
                               extra:info];
     }
-    ok = [archivist saveMeta:meta withIdentifier:did];
+    ok = [archivist saveMeta:meta forID:did];
     if (!ok) {
         // DB error?
         NSDictionary *info = @{
@@ -166,7 +163,7 @@
     return nil;
 }
 
-- (BOOL)checkMeta:(id<MKMMeta>)meta forIdentifier:(id<MKMID>)did {
+- (BOOL)checkMeta:(id<MKMMeta>)meta forID:(id<MKMID>)did {
     return [meta isValid] && DIMMetaMatchID(did, meta);
 }
 

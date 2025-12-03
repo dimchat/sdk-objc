@@ -84,7 +84,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param uid - user ID
  * @return user, null on not ready
  */
-- (nullable __kindof id<MKMUser>)createUser:(id<MKMID>)uid;
+- (nullable __kindof id<MKMUser>)createUserForID:(id<MKMID>)uid;
 
 /**
  *  Create group when members exist
@@ -92,7 +92,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param gid - group ID
  * @return group, null on not ready
  */
-- (nullable __kindof id<MKMGroup>)createGroup:(id<MKMID>)gid;
+- (nullable __kindof id<MKMGroup>)createGroupForID:(id<MKMID>)gid;
 
 @end
 
@@ -105,7 +105,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param did - entity ID
  * @return YES on success
  */
-- (BOOL)saveMeta:(id<MKMMeta>)meta withIdentifier:(id<MKMID>)did;
+- (BOOL)saveMeta:(id<MKMMeta>)meta forID:(id<MKMID>)did;
 
 /**
  *  Save entity document with ID (must verify first)
@@ -125,7 +125,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param did - entity ID
  * @return nil on not found
  */
-- (nullable __kindof id<MKVerifyKey>)metaKey:(id<MKMID>)did;
+- (nullable __kindof id<MKVerifyKey>)metaKeyForID:(id<MKMID>)did;
 
 /**
  *  Get visa.key
@@ -133,7 +133,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param did - entity ID
  * @return nil on not found
  */
-- (nullable __kindof id<MKEncryptKey>)visaKey:(id<MKMID>)did;
+- (nullable __kindof id<MKEncryptKey>)visaKeyForID:(id<MKMID>)did;
 
 //
 //  Local Users

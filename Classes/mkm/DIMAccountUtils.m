@@ -41,7 +41,7 @@
 
 @implementation DIMMetaUtils
 
-+ (BOOL)meta:(id<MKMMeta>)meta matchIdentifier:(id<MKMID>)did {
++ (BOOL)meta:(id<MKMMeta>)meta matchID:(id<MKMID>)did {
     NSAssert([meta isValid], @"meta not valid: %@", meta);
     // check ID.name
     NSString *seed = [meta seed];

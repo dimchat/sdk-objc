@@ -53,7 +53,7 @@
     return nil;
 }
 
-- (nullable id<MKMID>)selectLocalUser:(id<MKMID>)receiver {
+- (nullable id<MKMID>)selectLocalUserForID:(id<MKMID>)receiver {
     id<DIMArchivist> archivist = [self archivist];
     NSAssert(archivist, @"archivist not ready");
     NSArray<id<MKMID>> *localUsers = [archivist localUsers];
@@ -134,7 +134,7 @@
     //
     //  3. create user and cache it
     //
-    user = [barrack createUser:uid];
+    user = [barrack createUserForID:uid];
     if (user) {
         [barrack cacheUser:user];
     }
@@ -170,7 +170,7 @@
     //
     //  3. create group and cache it
     //
-    group = [barrack createGroup:gid];
+    group = [barrack createGroupForID:gid];
     if (group) {
         [barrack cacheGroup:group];
     }
@@ -211,7 +211,7 @@
     //
     //  1. get public key from visa
     //
-    id<MKEncryptKey> visaKey = [archivist visaKey:user];
+    id<MKEncryptKey> visaKey = [archivist visaKeyForID:user];
     if (visaKey) {
         // if visa.key exists, use it for encryption
         return visaKey;
@@ -219,7 +219,7 @@
     //
     //  2. get key from meta
     //
-    __kindof id<MKVerifyKey> metaKey = [archivist metaKey:user];
+    __kindof id<MKVerifyKey> metaKey = [archivist metaKeyForID:user];
     if ([metaKey conformsToProtocol:@protocol(MKEncryptKey)]) {
         // if visa.key not exists and meta.key is encrypt key,
         // use it for encryption
@@ -238,7 +238,7 @@
     //
     //  1. get pubic key from visa
     //
-    __kindof id<MKEncryptKey> visaKey = [archivist visaKey:user];
+    __kindof id<MKEncryptKey> visaKey = [archivist visaKeyForID:user];
     if ([visaKey conformsToProtocol:@protocol(MKVerifyKey)]) {
         // the sender may use communication key to sign message.data,
         // so try to verify it with visa.key first
@@ -247,7 +247,7 @@
     //
     //  2. get key from meta
     //
-    id<MKVerifyKey> metaKey = [archivist metaKey:user];
+    id<MKVerifyKey> metaKey = [archivist metaKeyForID:user];
     if (metaKey) {
         // the sender may use identity key to sign message.data,
         // try to verify it with meta.key too
