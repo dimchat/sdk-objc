@@ -55,7 +55,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param group - group ID
  * @return fonder ID
  */
-- (nullable id<MKMID>)founder:(id<MKMID>)group;
+- (nullable id<MKMID>)founderOfGroup:(id<MKMID>)group;
 
 /**
  *  Get group owner
@@ -63,7 +63,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param group - group ID
  * @return owner ID
  */
-- (nullable id<MKMID>)owner:(id<MKMID>)group;
+- (nullable id<MKMID>)ownerOfGroup:(id<MKMID>)group;
 
 /**
  *  Get group members list
@@ -71,15 +71,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param group - group ID
  * @return members list (ID)
  */
-- (NSArray<id<MKMID>> *)members:(id<MKMID>)group;
-
-/**
- *  Get assistants for this group
- *
- * @param group - group ID
- * @return bot ID list
- */
-- (NSArray<id<MKMID>> *)assistants:(id<MKMID>)group;
+- (NSArray<id<MKMID>> *)membersOfGroup:(id<MKMID>)group;
 
 @end
 
@@ -93,7 +85,6 @@ NS_ASSUME_NONNULL_BEGIN
  *      owner
  *      members
  *      administrators - Optional
- *      assistants     - group bots
  */
 @protocol MKMGroup <MKMEntity>
 
@@ -106,8 +97,6 @@ NS_ASSUME_NONNULL_BEGIN
 // NOTICE: the owner must be a member
 //         (usually the first one)
 @property (readonly, copy, nonatomic) NSArray<id<MKMID>> *members;
-
-@property (readonly, copy, nonatomic) NSArray<id<MKMID>> *assistants;
 
 @end
 

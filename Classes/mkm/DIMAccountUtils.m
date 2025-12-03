@@ -57,7 +57,7 @@
     }
     // check ID.address
     id<MKMAddress> old = [did address];
-    id<MKMAddress> gen = MKMAddressGenerate([old network], meta);
+    id<MKMAddress> gen = MKMAddressGenerate(meta, [old network]);
     return [old isEqual:gen];
 }
 

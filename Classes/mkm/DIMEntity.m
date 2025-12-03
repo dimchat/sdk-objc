@@ -116,13 +116,13 @@
 // Override
 - (id<MKMMeta>)meta {
     NSAssert(_dataSource, @"entity data source not set yet");
-    return [_dataSource meta:_did];
+    return [_dataSource metaForID:_did];
 }
 
 // Override
 - (NSArray<id<MKMDocument>> *)documents {
     NSAssert(_dataSource, @"entity data source not set yet");
-    return [_dataSource documents:_did];
+    return [_dataSource documentsForID:_did];
 }
 
 @end

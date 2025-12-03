@@ -121,7 +121,7 @@
     //
     if ([receiver isGroup]) {
         // group message
-        NSArray<id<MKMID>> *members = [facebook members:receiver];
+        NSArray<id<MKMID>> *members = [facebook membersOfGroup:receiver];
         NSAssert([members count] > 0, @"group not ready: %@", receiver);
         // a station will never send group message, so here must be a client;
         // the client messenger should check the group's meta & members before encrypting,

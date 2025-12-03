@@ -50,7 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param uid - user ID
  * @return user
  */
-- (nullable __kindof id<MKMUser>)user:(id<MKMID>)uid;
+- (nullable __kindof id<MKMUser>)userForID:(id<MKMID>)uid;
 
 /**
  *  Create group with ID
@@ -58,7 +58,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param gid - group ID
  * @return group
  */
-- (nullable __kindof id<MKMGroup>)group:(id<MKMID>)gid;
+- (nullable __kindof id<MKMGroup>)groupForID:(id<MKMID>)gid;
 
 @end
 
@@ -75,8 +75,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)cacheUser:(id<MKMUser>)user;
 - (void)cacheGroup:(id<MKMGroup>)group;
 
-- (nullable __kindof id<MKMUser>)user:(id<MKMID>)uid;
-- (nullable __kindof id<MKMGroup>)group:(id<MKMID>)gid;
+- (nullable __kindof id<MKMUser>)userForID:(id<MKMID>)uid;
+- (nullable __kindof id<MKMGroup>)groupForID:(id<MKMID>)gid;
 
 /**
  *  Create user when visa.key exists

@@ -76,7 +76,7 @@
                                  content:(id<DKDMetaCommand>)command
                                 envelope:(id<DKDEnvelope>)head {
     DIMFacebook *facebook = [self facebook];
-    id<MKMMeta> meta = [facebook meta:did];
+    id<MKMMeta> meta = [facebook metaForID:did];
     if (!meta) {
         // extra info for receipt
         NSDictionary *info = @{

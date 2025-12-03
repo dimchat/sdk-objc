@@ -70,7 +70,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param user - user ID
  * @return contacts list (ID)
  */
-- (NSArray<id<MKMID>> *)contacts:(id<MKMID>)user;
+- (NSArray<id<MKMID>> *)contactsOfUser:(id<MKMID>)user;
 
 /**
  *  Get user's public key for encryption

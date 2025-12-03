@@ -89,7 +89,7 @@
         id<MKMGroupDataSource> facebook = [self dataSource];
         NSAssert(facebook, @"group data source not set yet");
         id<MKMID> gid = [self identifier];
-        _founder = [facebook founder:gid];
+        _founder = [facebook founderOfGroup:gid];
     }
     return _founder;
 }
@@ -99,7 +99,7 @@
     id<MKMGroupDataSource> facebook = [self dataSource];
     NSAssert(facebook, @"group data source not set yet");
     id<MKMID> gid = [self identifier];
-    return [facebook owner:gid];
+    return [facebook ownerOfGroup:gid];
 }
 
 // Override
@@ -107,15 +107,7 @@
     id<MKMGroupDataSource> facebook = [self dataSource];
     NSAssert(facebook, @"group data source not set yet");
     id<MKMID> gid = [self identifier];
-    return [facebook members:gid];
-}
-
-// Override
-- (NSArray<id<MKMID>> *)assistants {
-    id<MKMGroupDataSource> facebook = [self dataSource];
-    NSAssert(facebook, @"group data source not set yet");
-    id<MKMID> gid = [self identifier];
-    return [facebook assistants:gid];
+    return [facebook membersOfGroup:gid];
 }
 
 @end

@@ -118,7 +118,7 @@
     id<MKMUserDataSource> facebook = [self dataSource];
     NSAssert(facebook, @"user data source not set yet");
     id<MKMID> uid = [self identifier];
-    return [facebook contacts:uid];
+    return [facebook contactsOfUser:uid];
 }
 
 // Override

@@ -57,7 +57,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param did - entity ID
  * @return Meta
  */
-- (nullable id<MKMMeta>)meta:(id<MKMID>)did;
+- (nullable id<MKMMeta>)metaForID:(id<MKMID>)did;
 
 /**
  *  Get documents for entity ID
@@ -65,7 +65,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param did - entity ID
  * @return Document List
  */
-- (NSArray<id<MKMDocument>> *)documents:(id<MKMID>)did;
+- (NSArray<id<MKMDocument>> *)documentsForID:(id<MKMID>)did;
 
 @end
 

@@ -90,7 +90,7 @@
                                       content:(id<DKDDocumentCommand>)command
                                      envelope:(id<DKDEnvelope>)head {
     DIMFacebook *facebook = [self facebook];
-    NSArray<id<MKMDocument>> *docs = [facebook documents:did];
+    NSArray<id<MKMDocument>> *docs = [facebook documentsForID:did];
     if ([docs count] == 0) {
         // extra info for receipt
         NSDictionary *info = @{
@@ -129,7 +129,7 @@
                                   extra:info];
         }
     }
-    id<MKMMeta> meta = [facebook meta:did];
+    id<MKMMeta> meta = [facebook metaForID:did];
     return @[
         DIMDocumentCommandResponse(did, meta, docs)
     ];
@@ -144,7 +144,7 @@
     // 0. check meta
     if (!meta) {
         DIMFacebook *facebook = [self facebook];
-        meta = [facebook meta:did];
+        meta = [facebook metaForID:did];
         if (!meta) {
             // extra info for receipt
             NSDictionary *info = @{

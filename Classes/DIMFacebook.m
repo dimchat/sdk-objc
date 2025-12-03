@@ -84,7 +84,7 @@
         //
         // the messenger will check group info before decrypting message,
         // so we can trust that the group's meta & members MUST exist here.
-        NSArray<id<MKMID>> *members = [self members:receiver];
+        NSArray<id<MKMID>> *members = [self membersOfGroup:receiver];
         if ([members count] == 0) {
             NSAssert(false, @"members not found: %@", receiver);
             return nil;
@@ -107,14 +107,14 @@
 //
 
 // Override
-- (nullable id<MKMUser>)user:(id<MKMID>)uid {
+- (nullable id<MKMUser>)userForID:(id<MKMID>)uid {
     NSAssert([uid isUser], @"user ID error: %@", uid);
     DIMBarrack *barrack = [self barrack];
     NSAssert(barrack, @"barrack not ready");
     //
     //  1. get from user cache
     //
-    id<MKMUser> user = [barrack user:uid];
+    id<MKMUser> user = [barrack userForID:uid];
     if (user) {
         return user;
     }
@@ -142,14 +142,14 @@
 }
 
 // Override
-- (nullable id<MKMGroup>)group:(id<MKMID>)gid {
+- (nullable id<MKMGroup>)groupForID:(id<MKMID>)gid {
     NSAssert([gid isGroup], @"user ID error: %@", gid);
     DIMBarrack *barrack = [self barrack];
     NSAssert(barrack, @"barrack not ready");
     //
     //  1. get from group cache
     //
-    id<MKMGroup> group = [barrack group:gid];
+    id<MKMGroup> group = [barrack groupForID:gid];
     if (group) {
         return group;
     }
@@ -159,7 +159,7 @@
     if ([gid isBroadcast]) {
         // no need to check members for broadcast group
     } else {
-        NSArray<id<MKMID>> *members = [self members:gid];
+        NSArray<id<MKMID>> *members = [self membersOfGroup:gid];
         if ([members count] == 0) {
             NSAssert(false, @"group members not found: %@", gid);
             return nil;
@@ -182,13 +182,13 @@
 //
 
 // Override
-- (nullable id<MKMMeta>)meta:(id<MKMID>)did {
+- (nullable id<MKMMeta>)metaForID:(id<MKMID>)did {
     NSAssert(false, @"implement me!");
     return nil;
 }
 
 // Override
-- (NSArray<id<MKMDocument>> *)documents:(id<MKMID>)did {
+- (NSArray<id<MKMDocument>> *)documentsForID:(id<MKMID>)did {
     NSAssert(false, @"implement me!");
     return nil;
 }
@@ -198,7 +198,7 @@
 //
 
 // Override
-- (NSArray<id<MKMID>> *)contacts:(id<MKMID>)user {
+- (NSArray<id<MKMID>> *)contactsOfUser:(id<MKMID>)user {
     NSAssert(false, @"implement me!");
     return nil;
 }
@@ -280,25 +280,19 @@
 //
 
 // Override
-- (nullable id<MKMID>)founder:(id<MKMID>)group {
+- (nullable id<MKMID>)founderOfGroup:(id<MKMID>)group {
     NSAssert(false, @"implement me!");
     return nil;
 }
 
 // Override
-- (nullable id<MKMID>)owner:(id<MKMID>)group {
+- (nullable id<MKMID>)ownerOfGroup:(id<MKMID>)group {
     NSAssert(false, @"implement me!");
     return nil;
 }
 
 // Override
-- (NSArray<id<MKMID>> *)members:(id<MKMID>)group {
-    NSAssert(false, @"implement me!");
-    return nil;
-}
-
-// Override
-- (NSArray<id<MKMID>> *)assistants:(id<MKMID>)group {
+- (NSArray<id<MKMID>> *)membersOfGroup:(id<MKMID>)group {
     NSAssert(false, @"implement me!");
     return nil;
 }
