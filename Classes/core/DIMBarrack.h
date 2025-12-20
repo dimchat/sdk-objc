@@ -113,27 +113,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param doc - entity document
  * @return YES on success
  */
-- (BOOL)saveDocument:(id<MKMDocument>)doc;
-
-//
-//  Public Keys
-//
-
-/**
- *  Get meta.key
- *
- * @param did - entity ID
- * @return nil on not found
- */
-- (nullable __kindof id<MKVerifyKey>)metaKeyForID:(id<MKMID>)did;
-
-/**
- *  Get visa.key
- *
- * @param did - entity ID
- * @return nil on not found
- */
-- (nullable __kindof id<MKEncryptKey>)visaKeyForID:(id<MKMID>)did;
+- (BOOL)saveDocument:(id<MKMDocument>)doc forID:(id<MKMID>)did;
 
 //
 //  Local Users

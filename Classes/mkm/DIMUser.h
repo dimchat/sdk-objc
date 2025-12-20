@@ -116,6 +116,14 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol MKMUser <MKMEntity>
 
 /**
+ *  Encrypt data, try visa.key first, if not found, use meta.key
+ *
+ * @param plaintext - message data
+ * @return encrypted data
+ */
+- (nullable NSDictionary<NSString *, NSData *> *)encrypt:(NSData *)plaintext;
+
+/**
  *  Verify data and signature with user's public keys
  *
  * @param data - message data
@@ -123,14 +131,6 @@ NS_ASSUME_NONNULL_BEGIN
  * @return true on correct
  */
 - (BOOL)verify:(NSData *)data withSignature:(NSData *)signature;
-
-/**
- *  Encrypt data, try visa.key first, if not found, use meta.key
- *
- * @param plaintext - message data
- * @return encrypted data
- */
-- (nullable NSDictionary<NSString *, NSData *> *)encrypt:(NSData *)plaintext;
 
 - (BOOL)verifyVisa:(id<MKMVisa>)visa;
 
@@ -141,14 +141,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly, strong, nonatomic) NSArray<id<MKMID>> *contacts;
 
 /**
- *  Sign data with user's private key
- *
- * @param data - message data
- * @return signature
- */
-- (NSData *)sign:(NSData *)data;
-
-/**
  *  Decrypt data with user's private key
  *
  * @param ciphertext - encrypted data
@@ -156,11 +148,17 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (nullable NSData *)decrypt:(NSData *)ciphertext;
 
+/**
+ *  Sign data with user's private key
+ *
+ * @param data - message data
+ * @return signature
+ */
+- (NSData *)sign:(NSData *)data;
+
 - (nullable id<MKMVisa>)signVisa:(id<MKMVisa>)visa;
 
 @end
-
-#pragma mark -
 
 /**
  *  Base User
@@ -168,6 +166,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface DIMUser : DIMEntity <MKMUser>
 
 @end
+
+#pragma mark - Visa Agent for Cryptography
 
 @class DIMVisaAgent;
 

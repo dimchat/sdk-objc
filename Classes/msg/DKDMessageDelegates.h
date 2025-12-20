@@ -108,7 +108,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param iMsg - instant message object
  * @param data - serialized data of symmetric key
  * @param receiver - actual receiver (user, or group member)
- * @return encrypted symmetric key data
+ * @return encrypted symmetric key data and target (ID + terminal)
  */
 - (nullable NSDictionary<NSString *, NSData *> *)message:(id<DKDInstantMessage>)iMsg
                                               encryptKey:(NSData *)data

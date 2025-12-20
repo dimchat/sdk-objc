@@ -143,7 +143,9 @@
 - (nullable id<MKMVisa>)signVisa:(id<MKMVisa>)visa {
     // check document ID
     id<MKMID> did = MKMIDParse([visa objectForKey:@"did"]);
-    NSAssert(!did || [self.identifier.address isEqual:did.address], @"visa ID not matched: %@, %@", did, self.identifier);
+    if (did) {
+        NSAssert([self.identifier.address isEqual:did.address], @"visa ID not matched: %@, %@", did, self.identifier);
+    }
     // NOTICE: only sign visa with the private key paired with your meta.key
     id<MKSignKey> SK = [self privateKeyForVisaSignature];
     NSAssert(SK, @"failed to get visa sign key for user: %@", did);

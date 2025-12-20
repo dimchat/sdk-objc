@@ -53,21 +53,20 @@
              @"meta command error: %@", content);
     id<DKDEnvelope> envelope = [rMsg envelope];
     id<DKDMetaCommand> command = content;
-    id<MKMID> did = [command identifier];
     id<MKMMeta> meta = [command meta];
+    id<MKMID> did = [command identifier];
     if (!did) {
         NSAssert(false, @"meta ID cannot be empty: %@", command);
         return [self respondReceipt:@"Meta command error."
                            envelope:envelope
                             content:content
                               extra:nil];
-    } else if (meta) {
-        // received a meta for ID
-        return [self putMeta:meta forID:did content:command envelope:envelope];
-    } else {
+    } else if (!meta) {
         // query meta for ID
         return [self respondMeta:did content:command envelope:envelope];
     }
+    // received a meta for ID
+    return [self putMeta:meta forID:did content:command envelope:envelope];
 }
 
 // private
@@ -128,6 +127,7 @@
                                        content:(id<DKDMetaCommand>)command
                                       envelope:(id<DKDEnvelope>)head {
     id<DIMArchivist> archivist = [self archivist];
+    NSAssert(archivist, @"archivist not ready");
     BOOL ok;
     // check meta
     ok = [self checkMeta:meta forID:did];

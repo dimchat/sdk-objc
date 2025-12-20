@@ -48,20 +48,20 @@
              @"document command error: %@", content);
     id<DKDEnvelope> envelope = [rMsg envelope];
     id<DKDDocumentCommand> command = content;
+    NSArray<id<MKMDocument>> *docs = [command documents];
     id<MKMID> did = [command identifier];
-    NSArray<id<MKMDocument>> *documents = [command documents];
     if (!did) {
         NSAssert(false, @"document ID cannot be empty: %@", command);
         return [self respondReceipt:@"Document command error."
                            envelope:envelope
                             content:content
                               extra:nil];
-    } else if ([documents count] == 0) {
+    } else if (!docs) {
         // query documents for ID
         return [self respondDocuments:did content:command envelope:envelope];
     }
     // reveived a document for ID
-    return [self putDocuments:documents forID:did content:command envelope:envelope];
+    return [self putDocuments:docs forID:did content:command envelope:envelope];
 }
 
 // protected
@@ -210,6 +210,7 @@
                                            content:(id<DKDMetaCommand>)command
                                           envelope:(id<DKDEnvelope>)head {
     id<DIMArchivist> archivist = [self archivist];
+    NSAssert(archivist, @"archivist not ready");
     BOOL ok;
     // check document
     ok = [self checkDocument:doc meta:meta forID:did];
@@ -226,7 +227,7 @@
                             content:command
                               extra:info];
     }
-    ok = [archivist saveDocument:doc];
+    ok = [archivist saveDocument:doc forID:did];
     if (!ok) {
         // document expired
         NSDictionary *info = @{
@@ -256,11 +257,11 @@
         id<MKMAddress> inc = [docID address];
         id<MKMAddress> out = [did address];
         if (![inc isEqual:out]) {
-            NSAssert(NO, @"ID not matched: %@, %@", did, doc.dictionary);
+            NSAssert(false, @"ID not matched: %@, %@", did, doc.dictionary);
             return NO;
         }
     } else {
-        NSAssert(NO, @"document ID not found: %@", doc.dictionary);
+        NSAssert(false, @"document ID not found: %@", doc.dictionary);
     }
     // NOTICE: if this is a bulletin document for group,
     //             verify it with the group owner's meta.key
