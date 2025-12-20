@@ -63,6 +63,66 @@
 
 @end
 
+@implementation DIMSecureMessagePacker (EncryptKey)
+
+- (nullable NSData *)message:(id<DKDSecureMessage>)sMsg encryptedKeyForReceiver:(id<MKMID>)receiver {
+    // get from 'key'
+    id base64 = [sMsg objectForKey:@"key"];
+    if (!base64) {
+        // get from 'keys'
+        NSDictionary<NSString *, id> *keys = [sMsg encryptedKeys];
+        if (keys) {
+            NSAssert([keys count] > 0, @"encrypted keys empty: %@", sMsg.dictionary);
+            //id<MKMID> receiver = [sMsg receiver];
+            NSAssert([receiver isUser], @"receiver error: %@", receiver);
+            // get by receiver
+            base64 = [self messageKeys:keys encodedKeyForReceiver:receiver];
+        }
+    }
+    id<MKTransportableData> ted = MKTransportableDataParse(base64);
+    //if (!ted) {
+    //    //NSAssert([DIMMessage isBroadcast:sMsg], @"key data error: %@", base64);
+    //    return nil;
+    //}
+    return [ted data];
+}
+
+- (nullable id)messageKeys:(NSDictionary<NSString *, id> *)keys
+     encodedKeyForReceiver:(id<MKMID>)receiver {
+    // get by receiver directly
+    NSString *target = [receiver string];
+    id base64 = [keys objectForKey:target];
+    if (base64) {
+        return base64;
+    }
+    // remove 'terminal' from receiver
+    if ([receiver terminal]) {
+        target = MKMIDConcat([receiver name], [receiver address], nil);
+        // get by receiver without 'terminal'
+        base64 = [keys objectForKey:target];
+        if (base64) {
+            return base64;
+        }
+    }
+    // check all keys
+    __block id found = nil;
+    [keys enumerateKeysAndObjectsUsingBlock:^(NSString *key, id obj, BOOL *stop) {
+        // check key without 'terminal'
+        NSRange range = [key rangeOfString:@"/"];
+        if (range.location > 0) {
+            key = [key substringToIndex:range.location];
+            if ([target isEqualToString:key]) {
+                found = obj;
+                *stop = YES;
+            }
+        }
+    }];
+    // value found
+    return found;
+}
+
+@end
+
 @implementation DIMSecureMessagePacker (Decryption)
 
 - (nullable id<DKDInstantMessage>)decryptMessage:(id<DKDSecureMessage>)sMsg
@@ -74,7 +134,7 @@
     //
     //  1. Decode 'message.key' to encrypted symmetric key data
     //
-    NSData *encryptedKey = [sMsg encryptedKey];
+    NSData *encryptedKey = [self message:sMsg encryptedKeyForReceiver:receiver];
     NSData *keyData;
     if (encryptedKey) {
         NSAssert([encryptedKey length] > 0, @"encrypted key data should not be empty: %@ => %@, %@", sMsg.sender, receiver, sMsg.group);
@@ -93,6 +153,10 @@
             return nil;
         }
         NSAssert([keyData length] > 0, @"message key data should not be empty: %@ => %@, %@", sMsg.sender, receiver, sMsg.group);
+    } else {
+        // broadcast message?
+        // reused key?
+        keyData = nil;
     }
     
     //

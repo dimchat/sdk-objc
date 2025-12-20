@@ -164,7 +164,12 @@
 }
 
 - (BOOL)checkMeta:(id<MKMMeta>)meta forID:(id<MKMID>)did {
-    return [meta isValid] && DIMMetaMatchID(did, meta);
+    if (![meta isValid]) {
+        return NO;
+    }
+    id<MKMAddress> old = [did address];
+    id<MKMAddress> gen = MKMAddressGenerate(meta, [old network]);
+    return [old isEqual:gen];
 }
 
 @end

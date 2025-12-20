@@ -50,6 +50,18 @@ NS_DESIGNATED_INITIALIZER;
 
 @end
 
+@interface DIMSecureMessagePacker (EncryptKey)
+
+// protected
+- (nullable NSData *)message:(id<DKDSecureMessage>)sMsg
+     encryptedKeyForReceiver:(id<MKMID>)receiver;
+
+// protected
+- (nullable id)messageKeys:(NSDictionary<NSString *, id> *)keys
+     encodedKeyForReceiver:(id<MKMID>)receiver;
+
+@end
+
 /*
  *  Decrypt the Secure Message to Instant Message
  *

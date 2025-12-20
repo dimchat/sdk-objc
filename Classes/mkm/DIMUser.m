@@ -53,7 +53,7 @@
     //         (if meta not exists, user won't be created)
     id<MKMID> uid = [self identifier];
     // check document ID
-    id<MKMID> did = [visa identifier];
+    id<MKMID> did = MKMIDParse([visa objectForKey:@"did"]);
     if ([uid isEqual:did]) {
         // OK
     } else {
@@ -127,7 +127,7 @@
     NSAssert(facebook, @"user data source not set yet");
     // check document ID
     id<MKMID> uid = [self identifier];
-    id<MKMID> did = [visa identifier];
+    id<MKMID> did = MKMIDParse([visa objectForKey:@"did"]);
     if ([uid isEqual:did]) {
         // OK
     } else {

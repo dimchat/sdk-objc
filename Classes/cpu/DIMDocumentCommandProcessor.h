@@ -52,7 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
                                            content:(id<DKDMetaCommand>)command
                                           envelope:(id<DKDEnvelope>)head;
 
-- (BOOL)checkDocument:(id<MKMDocument>)doc withMeta:(id<MKMMeta>)meta;
+- (BOOL)checkDocument:(id<MKMDocument>)doc meta:(id<MKMMeta>)meta forID:(id<MKMID>)did;
 
 @end
 

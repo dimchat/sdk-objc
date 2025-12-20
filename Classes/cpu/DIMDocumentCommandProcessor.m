@@ -61,26 +61,6 @@
         // query documents for ID
         return [self respondDocuments:did content:command envelope:envelope];
     }
-    // check document ID
-    BOOL ok;
-    for (id<MKMDocument> doc in documents) {
-        ok = [doc.identifier isEqual:did];
-        if (!ok) {
-            // error
-            NSAssert(false, @"document ID not match: %@", command);
-            // extra info for receipt
-            NSDictionary *info = @{
-                @"template": @"Document ID not match: ${did}.",
-                @"replacements": @{
-                    @"did": did.string,
-                },
-            };
-            return [self respondReceipt:@"Document ID not match."
-                               envelope:envelope
-                                content:content
-                                  extra:info];
-        }
-    }
     // reveived a document for ID
     return [self putDocuments:documents forID:did content:command envelope:envelope];
 }
@@ -207,7 +187,7 @@
     id<DIMArchivist> archivist = [self archivist];
     BOOL ok;
     // check document
-    ok = [self checkDocument:doc withMeta:meta];
+    ok = [self checkDocument:doc meta:meta forID:did];
     if (!ok) {
         // document error
         NSDictionary *info = @{
@@ -239,9 +219,23 @@
     return nil;
 }
 
-- (BOOL)checkDocument:(id<MKMDocument>)doc withMeta:(id<MKMMeta>)meta {
-    if ([doc isValid]) {
-        return YES;
+- (BOOL)checkDocument:(id<MKMDocument>)doc meta:(id<MKMMeta>)meta forID:(id<MKMID>)did {
+    // check meta with ID
+    if (![self checkMeta:meta forID:did]) {
+        // meta error
+        return NO;
+    }
+    // check document ID
+    id<MKMID> docID = MKMIDParse([doc objectForKey:@"did"]);
+    if (docID) {
+        id<MKMAddress> inc = [docID address];
+        id<MKMAddress> out = [did address];
+        if (![inc isEqual:out]) {
+            NSAssert(NO, @"ID not matched: %@, %@", did, doc.dictionary);
+            return NO;
+        }
+    } else {
+        NSAssert(NO, @"document ID not found: %@", doc.dictionary);
     }
     // NOTICE: if this is a bulletin document for group,
     //             verify it with the group owner's meta.key
