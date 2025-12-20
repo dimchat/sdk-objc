@@ -70,7 +70,7 @@ NS_ASSUME_NONNULL_BEGIN
  *      1st, get instance here to avoid create same instance,
  *      2nd, if they were updated, we can refresh them immediately here
  */
-@interface DIMBarrack : NSObject
+@protocol DIMBarrack <NSObject>
 
 - (void)cacheUser:(id<MKMUser>)user;
 - (void)cacheGroup:(id<MKMGroup>)group;

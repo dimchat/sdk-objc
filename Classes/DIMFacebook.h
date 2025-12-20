@@ -46,7 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
                                    MKMGroupDataSource>
 
 // protected
-@property (readonly, strong, nonatomic, nullable) __kindof DIMBarrack *barrack;
+@property (readonly, strong, nonatomic, nullable) __kindof id<DIMBarrack> barrack;
 
 @property (readonly, strong, nonatomic, nullable) __kindof id<DIMArchivist> archivist;
 

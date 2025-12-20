@@ -45,9 +45,6 @@
 #import <DIMSDK/DIMEntity.h>
 #import <DIMSDK/DIMUser.h>
 #import <DIMSDK/DIMGroup.h>
-#import <DIMSDK/DIMServiceProvider.h>
-#import <DIMSDK/DIMStation.h>
-#import <DIMSDK/DIMBot.h>
 #import <DIMSDK/DIMAccountUtils.h>
 
 #endif /* ! __SDK_MKM__ */

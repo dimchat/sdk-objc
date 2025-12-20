@@ -35,15 +35,11 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import "DIMServiceProvider.h"
-#import "DIMStation.h"
-#import "DIMBot.h"
-
 #import "DIMFacebook.h"
 
 @implementation DIMFacebook
 
-- (nullable DIMBarrack *)barrack {
+- (nullable id<DIMBarrack>)barrack {
     NSAssert(false, @"implement me!");
     return nil;
 }
@@ -109,7 +105,7 @@
 // Override
 - (nullable id<MKMUser>)userForID:(id<MKMID>)uid {
     NSAssert([uid isUser], @"user ID error: %@", uid);
-    DIMBarrack *barrack = [self barrack];
+    id<DIMBarrack> barrack = [self barrack];
     NSAssert(barrack, @"barrack not ready");
     //
     //  1. get from user cache
@@ -144,7 +140,7 @@
 // Override
 - (nullable id<MKMGroup>)groupForID:(id<MKMID>)gid {
     NSAssert([gid isGroup], @"user ID error: %@", gid);
-    DIMBarrack *barrack = [self barrack];
+    id<DIMBarrack> barrack = [self barrack];
     NSAssert(barrack, @"barrack not ready");
     //
     //  1. get from group cache
