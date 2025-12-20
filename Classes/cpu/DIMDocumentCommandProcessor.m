@@ -35,7 +35,6 @@
 //  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
-#import "DIMAccountUtils.h"
 #import "DIMFacebook.h"
 
 #import "DIMDocumentCommandProcessor.h"
@@ -88,7 +87,7 @@
     NSDate *queryTime = [command lastTime];
     if (queryTime) {
         // check last document time
-        id<MKMDocument> last = DIMDocumentGetLast(docs, @"*");
+        id<MKMDocument> last = [self lastDocument:docs];
         NSAssert(last, @"should not happen");
         NSDate *lastTime = [last time];
         NSTimeInterval lt = [lastTime timeIntervalSince1970];
@@ -113,6 +112,32 @@
     return @[
         DIMDocumentCommandResponse(did, meta, docs)
     ];
+}
+
+- (id<MKMDocument>)lastDocument:(NSArray<id<MKMDocument>> *)documents {
+    id<MKMDocument> lastDoc = nil;
+    NSDate *lastTime = nil;
+    NSDate *docTime;
+    for (id<MKMDocument> doc in documents) {
+        docTime = [doc time];
+        if (!lastDoc) {
+            // first document
+            lastDoc = doc;
+            lastTime = docTime;
+        //} else if (!lastTime) {
+        //    // the first document has no time (old version),
+        //    // if this document has time, use the new one
+        //    if (docTime) {
+        //        lastDoc = doc;
+        //        lastTime = docTime;
+        //    }
+        } else if (docTime.timeIntervalSince1970 > lastTime.timeIntervalSince1970) {
+            // new document
+            lastDoc = doc;
+            lastTime = docTime;
+        }
+    }
+    return lastDoc;
 }
 
 - (NSArray<id<DKDContent>> *)putDocuments:(NSArray<id<MKMDocument>> *)documents

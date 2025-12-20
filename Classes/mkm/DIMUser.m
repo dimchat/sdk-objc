@@ -35,17 +35,9 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "DIMAccountUtils.h"
-
 #import "DIMUser.h"
 
 @implementation DIMUser
-
-// Override
-- (nullable id<MKMVisa>)visa {
-    NSArray<id<MKMDocument>> *docs = [self documents];
-    return DIMDocumentGetVisa(docs);
-}
 
 // Override
 - (BOOL)verifyVisa:(id<MKMVisa>)visa {

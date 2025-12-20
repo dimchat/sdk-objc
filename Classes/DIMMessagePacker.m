@@ -35,8 +35,6 @@
 //  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
-#import "DIMMessageUtils.h"
-
 #import "DIMInstantMessagePacker.h"
 #import "DIMSecureMessagePacker.h"
 #import "DIMReliableMessagePacker.h"
@@ -173,13 +171,6 @@
 
 // Override
 - (id<DKDSecureMessage>)verifyMessage:(id<DKDReliableMessage>)rMsg {
-    // make sure sender's meta exists before verifying message
-    if ([self checkAttachments:rMsg]) {
-        // meta/visa ok
-    } else {
-        return nil;
-    }
-    
     NSAssert([rMsg.signature length] > 0, @"message signature cannot be empty: %@ => %@, %@", rMsg.sender, rMsg.receiver, [rMsg objectForKey:@"group"]);
     // verify 'data' with 'signature'
     return [_reliablePacker verifyMessage:rMsg];
@@ -203,32 +194,6 @@
     
     // TODO: check top-secret message
     //       (do it by application)
-}
-
-@end
-
-@implementation DIMMessagePacker (Attachments)
-
-- (BOOL)checkAttachments:(id<DKDReliableMessage>)rMsg {
-    id<DIMArchivist> archivist = [self archivist];
-    NSAssert(archivist, @"archivist not ready");
-    id<MKMID> sender = [rMsg sender];
-    // [Meta Protocol]
-    id<MKMMeta> meta = DIMMessageGetMeta(rMsg);
-    if (meta) {
-        [archivist saveMeta:meta forID:sender];
-    }
-    // [Visa Protocol]
-    id<MKMVisa> visa = DIMMessageGetVisa(rMsg);
-    if (visa) {
-        [archivist saveDocument:visa];
-    }
-    //
-    //  TODO: check [Visa Protocol] before calling this
-    //        make sure the sender's meta(visa) exists
-    //        (do it by application)
-    //
-    return YES;
 }
 
 @end

@@ -35,8 +35,6 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "DIMAccountUtils.h"
-
 #import "DIMGroup.h"
 
 @interface DIMGroup ()
@@ -75,12 +73,6 @@
     }
     [info setObject:@(self.members.count) forKey:@"members"];
     return MKJsonEncode(info);
-}
-
-// Override
-- (nullable id<MKMBulletin>)bulletin {
-    NSArray<id<MKMDocument>> *docs = [self documents];
-    return DIMDocumentGetBulletin(docs);
 }
 
 // Override

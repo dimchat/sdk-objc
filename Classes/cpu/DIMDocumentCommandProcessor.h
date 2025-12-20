@@ -41,6 +41,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMDocumentCommandProcessor : DIMMetaCommandProcessor
 
+// protected
+- (id<MKMDocument>)lastDocument:(NSArray<id<MKMDocument>> *)documents;
+
 @end
 
 // protected

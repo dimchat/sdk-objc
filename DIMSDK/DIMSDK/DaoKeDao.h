@@ -46,6 +46,5 @@
 #import <DIMSDK/DIMInstantMessagePacker.h>
 #import <DIMSDK/DIMSecureMessagePacker.h>
 #import <DIMSDK/DIMReliableMessagePacker.h>
-#import <DIMSDK/DIMMessageUtils.h>
 
 #endif /* ! __SDK_DKD__ */

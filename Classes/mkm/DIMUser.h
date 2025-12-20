@@ -133,9 +133,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @protocol MKMUser <MKMEntity>
 
-// user document
-@property (readonly, strong, nonatomic, nullable) __kindof id<MKMVisa> visa;
-
 /**
  *  Verify data and signature with user's public keys
  *
