@@ -124,59 +124,54 @@
         // B) reused key
         return DKDSecureMessageParse(info);
     }
+    // encrypt + encode key
     
-    NSData *encryptedKey;
-    NSObject *encodedKey;
-    if (!members)  // personal message
-    {
+    if (!members) {
+        // personal message
         id<MKMID> receiver = [iMsg receiver];
         NSAssert([receiver isUser], @"message.receiver error: %@", receiver);
-        //
-        //  5. Encrypt key data to 'message.key/keys' with receiver's public key
-        //
-        encryptedKey = [transceiver message:iMsg encryptKey:pwd forReceiver:receiver];
-        if (!encryptedKey) {
-            // public key for encryption not found
-            // TODO: suspend this message for waiting receiver's visa
-            return nil;
-        }
-        //
-        //  6. Encode message key to String (Base64)
-        //
-        encodedKey = MKTransportableDataEncode(encryptedKey);
-        NSAssert(encodedKey, @"failed to encode key data: %@", encryptedKey);
-        // insert as 'key'
-        [info setObject:encodedKey forKey:@"key"];
+        members = @[
+            receiver
+        ];
     }
-    else  // group message
-    {
-        NSMutableDictionary *keys = [[NSMutableDictionary alloc] initWithCapacity:members.count];
-        for (id<MKMID> receiver in members) {
-            //
-            //  5. Encrypt key data to 'message.key/keys' with receiver's public key
-            //
-            encryptedKey = [transceiver message:iMsg encryptKey:pwd forReceiver:receiver];
-            if (!encryptedKey) {
-                // public key for member not found
-                // TODO: suspend this message for waiting member's visa
-                continue;
-            }
+    
+    NSMutableDictionary<NSString *, id> *keys = [[NSMutableDictionary alloc] init];
+    NSDictionary<NSString *, NSData *> *results;
+    for (id<MKMID> receiver in members) {
+        //
+        //  5. Encrypt key data to 'message.keys' with member's public key
+        //
+        results = [transceiver message:iMsg encryptKey:pwd forReceiver:receiver];
+        if (!results) {
+            // public key for member not found
+            // TODO: suspend this message for waiting member's visa
+            continue;;
+        }
+        
+        [results enumerateKeysAndObjectsUsingBlock:^(NSString *target, NSData *encryptedKey, BOOL *stop) {
             //
             //  6. Encode message key to String (Base64)
             //
-            encodedKey = MKTransportableDataEncode(encryptedKey);
+            id encodedKey = MKTransportableDataEncode(encryptedKey);
             NSAssert(encodedKey, @"failed to encode key data: %@", encryptedKey);
-            // insert to 'message.keys' with member ID
+            if ([target length] == 0 || [target isEqualToString:@"*"]) {
+                target = [receiver string];
+            } else {
+                target = MKMIDConcat([receiver name], [receiver address], target);
+            }
+            // insert to 'message.keys' with ID + terminal
             [keys setObject:encodedKey forKey:receiver.string];
-        }
-        if ([keys count] == 0) {
-            // public key for member(s) not found
-            // TODO: suspend this message for waiting member's visa
-            return nil;
-        }
-        // insert as 'keys'
-        [info setObject:keys forKey:@"keys"];
+        }];
     }
+    if ([keys count] == 0) {
+        // public key for member(s) not found
+        // TODO: suspend this message for waiting member's visa
+        return nil;
+    }
+    // TODO: put key digest
+    
+    // insert as 'keys'
+    [info setObject:keys forKey:@"keys"];
 
     // OK, pack message
     return DKDSecureMessageParse(info);

@@ -35,9 +35,26 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
+#import "DIMVisaAgent.h"
+
 #import "DIMUser.h"
 
+@interface DIMUser () {
+    
+    DIMVisaAgent *_visaAgent;
+}
+
+@end
+
 @implementation DIMUser
+
+/* designated initializer */
+- (instancetype)initWithID:(id<MKMID>)did {
+    if (self = [super initWithID:did]) {
+        _visaAgent = [self createVisaAgent];
+    }
+    return self;
+}
 
 // Override
 - (BOOL)verifyVisa:(id<MKMVisa>)visa {
@@ -62,11 +79,18 @@
 
 // Override
 - (BOOL)verify:(NSData *)data withSignature:(NSData *)signature {
-    id<MKMUserDataSource> facebook = [self dataSource];
-    NSAssert(facebook, @"user data source not set yet");
-    id<MKMID> uid = [self identifier];
-    NSArray<id<MKVerifyKey>> *keys = [facebook publicKeysForVerification:uid];
-    NSAssert([keys count] > 0, @"failed to get verify keys: %@", uid);
+    id<MKMMeta> meta = [self meta];
+    NSArray<id<MKMDocument>> *docs = [self documents];
+    if (meta && docs) {
+        // OK
+    } else {
+        NSAssert(false, @"user not ready: %@", self.identifier);
+        return NO;
+    }
+    NSAssert([docs count] > 0, @"documents empty: %@", self.identifier);
+    NSArray<id<MKVerifyKey>> *keys = [_visaAgent keysFromDocuments:docs
+                                                              meta:meta];
+    NSAssert([keys count] > 0, @"failed to get verify keys: %@", self.identifier);
     for (id<MKVerifyKey> PK in keys) {
         if ([PK verify:data withSignature:signature]) {
             // matched!
@@ -79,15 +103,17 @@
 }
 
 // Override
-- (NSData *)encrypt:(NSData *)plaintext {
-    id<MKMUserDataSource> facebook = [self dataSource];
-    NSAssert(facebook, @"user data source not set yet");
-    id<MKMID> uid = [self identifier];
-    // NOTICE: meta.key will never changed, so use visa.key to encrypt message
-    //         is a better way
-    id<MKEncryptKey> PK = [facebook publicKeyForEncryption:uid];
-    NSAssert(PK, @"failed to get encrypt key for user: %@", uid);
-    return [PK encrypt:plaintext extra:nil];
+- (NSDictionary<NSString *, NSData *> *)encrypt:(NSData *)plaintext {
+    id<MKMMeta> meta = [self meta];
+    NSArray<id<MKMDocument>> *docs = [self documents];
+    if (meta && docs) {
+        // OK
+    } else {
+        NSAssert(false, @"user not ready: %@", self.identifier);
+        return nil;
+    }
+    NSAssert([docs count] > 0, @"documents empty: %@", self.identifier);
+    return [_visaAgent encrypt:plaintext documents:docs meta:meta];
 }
 
 #pragma mark Local User
@@ -115,19 +141,11 @@
 
 // Override
 - (nullable id<MKMVisa>)signVisa:(id<MKMVisa>)visa {
-    id<MKMUserDataSource> facebook = [self dataSource];
-    NSAssert(facebook, @"user data source not set yet");
     // check document ID
-    id<MKMID> uid = [self identifier];
     id<MKMID> did = MKMIDParse([visa objectForKey:@"did"]);
-    if ([uid isEqual:did]) {
-        // OK
-    } else {
-        NSAssert(false, @"visa ID not match:%@, %@", uid, did);
-        //return nil;
-    }
+    NSAssert(!did || [self.identifier.address isEqual:did.address], @"visa ID not matched: %@, %@", did, self.identifier);
     // NOTICE: only sign visa with the private key paired with your meta.key
-    id<MKSignKey> SK = [facebook privateKeyForVisaSignature:did];
+    id<MKSignKey> SK = [self privateKeyForVisaSignature];
     NSAssert(SK, @"failed to get visa sign key for user: %@", did);
     NSData *sig = [visa sign:SK];
     if ([sig length] == 0) {
@@ -139,23 +157,17 @@
 
 // Override
 - (NSData *)sign:(NSData *)data {
-    id<MKMUserDataSource> facebook = [self dataSource];
-    NSAssert(facebook, @"user data source not set yet");
-    id<MKMID> uid = [self identifier];
-    id<MKSignKey> SK = [facebook privateKeyForSignature:uid];
-    NSAssert(SK, @"failed to get sign key for user: %@", uid);
+    id<MKSignKey> SK = [self privateKeyForSignature];
+    NSAssert(SK, @"failed to get sign key for user: %@", self.identifier);
     return [SK sign:data];
 }
 
 // Override
 - (nullable NSData *)decrypt:(NSData *)ciphertext {
-    id<MKMUserDataSource> facebook = [self dataSource];
-    NSAssert(facebook, @"user data source not set yet");
-    id<MKMID> uid = [self identifier];
     // NOTICE: if you provide a public key in visa for encryption
     //         here you should return the private key paired with visa.key
-    NSArray<id<MKDecryptKey>> *keys = [facebook privateKeysForDecryption:uid];
-    NSAssert([keys count] > 0, @"failed to get decrypt keys for user: %@", uid);
+    NSArray<id<MKDecryptKey>> *keys = [self privateKeysForDecryption];
+    NSAssert([keys count] > 0, @"failed to get decrypt keys for user: %@", self.identifier);
     NSData *plaintext = nil;
     for (id<MKDecryptKey> SK in keys) {
         // try decrypting it with each private key

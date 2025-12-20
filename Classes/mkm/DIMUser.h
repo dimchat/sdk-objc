@@ -73,24 +73,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSArray<id<MKMID>> *)contactsOfUser:(id<MKMID>)user;
 
 /**
- *  Get user's public key for encryption
- *  (visa.key or meta.key)
- *
- * @param user - user ID
- * @return visa.key or meta.key
- */
-- (nullable id<MKEncryptKey>)publicKeyForEncryption:(id<MKMID>)user;
-
-/**
- *  Get user's public keys for verification
- *  [visa.key, meta.key]
- *
- * @param user - user ID
- * @return public keys
- */
-- (NSArray<id<MKVerifyKey>> *)publicKeysForVerification:(id<MKMID>)user;
-
-/**
  *  Get user's private keys for decryption
  *  (which paired with [visa.key, meta.key])
  *
@@ -148,7 +130,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param plaintext - message data
  * @return encrypted data
  */
-- (NSData *)encrypt:(NSData *)plaintext;
+- (nullable NSDictionary<NSString *, NSData *> *)encrypt:(NSData *)plaintext;
 
 - (BOOL)verifyVisa:(id<MKMVisa>)visa;
 
@@ -178,10 +160,37 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+#pragma mark -
+
 /**
  *  Base User
  */
 @interface DIMUser : DIMEntity <MKMUser>
+
+@end
+
+@class DIMVisaAgent;
+
+@interface DIMUser (VisaAgent)
+
+// protected
+@property (readonly, strong, nonatomic) DIMVisaAgent *visaAgent;
+
+// protected
+- (DIMVisaAgent *)createVisaAgent;
+
+@end
+
+@interface DIMUser (PrivateKey)
+
+// protected
+- (NSArray<id<MKDecryptKey>> *)privateKeysForDecryption;
+
+// protected
+- (nullable id<MKSignKey>)privateKeyForSignature;
+
+// protected
+- (nullable id<MKSignKey>)privateKeyForVisaSignature;
 
 @end
 

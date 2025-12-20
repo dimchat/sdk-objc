@@ -116,9 +116,9 @@
 }
 
 // Override
-- (nullable NSData *)message:(id<DKDInstantMessage>)iMsg
-                  encryptKey:(NSData *)data
-                 forReceiver:(id<MKMID>)receiver {
+- (nullable NSDictionary<NSString *, NSData *> *)message:(id<DKDInstantMessage>)iMsg
+                                              encryptKey:(NSData *)data
+                                             forReceiver:(id<MKMID>)receiver {
     NSAssert(![DIMMessage isBroadcast:iMsg], @"broadcast message has no key: %@", iMsg);
     // TODO: make sure the receiver's public key exists
     id<MKMUser> contact = [self.facebook userForID:receiver];

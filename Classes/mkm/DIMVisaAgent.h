@@ -1,13 +1,13 @@
 // license: https://mit-license.org
 //
-//  DIM-SDK : Decentralized Instant Messaging Software Development Kit
+//  DIMP : Decentralized Instant Messaging Protocol
 //
-//                               Written in 2019 by Moky <albert.moky@gmail.com>
+//                               Written in 2025 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Albert Moky
+// Copyright (c) 2025 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,23 +28,37 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  MingKeMing.h
+//  DIMVisaAgent.h
 //  DIMSDK
 //
-//  Created by Albert Moky on 2019/11/29.
-//  Copyright © 2019 Albert Moky. All rights reserved.
+//  Created by Albert Moky on 2025/12/21.
+//  Copyright © 2025 Albert Moky. All rights reserved.
 //
 
-// MingKeMing
-#import <DIMCore/MingKeMing.h>
+#import <DIMCore/DIMCore.h>
 
-#if !defined(__SDK_MKM__)
-#define __SDK_MKM__ 1
+NS_ASSUME_NONNULL_BEGIN
 
-// Account
-#import <DIMSDK/DIMEntity.h>
-#import <DIMSDK/DIMGroup.h>
-#import <DIMSDK/DIMUser.h>
-#import <DIMSDK/DIMVisaAgent.h>
+@interface DIMVisaAgent : NSObject
 
-#endif /* ! __SDK_MKM__ */
+- (NSDictionary<NSString *, NSData *> *)encrypt:(NSData *)plaintext
+                                      documents:(NSArray<id<MKMDocument>> *)docs
+                                           meta:(id<MKMMeta>)meta;
+
+- (NSArray<id<MKVerifyKey>> *)keysFromDocuments:(NSArray<id<MKMDocument>> *)docs
+                                           meta:(id<MKMMeta>)meta;
+
+@end
+
+// protected
+@interface DIMVisaAgent (Extended)
+
+- (nullable id<MKVerifyKey>)verifyKeyFromDocument:(id<MKMDocument>)doc;
+
+- (nullable id<MKEncryptKey>)encryptKeyFromDocument:(id<MKMDocument>)doc;
+
+- (nullable NSString *)terminalFromDocument:(id<MKMDocument>)doc;
+
+@end
+
+NS_ASSUME_NONNULL_END

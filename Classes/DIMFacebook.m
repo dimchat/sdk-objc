@@ -107,32 +107,14 @@
     NSAssert([uid isUser], @"user ID error: %@", uid);
     id<DIMBarrack> barrack = [self barrack];
     NSAssert(barrack, @"barrack not ready");
-    //
-    //  1. get from user cache
-    //
+    // get from user cache
     id<MKMUser> user = [barrack userForID:uid];
-    if (user) {
-        return user;
-    }
-    //
-    //  2. check visa key
-    //
-    if ([uid isBroadcast]) {
-        // no need to check visa key for broadcast user
-    } else {
-        id<MKEncryptKey> visaKey = [self publicKeyForEncryption:uid];
-        if (!visaKey) {
-            NSAssert(false, @"visa.key not found: %@", uid);
-            return nil;
+    if (!user) {
+        // create user and cache it
+        user = [barrack createUserForID:uid];
+        if (user) {
+            [barrack cacheUser:user];
         }
-        // NOTICE: if visa.key exists, then visa & meta must exist too.
-    }
-    //
-    //  3. create user and cache it
-    //
-    user = [barrack createUserForID:uid];
-    if (user) {
-        [barrack cacheUser:user];
     }
     return user;
 }
@@ -142,33 +124,14 @@
     NSAssert([gid isGroup], @"user ID error: %@", gid);
     id<DIMBarrack> barrack = [self barrack];
     NSAssert(barrack, @"barrack not ready");
-    //
-    //  1. get from group cache
-    //
+    // get from group cache
     id<MKMGroup> group = [barrack groupForID:gid];
-    if (group) {
-        return group;
-    }
-    //
-    //  2. check members
-    //
-    if ([gid isBroadcast]) {
-        // no need to check members for broadcast group
-    } else {
-        NSArray<id<MKMID>> *members = [self membersOfGroup:gid];
-        if ([members count] == 0) {
-            NSAssert(false, @"group members not found: %@", gid);
-            return nil;
+    if (!group) {
+        // create group and cache it
+        group = [barrack createGroupForID:gid];
+        if (group) {
+            [barrack cacheGroup:group];
         }
-        // NOTICE: if members exist, then owner (founder) must exist,
-        //         and bulletin & meta must exist too.
-    }
-    //
-    //  3. create group and cache it
-    //
-    group = [barrack createGroupForID:gid];
-    if (group) {
-        [barrack cacheGroup:group];
     }
     return group;
 }
@@ -197,60 +160,6 @@
 - (NSArray<id<MKMID>> *)contactsOfUser:(id<MKMID>)user {
     NSAssert(false, @"implement me!");
     return nil;
-}
-
-// Override
-- (nullable id<MKEncryptKey>)publicKeyForEncryption:(id<MKMID>)user {
-    NSAssert([user isUser], @"user ID error: %@", user);
-    id<DIMArchivist> archivist = [self archivist];
-    NSAssert(archivist, @"archivist not ready");
-    //
-    //  1. get public key from visa
-    //
-    id<MKEncryptKey> visaKey = [archivist visaKeyForID:user];
-    if (visaKey) {
-        // if visa.key exists, use it for encryption
-        return visaKey;
-    }
-    //
-    //  2. get key from meta
-    //
-    __kindof id<MKVerifyKey> metaKey = [archivist metaKeyForID:user];
-    if ([metaKey conformsToProtocol:@protocol(MKEncryptKey)]) {
-        // if visa.key not exists and meta.key is encrypt key,
-        // use it for encryption
-        return metaKey;
-    }
-    //NSAssert(false, @"failed to get encrypt key for user: %@", user);
-    return nil;
-}
-
-// Override
-- (NSArray<id<MKVerifyKey>> *)publicKeysForVerification:(id<MKMID>)user {
-    NSAssert([user isUser], @"user ID error: %@", user);
-    id<DIMArchivist> archivist = [self archivist];
-    NSAssert(archivist, @"archivist not ready");
-    NSMutableArray<id<MKVerifyKey>> *mKeys = [[NSMutableArray alloc] init];
-    //
-    //  1. get pubic key from visa
-    //
-    __kindof id<MKEncryptKey> visaKey = [archivist visaKeyForID:user];
-    if ([visaKey conformsToProtocol:@protocol(MKVerifyKey)]) {
-        // the sender may use communication key to sign message.data,
-        // so try to verify it with visa.key first
-        [mKeys addObject:visaKey];
-    }
-    //
-    //  2. get key from meta
-    //
-    id<MKVerifyKey> metaKey = [archivist metaKeyForID:user];
-    if (metaKey) {
-        // the sender may use identity key to sign message.data,
-        // try to verify it with meta.key too
-        [mKeys addObject:metaKey];
-    }
-    NSAssert([mKeys count] > 0, @"failed to get verify key for user: %@", user);
-    return mKeys;
 }
 
 // Override

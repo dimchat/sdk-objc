@@ -110,9 +110,9 @@ NS_ASSUME_NONNULL_BEGIN
  * @param receiver - actual receiver (user, or group member)
  * @return encrypted symmetric key data
  */
-- (nullable NSData *)message:(id<DKDInstantMessage>)iMsg
-                  encryptKey:(NSData *)data
-                 forReceiver:(id<MKMID>)receiver;
+- (nullable NSDictionary<NSString *, NSData *> *)message:(id<DKDInstantMessage>)iMsg
+                                              encryptKey:(NSData *)data
+                                             forReceiver:(id<MKMID>)receiver;
 
 ///**
 // *  6. Encode 'message.key' to String (Base64)
