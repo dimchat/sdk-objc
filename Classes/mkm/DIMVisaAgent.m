@@ -73,9 +73,9 @@
         //
         //  2. encrypt with meta key
         //
-        id<MKVerifyKey> visaKey = [meta publicKey];
-        if ([visaKey conformsToProtocol:@protocol(MKEncryptKey)]) {
-            pubKey = (id<MKEncryptKey>)visaKey;
+        id<MKVerifyKey> metaKey = [meta publicKey];
+        if ([metaKey conformsToProtocol:@protocol(MKEncryptKey)]) {
+            pubKey = (id<MKEncryptKey>)metaKey;
             //terminal = @"*";
             ciphertext = [pubKey encrypt:plaintext extra:nil];
             [results setObject:ciphertext forKey:@"*"];

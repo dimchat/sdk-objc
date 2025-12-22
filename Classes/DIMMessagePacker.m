@@ -76,11 +76,6 @@
     return [[DIMReliableMessagePacker alloc] initWithDelegate:delegate];
 }
 
-- (nullable id<DIMArchivist>)archivist {
-    DIMFacebook *facebook = [self facebook];
-    return [facebook archivist];
-}
-
 //
 //  InstantMessage -> SecureMessage -> ReliableMessage -> Data
 //

@@ -40,8 +40,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol DIMArchivist;
-
 @protocol DKDInstantMessageDelegate;
 @protocol DKDSecureMessageDelegate;
 @protocol DKDReliableMessageDelegate;
@@ -61,9 +59,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (DIMInstantMessagePacker *)createInstantMessagePacker:(id<DKDInstantMessageDelegate>)delegate;
 - (DIMSecureMessagePacker *)createSecureMessagePacker:(id<DKDSecureMessageDelegate>)delegate;
 - (DIMReliableMessagePacker *)createReliableMessagePacker:(id<DKDReliableMessageDelegate>)delegate;
-
-// protected
-@property (readonly, strong, nonatomic, nullable) __kindof id<DIMArchivist> archivist;
 
 @end
 

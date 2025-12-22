@@ -185,3 +185,37 @@
 }
 
 @end
+
+@implementation DIMUser (VisaAgent)
+
+- (DIMVisaAgent *)visaAgent {
+    return _visaAgent;
+}
+
+- (DIMVisaAgent *)createVisaAgent {
+    return [[DIMVisaAgent alloc] init];
+}
+
+@end
+
+@implementation DIMUser (PrivateKey)
+
+- (NSArray<id<MKDecryptKey>> *)privateKeysForDecryption {
+    id<MKMUserDataSource> facebook = [self dataSource];
+    NSAssert(facebook, @"user data source not set yet");
+    return [facebook privateKeysForDecryption:self.identifier];
+}
+
+- (nullable id<MKSignKey>)privateKeyForSignature {
+    id<MKMUserDataSource> facebook = [self dataSource];
+    NSAssert(facebook, @"user data source not set yet");
+    return [facebook privateKeyForSignature:self.identifier];
+}
+
+- (nullable id<MKSignKey>)privateKeyForVisaSignature {
+    id<MKMUserDataSource> facebook = [self dataSource];
+    NSAssert(facebook, @"user data source not set yet");
+    return [facebook privateKeyForVisaSignature:self.identifier];
+}
+
+@end
