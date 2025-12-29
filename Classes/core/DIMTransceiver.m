@@ -35,6 +35,8 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
+#import "DIMEncryptedData.h"
+
 #import "DIMUser.h"
 #import "DIMBarrack.h"
 #import "DIMMessageCompressor.h"
@@ -116,9 +118,9 @@
 }
 
 // Override
-- (nullable NSDictionary<NSString *, NSData *> *)message:(id<DKDInstantMessage>)iMsg
-                                              encryptKey:(NSData *)data
-                                             forReceiver:(id<MKMID>)receiver {
+- (nullable id<DIMEncryptedData>)message:(id<DKDInstantMessage>)iMsg
+                              encryptKey:(NSData *)data
+                             forReceiver:(id<MKMID>)receiver {
     NSAssert(![DIMMessage isBroadcast:iMsg], @"broadcast message has no key: %@", iMsg);
     // TODO: make sure the receiver's public key exists
     id<MKMUser> contact = [self.facebook userForID:receiver];
@@ -127,25 +129,44 @@
     return [contact encrypt:data];
 }
 
-//// Override
-//- (NSObject *)message:(id<DKDInstantMessage>)iMsg
-//            encodeKey:(NSData *)data {
-//    NSAssert(![DIMMessage isBroadcast:iMsg], @"broadcast message has no key: %@", iMsg);
-//    return MKTransportableDataEncode(data);
-//}
+// Override
+- (NSDictionary<NSString *, id> *)message:(id<DKDInstantMessage>)iMsg
+                                encodeKey:(id<DIMEncryptedData>)data
+                              forReceiver:(id<MKMID>)receiver {
+    NSAssert(![DIMMessage isBroadcast:iMsg], @"broadcast message has no key: %@", iMsg);
+    // message key had been encrypted by a public key,
+    // so the data should be encode here (with algorithm 'base64' as default).
+    return [data encodeForUserID:receiver];
+    // TODO: check for wildcard
+}
 
 #pragma mark DKDSecureMessageDelegate
 
-//// Override
-//- (nullable NSData *)message:(id<DKDSecureMessage>)sMsg
-//                   decodeKey:(NSObject *)dataString {
-//    NSAssert(![DIMMessage isBroadcast:sMsg], @"broadcast message has no key: %@", sMsg);
-//    return MKTransportableDataDecode(dataString);
-//}
+// Override
+- (nullable id<DIMEncryptedData>)message:(id<DKDSecureMessage>)sMsg
+                               decodeKey:(NSDictionary<NSString *, id> *)keys
+                             forReceiver:(id<MKMID>)receiver {
+    NSAssert(![DIMMessage isBroadcast:sMsg], @"broadcast message has no key: %@", sMsg);
+    id<MKMUser> user = [self.facebook userForID:receiver];
+    NSAssert(user, @"failed to decode key: %@ => %@, %@", sMsg.sender, receiver, sMsg.group);
+    NSSet<NSString *> *terminals = [user terminals];
+    NSAssert([terminals count] > 0, @"visa.terminals not found: %@", user);
+    id<DIMEncryptedData> data = [DIMEncryptedData decodeMap:keys
+                                                  forUserID:receiver
+                                                  terminals:terminals];
+    // check for wildcard
+    if (!data || [data isEmpty]) {
+        if (![terminals containsObject:@"*"]) {
+            terminals = [[NSSet alloc] initWithObjects:@"*", nil];
+            data = [DIMEncryptedData decodeMap:keys forUserID:receiver terminals:terminals];
+        }
+    }
+    return data;
+}
 
 // Override
 - (nullable NSData *)message:(id<DKDSecureMessage>)sMsg
-                  decryptKey:(NSData *)key
+                  decryptKey:(id<DIMEncryptedData>)data
                  forReceiver:(id<MKMID>)receiver {
     // NOTICE: the receiver must be a member ID
     //         if it's a group message
@@ -154,7 +175,7 @@
     id<MKMUser> user = [self.facebook userForID:receiver];
     NSAssert(user, @"failed to get decrypt keys: %@", receiver);
     // decrypt with private key of the receiver (or group member)
-    return [user decrypt:key];
+    return [user decrypt:data];
 }
 
 // Override

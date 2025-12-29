@@ -39,6 +39,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@protocol DIMEncryptedData;
+
 @protocol DKDInstantMessageDelegate <NSObject>
 
 /*
@@ -110,19 +112,21 @@ NS_ASSUME_NONNULL_BEGIN
  * @param receiver - actual receiver (user, or group member)
  * @return encrypted symmetric key data and target (ID + terminal)
  */
-- (nullable NSDictionary<NSString *, NSData *> *)message:(id<DKDInstantMessage>)iMsg
-                                              encryptKey:(NSData *)data
-                                             forReceiver:(id<MKMID>)receiver;
+- (nullable id<DIMEncryptedData>)message:(id<DKDInstantMessage>)iMsg
+                              encryptKey:(NSData *)data
+                             forReceiver:(id<MKMID>)receiver;
 
-///**
-// *  6. Encode 'message.key' to String (Base64)
-// *
-// * @param iMsg - instant message object
-// * @param data - encrypted symmetric key data
-// * @return String object
-// */
-//- (NSObject *)message:(id<DKDInstantMessage>)iMsg
-//            encodeKey:(NSData *)data;
+/**
+ *  6. Encode 'message.key' to String (Base64)
+ *
+ * @param iMsg - instant message object
+ * @param data - encrypted symmetric key data
+ * @param receiver - actual receiver (user, or group member)
+ * @return String object
+ */
+- (NSDictionary<NSString *, id> *)message:(id<DKDInstantMessage>)iMsg
+                                encodeKey:(id<DIMEncryptedData>)data
+                              forReceiver:(id<MKMID>)receiver;
 
 @end
 
@@ -143,26 +147,27 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark Decrypt Key
 
-///**
-// *  1. Decode 'message.key' to encrypted symmetric key data
-// *
-// * @param sMsg - secure message object
-// * @param dataString - base64 string object
-// * @return encrypted symmetric key data
-// */
-//- (nullable NSData *)message:(id<DKDSecureMessage>)sMsg
-//                   decodeKey:(NSObject *)dataString;
+/**
+ *  1. Decode 'message.key' to encrypted symmetric key data
+ *
+ * @param sMsg - secure message object
+ * @param keys - base64 string object
+ * @return encrypted symmetric key data
+ */
+- (nullable id<DIMEncryptedData>)message:(id<DKDSecureMessage>)sMsg
+                               decodeKey:(NSDictionary<NSString *, id> *)keys
+                             forReceiver:(id<MKMID>)receiver;
 
 /**
  *  2. Decrypt 'message.key' with receiver's private key
  *
  * @param sMsg - secure message object
- * @param key - encrypted symmetric key data
+ * @param data - encrypted symmetric key data
  * @param receiver - actual receiver (user, or group member)
  * @return serialized data of symmetric key
  */
 - (nullable NSData *)message:(id<DKDSecureMessage>)sMsg
-                  decryptKey:(NSData *)key
+                  decryptKey:(id<DIMEncryptedData>)data
                  forReceiver:(id<MKMID>)receiver;
 
 /**

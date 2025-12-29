@@ -50,32 +50,6 @@ NS_DESIGNATED_INITIALIZER;
 
 @end
 
-@interface DIMSecureMessagePacker (EncryptKey)
-
-/**
- *  Decode key data (encrypted) for receiver
- *
- * @param sMsg     - message with 'keys'
- * @param receiver - user ID
- * @return encrypted key data
- */
-// protected
-- (nullable NSData *)message:(id<DKDSecureMessage>)sMsg
-     encryptedKeyForReceiver:(id<MKMID>)receiver;
-
-/**
- *  Get encoded key data for receiver
- *
- * @param keys     - encoded keys with target (ID + terminal)
- * @param receiver - user ID
- * @return base64 string
- */
-// protected
-- (nullable id)messageKeys:(NSDictionary<NSString *, id> *)keys
-     encodedKeyForReceiver:(id<MKMID>)receiver;
-
-@end
-
 /*
  *  Decrypt the Secure Message to Instant Message
  *
@@ -124,6 +98,16 @@ NS_DESIGNATED_INITIALIZER;
  * @return ReliableMessage object
  */
 - (id<DKDReliableMessage>)signMessage:(id<DKDSecureMessage>)sMsg;
+
+@end
+
+@protocol DIMEncryptedData;
+
+@interface DIMSecureMessagePacker (Extended)
+
+// protected
+- (nullable id<DIMEncryptedData>)message:(id<DKDSecureMessage>)sMsg
+                    decodeKeyForReceiver:(id<MKMID>)receiver;
 
 @end
 

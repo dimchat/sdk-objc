@@ -35,6 +35,7 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
+#import "DIMEncryptedData.h"
 #import "DIMVisaAgent.h"
 
 #import "DIMUser.h"
@@ -103,7 +104,7 @@
 }
 
 // Override
-- (NSDictionary<NSString *, NSData *> *)encrypt:(NSData *)plaintext {
+- (id<DIMEncryptedData>)encrypt:(NSData *)plaintext {
     id<MKMMeta> meta = [self meta];
     NSArray<id<MKMDocument>> *docs = [self documents];
     if (meta && docs) {
@@ -113,7 +114,17 @@
         return nil;
     }
     NSAssert([docs count] > 0, @"documents empty: %@", self.identifier);
-    return [_visaAgent encrypt:plaintext documents:docs meta:meta];
+    return [_visaAgent encryptData:plaintext forDocuments:docs meta:meta];
+}
+
+// Override
+- (NSSet<NSString *> *)terminals {
+    NSArray<id<MKMDocument>> *docs = [self documents];
+    if ([docs count] == 0) {
+        NSAssert(false, @"failed to get documents: %@", self.identifier);
+        return nil;
+    }
+    return [_visaAgent terminalsFromDocuments:docs];
 }
 
 #pragma mark Local User
@@ -165,18 +176,22 @@
 }
 
 // Override
-- (nullable NSData *)decrypt:(NSData *)ciphertext {
+- (nullable NSData *)decrypt:(id<DIMEncryptedData>)data {
     // NOTICE: if you provide a public key in visa for encryption
     //         here you should return the private key paired with visa.key
     NSArray<id<MKDecryptKey>> *keys = [self privateKeysForDecryption];
     NSAssert([keys count] > 0, @"failed to get decrypt keys for user: %@", self.identifier);
+    NSSet<NSData *> *values = [data values];
+    NSAssert([values count] > 0, @"data empty: %@", data);
     NSData *plaintext = nil;
     for (id<MKDecryptKey> SK in keys) {
         // try decrypting it with each private key
-        plaintext = [SK decrypt:ciphertext params:nil];
-        if ([plaintext length] > 0) {
-            // OK!
-            return plaintext;
+        for (NSData *ciphertext in values) {
+            plaintext = [SK decrypt:ciphertext params:nil];
+            if ([plaintext length] > 0) {
+                // OK!
+                return plaintext;
+            }
         }
     }
     // decryption failed

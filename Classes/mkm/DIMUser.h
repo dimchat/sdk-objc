@@ -100,6 +100,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@protocol DIMEncryptedData;
+
 /**
  *  User account for communication
  *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -116,12 +118,19 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol MKMUser <MKMEntity>
 
 /**
+ *  Get visa.terminal
+ *
+ * @return terminal list
+ */
+@property (readonly, strong, nonnull) NSSet<NSString *> *terminals;
+
+/**
  *  Encrypt data, try visa.key first, if not found, use meta.key
  *
  * @param plaintext - message data
  * @return encrypted data
  */
-- (nullable NSDictionary<NSString *, NSData *> *)encrypt:(NSData *)plaintext;
+- (nullable id<DIMEncryptedData>)encrypt:(NSData *)plaintext;
 
 /**
  *  Verify data and signature with user's public keys
@@ -146,7 +155,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param ciphertext - encrypted data
  * @return plain text
  */
-- (nullable NSData *)decrypt:(NSData *)ciphertext;
+- (nullable NSData *)decrypt:(id<DIMEncryptedData>)ciphertext;
 
 /**
  *  Sign data with user's private key

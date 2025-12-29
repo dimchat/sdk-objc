@@ -35,6 +35,7 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
+#import "DIMEncryptedData.h"
 #import "DKDMessageDelegates.h"
 
 #import "DIMSecureMessagePacker.h"
@@ -63,100 +64,42 @@
 
 @end
 
-@implementation DIMSecureMessagePacker (EncryptKey)
-
-- (nullable NSData *)message:(id<DKDSecureMessage>)sMsg encryptedKeyForReceiver:(id<MKMID>)receiver {
-    // get from 'key'
-    id base64 = [sMsg objectForKey:@"key"];
-    if (!base64) {
-        // get from 'keys'
-        NSDictionary<NSString *, id> *keys = [sMsg encryptedKeys];
-        if (keys) {
-            NSAssert([keys count] > 0, @"encrypted keys empty: %@", sMsg.dictionary);
-            //id<MKMID> receiver = [sMsg receiver];
-            NSAssert([receiver isUser], @"receiver error: %@", receiver);
-            // get by receiver
-            base64 = [self messageKeys:keys encodedKeyForReceiver:receiver];
-        }
-    }
-    id<MKTransportableData> ted = MKTransportableDataParse(base64);
-    //if (!ted) {
-    //    //NSAssert([DIMMessage isBroadcast:sMsg], @"key data error: %@", base64);
-    //    return nil;
-    //}
-    return [ted data];
-}
-
-- (nullable id)messageKeys:(NSDictionary<NSString *, id> *)keys
-     encodedKeyForReceiver:(id<MKMID>)receiver {
-    // get by receiver directly
-    NSString *target = [receiver string];
-    id base64 = [keys objectForKey:target];
-    if (base64) {
-        return base64;
-    }
-    // remove 'terminal' from receiver
-    if ([receiver terminal]) {
-        target = MKMIDConcat([receiver name], [receiver address], nil);
-        // get by receiver without 'terminal'
-        base64 = [keys objectForKey:target];
-        if (base64) {
-            return base64;
-        }
-    }
-    // check all keys
-    __block id found = nil;
-    [keys enumerateKeysAndObjectsUsingBlock:^(NSString *key, id obj, BOOL *stop) {
-        // check key without 'terminal'
-        NSRange range = [key rangeOfString:@"/"];
-        if (range.location > 0) {
-            key = [key substringToIndex:range.location];
-            if ([target isEqualToString:key]) {
-                found = obj;
-                *stop = YES;
-            }
-        }
-    }];
-    // value found
-    return found;
-}
-
-@end
-
 @implementation DIMSecureMessagePacker (Decryption)
 
 - (nullable id<DKDInstantMessage>)decryptMessage:(id<DKDSecureMessage>)sMsg
                                      forReceiver:(id<MKMID>)receiver {
     NSAssert([receiver isUser], @"receiver error: %@", receiver);
     id<DKDSecureMessageDelegate> transceiver = [self delegate];
-    NSAssert(transceiver, @"should not happen");
+    if (!transceiver) {
+        NSAssert(false, @"secure message delegate not found");
+        return nil;
+    }
+
+    NSData *keyData;
     
     //
     //  1. Decode 'message.key' to encrypted symmetric key data
     //
-    NSData *encryptedKey = [self message:sMsg encryptedKeyForReceiver:receiver];
-    NSData *keyData;
-    if (encryptedKey) {
-        NSAssert([encryptedKey length] > 0, @"encrypted key data should not be empty: %@ => %@, %@", sMsg.sender, receiver, sMsg.group);
+    id<DIMEncryptedData> data = [self message:sMsg decodeKeyForReceiver:receiver];
+    if (!data || [data isEmpty]) {
+        // broadcast message?
+        // reused key?
+        keyData = nil;
+    } else {
         //
         //  2. Decrypt 'message.key' with receiver's private key
         //
-        keyData = [transceiver message:sMsg
-                            decryptKey:encryptedKey
-                           forReceiver:receiver];
+        keyData = [transceiver message:sMsg decryptKey:data forReceiver:receiver];
         if (!keyData) {
             // A: my visa updated but the sender doesn't got the new one;
             // B: key data error.
-            NSAssert(false, @"failed to decrypt key in message: %@ => %@, %@", sMsg.sender, receiver, sMsg.group);
+            NSAssert(false, @"failed to decrypt message key: %@, %@ => %@, %@",
+                     data, sMsg.sender, receiver, sMsg.group);
             //@throw [NSException exceptionWithName:@"ReceiverError" reason:@"failed to decrypt key in msg" userInfo:[sMsg dictionary]];
             // TODO: check whether my visa key is changed, push new visa to this contact
             return nil;
         }
         NSAssert([keyData length] > 0, @"message key data should not be empty: %@ => %@, %@", sMsg.sender, receiver, sMsg.group);
-    } else {
-        // broadcast message?
-        // reused key?
-        keyData = nil;
     }
     
     //
@@ -231,7 +174,10 @@
 
 - (id<DKDReliableMessage>)signMessage:(id<DKDSecureMessage>)sMsg {
     id<DKDSecureMessageDelegate> transceiver = [self delegate];
-    NSAssert(transceiver, @"should not happen");
+    if (!transceiver) {
+        NSAssert(false, @"secure message delegate not found");
+        return nil;
+    }
     
     //
     //  0. decode message data
@@ -255,6 +201,33 @@
     NSMutableDictionary *info = [sMsg copyDictionary:NO];
     [info setObject:base64 forKey:@"signature"];
     return DKDReliableMessageParse(info);
+}
+
+@end
+
+@implementation DIMSecureMessagePacker (Extended)
+
+- (nullable id<DIMEncryptedData>)message:(id<DKDSecureMessage>)sMsg
+                    decodeKeyForReceiver:(id<MKMID>)receiver {
+    NSDictionary<NSString *, id> *keys = [sMsg encryptedKeys];
+    if (!keys) {
+        // get from 'key'
+        id base64 = [sMsg objectForKey:@"key"];
+        if (!base64) {
+            // broadcast message?
+            // reused key?
+            return nil;
+        }
+        keys = @{
+            [receiver string]: base64,
+        };
+    }
+    id<DKDSecureMessageDelegate> transceiver = [self delegate];
+    if (!transceiver) {
+        NSAssert(false, @"secure message delegate not found");
+        return nil;
+    }
+    return [transceiver message:sMsg decodeKey:keys forReceiver:receiver];
 }
 
 @end

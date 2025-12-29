@@ -35,6 +35,7 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
+#import "DIMEncryptedData.h"
 #import "DKDMessageDelegates.h"
 
 #import "DIMInstantMessagePacker.h"
@@ -77,7 +78,10 @@
     // TODO: check attachment for File/Image/Audio/Video message content
     //      (do it by application)
     id<DKDInstantMessageDelegate> transceiver = [self delegate];
-    NSAssert(transceiver, @"should not happen");
+    if (!transceiver) {
+        NSAssert(false, @"instant message delegate not found");
+        return nil;
+    }
 
     //
     //  1. Serialize 'message.content' to data (JsON / ProtoBuf / ...)
@@ -135,46 +139,61 @@
         ];
     }
     
-    NSMutableDictionary<NSString *, id> *keys = [[NSMutableDictionary alloc] init];
-    NSDictionary<NSString *, NSData *> *results;
+    NSMutableDictionary<id<MKMID>, id<DIMEncryptedData>> *keyMap;
+    keyMap = [[NSMutableDictionary alloc] init];
+    id<DIMEncryptedData> results;
     for (id<MKMID> receiver in members) {
         //
         //  5. Encrypt key data to 'message.keys' with member's public key
         //
         results = [transceiver message:iMsg encryptKey:pwd forReceiver:receiver];
-        if (!results) {
+        if (!results || [results isEmpty]) {
             // public key for member not found
             // TODO: suspend this message for waiting member's visa
             continue;;
         }
-        
-        [results enumerateKeysAndObjectsUsingBlock:^(NSString *target, NSData *encryptedKey, BOOL *stop) {
-            //
-            //  6. Encode message key to String (Base64)
-            //
-            id encodedKey = MKTransportableDataEncode(encryptedKey);
-            NSAssert(encodedKey, @"failed to encode key data: %@", encryptedKey);
-            if ([target length] == 0 || [target isEqualToString:@"*"]) {
-                target = [receiver string];
-            } else {
-                target = MKMIDConcat([receiver name], [receiver address], target);
-            }
-            // insert to 'message.keys' with ID + terminal
-            [keys setObject:encodedKey forKey:receiver.string];
-        }];
+        [keyMap setObject:results forKey:receiver];;
     }
+    
+    //
+    //  6. Encode message key to String (Base64)
+    //
+    NSDictionary<NSString *, id> *keys = [self message:iMsg encodeKeys:keyMap];
     if ([keys count] == 0) {
         // public key for member(s) not found
         // TODO: suspend this message for waiting member's visa
         return nil;
     }
-    // TODO: put key digest
     
     // insert as 'keys'
     [info setObject:keys forKey:@"keys"];
 
     // OK, pack message
     return DKDSecureMessageParse(info);
+}
+
+@end
+
+@implementation DIMInstantMessagePacker (Extended)
+
+- (NSDictionary<NSString *, id> *)message:(id<DKDInstantMessage>)iMsg
+                               encodeKeys:(NSDictionary<id<MKMID>, id<DIMEncryptedData>> *)map {
+    id<DKDInstantMessageDelegate> transceiver = [self delegate];
+    if (!transceiver) {
+        NSAssert(false, @"instant message delegate not found");
+        return nil;
+    }
+    NSMutableDictionary<NSString *, id> *keys = [[NSMutableDictionary alloc] init];
+    [map enumerateKeysAndObjectsUsingBlock:^(id<MKMID> receiver, id<DIMEncryptedData> data, BOOL *stop) {
+        NSDictionary<NSString *, id> *encoded = [transceiver message:iMsg
+                                                           encodeKey:data
+                                                         forReceiver:receiver];
+        NSAssert([encoded count] > 0, @"failed to encode key data: %@", receiver);
+        // insert to 'message.keys' with ID + terminal
+        [keys addEntriesFromDictionary:encoded];
+    }];
+    // TODO: put key digest
+    return keys;
 }
 
 @end
