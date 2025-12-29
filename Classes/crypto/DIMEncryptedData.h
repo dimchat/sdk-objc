@@ -1,0 +1,113 @@
+// license: https://mit-license.org
+//
+//  DIMP : Decentralized Instant Messaging Protocol
+//
+//                               Written in 2025 by Moky <albert.moky@gmail.com>
+//
+// =============================================================================
+// The MIT License (MIT)
+//
+// Copyright (c) 2025 Albert Moky
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+// =============================================================================
+//
+//  DIMEncryptedData.h
+//  DIMSDK
+//
+//  Created by Albert Moky on 2025/12/29.
+//  Copyright © 2025 Albert Moky. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+NS_ASSUME_NONNULL_BEGIN
+
+@protocol MKMID;
+
+@protocol DIMEncryptedData <NSObject>
+
+/**
+ * Get inner dictionary
+ */
+@property (readonly, strong, nonatomic) NSDictionary<NSString *, NSData *> *dictionary;
+
+- (BOOL)isEmpty;  // count == 0
+
+/**
+ *  Put encrypted key data for terminal
+ *
+ * @param terminal - ID terminal
+ * @param data     - encrypted key data
+ */
+- (void)setData:(NSData *)data forTerminal:(NSString *)terminal;
+
+/**
+ *  Remove encrypted key data for terminal
+ *
+ * @param terminal - ID terminal
+ */
+- (void)removeDataForTerminal:(NSString *)terminal;
+
+/**
+ *  Get encrypted key data for terminal
+ *
+ * @param terminal - ID terminal
+ * @return encrypted key data
+ */
+- (nullable NSData *)dataForTerminal:(NSString *)terminal;
+
+/**
+ *  Get all data values
+ *
+ * @return data list
+ */
+@property (readonly, copy, nonatomic) NSSet<NSData *> *values;
+
+/**
+ *  Encode key data
+ *
+ * @param did - user ID
+ * @return encoded key data with target (ID + terminal)
+ */
+- (NSDictionary<NSString *, id> *)encodeForUserID:(id<MKMID>)did;
+
+@end
+
+@interface DIMEncryptedData : NSObject <DIMEncryptedData>
+
+@end
+
+@interface DIMEncryptedData (DataCreation)
+
+/**
+ *  Decode key data from 'message.keys'
+ *
+ * @param keys    - encoded key data with target (ID + terminal)
+ * @param did     - receiver ID
+ * @param devices - visa terminals
+ * @return decrypted key data with terminals
+ */
++ (__kindof id<DIMEncryptedData>)decodeMap:(NSDictionary<NSString *, id> *)keys
+                                 forUserID:(id<MKMID>)did
+                                 terminals:(NSSet<NSString *> *)devices;
+
+@end
+
+NS_ASSUME_NONNULL_END

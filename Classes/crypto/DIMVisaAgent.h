@@ -35,18 +35,28 @@
 //  Copyright © 2025 Albert Moky. All rights reserved.
 //
 
-#import <DIMCore/DIMCore.h>
+#import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
+@protocol MKVerifyKey;
+@protocol MKEncryptKey;
+
+@protocol MKMMeta;
+@protocol MKMDocument;
+
+@protocol DIMEncryptedData;
+
 @interface DIMVisaAgent : NSObject
 
-- (NSDictionary<NSString *, NSData *> *)encrypt:(NSData *)plaintext
-                                      documents:(NSArray<id<MKMDocument>> *)docs
-                                           meta:(id<MKMMeta>)meta;
+- (id<DIMEncryptedData>)encryptData:(NSData *)plaintext
+                       forDocuments:(NSArray<id<MKMDocument>> *)docs
+                               meta:(id<MKMMeta>)meta;
 
 - (NSArray<id<MKVerifyKey>> *)keysFromDocuments:(NSArray<id<MKMDocument>> *)docs
                                            meta:(id<MKMMeta>)meta;
+
+- (NSSet<NSString *> *)terminalsFromDocuments:(NSArray<id<MKMDocument>> *)docs;
 
 @end
 

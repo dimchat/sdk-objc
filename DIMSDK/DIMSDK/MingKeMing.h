@@ -41,10 +41,13 @@
 #if !defined(__SDK_MKM__)
 #define __SDK_MKM__ 1
 
+// Crypto
+#import <DIMSDK/DIMEncryptedData.h>
+#import <DIMSDK/DIMVisaAgent.h>
+
 // Account
 #import <DIMSDK/DIMEntity.h>
 #import <DIMSDK/DIMGroup.h>
 #import <DIMSDK/DIMUser.h>
-#import <DIMSDK/DIMVisaAgent.h>
 
 #endif /* ! __SDK_MKM__ */
