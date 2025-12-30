@@ -67,7 +67,10 @@
 
 - (nullable id<DKDSecureMessage>)verifyMessage:(id<DKDReliableMessage>)rMsg {
     id<DKDReliableMessageDelegate> transceiver = [self delegate];
-    NSAssert(transceiver, @"should not happen");
+    if (!transceiver) {
+        NSAssert(false, @"reliable message delegate not found");
+        return nil;
+    }
     
     //
     //  0. Decode 'message.data' to encrypted content data

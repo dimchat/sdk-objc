@@ -35,14 +35,13 @@
 //  Copyright © 2025 Albert Moky. All rights reserved.
 //
 
-#import <DIMCore/DIMCore.h>
-
 #import "DIMEncryptedData.h"
 
 #import "DIMVisaAgent.h"
 
 @implementation DIMVisaAgent
 
+// Override
 - (id<DIMEncryptedData>)encryptData:(NSData *)plaintext
                        forDocuments:(NSArray<id<MKMDocument>> *)documents
                                meta:(id<MKMMeta>)meta {
@@ -89,6 +88,7 @@
     return results;
 }
 
+// Override
 - (NSArray<id<MKVerifyKey>> *)keysFromDocuments:(NSArray<id<MKMDocument>> *)documents
                                            meta:(id<MKMMeta>)meta {
     NSMutableArray *keys = [[NSMutableArray alloc] init];
@@ -115,6 +115,7 @@
     return keys;
 }
 
+// Override
 - (NSSet<NSString *> *)terminalsFromDocuments:(NSArray<id<MKMDocument>> *)documents {
     NSMutableSet<NSString *> *devices = [[NSMutableSet alloc] init];
     NSString *terminal;
@@ -180,6 +181,29 @@
         terminal = [did terminal];
     }
     return terminal;
+}
+
+@end
+
+#pragma mark -
+
+@implementation DIMSharedVisaAgent
+
+static DIMSharedVisaAgent *s_visa_agent = nil;
+
++ (instancetype)sharedInstance {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        s_visa_agent = [[self alloc] init];
+    });
+    return s_visa_agent;
+}
+
+- (instancetype)init {
+    if (self = [super init]) {
+        self.agent = [[DIMVisaAgent alloc] init];
+    }
+    return self;
 }
 
 @end

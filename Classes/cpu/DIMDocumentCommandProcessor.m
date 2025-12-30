@@ -254,9 +254,9 @@
     // check document ID
     id<MKMID> docID = MKMIDParse([doc objectForKey:@"did"]);
     if (docID) {
-        id<MKMAddress> inc = [docID address];
-        id<MKMAddress> out = [did address];
-        if (![inc isEqual:out]) {
+        id<MKMAddress> inside = [docID address];
+        id<MKMAddress> outside = [did address];
+        if (![inside isEqual:outside]) {
             NSAssert(false, @"ID not matched: %@, %@", did, doc.dictionary);
             return NO;
         }

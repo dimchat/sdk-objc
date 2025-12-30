@@ -35,39 +35,68 @@
 //  Copyright © 2025 Albert Moky. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <DIMCore/DIMCore.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol MKVerifyKey;
-@protocol MKEncryptKey;
-
-@protocol MKMMeta;
-@protocol MKMDocument;
-
 @protocol DIMEncryptedData;
 
-@interface DIMVisaAgent : NSObject
+@protocol DIMVisaAgent <NSObject>
 
-- (id<DIMEncryptedData>)encryptData:(NSData *)plaintext
-                       forDocuments:(NSArray<id<MKMDocument>> *)docs
-                               meta:(id<MKMMeta>)meta;
+/**
+ *  Encrypt plaintext to ciphertexts with all visa keys
+ *
+ * @param plaintext - key data
+ * @param meta      - meta for public key
+ * @param documents - visa documents for public keys
+ * @return encrypted data with terminals
+ */
+- (__kindof id<DIMEncryptedData>)encryptData:(NSData *)plaintext
+                                forDocuments:(NSArray<id<MKMDocument>> *)documents
+                                        meta:(id<MKMMeta>)meta;
 
-- (NSArray<id<MKVerifyKey>> *)keysFromDocuments:(NSArray<id<MKMDocument>> *)docs
+/**
+ *  Get all verify keys from documents and meta
+ *
+ * @param meta      - meta for public key
+ * @param documents - visa documents for public keys
+ * @return verify keys
+ */
+- (NSArray<id<MKVerifyKey>> *)keysFromDocuments:(NSArray<id<MKMDocument>> *)documents
                                            meta:(id<MKMMeta>)meta;
 
-- (NSSet<NSString *> *)terminalsFromDocuments:(NSArray<id<MKMDocument>> *)docs;
+/**
+ *  Get all terminals from documents
+ *
+ * @param documents - visa documents
+ * @return terminals
+ */
+- (NSSet<NSString *> *)terminalsFromDocuments:(NSArray<id<MKMDocument>> *)documents;
+
+@end
+
+@interface DIMVisaAgent : NSObject <DIMVisaAgent>
 
 @end
 
 // protected
 @interface DIMVisaAgent (Extended)
 
-- (nullable id<MKVerifyKey>)verifyKeyFromDocument:(id<MKMDocument>)doc;
+- (nullable __kindof id<MKVerifyKey>)verifyKeyFromDocument:(id<MKMDocument>)doc;
 
-- (nullable id<MKEncryptKey>)encryptKeyFromDocument:(id<MKMDocument>)doc;
+- (nullable __kindof id<MKEncryptKey>)encryptKeyFromDocument:(id<MKMDocument>)doc;
 
 - (nullable NSString *)terminalFromDocument:(id<MKMDocument>)doc;
+
+@end
+
+#pragma mark -
+
+@interface DIMSharedVisaAgent : NSObject
+
++ (instancetype)sharedInstance;
+
+@property (strong, nonatomic, nullable) __kindof id<DIMVisaAgent> agent;
 
 @end
 

@@ -176,20 +176,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-#pragma mark - Visa Agent for Cryptography
-
-@class DIMVisaAgent;
-
-@interface DIMUser (VisaAgent)
-
-// protected
-@property (readonly, strong, nonatomic) DIMVisaAgent *visaAgent;
-
-// protected
-- (DIMVisaAgent *)createVisaAgent;
-
-@end
-
 @interface DIMUser (PrivateKey)
 
 // protected

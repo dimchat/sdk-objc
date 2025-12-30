@@ -40,19 +40,11 @@
 
 #import "DIMUser.h"
 
-@interface DIMUser () {
-    
-    DIMVisaAgent *_visaAgent;
-}
-
-@end
-
 @implementation DIMUser
 
 /* designated initializer */
 - (instancetype)initWithID:(id<MKMID>)did {
     if (self = [super initWithID:did]) {
-        _visaAgent = [self createVisaAgent];
     }
     return self;
 }
@@ -89,8 +81,8 @@
         return NO;
     }
     NSAssert([docs count] > 0, @"documents empty: %@", self.identifier);
-    NSArray<id<MKVerifyKey>> *keys = [_visaAgent keysFromDocuments:docs
-                                                              meta:meta];
+    id<DIMVisaAgent> visaAgent = [[DIMSharedVisaAgent sharedInstance] agent];
+    NSArray<id<MKVerifyKey>> *keys = [visaAgent keysFromDocuments:docs meta:meta];
     NSAssert([keys count] > 0, @"failed to get verify keys: %@", self.identifier);
     for (id<MKVerifyKey> PK in keys) {
         if ([PK verify:data withSignature:signature]) {
@@ -114,7 +106,8 @@
         return nil;
     }
     NSAssert([docs count] > 0, @"documents empty: %@", self.identifier);
-    return [_visaAgent encryptData:plaintext forDocuments:docs meta:meta];
+    id<DIMVisaAgent> visaAgent = [[DIMSharedVisaAgent sharedInstance] agent];
+    return [visaAgent encryptData:plaintext forDocuments:docs meta:meta];
 }
 
 // Override
@@ -124,7 +117,8 @@
         NSAssert(false, @"failed to get documents: %@", self.identifier);
         return nil;
     }
-    return [_visaAgent terminalsFromDocuments:docs];
+    id<DIMVisaAgent> visaAgent = [[DIMSharedVisaAgent sharedInstance] agent];
+    return [visaAgent terminalsFromDocuments:docs];
 }
 
 #pragma mark Local User
@@ -197,18 +191,6 @@
     // decryption failed
     // TODO: check whether my visa key is changed, push new visa to this contact
     return nil;
-}
-
-@end
-
-@implementation DIMUser (VisaAgent)
-
-- (DIMVisaAgent *)visaAgent {
-    return _visaAgent;
-}
-
-- (DIMVisaAgent *)createVisaAgent {
-    return [[DIMVisaAgent alloc] init];
 }
 
 @end
