@@ -115,7 +115,7 @@
 - (NSDictionary<NSString *, id> *)encodeForUserID:(id<MKMID>)did {
     NSAssert([did terminal] == nil, @"ID should not contain terminal here: %@", did);
     NSString *identifier = MKMIDConcat([did name], [did address], nil);
-    NSMutableDictionary<NSString *, id> *results = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary<NSString *, id> *bundle = [[NSMutableDictionary alloc] init];
     [_map enumerateKeysAndObjectsUsingBlock:^(NSString *target, NSData *data, BOOL *stop) {
         // encode data
         id base64 = MKTransportableDataEncode(data);
@@ -126,19 +126,19 @@
             target = [NSString stringWithFormat:@"%@/%@", identifier, target];
         }
         // insert to 'message.keys' with ID + terminal
-        [results setObject:base64 forKey:target];
+        [bundle setObject:base64 forKey:target];
     }];
-    return results;
+    return bundle;
 }
 
 @end
 
 @implementation DIMEncryptedBundle (DataCreation)
 
-+ (id<DIMEncryptedBundle>)decodeMap:(NSDictionary<NSString *,id> *)keys
-                        forUserID:(id<MKMID>)did
-                        terminals:(NSSet<NSString *> *)devices {
-    id<DIMEncryptedBundle> result = [[DIMEncryptedBundle alloc] init];
++ (id<DIMEncryptedBundle>)decodeBundle:(NSDictionary<NSString *,id> *)keys
+                             forUserID:(id<MKMID>)did
+                             terminals:(NSSet<NSString *> *)devices {
+    id<DIMEncryptedBundle> bundle = [[DIMEncryptedBundle alloc] init];
     //
     //  0. ID string without terminal
     //
@@ -173,12 +173,12 @@
             continue;
         }
         //
-        //  3. got data with target (ID + terminal)
+        //  3. put data for target (ID terminal)
         //
-        [result setData:data forTerminal:target];
+        [bundle setData:data forTerminal:target];
     }
     // OK
-    return result;
+    return bundle;
 }
 
 @end

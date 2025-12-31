@@ -70,18 +70,15 @@
                                      forReceiver:(id<MKMID>)receiver {
     NSAssert([receiver isUser], @"receiver error: %@", receiver);
     id<DKDSecureMessageDelegate> transceiver = [self delegate];
-    if (!transceiver) {
-        NSAssert(false, @"secure message delegate not found");
-        return nil;
-    }
+    NSAssert(transceiver, @"secure message delegate not found");
 
     NSData *keyData;
     
     //
     //  1. Decode 'message.key' to encrypted symmetric key data
     //
-    id<DIMEncryptedBundle> data = [self message:sMsg decodeKeyForReceiver:receiver];
-    if (!data || [data isEmpty]) {
+    id<DIMEncryptedBundle> bundle = [self message:sMsg decodeKeyForReceiver:receiver];
+    if (!bundle || [bundle isEmpty]) {
         // broadcast message?
         // reused key?
         keyData = nil;
@@ -89,17 +86,16 @@
         //
         //  2. Decrypt 'message.key' with receiver's private key
         //
-        keyData = [transceiver message:sMsg decryptKey:data forReceiver:receiver];
-        if (!keyData) {
+        keyData = [transceiver message:sMsg decryptKey:bundle forReceiver:receiver];
+        if ([keyData length] == 0) {
             // A: my visa updated but the sender doesn't got the new one;
             // B: key data error.
             NSAssert(false, @"failed to decrypt message key: %@, %@ => %@, %@",
-                     data, sMsg.sender, receiver, sMsg.group);
+                     bundle, sMsg.sender, receiver, sMsg.group);
             //@throw [NSException exceptionWithName:@"ReceiverError" reason:@"failed to decrypt key in msg" userInfo:[sMsg dictionary]];
             // TODO: check whether my visa key is changed, push new visa to this contact
             return nil;
         }
-        NSAssert([keyData length] > 0, @"message key data should not be empty: %@ => %@, %@", sMsg.sender, receiver, sMsg.group);
     }
     
     //
@@ -110,7 +106,8 @@
     if (!password) {
         // A: key data is empty, and cipher key not found from local storage;
         // B: key data error.
-        NSAssert(false, @"failed to decrypt key in message: %@ => %@, %@", sMsg.sender, receiver, sMsg.group);
+        NSAssert(false, @"failed to decrypt key in message: %@ => %@, %@",
+                 sMsg.sender, receiver, sMsg.group);
         //@throw [NSException exceptionWithName:@"CryptoKeyError" reason:@"failed to get message key" userInfo:[sMsg dictionary]];
         // TODO: ask the sender to send again (with new message key)
         return nil;
@@ -121,7 +118,8 @@
     //
     NSData *ciphertext = [sMsg data];
     if ([ciphertext length] == 0) {
-        NSAssert(false, @"failed to decode message data: %@ => %@, %@", sMsg.sender, receiver, sMsg.group);
+        NSAssert(false, @"failed to decode message data: %@ => %@, %@",
+                 sMsg.sender, receiver, sMsg.group);
         return nil;
     }
     
@@ -131,15 +129,15 @@
     NSData *body = [transceiver message:sMsg
                          decryptContent:ciphertext
                                 withKey:password];
-    if (!body) {
+    if ([body length] == 0) {
         // A: password is a reused key loaded from local storage, but it's expired;
         // B: key error.
-        NSAssert(false, @"failed to decrypt message data with key: %@, data length: %lu byte(s)", password, ciphertext.length);
+        NSAssert(false, @"failed to decrypt message data with key: %@, data length: %lu byte(s)",
+                 password, ciphertext.length);
         //@throw [NSException exceptionWithName:@"DecryptError" reason:@"failed to decrypt message" userInfo:[sMsg dictionary]];
         // TODO: ask the sender to send again
         return nil;
     }
-    NSAssert([body length] > 0, @"message data should not be empty: %@ => %@, %@", sMsg.sender, receiver, sMsg.group);
     
     //
     //  6. Deserialize message content from data (JsON / ProtoBuf / ...)
@@ -148,7 +146,8 @@
                                deserializeContent:body
                                           withKey:password];
     if (!content) {
-        NSAssert(false, @"failed to deserialize content: %lu byte(s), %@ => %@, %@", body.length, sMsg.sender, receiver, sMsg.group);
+        NSAssert(false, @"failed to deserialize content: %lu byte(s), %@ => %@, %@",
+                 body.length, sMsg.sender, receiver, sMsg.group);
         return nil;
     }
     
@@ -174,28 +173,37 @@
 
 - (id<DKDReliableMessage>)signMessage:(id<DKDSecureMessage>)sMsg {
     id<DKDSecureMessageDelegate> transceiver = [self delegate];
-    if (!transceiver) {
-        NSAssert(false, @"secure message delegate not found");
-        return nil;
-    }
-    
+    NSAssert(transceiver, @"secure message delegate not found");
+
     //
     //  0. decode message data
     //
     NSData *ciphertext = [sMsg data];
-    NSAssert([ciphertext length] > 0, @"failed to to decode message data: %@ => %@, %@", sMsg.sender, sMsg.receiver, sMsg.group);
+    if ([ciphertext length] == 0) {
+        NSAssert(false, @"failed to to decode message data: %@ => %@, %@",
+                 sMsg.sender, sMsg.receiver, sMsg.group);
+        return nil;
+    }
     
     //
     //  1. Sign 'message.data' with sender's private key
     //
     NSData *signature = [transceiver message:sMsg signData:ciphertext];
-    NSAssert([signature length] > 0, @"failed to sign message: %@ => %@, %@", sMsg.sender, sMsg.receiver, sMsg.group);
+    if ([signature length] == 0) {
+        NSAssert(false, @"failed to sign message: %lu byte(s) %@ => %@, %@",
+                 ciphertext.length, sMsg.sender, sMsg.receiver, sMsg.group);
+        return nil;
+    }
     
     //
     //  2. Encode 'message.signature' to String (Base64)
     //
     NSObject *base64 = MKTransportableDataEncode(signature);
-    //NSAssert([(NSString *)base64 length] > 0, @"failed to encode signature: %lu byte(s), %@ => %@, %@", signature.length, sMsg.sender, sMsg.receiver, sMsg.group);
+    if (!base64) {
+        NSAssert(false, @"failed to encode signature: %lu byte(s), %@ => %@, %@",
+                 signature.length, sMsg.sender, sMsg.receiver, sMsg.group);
+        return nil;
+    }
     
     // OK, pack message
     NSMutableDictionary *info = [sMsg copyDictionary:NO];
@@ -208,9 +216,9 @@
 @implementation DIMSecureMessagePacker (Extended)
 
 - (nullable id<DIMEncryptedBundle>)message:(id<DKDSecureMessage>)sMsg
-                    decodeKeyForReceiver:(id<MKMID>)receiver {
-    NSDictionary<NSString *, id> *keys = [sMsg encryptedKeys];
-    if (!keys) {
+                      decodeKeyForReceiver:(id<MKMID>)receiver {
+    NSDictionary<NSString *, id> *msgKeys = [sMsg encryptedKeys];
+    if (!msgKeys) {
         // get from 'key'
         id base64 = [sMsg objectForKey:@"key"];
         if (!base64) {
@@ -218,16 +226,13 @@
             // reused key?
             return nil;
         }
-        keys = @{
+        msgKeys = @{
             [receiver string]: base64,
         };
     }
     id<DKDSecureMessageDelegate> transceiver = [self delegate];
-    if (!transceiver) {
-        NSAssert(false, @"secure message delegate not found");
-        return nil;
-    }
-    return [transceiver message:sMsg decodeKey:keys forReceiver:receiver];
+    NSAssert(transceiver, @"secure message delegate not found");
+    return [transceiver message:sMsg decodeKey:msgKeys forReceiver:receiver];
 }
 
 @end

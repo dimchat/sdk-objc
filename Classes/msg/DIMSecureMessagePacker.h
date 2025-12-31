@@ -107,7 +107,7 @@ NS_DESIGNATED_INITIALIZER;
 
 // protected
 - (nullable id<DIMEncryptedBundle>)message:(id<DKDSecureMessage>)sMsg
-                    decodeKeyForReceiver:(id<MKMID>)receiver;
+                      decodeKeyForReceiver:(id<MKMID>)receiver;
 
 @end
 

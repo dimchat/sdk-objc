@@ -130,7 +130,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param plaintext - message data
  * @return encrypted data
  */
-- (nullable id<DIMEncryptedBundle>)encrypt:(NSData *)plaintext;
+- (nullable id<DIMEncryptedBundle>)encryptBundle:(NSData *)plaintext;
 
 /**
  *  Verify data and signature with user's public keys
@@ -152,10 +152,10 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  Decrypt data with user's private key
  *
- * @param ciphertext - encrypted data
+ * @param bundle - encrypted data with targets (ID terminals)
  * @return plain text
  */
-- (nullable NSData *)decrypt:(id<DIMEncryptedBundle>)ciphertext;
+- (nullable NSData *)decryptBundle:(id<DIMEncryptedBundle>)bundle;
 
 /**
  *  Sign data with user's private key

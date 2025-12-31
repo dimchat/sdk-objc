@@ -42,12 +42,12 @@
 @implementation DIMVisaAgent
 
 // Override
-- (id<DIMEncryptedBundle>)encryptData:(NSData *)plaintext
-                       forDocuments:(NSArray<id<MKMDocument>> *)documents
-                               meta:(id<MKMMeta>)meta {
+- (id<DIMEncryptedBundle>)encryptBundle:(NSData *)plaintext
+                           forDocuments:(NSArray<id<MKMDocument>> *)documents
+                                   meta:(id<MKMMeta>)meta {
     // NOTICE: meta.key will never changed, so use visa.key to encrypt message
     //         is a better way
-    id<DIMEncryptedBundle> results = [[DIMEncryptedBundle alloc] init];
+    id<DIMEncryptedBundle> bundle = [[DIMEncryptedBundle alloc] init];
     NSString *terminal;
     id<MKEncryptKey> pubKey;
     NSData *ciphertext;
@@ -65,14 +65,14 @@
         if ([terminal length] == 0) {
             terminal = @"*";
         }
-        if ([results dataForTerminal:terminal] != nil) {
+        if ([bundle dataForTerminal:terminal] != nil) {
             NSAssert(false, @"duplicated visa key: %@", doc);
             continue;
         }
         ciphertext = [pubKey encrypt:plaintext extra:nil];
-        [results setData:ciphertext forTerminal:terminal];
+        [bundle setData:ciphertext forTerminal:terminal];
     }
-    if ([results isEmpty]) {
+    if ([bundle isEmpty]) {
         //
         //  2. encrypt with meta key
         //
@@ -81,11 +81,11 @@
             pubKey = (id<MKEncryptKey>)metaKey;
             //terminal = @"*";
             ciphertext = [pubKey encrypt:plaintext extra:nil];
-            [results setData:ciphertext forTerminal:@"*"];
+            [bundle setData:ciphertext forTerminal:@"*"];
         }
     }
     // OK
-    return results;
+    return bundle;
 }
 
 // Override

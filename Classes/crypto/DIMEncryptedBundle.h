@@ -35,11 +35,9 @@
 //  Copyright © 2025 Albert Moky. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <DIMCore/DIMCore.h>
 
 NS_ASSUME_NONNULL_BEGIN
-
-@protocol MKMID;
 
 @protocol DIMEncryptedBundle <NSObject>
 
@@ -84,7 +82,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  Encode key data
  *
  * @param did - user ID
- * @return encoded key data with target (ID + terminal)
+ * @return encoded key data with targets (ID + terminals)
  */
 - (NSDictionary<NSString *, id> *)encodeForUserID:(id<MKMID>)did;
 
@@ -99,14 +97,14 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  Decode key data from 'message.keys'
  *
- * @param keys    - encoded key data with target (ID + terminal)
+ * @param keys    - encoded key data with targets (ID + terminals)
  * @param did     - receiver ID
  * @param devices - visa terminals
- * @return decrypted key data with terminals
+ * @return decrypted key data with targets (ID terminals)
  */
-+ (__kindof id<DIMEncryptedBundle>)decodeMap:(NSDictionary<NSString *, id> *)keys
-                                 forUserID:(id<MKMID>)did
-                                 terminals:(NSSet<NSString *> *)devices;
++ (__kindof id<DIMEncryptedBundle>)decodeBundle:(NSDictionary<NSString *, id> *)keys
+                                      forUserID:(id<MKMID>)did
+                                      terminals:(NSSet<NSString *> *)devices;
 
 @end
 

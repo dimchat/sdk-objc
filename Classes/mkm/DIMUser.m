@@ -96,7 +96,7 @@
 }
 
 // Override
-- (id<DIMEncryptedBundle>)encrypt:(NSData *)plaintext {
+- (id<DIMEncryptedBundle>)encryptBundle:(NSData *)plaintext {
     id<MKMMeta> meta = [self meta];
     NSArray<id<MKMDocument>> *docs = [self documents];
     if (meta && docs) {
@@ -107,7 +107,7 @@
     }
     NSAssert([docs count] > 0, @"documents empty: %@", self.identifier);
     id<DIMVisaAgent> visaAgent = [[DIMSharedVisaAgent sharedInstance] agent];
-    return [visaAgent encryptData:plaintext forDocuments:docs meta:meta];
+    return [visaAgent encryptBundle:plaintext forDocuments:docs meta:meta];
 }
 
 // Override
@@ -170,17 +170,17 @@
 }
 
 // Override
-- (nullable NSData *)decrypt:(id<DIMEncryptedBundle>)data {
+- (nullable NSData *)decryptBundle:(id<DIMEncryptedBundle>)bundle {
     // NOTICE: if you provide a public key in visa for encryption
     //         here you should return the private key paired with visa.key
     NSArray<id<MKDecryptKey>> *keys = [self privateKeysForDecryption];
     NSAssert([keys count] > 0, @"failed to get decrypt keys for user: %@", self.identifier);
-    NSSet<NSData *> *values = [data values];
-    NSAssert([values count] > 0, @"data empty: %@", data);
+    NSSet<NSData *> *values = [bundle values];
+    NSAssert([values count] > 0, @"data empty: %@", bundle);
     NSData *plaintext = nil;
-    for (id<MKDecryptKey> SK in keys) {
+    for (NSData *ciphertext in values) {
         // try decrypting it with each private key
-        for (NSData *ciphertext in values) {
+        for (id<MKDecryptKey> SK in keys) {
             plaintext = [SK decrypt:ciphertext params:nil];
             if ([plaintext length] > 0) {
                 // OK!

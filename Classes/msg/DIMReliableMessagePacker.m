@@ -67,17 +67,15 @@
 
 - (nullable id<DKDSecureMessage>)verifyMessage:(id<DKDReliableMessage>)rMsg {
     id<DKDReliableMessageDelegate> transceiver = [self delegate];
-    if (!transceiver) {
-        NSAssert(false, @"reliable message delegate not found");
-        return nil;
-    }
-    
+    NSAssert(transceiver, @"reliable message delegate not found");
+
     //
     //  0. Decode 'message.data' to encrypted content data
     //
     NSData *ciphertext = [rMsg data];
     if ([ciphertext length] == 0) {
-        NSAssert(false, @"failed to decode message data: %@ => %@, %@", rMsg.sender, rMsg.receiver, rMsg.group);
+        NSAssert(false, @"failed to decode message data: %@ => %@, %@",
+                 rMsg.sender, rMsg.receiver, rMsg.group);
         return nil;
     }
     
@@ -86,7 +84,8 @@
     //
     NSData *signature = [rMsg signature];
     if ([signature length] == 0) {
-        NSAssert(false, @"failed to decode message signature: %@ => %@, %@", rMsg.sender, rMsg.receiver, rMsg.group);
+        NSAssert(false, @"failed to decode message signature: %@ => %@, %@",
+                 rMsg.sender, rMsg.receiver, rMsg.group);
         return nil;
     }
     
@@ -97,7 +96,8 @@
                         verifyData:ciphertext
                      withSignature:signature];
     if (!ok) {
-        NSAssert(false, @"message signature not match: %@ => %@, %@", rMsg.sender, rMsg.receiver, rMsg.group);
+        NSAssert(false, @"message signature not match: %@ => %@, %@",
+                 rMsg.sender, rMsg.receiver, rMsg.group);
         return nil;
     }
     

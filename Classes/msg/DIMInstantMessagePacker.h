@@ -94,7 +94,7 @@ NS_DESIGNATED_INITIALIZER;
 
 // protected
 - (NSDictionary<NSString *, id> *)message:(id<DKDInstantMessage>)iMsg
-                               encodeKeys:(NSDictionary<id<MKMID>, id<DIMEncryptedBundle>> *)map;
+                               encodeKeys:(NSDictionary<id<MKMID>, id<DIMEncryptedBundle>> *)bundleMap;
 
 @end
 

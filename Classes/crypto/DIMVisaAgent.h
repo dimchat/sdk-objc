@@ -51,9 +51,9 @@ NS_ASSUME_NONNULL_BEGIN
  * @param documents - visa documents for public keys
  * @return encrypted data with terminals
  */
-- (__kindof id<DIMEncryptedBundle>)encryptData:(NSData *)plaintext
-                                forDocuments:(NSArray<id<MKMDocument>> *)documents
-                                        meta:(id<MKMMeta>)meta;
+- (__kindof id<DIMEncryptedBundle>)encryptBundle:(NSData *)plaintext
+                                    forDocuments:(NSArray<id<MKMDocument>> *)documents
+                                            meta:(id<MKMMeta>)meta;
 
 /**
  *  Get all verify keys from documents and meta

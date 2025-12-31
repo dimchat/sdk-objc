@@ -78,10 +78,7 @@
     // TODO: check attachment for File/Image/Audio/Video message content
     //      (do it by application)
     id<DKDInstantMessageDelegate> transceiver = [self delegate];
-    if (!transceiver) {
-        NSAssert(false, @"instant message delegate not found");
-        return nil;
-    }
+    NSAssert(transceiver, @"instant message delegate not found");
 
     //
     //  1. Serialize 'message.content' to data (JsON / ProtoBuf / ...)
@@ -89,7 +86,10 @@
     NSData *body = [transceiver message:iMsg
                        serializeContent:iMsg.content
                                 withKey:password];
-    NSAssert([body length] > 0, @"failed to serialize content: %@", iMsg.content);
+    if ([body length] == 0) {
+        NSAssert(false, @"failed to serialize content: %@", iMsg.content);
+        return nil;
+    }
     
     //
     //  2. Encrypt content data to 'message.data' with symmetric key
@@ -97,7 +97,10 @@
     NSData *ciphertext = [transceiver message:iMsg
                                encryptContent:body
                                       withKey:password];
-    NSAssert([ciphertext length] > 0, @"failed to encrypt content with key: %@", password);
+    if ([ciphertext length] == 0) {
+        NSAssert(false, @"failed to encrypt content with key: %@", password);
+        return nil;
+    }
 
     //
     //  3. Encode 'message.data' to String (Base64)
@@ -112,7 +115,10 @@
         // so the data should be encoded here (with algorithm 'base64' as default).
         encodedData = MKTransportableDataEncode(ciphertext);
     }
-    NSAssert(encodedData, @"failed to encode content data: %@", ciphertext);
+    if (!encodedData) {
+        NSAssert(false, @"failed to encode content data: %lu byte(s)", ciphertext.length);
+        return nil;
+    }
     
     // replace 'content' with encrypted 'data'
     NSMutableDictionary *info = [iMsg copyDictionary:NO];
@@ -139,34 +145,33 @@
         ];
     }
     
-    NSMutableDictionary<id<MKMID>, id<DIMEncryptedBundle>> *keyMap;
-    keyMap = [[NSMutableDictionary alloc] init];
-    id<DIMEncryptedBundle> results;
+    NSMutableDictionary<id<MKMID>, id<DIMEncryptedBundle>> *bundleMap = [[NSMutableDictionary alloc] init];
+    id<DIMEncryptedBundle> bundle;
     for (id<MKMID> receiver in members) {
         //
         //  5. Encrypt key data to 'message.keys' with member's public key
         //
-        results = [transceiver message:iMsg encryptKey:pwd forReceiver:receiver];
-        if (!results || [results isEmpty]) {
+        bundle = [transceiver message:iMsg encryptKey:pwd forReceiver:receiver];
+        if (!bundle || [bundle isEmpty]) {
             // public key for member not found
             // TODO: suspend this message for waiting member's visa
             continue;;
         }
-        [keyMap setObject:results forKey:receiver];;
+        [bundleMap setObject:bundle forKey:receiver];;
     }
     
     //
     //  6. Encode message key to String (Base64)
     //
-    NSDictionary<NSString *, id> *keys = [self message:iMsg encodeKeys:keyMap];
-    if ([keys count] == 0) {
+    NSDictionary<NSString *, id> *msgKeys = [self message:iMsg encodeKeys:bundleMap];
+    if ([msgKeys count] == 0) {
         // public key for member(s) not found
         // TODO: suspend this message for waiting member's visa
         return nil;
     }
     
     // insert as 'keys'
-    [info setObject:keys forKey:@"keys"];
+    [info setObject:msgKeys forKey:@"keys"];
 
     // OK, pack message
     return DKDSecureMessageParse(info);
@@ -177,23 +182,23 @@
 @implementation DIMInstantMessagePacker (Extended)
 
 - (NSDictionary<NSString *, id> *)message:(id<DKDInstantMessage>)iMsg
-                               encodeKeys:(NSDictionary<id<MKMID>, id<DIMEncryptedBundle>> *)map {
+                               encodeKeys:(NSDictionary<id<MKMID>, id<DIMEncryptedBundle>> *)bundleMap {
     id<DKDInstantMessageDelegate> transceiver = [self delegate];
-    if (!transceiver) {
-        NSAssert(false, @"instant message delegate not found");
-        return nil;
-    }
-    NSMutableDictionary<NSString *, id> *keys = [[NSMutableDictionary alloc] init];
-    [map enumerateKeysAndObjectsUsingBlock:^(id<MKMID> receiver, id<DIMEncryptedBundle> data, BOOL *stop) {
+    NSAssert(transceiver, @"instant message delegate not found");
+    NSMutableDictionary<NSString *, id> *msgKeys = [[NSMutableDictionary alloc] init];
+    [bundleMap enumerateKeysAndObjectsUsingBlock:^(id<MKMID> receiver, id<DIMEncryptedBundle> bundle, BOOL *stop) {
         NSDictionary<NSString *, id> *encoded = [transceiver message:iMsg
-                                                           encodeKey:data
+                                                           encodeKey:bundle
                                                          forReceiver:receiver];
-        NSAssert([encoded count] > 0, @"failed to encode key data: %@", receiver);
-        // insert to 'message.keys' with ID + terminal
-        [keys addEntriesFromDictionary:encoded];
+        if ([encoded count] > 0) {
+            // insert to 'message.keys' with ID + terminal
+            [msgKeys addEntriesFromDictionary:encoded];
+        } else {
+            NSAssert(false, @"failed to encode key data: %@", receiver);
+        }
     }];
     // TODO: put key digest
-    return keys;
+    return msgKeys;
 }
 
 @end

@@ -119,24 +119,24 @@
 
 // Override
 - (nullable id<DIMEncryptedBundle>)message:(id<DKDInstantMessage>)iMsg
-                              encryptKey:(NSData *)data
-                             forReceiver:(id<MKMID>)receiver {
+                                encryptKey:(NSData *)data
+                               forReceiver:(id<MKMID>)receiver {
     NSAssert(![DIMMessage isBroadcast:iMsg], @"broadcast message has no key: %@", iMsg);
     // TODO: make sure the receiver's public key exists
     id<MKMUser> contact = [self.facebook userForID:receiver];
     NSAssert(contact, @"failed to get encrypt key for receiver: %@", receiver);
     // encrypt with receiver's public key
-    return [contact encrypt:data];
+    return [contact encryptBundle:data];
 }
 
 // Override
 - (NSDictionary<NSString *, id> *)message:(id<DKDInstantMessage>)iMsg
-                                encodeKey:(id<DIMEncryptedBundle>)data
+                                encodeKey:(id<DIMEncryptedBundle>)bundle
                               forReceiver:(id<MKMID>)receiver {
     NSAssert(![DIMMessage isBroadcast:iMsg], @"broadcast message has no key: %@", iMsg);
     // message key had been encrypted by a public key,
     // so the data should be encode here (with algorithm 'base64' as default).
-    return [data encodeForUserID:receiver];
+    return [bundle encodeForUserID:receiver];
     // TODO: check for wildcard
 }
 
@@ -144,29 +144,31 @@
 
 // Override
 - (nullable id<DIMEncryptedBundle>)message:(id<DKDSecureMessage>)sMsg
-                               decodeKey:(NSDictionary<NSString *, id> *)keys
-                             forReceiver:(id<MKMID>)receiver {
+                                 decodeKey:(NSDictionary<NSString *, id> *)msgKeys
+                               forReceiver:(id<MKMID>)receiver {
     NSAssert(![DIMMessage isBroadcast:sMsg], @"broadcast message has no key: %@", sMsg);
     id<MKMUser> user = [self.facebook userForID:receiver];
     NSAssert(user, @"failed to decode key: %@ => %@, %@", sMsg.sender, receiver, sMsg.group);
     NSSet<NSString *> *terminals = [user terminals];
     NSAssert([terminals count] > 0, @"visa.terminals not found: %@", user);
-    id<DIMEncryptedBundle> data = [DIMEncryptedBundle decodeMap:keys
-                                                  forUserID:receiver
-                                                  terminals:terminals];
+    id<DIMEncryptedBundle> bundle = [DIMEncryptedBundle decodeBundle:msgKeys
+                                                           forUserID:receiver
+                                                           terminals:terminals];
     // check for wildcard
-    if (!data || [data isEmpty]) {
+    if (!bundle || [bundle isEmpty]) {
         if (![terminals containsObject:@"*"]) {
             terminals = [[NSSet alloc] initWithObjects:@"*", nil];
-            data = [DIMEncryptedBundle decodeMap:keys forUserID:receiver terminals:terminals];
+            bundle = [DIMEncryptedBundle decodeBundle:msgKeys
+                                            forUserID:receiver
+                                            terminals:terminals];
         }
     }
-    return data;
+    return bundle;
 }
 
 // Override
 - (nullable NSData *)message:(id<DKDSecureMessage>)sMsg
-                  decryptKey:(id<DIMEncryptedBundle>)data
+                  decryptKey:(id<DIMEncryptedBundle>)bundle
                  forReceiver:(id<MKMID>)receiver {
     // NOTICE: the receiver must be a member ID
     //         if it's a group message
@@ -175,7 +177,7 @@
     id<MKMUser> user = [self.facebook userForID:receiver];
     NSAssert(user, @"failed to get decrypt keys: %@", receiver);
     // decrypt with private key of the receiver (or group member)
-    return [user decrypt:data];
+    return [user decryptBundle:bundle];
 }
 
 // Override
@@ -228,6 +230,8 @@
     id<DIMCompressor> compressor = [self compressor];
     NSDictionary *dict = [compressor extractContent:data withKey:key];
     return DKDContentParse(dict);
+    // NOTICE: check attachment for File/Image/Audio/Video message content
+    //         after deserialize content, this job should be do in subclass
 }
 
 // Override
