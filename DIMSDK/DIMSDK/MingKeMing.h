@@ -42,7 +42,7 @@
 #define __SDK_MKM__ 1
 
 // Crypto
-#import <DIMSDK/DIMEncryptedData.h>
+#import <DIMSDK/DIMEncryptedBundle.h>
 #import <DIMSDK/DIMVisaAgent.h>
 
 // Account

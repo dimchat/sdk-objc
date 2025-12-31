@@ -101,12 +101,12 @@ NS_DESIGNATED_INITIALIZER;
 
 @end
 
-@protocol DIMEncryptedData;
+@protocol DIMEncryptedBundle;
 
 @interface DIMSecureMessagePacker (Extended)
 
 // protected
-- (nullable id<DIMEncryptedData>)message:(id<DKDSecureMessage>)sMsg
+- (nullable id<DIMEncryptedBundle>)message:(id<DKDSecureMessage>)sMsg
                     decodeKeyForReceiver:(id<MKMID>)receiver;
 
 @end

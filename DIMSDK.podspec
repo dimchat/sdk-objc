@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
     s.name                  = 'DIMSDK'
-    s.version               = '1.2.1'
+    s.version               = '1.2.2'
     s.summary               = 'Decentralized Instant Messaging Software Development Kit'
     s.homepage              = 'https://github.com/dimchat/sdk-objc'
     s.license               = { :type => 'MIT', :file => 'LICENSE' }

@@ -39,7 +39,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol DIMEncryptedData;
+@protocol DIMEncryptedBundle;
 
 @protocol DKDInstantMessageDelegate <NSObject>
 
@@ -112,7 +112,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param receiver - actual receiver (user, or group member)
  * @return encrypted symmetric key data and target (ID + terminal)
  */
-- (nullable id<DIMEncryptedData>)message:(id<DKDInstantMessage>)iMsg
+- (nullable id<DIMEncryptedBundle>)message:(id<DKDInstantMessage>)iMsg
                               encryptKey:(NSData *)data
                              forReceiver:(id<MKMID>)receiver;
 
@@ -125,7 +125,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @return String object
  */
 - (NSDictionary<NSString *, id> *)message:(id<DKDInstantMessage>)iMsg
-                                encodeKey:(id<DIMEncryptedData>)data
+                                encodeKey:(id<DIMEncryptedBundle>)data
                               forReceiver:(id<MKMID>)receiver;
 
 @end
@@ -154,7 +154,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param keys - base64 string object
  * @return encrypted symmetric key data
  */
-- (nullable id<DIMEncryptedData>)message:(id<DKDSecureMessage>)sMsg
+- (nullable id<DIMEncryptedBundle>)message:(id<DKDSecureMessage>)sMsg
                                decodeKey:(NSDictionary<NSString *, id> *)keys
                              forReceiver:(id<MKMID>)receiver;
 
@@ -167,7 +167,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @return serialized data of symmetric key
  */
 - (nullable NSData *)message:(id<DKDSecureMessage>)sMsg
-                  decryptKey:(id<DIMEncryptedData>)data
+                  decryptKey:(id<DIMEncryptedBundle>)data
                  forReceiver:(id<MKMID>)receiver;
 
 /**

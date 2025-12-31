@@ -35,7 +35,7 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "DIMEncryptedData.h"
+#import "DIMEncryptedBundle.h"
 #import "DKDMessageDelegates.h"
 
 #import "DIMInstantMessagePacker.h"
@@ -139,9 +139,9 @@
         ];
     }
     
-    NSMutableDictionary<id<MKMID>, id<DIMEncryptedData>> *keyMap;
+    NSMutableDictionary<id<MKMID>, id<DIMEncryptedBundle>> *keyMap;
     keyMap = [[NSMutableDictionary alloc] init];
-    id<DIMEncryptedData> results;
+    id<DIMEncryptedBundle> results;
     for (id<MKMID> receiver in members) {
         //
         //  5. Encrypt key data to 'message.keys' with member's public key
@@ -177,14 +177,14 @@
 @implementation DIMInstantMessagePacker (Extended)
 
 - (NSDictionary<NSString *, id> *)message:(id<DKDInstantMessage>)iMsg
-                               encodeKeys:(NSDictionary<id<MKMID>, id<DIMEncryptedData>> *)map {
+                               encodeKeys:(NSDictionary<id<MKMID>, id<DIMEncryptedBundle>> *)map {
     id<DKDInstantMessageDelegate> transceiver = [self delegate];
     if (!transceiver) {
         NSAssert(false, @"instant message delegate not found");
         return nil;
     }
     NSMutableDictionary<NSString *, id> *keys = [[NSMutableDictionary alloc] init];
-    [map enumerateKeysAndObjectsUsingBlock:^(id<MKMID> receiver, id<DIMEncryptedData> data, BOOL *stop) {
+    [map enumerateKeysAndObjectsUsingBlock:^(id<MKMID> receiver, id<DIMEncryptedBundle> data, BOOL *stop) {
         NSDictionary<NSString *, id> *encoded = [transceiver message:iMsg
                                                            encodeKey:data
                                                          forReceiver:receiver];

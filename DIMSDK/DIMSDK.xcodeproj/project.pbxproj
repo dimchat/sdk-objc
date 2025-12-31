@@ -60,10 +60,10 @@
 		E9E626042E9B0CD5005A3991 /* DIMContentProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = E9E626022E9B0CD5005A3991 /* DIMContentProcessor.m */; };
 		E9E626072E9B0DBC005A3991 /* DIMMessageHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = E9E626052E9B0DBC005A3991 /* DIMMessageHelpers.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9E626082E9B0DBC005A3991 /* DIMMessageHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = E9E626062E9B0DBC005A3991 /* DIMMessageHelpers.m */; };
-		E9FD87FC2F02FF05004A6AC1 /* DIMEncryptedData.m in Sources */ = {isa = PBXBuildFile; fileRef = E9FD87F82F02FF05004A6AC1 /* DIMEncryptedData.m */; };
+		E9FD87FC2F02FF05004A6AC1 /* DIMEncryptedBundle.m in Sources */ = {isa = PBXBuildFile; fileRef = E9FD87F82F02FF05004A6AC1 /* DIMEncryptedBundle.m */; };
 		E9FD87FD2F02FF05004A6AC1 /* DIMVisaAgent.m in Sources */ = {isa = PBXBuildFile; fileRef = E9FD87FA2F02FF05004A6AC1 /* DIMVisaAgent.m */; };
 		E9FD87FE2F02FF05004A6AC1 /* DIMVisaAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = E9FD87F92F02FF05004A6AC1 /* DIMVisaAgent.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		E9FD87FF2F02FF05004A6AC1 /* DIMEncryptedData.h in Headers */ = {isa = PBXBuildFile; fileRef = E9FD87F72F02FF05004A6AC1 /* DIMEncryptedData.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E9FD87FF2F02FF05004A6AC1 /* DIMEncryptedBundle.h in Headers */ = {isa = PBXBuildFile; fileRef = E9FD87F72F02FF05004A6AC1 /* DIMEncryptedBundle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -147,8 +147,8 @@
 		E9E626022E9B0CD5005A3991 /* DIMContentProcessor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMContentProcessor.m; sourceTree = "<group>"; };
 		E9E626052E9B0DBC005A3991 /* DIMMessageHelpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMMessageHelpers.h; sourceTree = "<group>"; };
 		E9E626062E9B0DBC005A3991 /* DIMMessageHelpers.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMMessageHelpers.m; sourceTree = "<group>"; };
-		E9FD87F72F02FF05004A6AC1 /* DIMEncryptedData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMEncryptedData.h; sourceTree = "<group>"; };
-		E9FD87F82F02FF05004A6AC1 /* DIMEncryptedData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMEncryptedData.m; sourceTree = "<group>"; };
+		E9FD87F72F02FF05004A6AC1 /* DIMEncryptedBundle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMEncryptedBundle.h; sourceTree = "<group>"; };
+		E9FD87F82F02FF05004A6AC1 /* DIMEncryptedBundle.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMEncryptedBundle.m; sourceTree = "<group>"; };
 		E9FD87F92F02FF05004A6AC1 /* DIMVisaAgent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMVisaAgent.h; sourceTree = "<group>"; };
 		E9FD87FA2F02FF05004A6AC1 /* DIMVisaAgent.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMVisaAgent.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -312,8 +312,8 @@
 		E9FD87FB2F02FF05004A6AC1 /* crypto */ = {
 			isa = PBXGroup;
 			children = (
-				E9FD87F72F02FF05004A6AC1 /* DIMEncryptedData.h */,
-				E9FD87F82F02FF05004A6AC1 /* DIMEncryptedData.m */,
+				E9FD87F72F02FF05004A6AC1 /* DIMEncryptedBundle.h */,
+				E9FD87F82F02FF05004A6AC1 /* DIMEncryptedBundle.m */,
 				E9FD87F92F02FF05004A6AC1 /* DIMVisaAgent.h */,
 				E9FD87FA2F02FF05004A6AC1 /* DIMVisaAgent.m */,
 			);
@@ -344,7 +344,7 @@
 				E905E5E52E9999BF00C18726 /* DIMInstantMessagePacker.h in Headers */,
 				E905E5E62E9999BF00C18726 /* DKDMessageDelegates.h in Headers */,
 				E9FD87FE2F02FF05004A6AC1 /* DIMVisaAgent.h in Headers */,
-				E9FD87FF2F02FF05004A6AC1 /* DIMEncryptedData.h in Headers */,
+				E9FD87FF2F02FF05004A6AC1 /* DIMEncryptedBundle.h in Headers */,
 				E905E5E72E9999BF00C18726 /* DIMReliableMessagePacker.h in Headers */,
 				E905E5E82E9999BF00C18726 /* DIMSecureMessagePacker.h in Headers */,
 				E95D4A5728A1936500523488 /* DIMArrayContentProcessor.h in Headers */,
@@ -478,7 +478,7 @@
 				E9E625F82E9ACB98005A3991 /* DIMTwinsHelper.m in Sources */,
 				E9E2F6B42E982BF70060886C /* DIMEntity.m in Sources */,
 				E988C94D23F54BBE00BA5D66 /* DIMForwardContentProcessor.m in Sources */,
-				E9FD87FC2F02FF05004A6AC1 /* DIMEncryptedData.m in Sources */,
+				E9FD87FC2F02FF05004A6AC1 /* DIMEncryptedBundle.m in Sources */,
 				E9FD87FD2F02FF05004A6AC1 /* DIMVisaAgent.m in Sources */,
 				E919B0142390FAA1004F7FF9 /* DIMMessenger.m in Sources */,
 				E9BB894A2B258F26009491B0 /* DIMBaseProcessor.m in Sources */,

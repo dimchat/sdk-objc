@@ -100,7 +100,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@protocol DIMEncryptedData;
+@protocol DIMEncryptedBundle;
 
 /**
  *  User account for communication
@@ -130,7 +130,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param plaintext - message data
  * @return encrypted data
  */
-- (nullable id<DIMEncryptedData>)encrypt:(NSData *)plaintext;
+- (nullable id<DIMEncryptedBundle>)encrypt:(NSData *)plaintext;
 
 /**
  *  Verify data and signature with user's public keys
@@ -155,7 +155,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param ciphertext - encrypted data
  * @return plain text
  */
-- (nullable NSData *)decrypt:(id<DIMEncryptedData>)ciphertext;
+- (nullable NSData *)decrypt:(id<DIMEncryptedBundle>)ciphertext;
 
 /**
  *  Sign data with user's private key

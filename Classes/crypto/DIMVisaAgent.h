@@ -39,7 +39,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol DIMEncryptedData;
+@protocol DIMEncryptedBundle;
 
 @protocol DIMVisaAgent <NSObject>
 
@@ -51,7 +51,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param documents - visa documents for public keys
  * @return encrypted data with terminals
  */
-- (__kindof id<DIMEncryptedData>)encryptData:(NSData *)plaintext
+- (__kindof id<DIMEncryptedBundle>)encryptData:(NSData *)plaintext
                                 forDocuments:(NSArray<id<MKMDocument>> *)documents
                                         meta:(id<MKMMeta>)meta;
 

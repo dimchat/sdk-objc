@@ -35,7 +35,7 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "DIMEncryptedData.h"
+#import "DIMEncryptedBundle.h"
 #import "DIMVisaAgent.h"
 
 #import "DIMUser.h"
@@ -96,7 +96,7 @@
 }
 
 // Override
-- (id<DIMEncryptedData>)encrypt:(NSData *)plaintext {
+- (id<DIMEncryptedBundle>)encrypt:(NSData *)plaintext {
     id<MKMMeta> meta = [self meta];
     NSArray<id<MKMDocument>> *docs = [self documents];
     if (meta && docs) {
@@ -170,7 +170,7 @@
 }
 
 // Override
-- (nullable NSData *)decrypt:(id<DIMEncryptedData>)data {
+- (nullable NSData *)decrypt:(id<DIMEncryptedBundle>)data {
     // NOTICE: if you provide a public key in visa for encryption
     //         here you should return the private key paired with visa.key
     NSArray<id<MKDecryptKey>> *keys = [self privateKeysForDecryption];

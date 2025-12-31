@@ -28,7 +28,7 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMEncryptedData.m
+//  DIMEncryptedBundle.m
 //  DIMSDK
 //
 //  Created by Albert Moky on 2025/12/29.
@@ -37,16 +37,16 @@
 
 #import <DIMCore/DIMCore.h>
 
-#import "DIMEncryptedData.h"
+#import "DIMEncryptedBundle.h"
 
-@interface DIMEncryptedData () {
+@interface DIMEncryptedBundle () {
     
     NSMutableDictionary<NSString *, NSData *> *_map;
 }
 
 @end
 
-@implementation DIMEncryptedData
+@implementation DIMEncryptedBundle
 
 - (instancetype)init {
     if (self = [super init]) {
@@ -133,12 +133,12 @@
 
 @end
 
-@implementation DIMEncryptedData (DataCreation)
+@implementation DIMEncryptedBundle (DataCreation)
 
-+ (id<DIMEncryptedData>)decodeMap:(NSDictionary<NSString *,id> *)keys
++ (id<DIMEncryptedBundle>)decodeMap:(NSDictionary<NSString *,id> *)keys
                         forUserID:(id<MKMID>)did
                         terminals:(NSSet<NSString *> *)devices {
-    id<DIMEncryptedData> result = [[DIMEncryptedData alloc] init];
+    id<DIMEncryptedBundle> result = [[DIMEncryptedBundle alloc] init];
     //
     //  0. ID string without terminal
     //

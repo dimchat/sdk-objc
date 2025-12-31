@@ -35,19 +35,19 @@
 //  Copyright © 2025 Albert Moky. All rights reserved.
 //
 
-#import "DIMEncryptedData.h"
+#import "DIMEncryptedBundle.h"
 
 #import "DIMVisaAgent.h"
 
 @implementation DIMVisaAgent
 
 // Override
-- (id<DIMEncryptedData>)encryptData:(NSData *)plaintext
+- (id<DIMEncryptedBundle>)encryptData:(NSData *)plaintext
                        forDocuments:(NSArray<id<MKMDocument>> *)documents
                                meta:(id<MKMMeta>)meta {
     // NOTICE: meta.key will never changed, so use visa.key to encrypt message
     //         is a better way
-    id<DIMEncryptedData> results = [[DIMEncryptedData alloc] init];
+    id<DIMEncryptedBundle> results = [[DIMEncryptedBundle alloc] init];
     NSString *terminal;
     id<MKEncryptKey> pubKey;
     NSData *ciphertext;

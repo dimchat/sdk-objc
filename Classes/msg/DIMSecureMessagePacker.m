@@ -35,7 +35,7 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "DIMEncryptedData.h"
+#import "DIMEncryptedBundle.h"
 #import "DKDMessageDelegates.h"
 
 #import "DIMSecureMessagePacker.h"
@@ -80,7 +80,7 @@
     //
     //  1. Decode 'message.key' to encrypted symmetric key data
     //
-    id<DIMEncryptedData> data = [self message:sMsg decodeKeyForReceiver:receiver];
+    id<DIMEncryptedBundle> data = [self message:sMsg decodeKeyForReceiver:receiver];
     if (!data || [data isEmpty]) {
         // broadcast message?
         // reused key?
@@ -207,7 +207,7 @@
 
 @implementation DIMSecureMessagePacker (Extended)
 
-- (nullable id<DIMEncryptedData>)message:(id<DKDSecureMessage>)sMsg
+- (nullable id<DIMEncryptedBundle>)message:(id<DKDSecureMessage>)sMsg
                     decodeKeyForReceiver:(id<MKMID>)receiver {
     NSDictionary<NSString *, id> *keys = [sMsg encryptedKeys];
     if (!keys) {

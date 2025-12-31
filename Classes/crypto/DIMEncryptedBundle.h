@@ -28,7 +28,7 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMEncryptedData.h
+//  DIMEncryptedBundle.h
 //  DIMSDK
 //
 //  Created by Albert Moky on 2025/12/29.
@@ -41,7 +41,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol MKMID;
 
-@protocol DIMEncryptedData <NSObject>
+@protocol DIMEncryptedBundle <NSObject>
 
 /**
  * Get inner dictionary
@@ -90,11 +90,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface DIMEncryptedData : NSObject <DIMEncryptedData>
+@interface DIMEncryptedBundle : NSObject <DIMEncryptedBundle>
 
 @end
 
-@interface DIMEncryptedData (DataCreation)
+@interface DIMEncryptedBundle (DataCreation)
 
 /**
  *  Decode key data from 'message.keys'
@@ -104,7 +104,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param devices - visa terminals
  * @return decrypted key data with terminals
  */
-+ (__kindof id<DIMEncryptedData>)decodeMap:(NSDictionary<NSString *, id> *)keys
++ (__kindof id<DIMEncryptedBundle>)decodeMap:(NSDictionary<NSString *, id> *)keys
                                  forUserID:(id<MKMID>)did
                                  terminals:(NSSet<NSString *> *)devices;
 

@@ -88,13 +88,13 @@ NS_DESIGNATED_INITIALIZER;
 
 @end
 
-@protocol DIMEncryptedData;
+@protocol DIMEncryptedBundle;
 
 @interface DIMInstantMessagePacker (Extended)
 
 // protected
 - (NSDictionary<NSString *, id> *)message:(id<DKDInstantMessage>)iMsg
-                               encodeKeys:(NSDictionary<id<MKMID>, id<DIMEncryptedData>> *)map;
+                               encodeKeys:(NSDictionary<id<MKMID>, id<DIMEncryptedBundle>> *)map;
 
 @end
 

@@ -35,7 +35,7 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "DIMEncryptedData.h"
+#import "DIMEncryptedBundle.h"
 
 #import "DIMUser.h"
 #import "DIMBarrack.h"
@@ -118,7 +118,7 @@
 }
 
 // Override
-- (nullable id<DIMEncryptedData>)message:(id<DKDInstantMessage>)iMsg
+- (nullable id<DIMEncryptedBundle>)message:(id<DKDInstantMessage>)iMsg
                               encryptKey:(NSData *)data
                              forReceiver:(id<MKMID>)receiver {
     NSAssert(![DIMMessage isBroadcast:iMsg], @"broadcast message has no key: %@", iMsg);
@@ -131,7 +131,7 @@
 
 // Override
 - (NSDictionary<NSString *, id> *)message:(id<DKDInstantMessage>)iMsg
-                                encodeKey:(id<DIMEncryptedData>)data
+                                encodeKey:(id<DIMEncryptedBundle>)data
                               forReceiver:(id<MKMID>)receiver {
     NSAssert(![DIMMessage isBroadcast:iMsg], @"broadcast message has no key: %@", iMsg);
     // message key had been encrypted by a public key,
@@ -143,7 +143,7 @@
 #pragma mark DKDSecureMessageDelegate
 
 // Override
-- (nullable id<DIMEncryptedData>)message:(id<DKDSecureMessage>)sMsg
+- (nullable id<DIMEncryptedBundle>)message:(id<DKDSecureMessage>)sMsg
                                decodeKey:(NSDictionary<NSString *, id> *)keys
                              forReceiver:(id<MKMID>)receiver {
     NSAssert(![DIMMessage isBroadcast:sMsg], @"broadcast message has no key: %@", sMsg);
@@ -151,14 +151,14 @@
     NSAssert(user, @"failed to decode key: %@ => %@, %@", sMsg.sender, receiver, sMsg.group);
     NSSet<NSString *> *terminals = [user terminals];
     NSAssert([terminals count] > 0, @"visa.terminals not found: %@", user);
-    id<DIMEncryptedData> data = [DIMEncryptedData decodeMap:keys
+    id<DIMEncryptedBundle> data = [DIMEncryptedBundle decodeMap:keys
                                                   forUserID:receiver
                                                   terminals:terminals];
     // check for wildcard
     if (!data || [data isEmpty]) {
         if (![terminals containsObject:@"*"]) {
             terminals = [[NSSet alloc] initWithObjects:@"*", nil];
-            data = [DIMEncryptedData decodeMap:keys forUserID:receiver terminals:terminals];
+            data = [DIMEncryptedBundle decodeMap:keys forUserID:receiver terminals:terminals];
         }
     }
     return data;
@@ -166,7 +166,7 @@
 
 // Override
 - (nullable NSData *)message:(id<DKDSecureMessage>)sMsg
-                  decryptKey:(id<DIMEncryptedData>)data
+                  decryptKey:(id<DIMEncryptedBundle>)data
                  forReceiver:(id<MKMID>)receiver {
     // NOTICE: the receiver must be a member ID
     //         if it's a group message
