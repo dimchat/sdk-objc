@@ -72,7 +72,7 @@
     id<DKDSecureMessageDelegate> transceiver = [self delegate];
     NSAssert(transceiver, @"secure message delegate not found");
 
-    NSData *keyData;
+    NSData *pwd;  // serialized symmetric key data
     
     //
     //  1. Decode 'message.key' to encrypted symmetric key data
@@ -81,13 +81,13 @@
     if (!bundle || [bundle isEmpty]) {
         // broadcast message?
         // reused key?
-        keyData = nil;
+        pwd = nil;
     } else {
         //
         //  2. Decrypt 'message.key' with receiver's private key
         //
-        keyData = [transceiver message:sMsg decryptKey:bundle forReceiver:receiver];
-        if ([keyData length] == 0) {
+        pwd = [transceiver message:sMsg decryptKey:bundle forReceiver:receiver];
+        if ([pwd length] == 0) {
             // A: my visa updated but the sender doesn't got the new one;
             // B: key data error.
             NSAssert(false, @"failed to decrypt message key: %@, %@ => %@, %@",
@@ -102,7 +102,7 @@
     //  3. Deserialize message key from data (JsON / ProtoBuf / ...)
     //     (if key is empty, means it should be reused, get it from key cache)
     //
-    id<MKSymmetricKey> password = [transceiver message:sMsg deserializeKey:keyData];
+    id<MKSymmetricKey> password = [transceiver message:sMsg deserializeKey:pwd];
     if (!password) {
         // A: key data is empty, and cipher key not found from local storage;
         // B: key data error.

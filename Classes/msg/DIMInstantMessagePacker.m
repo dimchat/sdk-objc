@@ -120,21 +120,26 @@
         return nil;
     }
     
-    // replace 'content' with encrypted 'data'
-    NSMutableDictionary *info = [iMsg copyDictionary:NO];
-    [info removeObjectForKey:@"content"];
-    [info setObject:encodedData forKey:@"data"];
-    
     //
     //  4. Serialize message key to data (JsON / ProtoBuf / ...)
     //
     NSData *pwd = [transceiver message:iMsg serializeKey:password];
+    // NOTICE:
+    //    if the key is reused, iMsg must be updated with key digest.
+    NSMutableDictionary *info = [iMsg copyDictionary:NO];
+    
+    // replace 'content' with encrypted and encoded 'data'
+    [info removeObjectForKey:@"content"];
+    [info setObject:encodedData forKey:@"data"];
+    
+    // check serialized key data,
+    // if key data is null here, build the secure message directly.
     if (!pwd) {
         // A) broadcast message has no key
         // B) reused key
         return DKDSecureMessageParse(info);
     }
-    // encrypt + encode key
+    // encrypt and encode key
     
     if (!members) {
         // personal message
