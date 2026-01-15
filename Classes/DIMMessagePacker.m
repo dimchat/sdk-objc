@@ -107,7 +107,10 @@
     //  1. get message key with direction (sender -> receiver) or (sender -> group)
     //
     id<MKSymmetricKey> password = [messenger encryptKeyForMessage:iMsg];
-    NSAssert(password, @"failed to get msg key: %@ => %@, %@", iMsg.sender, receiver, [iMsg objectForKey:@"group"]);
+    if (!password) {
+        NSAssert(false, @"failed to get msg key: %@ => %@, %@", iMsg.sender, receiver, [iMsg objectForKey:@"group"]);
+        return nil;
+    }
     
     //
     //  2. encrypt 'content' to 'data' for receiver/group members

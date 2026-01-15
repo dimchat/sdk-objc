@@ -122,7 +122,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @return terminal list
  */
-@property (readonly, strong, nonnull) NSSet<NSString *> *terminals;
+@property (readonly, strong, nonatomic) NSSet<NSString *> *terminals;
 
 /**
  *  Encrypt data, try visa.key first, if not found, use meta.key
@@ -179,7 +179,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface DIMUser (PrivateKey)
 
 // protected
-- (NSArray<id<MKDecryptKey>> *)privateKeysForDecryption;
+- (NSArray<id<MKDecryptKey>> *)privateKeysForDecryption:(NSString *)terminal;
 
 // protected
 - (nullable id<MKSignKey>)privateKeyForSignature;

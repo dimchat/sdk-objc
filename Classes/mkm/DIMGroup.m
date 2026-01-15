@@ -62,18 +62,18 @@
     return group;
 }
 
-- (NSString *)debugDescription {
-    NSString *desc = [super debugDescription];
-    NSDictionary *dict = MKJsonDecode(desc);
-    NSMutableDictionary *info;
-    if ([dict isKindOfClass:[NSMutableDictionary class]]) {
-        info = (NSMutableDictionary *)dict;
-    } else {
-        info = [dict mutableCopy];
-    }
-    [info setObject:@(self.members.count) forKey:@"members"];
-    return MKJsonEncode(info);
-}
+//- (NSString *)debugDescription {
+//    NSString *desc = [super debugDescription];
+//    NSDictionary *dict = MKJsonMapDecode(desc);
+//    NSMutableDictionary *info;
+//    if ([dict isKindOfClass:[NSMutableDictionary class]]) {
+//        info = (NSMutableDictionary *)dict;
+//    } else {
+//        info = [dict mutableCopy];
+//    }
+//    [info setObject:@(self.members.count) forKey:@"members"];
+//    return MKJsonMapEncode(info);
+//}
 
 // Override
 - (id<MKMID>)founder {

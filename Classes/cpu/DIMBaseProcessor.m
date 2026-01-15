@@ -97,7 +97,7 @@
     id<DKDCommand> command = content;
     // extra info for receipt
     NSDictionary *info = @{
-        @"template": @"Command (name: ${name}) not support yet!",
+        @"template": @"Command (name: ${command}) not support yet!",
         @"replacements": @{
             @"command": command.cmd,
         },

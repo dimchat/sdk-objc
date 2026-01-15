@@ -113,8 +113,10 @@
     // get handler for 'app' & 'mod'
     NSString *app = [customized application];
     NSString *mod = [customized moduleName];
-    id<DIMCustomizedContentHandler> handler;
-    handler = [self filterForModule:mod inApplication:app content:content messasge:rMsg];
+    id<DIMCustomizedContentHandler> handler = [self filterForModule:mod
+                                                      inApplication:app
+                                                            content:content
+                                                           messasge:rMsg];
     // hand the action
     NSString *act = [customized actionName];
     id<MKMID> sender = [rMsg sender];

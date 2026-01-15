@@ -89,11 +89,10 @@
                               extra:info];
     }
     // meta got
-    return @[
-        DIMMetaCommandResponse(did, meta)
-    ];
+    return [self respondMeta:meta forID:did toReceiver:head.sender];
 }
 
+// private
 - (NSArray<id<DKDContent>> *)putMeta:(id<MKMMeta>)meta
                                forID:(id<MKMID>)did
                              content:(id<DKDMetaCommand>)command
@@ -116,6 +115,20 @@
                        envelope:head
                         content:command
                           extra:info];
+}
+
+@end
+
+@implementation DIMMetaCommandProcessor (Response)
+
+- (NSArray<id<DKDContent>> *)respondMeta:(id<MKMMeta>)meta
+                                   forID:(id<MKMID>)did
+                              toReceiver:(id<MKMID>)receiver {
+    NSAssert(![receiver isEqual:did], @"cycled response: %@", did);
+    // TODO: check response expired
+    return @[
+        DIMMetaCommandResponse(did, meta)
+    ];
 }
 
 @end

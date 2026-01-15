@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
     s.name                  = 'DIMSDK'
-    s.version               = '1.2.2'
+    s.version               = '1.2.3'
     s.summary               = 'Decentralized Instant Messaging Software Development Kit'
     s.homepage              = 'https://github.com/dimchat/sdk-objc'
     s.license               = { :type => 'MIT', :file => 'LICENSE' }
@@ -24,7 +24,7 @@ Pod::Spec.new do |s|
     # s.frameworks          = 'Security'
     # s.requires_arc        = true
 
-    s.dependency 'DIMCore', '~> 1.2.0'
-    s.dependency 'DaoKeDao', '~> 1.2.0'
-    s.dependency 'MingKeMing', '~> 1.2.0'
+    s.dependency 'DIMCore', '~> 1.2.3'
+    s.dependency 'DaoKeDao', '~> 1.2.3'
+    s.dependency 'MingKeMing', '~> 1.2.3'
 end

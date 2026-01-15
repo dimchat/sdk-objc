@@ -97,7 +97,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (nullable id<DIMContentProcessor>)contentProcessor:(id<DKDContent>)content;
 
-- (id<DIMContentProcessor>)contentProcessorForType:(NSString *)msgType;
+- (nullable id<DIMContentProcessor>)contentProcessorForType:(NSString *)msgType;
 
 @end
 

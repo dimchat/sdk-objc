@@ -141,13 +141,18 @@
     }
     // encrypt and encode key
     
-    if (!members) {
+    if (members == nil) {
         // personal message
         id<MKMID> receiver = [iMsg receiver];
         NSAssert([receiver isUser], @"message.receiver error: %@", receiver);
         members = @[
             receiver
         ];
+    //} else {
+    //    // group message
+    //    id<MKMID> receiver = [iMsg receiver];
+    //    NSAssert([receiver isGroup], @"message.receiver error: %@", receiver);
+    //    NSAssert([members count] > 0, @"group members empty: %@", receiver);
     }
     
     NSMutableDictionary<id<MKMID>, id<DIMEncryptedBundle>> *bundleMap = [[NSMutableDictionary alloc] init];

@@ -125,7 +125,7 @@
     // TODO: make sure the receiver's public key exists
     id<MKMUser> contact = [self.facebook userForID:receiver];
     NSAssert(contact, @"failed to get encrypt key for receiver: %@", receiver);
-    // encrypt with receiver's public key
+    // encrypt with public key of the receiver (or group member)
     return [contact encryptBundle:data];
 }
 
@@ -149,18 +149,26 @@
     NSAssert(![DIMMessage isBroadcast:sMsg], @"broadcast message has no key: %@", sMsg);
     id<MKMUser> user = [self.facebook userForID:receiver];
     NSAssert(user, @"failed to decode key: %@ => %@, %@", sMsg.sender, receiver, sMsg.group);
+    // decode key bundle for all terminals
     NSSet<NSString *> *terminals = [user terminals];
     NSAssert([terminals count] > 0, @"visa.terminals not found: %@", user);
     id<DIMEncryptedBundle> bundle = [DIMEncryptedBundle decodeBundle:msgKeys
                                                            forUserID:receiver
                                                            terminals:terminals];
-    // check for wildcard
     if (!bundle || [bundle isEmpty]) {
-        if (![terminals containsObject:@"*"]) {
-            terminals = [[NSSet alloc] initWithObjects:@"*", nil];
-            bundle = [DIMEncryptedBundle decodeBundle:msgKeys
-                                            forUserID:receiver
-                                            terminals:terminals];
+        // check for wildcard
+        if ([terminals containsObject:@"*"]) {
+            NSAssert(false, @"failed to decode key: %@ => %@, %@", sMsg.sender, receiver, sMsg.group);
+            return nil;
+        }
+        // decode key bundle for '*'
+        terminals = [[NSSet alloc] initWithObjects:@"*", nil];
+        bundle = [DIMEncryptedBundle decodeBundle:msgKeys
+                                        forUserID:receiver
+                                        terminals:terminals];
+        if (!bundle || [bundle isEmpty]) {
+            NSAssert(false, @"failed to decode key: %@ => %@, %@", sMsg.sender, receiver, sMsg.group);
+            return nil;
         }
     }
     return bundle;

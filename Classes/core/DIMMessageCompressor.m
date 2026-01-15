@@ -67,7 +67,7 @@
     id<DIMShortener> shortener = [self shortener];
     NSAssert(shortener, @"message shortener not set");
     content = [shortener compressContent:content];
-    NSString *json = MKJsonEncode(content);
+    NSString *json = MKJsonMapEncode(content);
     return MKUTF8Encode(json);
 }
 
@@ -92,7 +92,7 @@
     id<DIMShortener> shortener = [self shortener];
     NSAssert(shortener, @"message shortener not set");
     key = [shortener compressSymmetricKey:key];
-    NSString *json = MKJsonEncode(key);
+    NSString *json = MKJsonMapEncode(key);
     return MKUTF8Encode(json);
 }
 
@@ -117,7 +117,7 @@
     id<DIMShortener> shortener = [self shortener];
     NSAssert(shortener, @"message shortener not set");
     msg = [shortener compressReliableMessage:msg];
-    NSString *json = MKJsonEncode(msg);
+    NSString *json = MKJsonMapEncode(msg);
     return MKUTF8Encode(json);
 }
 

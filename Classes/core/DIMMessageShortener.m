@@ -114,6 +114,10 @@ static inline NSMutableDictionary *_mutable_dictionary(__kindof NSDictionary *di
 // Override
 - (NSMutableDictionary *)compressReliableMessage:(NSDictionary *)msg {
     NSMutableDictionary *mDict = _mutable_dictionary(msg);
+    
+    // move 'keys'
+    [self dictionary:mDict moveKey:@"keys" toKey:@"K"];
+    
     NSArray *keys = [self messageShortKeys];
     [self dictionary:mDict shortenKeys:keys];
     return mDict;
@@ -122,6 +126,23 @@ static inline NSMutableDictionary *_mutable_dictionary(__kindof NSDictionary *di
 // Override
 - (NSMutableDictionary *)extractReliableMessage:(NSDictionary *)msg {
     NSMutableDictionary *mDict = _mutable_dictionary(msg);
+    
+    // move 'keys'
+    id encryptedKeys = [msg objectForKey:@"K"];
+    if (!encryptedKeys) {
+        NSAssert([msg objectForKey:@"data"], @"message data should not empty: %@", msg);
+    } else if ([encryptedKeys isKindOfClass:[NSDictionary class]]) {
+        NSAssert([msg objectForKey:@"keys"] == nil, @"message keys duplicated: %@", msg);
+        [mDict removeObjectForKey:@"K"];
+        [mDict setObject:encryptedKeys forKey:@"keys"];
+    } else if ([encryptedKeys isKindOfClass:[NSString class]]) {
+        NSAssert([msg objectForKey:@"key"] == nil, @"message key duplicated: %@", msg);
+        [mDict removeObjectForKey:@"K"];
+        [mDict setObject:encryptedKeys forKey:@"key"];
+    } else {
+        NSAssert(false, @"message key error: %@", msg);
+    }
+    
     NSArray *keys = [self messageShortKeys];
     [self dictionary:mDict restoreKeys:keys];
     return mDict;

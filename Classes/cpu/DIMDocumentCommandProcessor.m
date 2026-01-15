@@ -108,10 +108,8 @@
                                   extra:info];
         }
     }
-    id<MKMMeta> meta = [facebook metaForID:did];
-    return @[
-        DIMDocumentCommandResponse(did, meta, docs)
-    ];
+    // document got
+    return [self respondDocuments:docs forID:did toReceiver:head.sender];
 }
 
 - (id<MKMDocument>)lastDocument:(NSArray<id<MKMDocument>> *)documents {
@@ -198,6 +196,22 @@
                        envelope:head
                         content:command
                           extra:info];
+}
+
+@end
+
+@implementation DIMDocumentCommandProcessor (Response)
+
+- (NSArray<id<DKDContent>> *)respondDocuments:(NSArray<id<MKMDocument>> *)docs
+                                        forID:(id<MKMID>)did
+                                   toReceiver:(id<MKMID>)receiver {
+    NSAssert(![receiver isEqual:did], @"cycled response: %@", did);
+    // TODO: check response expired
+    DIMFacebook *facebook = [self facebook];
+    id<MKMMeta> meta = [facebook metaForID:did];
+    return @[
+        DIMDocumentCommandResponse(did, meta, docs)
+    ];
 }
 
 @end

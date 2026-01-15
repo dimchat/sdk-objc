@@ -47,6 +47,15 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 // protected
+@interface DIMDocumentCommandProcessor (Response)
+
+- (NSArray<id<DKDContent>> *)respondDocuments:(NSArray<id<MKMDocument>> *)docs
+                                        forID:(id<MKMID>)did
+                                   toReceiver:(id<MKMID>)receiver;
+
+@end
+
+// protected
 @interface DIMDocumentCommandProcessor (Storage)
 
 - (nullable NSArray<id<DKDContent>> *)saveDocument:(id<MKMDocument>)doc

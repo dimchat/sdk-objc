@@ -43,6 +43,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Get inner dictionary
+ *
+ *  toMap()
  */
 @property (readonly, strong, nonatomic) NSDictionary<NSString *, NSData *> *dictionary;
 
@@ -72,13 +74,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable NSData *)dataForTerminal:(NSString *)terminal;
 
 /**
- *  Get all data values
- *
- * @return data list
- */
-@property (readonly, copy, nonatomic) NSSet<NSData *> *values;
-
-/**
  *  Encode key data
  *
  * @param did - user ID
@@ -88,6 +83,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+/**
+ *  User Encrypted Bundle
+ */
 @interface DIMEncryptedBundle : NSObject <DIMEncryptedBundle>
 
 @end

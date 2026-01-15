@@ -121,11 +121,11 @@ static inline NSString *build_key(NSString *app, NSString *mod) {
                                             messasge:(id<DKDReliableMessage>)rMsg {
     id<DIMCustomizedContentHandler> handler;
     handler = [self contentHandlerForModule:mod inApplication:app];
-    if (!handler) {
-        // default handler
-        handler = [super filterForModule:mod inApplication:app content:body messasge:rMsg];
+    if (handler) {
+        return handler;
     }
-    return handler;
+    // default handler
+    return [super filterForModule:mod inApplication:app content:body messasge:rMsg];
 }
 
 @end
@@ -260,5 +260,5 @@ and then set your **creator** for ```DIMContentProcessorFactory``` in the ```DIM
 
 ----
 
-Copyright &copy; 2018-2025 Albert Moky
+Copyright &copy; 2018-2026 Albert Moky
 [![Followers](https://img.shields.io/github/followers/moky)](https://github.com/moky?tab=followers)

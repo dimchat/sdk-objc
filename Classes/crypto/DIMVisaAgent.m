@@ -143,8 +143,7 @@
         return nil;
     }
     // public key in user profile?
-    id<MKPublicKey> pubKey = MKPublicKeyParse([doc propertyForKey:@"key"]);
-    return pubKey;
+    return MKPublicKeyParse([doc propertyForKey:@"key"]);
 }
 
 - (nullable id<MKEncryptKey>)encryptKeyFromDocument:(id<MKMDocument>)doc {
@@ -157,28 +156,27 @@
         return nil;
     }
     id<MKPublicKey> pubKey = MKPublicKeyParse([doc propertyForKey:@"key"]);
-    if ([pubKey conformsToProtocol:@protocol(MKEncryptKey)]) {
+    if (!pubKey) {
+        // profile document?
+        return nil;
+    } else if ([pubKey conformsToProtocol:@protocol(MKEncryptKey)]) {
         return (id<MKEncryptKey>)pubKey;
     }
-    NSAssert(pubKey == nil, @"visa key error: %@", pubKey);
+    NSAssert(false, @"visa key error: %@", pubKey);
     return nil;
 }
 
 - (nullable NSString *)terminalFromDocument:(id<MKMDocument>)doc {
-    NSString *terminal;
-    // get from visa
-    if ([doc conformsToProtocol:@protocol(MKMVisa)]) {
-        terminal = [(id<MKMVisa>)doc terminal];
-        if (terminal) {
-            return terminal;
-        }
-    }
-    // get from document
-    terminal = [doc stringForKey:@"terminal" defaultValue:nil];
+    NSString *terminal = [doc stringForKey:@"terminal" defaultValue:nil];
     if (!terminal) {
+        // get from document ID
         id<MKMID> did = MKMIDParse([doc objectForKey:@"did"]);
-        NSAssert(did, @"document ID not found: %@", doc);
-        terminal = [did terminal];
+        if (did) {
+            terminal = [did terminal];
+        } else {
+            NSAssert(false, @"document ID not found: %@", doc);
+            // TODO: get from property?
+        }
     }
     return terminal;
 }

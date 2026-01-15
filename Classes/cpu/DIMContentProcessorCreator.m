@@ -53,14 +53,6 @@
 
 // Override
 - (id<DIMContentProcessor>)createContentProcessor:(NSString *)type {
-    // forward content
-    if ([type isEqualToString:DKDContentType_Forward]) {
-        return CREATE_CPU(DIMForwardContentProcessor);
-    }
-    // array content
-    if ([type isEqualToString:DKDContentType_Array]) {
-        return CREATE_CPU(DIMArrayContentProcessor);
-    }
     /*
     // application customized
     if ([type isEqualToString:DKDContentType_Application]) {
@@ -69,6 +61,14 @@
         return CREATE_CPU(DIMCustomizedContentProcessor);
     }
      */
+    // forward content
+    if ([type isEqualToString:DKDContentType_Forward]) {
+        return CREATE_CPU(DIMForwardContentProcessor);
+    }
+    // array content
+    if ([type isEqualToString:DKDContentType_Array]) {
+        return CREATE_CPU(DIMArrayContentProcessor);
+    }
     // default commands
     if ([type isEqualToString:DKDContentType_Command]) {
         return CREATE_CPU(DIMCommandProcessor);
@@ -79,6 +79,7 @@
         return CREATE_CPU(DIMContentProcessor);
     }
     // unknown
+    //NSAssert(false, @"unsupported content: %@", type);
     return nil;
 }
 

@@ -84,12 +84,11 @@
 
 // Override
 - (void)setData:(NSData *)data forTerminal:(NSString *)terminal {
-    if (!terminal) {
-        NSAssert(false, @"should not happen");
+    if (!data) {
         [_map removeObjectForKey:terminal];
-        return;
+    } else {
+        [_map setObject:data forKey:terminal];
     }
-    [_map setObject:data forKey:terminal];
 }
 
 // Override
@@ -103,15 +102,6 @@
 }
 
 // Override
-- (NSSet<NSData *> *)values {
-    NSArray *array = [_map allValues];
-    if ([array count] == 0) {
-        return nil;
-    }
-    return [NSSet setWithArray:array];
-}
-
-// Override
 - (NSDictionary<NSString *, id> *)encodeForUserID:(id<MKMID>)did {
     NSAssert([did terminal] == nil, @"ID should not contain terminal here: %@", did);
     NSString *identifier = MKMIDConcat([did name], [did address], nil);
@@ -119,7 +109,7 @@
     [_map enumerateKeysAndObjectsUsingBlock:^(NSString *target, NSData *data, BOOL *stop) {
         // encode data
         id base64 = MKTransportableDataEncode(data);
-        NSAssert([base64 length] > 0, @"failed to encode data: %lu byte(s)", [data length]);
+        //NSAssert(base64, @"failed to encode data: %lu byte(s)", [data length]);
         if ([target length] == 0 || [target isEqualToString:@"*"]) {
             target = identifier;
         } else {
@@ -128,6 +118,7 @@
         // insert to 'message.keys' with ID + terminal
         [bundle setObject:base64 forKey:target];
     }];
+    // OK
     return bundle;
 }
 

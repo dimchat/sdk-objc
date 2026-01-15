@@ -199,11 +199,8 @@
     //  2. Encode 'message.signature' to String (Base64)
     //
     NSObject *base64 = MKTransportableDataEncode(signature);
-    if (!base64) {
-        NSAssert(false, @"failed to encode signature: %lu byte(s), %@ => %@, %@",
-                 signature.length, sMsg.sender, sMsg.receiver, sMsg.group);
-        return nil;
-    }
+    //NSAssert(base64, @"failed to encode signature: %lu byte(s), %@ => %@, %@",
+    //         signature.length, sMsg.sender, sMsg.receiver, sMsg.group);
     
     // OK, pack message
     NSMutableDictionary *info = [sMsg copyDictionary:NO];

@@ -50,24 +50,29 @@
 }
 
 // Override
-- (BOOL)verifyVisa:(id<MKMVisa>)visa {
-    // NOTICE: only verify visa with meta.key
-    //         (if meta not exists, user won't be created)
-    id<MKMID> uid = [self identifier];
-    // check document ID
-    id<MKMID> did = MKMIDParse([visa objectForKey:@"did"]);
-    if ([uid isEqual:did]) {
+- (NSSet<NSString *> *)terminals {
+    NSArray<id<MKMDocument>> *docs = [self documents];
+    if ([docs count] == 0) {
+        NSAssert(false, @"failed to get documents: %@", self.identifier);
+        return nil;
+    }
+    id<DIMVisaAgent> visaAgent = [[DIMSharedVisaAgent sharedInstance] agent];
+    return [visaAgent terminalsFromDocuments:docs];
+}
+
+// Override
+- (id<DIMEncryptedBundle>)encryptBundle:(NSData *)plaintext {
+    id<MKMMeta> meta = [self meta];
+    NSArray<id<MKMDocument>> *docs = [self documents];
+    if (meta && docs) {
         // OK
     } else {
-        // visa ID not match
-        NSAssert(false, @"visa ID not match:%@, %@", uid, did);
-        return NO;
+        NSAssert(false, @"user not ready: %@", self.identifier);
+        return nil;
     }
-    // if meta not exists, user won't be created
-    id<MKMMeta> meta = [self meta];
-    id<MKVerifyKey> PK = [meta publicKey];
-    NSAssert(PK, @"failed to get verify key for visa: %@", uid);
-    return [visa verify:PK];
+    NSAssert([docs count] > 0, @"documents empty: %@", self.identifier);
+    id<DIMVisaAgent> visaAgent = [[DIMSharedVisaAgent sharedInstance] agent];
+    return [visaAgent encryptBundle:plaintext forDocuments:docs meta:meta];
 }
 
 // Override
@@ -96,45 +101,40 @@
 }
 
 // Override
-- (id<DIMEncryptedBundle>)encryptBundle:(NSData *)plaintext {
-    id<MKMMeta> meta = [self meta];
-    NSArray<id<MKMDocument>> *docs = [self documents];
-    if (meta && docs) {
+- (BOOL)verifyVisa:(id<MKMVisa>)visa {
+    // NOTICE: only verify visa with meta.key
+    //         (if meta not exists, user won't be created)
+    id<MKMID> uid = [self identifier];
+    // check document ID
+    id<MKMID> did = MKMIDParse([visa objectForKey:@"did"]);
+    if (did == nil || [did.address isEqual:uid.address]) {
         // OK
     } else {
-        NSAssert(false, @"user not ready: %@", self.identifier);
-        return nil;
+        // visa ID not match
+        NSAssert(false, @"visa ID not match:%@, %@", uid, did);
+        return NO;
     }
-    NSAssert([docs count] > 0, @"documents empty: %@", self.identifier);
-    id<DIMVisaAgent> visaAgent = [[DIMSharedVisaAgent sharedInstance] agent];
-    return [visaAgent encryptBundle:plaintext forDocuments:docs meta:meta];
-}
-
-// Override
-- (NSSet<NSString *> *)terminals {
-    NSArray<id<MKMDocument>> *docs = [self documents];
-    if ([docs count] == 0) {
-        NSAssert(false, @"failed to get documents: %@", self.identifier);
-        return nil;
-    }
-    id<DIMVisaAgent> visaAgent = [[DIMSharedVisaAgent sharedInstance] agent];
-    return [visaAgent terminalsFromDocuments:docs];
+    // if meta not exists, user won't be created
+    id<MKMMeta> meta = [self meta];
+    id<MKVerifyKey> PK = [meta publicKey];
+    NSAssert(PK, @"failed to get verify key for visa: %@", uid);
+    return [visa verify:PK];
 }
 
 #pragma mark Local User
 
-- (NSString *)debugDescription {
-    NSString *desc = [super debugDescription];
-    NSDictionary *dict = MKJsonDecode(desc);
-    NSMutableDictionary *info;
-    if ([dict isKindOfClass:[NSMutableDictionary class]]) {
-        info = (NSMutableDictionary *)dict;
-    } else {
-        info = [dict mutableCopy];
-    }
-    [info setObject:@(self.contacts.count) forKey:@"contacts"];
-    return MKJsonEncode(info);
-}
+//- (NSString *)debugDescription {
+//    NSString *desc = [super debugDescription];
+//    NSDictionary *dict = MKJsonMapDecode(desc);
+//    NSMutableDictionary *info;
+//    if ([dict isKindOfClass:[NSMutableDictionary class]]) {
+//        info = (NSMutableDictionary *)dict;
+//    } else {
+//        info = [dict mutableCopy];
+//    }
+//    [info setObject:@(self.contacts.count) forKey:@"contacts"];
+//    return MKJsonMapEncode(info);
+//}
 
 // Override
 - (NSArray<id<MKMID>> *)contacts {
@@ -173,34 +173,46 @@
 - (nullable NSData *)decryptBundle:(id<DIMEncryptedBundle>)bundle {
     // NOTICE: if you provide a public key in visa for encryption
     //         here you should return the private key paired with visa.key
-    NSArray<id<MKDecryptKey>> *keys = [self privateKeysForDecryption];
-    NSAssert([keys count] > 0, @"failed to get decrypt keys for user: %@", self.identifier);
-    NSSet<NSData *> *values = [bundle values];
-    NSAssert([values count] > 0, @"data empty: %@", bundle);
-    NSData *plaintext = nil;
-    for (NSData *ciphertext in values) {
+    NSDictionary<NSString *, NSData *> *map = [bundle dictionary];
+    NSAssert([map count] > 0, @"key data empty: %@", bundle);
+    __block NSData *plaintext = nil;
+    [map enumerateKeysAndObjectsUsingBlock:^(NSString *terminal, NSData *ciphertext, BOOL *stop) {
+        // get private keys for terminal
+        NSArray<id<MKDecryptKey>> *keys = [self privateKeysForDecryption:terminal];
+        if ([keys count] == 0) {
+            NSAssert(false, @"failed to get decrypt keys for user: %@, terminal: %@", self.identifier, terminal);
+            return;
+        }
         // try decrypting it with each private key
+        NSData *plain;
         for (id<MKDecryptKey> SK in keys) {
-            plaintext = [SK decrypt:ciphertext params:nil];
-            if ([plaintext length] > 0) {
+            plain = [SK decrypt:ciphertext params:nil];
+            if ([plain length] > 0) {
                 // OK!
-                return plaintext;
+                plaintext = plain;
+                *stop = true;
+                break;
             }
         }
-    }
+    }];
     // decryption failed
     // TODO: check whether my visa key is changed, push new visa to this contact
-    return nil;
+    return plaintext;
 }
 
 @end
 
 @implementation DIMUser (PrivateKey)
 
-- (NSArray<id<MKDecryptKey>> *)privateKeysForDecryption {
+- (NSArray<id<MKDecryptKey>> *)privateKeysForDecryption:(NSString *)terminal {
     id<MKMUserDataSource> facebook = [self dataSource];
     NSAssert(facebook, @"user data source not set yet");
-    return [facebook privateKeysForDecryption:self.identifier];
+    if ([terminal length] == 0 || [terminal isEqualToString:@"*"]) {
+        return [facebook privateKeysForDecryption:self.identifier];
+    }
+    id<MKMID> did = [self identifier];
+    id<MKMID> uid = MKMIDCreate(did.name, did.address, terminal);
+    return [facebook privateKeysForDecryption:uid];
 }
 
 - (nullable id<MKSignKey>)privateKeyForSignature {

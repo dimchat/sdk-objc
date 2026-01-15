@@ -40,9 +40,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/*
+/**
+ *  CPU - Content Processing Unit
+ *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  *  Base Content Processor
- *  ~~~~~~~~~~~~~~~~~~~~~~
  */
 @interface DIMContentProcessor : DIMTwinsHelper <DIMContentProcessor>
 
@@ -74,9 +75,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark -
 
-/*
+/**
+ *  CPU - Command Processing Unit
+ *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  *  Base Command Processor
- *  ~~~~~~~~~~~~~~~~~~~~~~
  */
 @interface DIMCommandProcessor : DIMContentProcessor
 

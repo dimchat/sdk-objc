@@ -94,7 +94,7 @@
     } else {
         NSAssert(false, @"receiver error: %@", receiver);
     }
-    //NSAssert(false, @"receiver not in local users: %@, %@", receiver, users);
+    // not me?
     return nil;
 }
 

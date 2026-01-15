@@ -49,6 +49,15 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 // protected
+@interface DIMMetaCommandProcessor (Response)
+
+- (NSArray<id<DKDContent>> *)respondMeta:(id<MKMMeta>)meta
+                                   forID:(id<MKMID>)did
+                              toReceiver:(id<MKMID>)receiver;
+
+@end
+
+// protected
 @interface DIMMetaCommandProcessor (Storage)
 
 - (nullable NSArray<id<DKDContent>> *)saveMeta:(id<MKMMeta>)meta

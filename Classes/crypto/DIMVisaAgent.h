@@ -75,6 +75,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+/**
+ *  Default Visa Agent
+ */
 @interface DIMVisaAgent : NSObject <DIMVisaAgent>
 
 @end
